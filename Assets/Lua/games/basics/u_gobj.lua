@@ -24,7 +24,7 @@ function M:IsActive( )
 end
 
 function M:GetComponent( com )
-	return self.gobj:getComponent( com )
+	return self.gobj:GetComponent( com )
 end
 
 function M:SetActive( isActive )
