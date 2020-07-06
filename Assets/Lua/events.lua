@@ -26,17 +26,13 @@ function Event.AddListener(event,handler)
 end
 
 function Event.Brocast(event,...)
-	if not events[event] then
-		error("brocast " .. event .. " has no event.")
-	else
+	if events[event] then
 		events[event]:fire(...)
 	end
 end
 
 function Event.RemoveListener(event,handler)
-	if not events[event] then
-		error("remove " .. event .. " has no event.")
-	else
+	if events[event] then
 		events[event]:disconnect(handler)
 	end
 end
