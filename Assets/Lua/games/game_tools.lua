@@ -35,9 +35,15 @@ function printLog(tag, fmt, ...)
     local t = {
         "[",
         str_upper(tostring(tag)),
-        "] ",
-        str_format(tostring(fmt), ...)
+        "] "
 	}
+	
+	if #({...}) > 0 then
+		tb_insert(t, str_format(tostring(fmt), ...))
+	else
+		tb_insert(t, fmt)
+	end
+
     if _isErr or _isThr then
         tb_insert(t, d_traceback("", 3))  -- 打印要少前3行数据
 	end
