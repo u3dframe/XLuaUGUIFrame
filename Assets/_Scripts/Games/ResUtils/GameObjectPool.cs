@@ -102,7 +102,7 @@ namespace Core{
 			if(_ars != null && _ars.Length > 2){
 				this.abName = _ars[0];
 				this.assetName = _ars[1];
-				this.poolObject = abMgr.LoadGobj(this.abName,this.assetName,OnLoadedCall);
+				this.poolObject = abMgr.LoadAsset<GameObject>(this.abName,this.assetName,OnLoadedCall);
 			}
 		}
 		
