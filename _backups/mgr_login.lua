@@ -36,4 +36,16 @@ function M:ToLoginView()
 	printError("=== 5")
 end
 
+function M:OnUpdate(dt)
+	if not self.uptime or self.uptime <= 0 then
+		self.uptime = 1;
+		if not self.objdd then
+			self.objdd = MgrRes.GetAsset(self.cfgAsset.abName,self.cfgAsset.assetName,self.cfgAsset.assetLType);
+		end
+		printTable(self.objdd,"obj");
+		-- printInfo(self.assetCfg.abName)
+	end
+	self.uptime = self.uptime - dt;
+end
+
 return M
