@@ -88,7 +88,14 @@ public class GameMgr : GobjLifeListener {
 	/// 销毁
 	/// </summary>
 	void OnDestroy() {
+		onUpdate = null;
+		onLateUpdate = null;
+		upItem = null;
+		upLateItem = null;
 		mListUps.Clear();
+		mListLateUps.Clear();
+		upList.Clear();
+		upLateList.Clear();
 	}
 
 	void _Exc_Up(float dt){

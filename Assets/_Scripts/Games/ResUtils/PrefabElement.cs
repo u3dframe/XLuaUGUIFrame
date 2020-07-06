@@ -101,8 +101,6 @@ public class PrefabElement : PrefabBasic {
 				_tmpName = GetRelativeName(tmp);
 				if(!m_dicName2Gobj.ContainsKey(_tmpName)){
 					m_dicName2Gobj.Add(_tmpName,tmp);
-				}else{
-					Debug.LogError(string.Format("the same name = [{0}] in gameObject.name = [{1}]",_tmpName,tmp.name));
 				}
 			}
 		}
@@ -228,13 +226,13 @@ public class PrefabElement : PrefabBasic {
 	[ContextMenu("Re-Pars")]
 	void ReSizeList(){
 		List<GameObject> list = new List<GameObject> ();
-		GameObject gobj = null;
+		GameObject _gobj = null;
 		for (int i=0;i<m_gobjs.Length;++i)
 		{
-			gobj = m_gobjs [i];
-			if(IsNull(gobj)) continue;
-			if (!list.Contains (gobj)) {
-				list.Add (gobj);
+			_gobj = m_gobjs [i];
+			if(IsNull(_gobj)) continue;
+			if (!list.Contains (_gobj)) {
+				list.Add (_gobj);
 			}
 		}
 		m_gobjs = list.ToArray ();

@@ -214,14 +214,24 @@ public class UtilityHelper {
 		Debug.LogError(str);
 	}
 
-	// UObject对象的空判断，比 == 要快很多
-	static public bool IsNull(object obj)
+	// 在编辑模式下，这个函数有问题，即便为null对象，经过判断就不为空了
+	static public bool IsNull(System.Object obj)
 	{
-		return System.Object.ReferenceEquals(obj,null);
+		return System.Object.ReferenceEquals(null,obj);
 	}
 
-	static public bool IsNotNull(object obj)
+	static public bool IsNotNull(System.Object obj)
 	{
 		return !IsNull(obj);
+	}
+
+	static public bool IsNull(UnityEngine.Object uobj)
+	{
+		return null == uobj;
+	}
+
+	static public bool IsNotNull(UnityEngine.Object uobj)
+	{
+		return null != uobj;
 	}
 }

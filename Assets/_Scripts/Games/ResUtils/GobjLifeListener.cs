@@ -64,6 +64,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		}
 	}
 
+	[System.NonSerialized]
 	public string poolName = "";
 	
 	/// <summary>
