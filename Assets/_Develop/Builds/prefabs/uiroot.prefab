@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1863377883160115808}
+  - component: {fileID: 8798299387162966694}
   m_Layer: 5
   m_Name: uiroot
   m_TagString: Untagged
@@ -32,6 +33,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8798299387162966694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173144297772104094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b08469ca1961a58458c41e4a6d6d70fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  poolName: 
+  m_gobjs:
+  - {fileID: 5999145452730627902}
+  - {fileID: 3642011444733226266}
+  - {fileID: 8742960806406163786}
+  - {fileID: 4077965856972068982}
+  - {fileID: 6571881856587798220}
+  - {fileID: 5045259963987552444}
+  - {fileID: 2174540101363698242}
+  - {fileID: 5418236344383603157}
+  - {fileID: 5987535814756806780}
+  - {fileID: 2138220840363687057}
 --- !u!1 &2138220840363687057
 GameObject:
   m_ObjectHideFlags: 0
