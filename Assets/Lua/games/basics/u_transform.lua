@@ -80,6 +80,11 @@ function M:SetSizeDelta( x,y )
 	self.trsf.sizeDelta = {x = x, y = y}
 end
 
+function M:SetParent( parent,isLocal )
+	isLocal = isLocal == true
+	self.trsf:SetParent(parent,isLocal);
+end
+
 function M:DestroyObj()
 	self.trsf = nil
 	return super.DestroyObj(self)
