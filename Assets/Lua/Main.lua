@@ -14,6 +14,7 @@ function OnLevelWasLoaded(level)
 end
 
 function Update(dt)
+	Event.Brocast(Evt_Update,dt);
 end
 
 function LateUpdate()
