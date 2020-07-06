@@ -90,7 +90,7 @@ public static class ExampleConfig
                 typeof(Localization),
                 typeof(UGUILocalize),
                 typeof(AssetBase),
-                // typeof(AssetInfo),
+                typeof(AssetInfo),
                 typeof(ABInfo),
                 // typeof(AssetBundleManager),
                 typeof(ResourceManager),
