@@ -7,31 +7,6 @@
 local super = UIBase
 local M = class( "ui_root",super )
 
-function M:ctor()
-	super.ctor( self )
-end
-
-function M:onAssetConfig( assetCfg )
-	local _cfg = super.onAssetConfig( self,assetCfg )
-	_cfg.abName = "prefabs/uiroot.fab"
-	_cfg.assetName = "uiroot.prefab"
-	_cfg.isStay = true
-	_cfg.isUpdate = true
-	return _cfg;
-end
-
-function M:OnUpdate(dt)
-	if not self.uptime or self.uptime <= 0 then
-		self.uptime = 1;
-		if not self.objdd then
-			self.objdd = MgrRes.GetAsset(self.cfgAsset.abName,self.cfgAsset.assetName,self.cfgAsset.assetLType);
-		end
-		printTable(self.objdd,"obj");
-		-- printInfo(self.assetCfg.abName)
-	end
-	self.uptime = self.uptime - dt;
-end
-
 function M.Singler()
 	local _t = M.__single
 	if not _t then
@@ -41,5 +16,29 @@ function M.Singler()
 	end
 	return _t
 end
+
+function M:ctor()
+	super.ctor( self )
+end
+
+function M:onAssetConfig( assetCfg )
+	local _cfg = super.onAssetConfig( self,assetCfg )
+	_cfg.abName = "prefabs/uiroot.fab"
+	_cfg.assetName = "uiroot.prefab"
+	_cfg.isStay = true
+	-- _cfg.isUpdate = true
+	return _cfg;
+end
+
+
+function M:OnCF_Fab( obj )
+	super.OnCF_Fab( self,obj )
+	self:SetParent(nil,true)
+	self:DonotDestory()
+end
+
+
+
+
 
 return M

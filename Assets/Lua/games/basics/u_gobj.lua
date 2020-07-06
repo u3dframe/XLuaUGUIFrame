@@ -6,6 +6,21 @@
 ]]
 local super = LuaObject
 local M = class( "lua_gobj",super )
+local this = M
+
+function M.Destroy(gobj)
+	if gobj ~= nil then
+		UGameObject.Destroy(gobj);
+		return true;
+	end
+end
+
+function M.DontDestroyOnLoad(gobj)
+	if gobj ~= nil then
+		UGameObject.DontDestroyOnLoad(gobj);
+		return true;
+	end
+end
 
 function M:ctor( obj )
 	assert( obj )
@@ -44,10 +59,11 @@ end
 function M:DestroyObj()
 	local _gobj = self.gobj
 	self.gobj = nil
-	if _gobj ~= nil then
-		UGameObject.Destroy(_gobj);
-		return true
-	end
+	return this.Destroy(_gobj)
+end
+
+function M:DonotDestory( )
+	this.DontDestroyOnLoad(self.gobj)
 end
 
 return M

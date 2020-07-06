@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08469ca1961a58458c41e4a6d6d70fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolName: 
   m_gobjs:
   - {fileID: 5999145452730627902}
   - {fileID: 3642011444733226266}
