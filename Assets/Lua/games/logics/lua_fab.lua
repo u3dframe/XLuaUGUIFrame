@@ -14,10 +14,24 @@ function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
 	self.stateLoad = LE_StateLoad.None;
 	self.stateView = LE_StateView.None;
+	self:ReEvent4OnUpdate(true)
 end
 
 function M:IsLoadedAndShow()
 	return (self.isInited == true) and (self.isVisible == true) and (self.isActive == true)
+end
+
+function M:ReEvent4OnUpdate(isBind)
+	self.__lfuncUp = self.__lfuncUp or handler_pcall(self,self.OnUpdate)
+	Event.RemoveListener(Evt_Update,self.__lfuncUp)
+	if isBind == true then
+		if self.cfgAsset.isUpdate  == true then
+			Event.AddListener(Evt_Update,self.__lfuncUp);
+		end
+	end
+end
+
+function M:OnUpdate(dt)
 end
 
 function M:IsVwCircle4Load()
@@ -129,7 +143,7 @@ end
 function M:_OnInit()
 	if self.isInited then return end
 	self.isInited = true
-	self:OnInit();
+	self:OnInit();	
 end
 
 function M:OnInit()
@@ -195,6 +209,7 @@ function M:pre_clean()
 	local _key = str_format("%s",self)
 	cfg_backup[_key] = self.cfgAsset;
 	self.cfgAsset = nil
+	self:ReEvent4OnUpdate()
 end
 
 function M:clean_end()
