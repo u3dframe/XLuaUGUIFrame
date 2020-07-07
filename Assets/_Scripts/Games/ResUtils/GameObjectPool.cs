@@ -37,7 +37,7 @@ namespace Core{
 		private int poolSize;
 
 		// 根节点
-		private Transform poolRoot;
+		private Transform trsfRoot;
 
 		// 数据记录
 		private Stack<GameObject> availableObjStack = new Stack<GameObject> ();
@@ -77,6 +77,11 @@ namespace Core{
 			return builder(poolName,1,root);
 		}
 
+		static public GameObjectPool builder(string poolName)
+		{
+			return builder(poolName,null);
+		}
+
 		public override string ToString ()
 		{
 			return string.Format (
@@ -97,7 +102,7 @@ namespace Core{
 			this.initSize = initCount;
 			this.poolSize = 0;
 			this.maxSize = maxSize;
-			this.poolRoot = root;
+			this.trsfRoot = root;
 			string[] _ars = GameFile.Split(poolName,m_cSp,true);
 			if(_ars != null && _ars.Length > 2){
 				this.abName = _ars[0];
@@ -116,6 +121,10 @@ namespace Core{
 					HandlerMoreThanMax(true);
 				}
 			}
+		}
+
+		public void SetParent(Transform trsf){
+			this.trsfRoot = trsf;
 		}
 		
 		// 加载回调
@@ -155,7 +164,7 @@ namespace Core{
 				bool isAdd = (!isAutoHandler4MoreThanMax) || (isAutoHandler4MoreThanMax && this.poolSize < this.maxSize);
 				if (isAdd) {
 					availableObjStack.Push (go);
-					go.transform.SetParent (poolRoot, false);
+					go.transform.SetParent (trsfRoot, false);
 					this.poolSize = availableObjStack.Count;
 					if (borrowNum > 0)
 						borrowNum--;
@@ -169,7 +178,7 @@ namespace Core{
 		private GameObject NewObjectInstance ()
 		{
 			if (IsNull(this.poolObject)) return null;
-			GameObject gobj = this.poolObject.NewGObjInstance(poolRoot);
+			GameObject gobj = this.poolObject.NewGObjInstance(trsfRoot);
 			if(!IsNull(gobj)){
 				var cs = GobjLifeListener.Get(gobj,true);
 				cs.poolName = this.poolName;
