@@ -3,8 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TNet;
-
-public delegate void DF_OnUpdate(float dt);
+using Core;
 
 /// <summary>
 /// 类名 : Update 管理
@@ -69,17 +68,11 @@ public class GameMgr : GobjLifeListener {
 		LuaManager.instance.Init();
 	}
 
-	/// <summary>
-	///  更新 - 接受到数据
-	/// </summary>
 	void Update() {
 		_dt = Time.deltaTime;
 		_Exc_Up(_dt);
 	}
-
-	/// <summary>
-	///  更新 - 接受到数据
-	/// </summary>
+	
 	void LateUpdate() {
 		_Exc_LateUp();
 	}

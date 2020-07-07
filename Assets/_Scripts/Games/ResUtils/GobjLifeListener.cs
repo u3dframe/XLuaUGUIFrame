@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public delegate void OnNotifyDestry(GobjLifeListener obj);
-
 /// <summary>
 /// 类名 : GameObject对象 生命周期 监听
 /// 作者 : Canyon
@@ -74,7 +72,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	/// <summary>
 	/// 销毁回调
 	/// </summary>
-	public event OnNotifyDestry m_onDestroy;
+	public event Core.DF_OnNotifyDestry m_onDestroy;
 	
 	// 是否是存活的
 	private bool _alive = true;

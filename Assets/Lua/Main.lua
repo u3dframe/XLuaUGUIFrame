@@ -14,11 +14,19 @@ function OnLevelWasLoaded(level)
 end
 
 function Update(dt)
-	Event.Brocast(Evt_Update,dt);
+	if Event then
+		Event.Brocast(Evt_Update,dt);
+	end
 end
 
 function LateUpdate()
+	if Event then
+		Event.Brocast(Evt_LateUpdate);
+	end
 end
 
 function OnApplicationQuit()
+	if Event then
+		Event.Brocast(Evt_OnAppQuit);
+	end
 end

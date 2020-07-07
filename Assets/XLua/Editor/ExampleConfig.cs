@@ -105,14 +105,15 @@ public static class ExampleConfig
                 typeof(Action<string>),
                 typeof(Action<double>),
                 typeof(UnityEngine.Events.UnityAction),
+                typeof(System.Collections.IEnumerator),
+                
                 typeof(DF_LoadedAsset),
                 typeof(DF_LoadedFab),
                 typeof(DF_LoadedSprite),
                 typeof(DF_LoadedTex2D),
                 typeof(DF_OnUpdate),
-                typeof(LuaManager.DF_OnSceneChange),
-                typeof(OnNotifyDestry),
-                typeof(System.Collections.IEnumerator)
+                typeof(DF_OnSceneChange),
+                typeof(DF_OnNotifyDestry),
             };
 
     //黑名单

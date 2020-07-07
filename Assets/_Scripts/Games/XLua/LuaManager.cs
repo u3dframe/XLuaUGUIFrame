@@ -6,10 +6,10 @@ using XLua;
 #if UNITY_5_4_OR_NEWER
 using UnityEngine.SceneManagement;
 #endif
+using Core;
 
 public class LuaManager : GobjLifeListener
 {
-	public delegate void DF_OnSceneChange(int level);
 	static LuaManager _instance;
 	static public LuaManager instance{
 		get{
@@ -31,6 +31,7 @@ public class LuaManager : GobjLifeListener
 
 	private DF_OnUpdate luaUpdate;
 	private DF_OnSceneChange luaSceneChange;
+	private Action luLateUpdate,luaOnApplicationQuit;
 
 	public void Init(){}
 
@@ -41,7 +42,6 @@ public class LuaManager : GobjLifeListener
 		luaEnv.AddLoader(new LuaFileLoader());
 		InitSelfLibs();
 		m_isOnUpdate = true;
-		GameMgr.RegisterUpdate(this);
 	}
 
 	void Start()
@@ -50,14 +50,13 @@ public class LuaManager : GobjLifeListener
 		var _luaG = luaEnv.Global;
 		var luaStart = _luaG.Get<Action>("Main");
 		luaUpdate = _luaG.Get<DF_OnUpdate>("Update");
+		luLateUpdate = _luaG.Get<Action>("LateUpdate");
+		luaOnApplicationQuit = _luaG.Get<Action>("OnApplicationQuit");
 		luaSceneChange = _luaG.Get<DF_OnSceneChange>("OnLevelWasLoaded");
 		if (luaStart != null)
 		{
 			luaStart();
 		}
-	}
-
-	void OnLevelLoaded(int level){
 	}
 
 #if UNITY_5_4_OR_NEWER
@@ -71,7 +70,24 @@ public class LuaManager : GobjLifeListener
         OnLevelLoaded(level);
     }
 #endif
+
+	void OnLevelLoaded(int level){
+		if(luaSceneChange != null) luaSceneChange(level);
+	}
+
+	void Update() {
+		if(!m_isOnUpdate) return;
+		OnUpdate(Time.deltaTime);
+	}
+
+	void LateUpdate() {
+		if(luLateUpdate != null) luLateUpdate();
+	}
 	
+	void OnApplicationQuit(){
+		if(luaOnApplicationQuit != null) luaOnApplicationQuit();
+	}
+
 	void InitSelfLibs()
 	{
 		/*

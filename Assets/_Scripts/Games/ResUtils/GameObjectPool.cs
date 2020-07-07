@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 namespace Core{
-	public delegate void DF_LoadedFab(GameObject gobj);
-
 	/// <summary>
 	/// 类名 : GameObject 对象池
 	/// 作者 : Canyon / 龚阳辉
