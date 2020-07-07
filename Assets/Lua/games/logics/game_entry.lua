@@ -17,7 +17,7 @@ function M:EntryAfterUpRes()
 	-- UIRoot.singler()
 	local ui = UIBase.New({
 		abName = "prefabs/updateui.fab",
-		assetName = "updateui.prefab",
+		-- assetName = "updateui.prefab",
 	});
 	-- ui.lfLoaded = function() UIRoot.singler() end
 	ui:View(true)

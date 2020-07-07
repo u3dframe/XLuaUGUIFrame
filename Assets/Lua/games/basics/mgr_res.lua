@@ -32,30 +32,15 @@ function M._GetAssetFuncs()
 end
 
 function M._LoadFab(abName,assetName,callLoad)
-	CResMgr.LoadFab(abName,assetName,function(obj)
-		printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
-		if callLoad then
-			callLoad(obj);
-		end
-	end)
+	CResMgr.LoadFab(abName,assetName,callLoad)
 end
 
 function M._LoadSprite(abName,assetName,callLoad)
-	CResMgr.LoadSprite(abName,assetName,function(obj)
-		printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
-		if callLoad then
-			callLoad(obj);
-		end
-	end)
+	CResMgr.LoadSprite(abName,assetName,callLoad)
 end
 
 function M._LoadTexture(abName,assetName,callLoad)
-	CResMgr.LoadTexture(abName,assetName,function(obj)
-		printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
-		if callLoad then
-			callLoad(obj);
-		end
-	end)
+	CResMgr.LoadTexture(abName,assetName,callLoad)
 end
 
 function M.LoadAsset(abName,assetName,assetLType,callLoad)

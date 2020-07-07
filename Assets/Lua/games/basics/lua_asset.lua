@@ -5,6 +5,7 @@
 	-- Desc : 
 ]]
 local tb = table
+local str_format = string.format
 local super = LCFabElement
 local M = class( "lua_asset",super )
 
@@ -31,8 +32,17 @@ end
 function M:CfgAssetInfo()
 	local _abName = self.cfgAsset.abName
 	local _assetName = self.cfgAsset.assetName
-	local _isInit = (type(_abName) == "string") and (type(_assetName) == "string");
-	return _isInit,_abName,_assetName,(self.cfgAsset.assetLType or LE_AsType.Fab);
+	local _ltp = (self.cfgAsset.assetLType or LE_AsType.Fab)
+	local _isAb = (type(_abName) == "string")
+	local _isAs = (type(_assetName) == "string")
+	if _isAb and not _isAs then
+		_assetName = CGameFile.GetFileNameNoSuffix(_abName)
+		_assetName = str_format("%s.%s",_assetName,LE_AsType[_ltp])
+		_isAs = true
+	end
+	self.cfgAsset.assetName = _assetName
+	self.cfgAsset.assetLType = _ltp
+	return (_isAb and _isAs),_abName,_assetName,_ltp;
 end
 
 function M:LoadAsset()
@@ -41,7 +51,7 @@ function M:LoadAsset()
 		self.stateLoad = LE_StateLoad.Loading;
 		MgrRes.LoadAsset(_abName,_assetName,_ltp,self._lfLoadAsset);
 	else
-		error("=== LoadAsset asset info not init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
+		printError("=== LoadAsset asset info not init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
 	end
 end
 
@@ -50,7 +60,7 @@ function M:_OnCFLoadAsset( obj )
 	local _tp = self.cfgAsset.assetLType
 	if not obj then
 		local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
-		error("=== Not has asset init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp);
+		printError("=== Not has asset init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp);
 	end
 	if LE_AsType.Fab == _tp or LE_AsType.UI == _tp then
 		super.ctor(self,obj)
@@ -77,7 +87,7 @@ function M:OnUnLoad()
 		self.stateLoad = LE_StateLoad.UnLoad;
 		MgrRes.UnLoad(_abName,_assetName,_ltp);
 	else
-		error("=== OnUnLoad asset = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
+		printError("=== OnUnLoad asset = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
 	end
 end
 

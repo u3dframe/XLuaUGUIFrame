@@ -10,7 +10,11 @@ LE_AsType = {
     Fab = 1,
     UI = 2,
     Sprite = 3,
-    Texture = 4
+    Texture = 4,
+    [1] = "prefab",
+    [2] = "prefab",
+    [3] = "png",
+    [4] = "png",
 }
 
 -- asset 加载状态

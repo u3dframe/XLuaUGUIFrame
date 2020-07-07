@@ -12,7 +12,6 @@ local M = class( "lua_fab",super )
 
 function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
-	self.stateLoad = LE_StateLoad.None;
 	self.stateView = LE_StateView.None;
 	self:ReEvent4OnUpdate(true)
 end
@@ -22,7 +21,7 @@ function M:IsLoadedAndShow()
 end
 
 function M:ReEvent4OnUpdate(isBind)
-	self.__lfuncUp = self.__lfuncUp or handler_pcall(self,self.OnUpdate)
+	self.__lfuncUp = self.__lfuncUp or handler_pcall(self,self._OnUpdate)
 	Event.RemoveListener(Evt_Update,self.__lfuncUp)
 	if isBind == true then
 		if self.cfgAsset.isUpdate  == true then
@@ -31,7 +30,17 @@ function M:ReEvent4OnUpdate(isBind)
 	end
 end
 
+function M:_OnUpdate(dt)
+	self:OnUpdate(dt)
+	
+	if self.stateLoad ~= LE_StateLoad.Loaded then return end
+	self:OnUpdateLoaded(dt)
+end
+
 function M:OnUpdate(dt)
+end
+
+function M:OnUpdateLoaded(dt)
 end
 
 function M:IsVwCircle4Load()

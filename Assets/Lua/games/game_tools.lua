@@ -53,7 +53,7 @@ function printLog(tag, fmt, ...)
 		CHelper.LogError(str)
 	elseif _isThr then
 		if _error then
-			_error(str)
+			_error(str,1)
 		else
 			CHelper.ThrowError(str);
 		end
@@ -74,6 +74,6 @@ function printWarn(fmt, ...)
 	printLog("WARN", fmt, ...)
 end
 
-function error(fmt,...)
+function error(fmt,...)	
 	printLog("THR", fmt, ...)
 end

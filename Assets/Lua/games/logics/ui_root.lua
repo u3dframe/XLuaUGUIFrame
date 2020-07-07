@@ -4,7 +4,6 @@
 	-- Date : 2020-07-05 09:25
 	-- Desc : 
 ]]
-local __single = nil
 local str_format = string.format
 local tb_remove = table.remove
 local tb_insert = table.insert
@@ -13,6 +12,7 @@ local tb_contain = table.contains
 local super = UIBase
 local M = class( "ui_root",super )
 
+local __single = nil
 function M.singler()
 	if not __single then
 		__single = M.New()
@@ -25,10 +25,10 @@ function M:ctor()
 	super.ctor( self )
 end
 
-function M:onAssetConfig( assetCfg )
-	local _cfg = super.onAssetConfig( self,assetCfg )
+function M:onAssetConfig( _cfg )
+	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.abName = "prefabs/uiroot.fab"
-	_cfg.assetName = "uiroot.prefab"
+	-- _cfg.assetName = "uiroot.prefab"
 	_cfg.isStay = true
 	_cfg.layer = LE_UILayer.URoot
 	_cfg.isUpdate = true
@@ -65,7 +65,6 @@ function M:SetUILayer( lbUIEntity )
 		if not tb_contain(self._lbLayer,lbUIEntity) then
 			tb_insert(self._lbLayer,lbUIEntity)
 		end
-		printTable(self._lbLayer)
 		self._ti_layer = 0.06
 		return false;
 	end
@@ -73,7 +72,7 @@ function M:SetUILayer( lbUIEntity )
 	return true
 end
 
-function M:OnUpdate(dt)
+function M:OnUpdateLoaded(dt)
 	self:_OnUpCheckLayer( dt )
 end
 
