@@ -4,7 +4,7 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local super = LuUTrsf
+local super = LUTrsf
 local M = class( "lua_component",super )
 
 function M:ctor( obj, component )

@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 local tb = table
-local super = LuCFabElement
+local super = LCFabElement
 local M = class( "lua_asset",super )
 
 function M:ctor(assetCfg)
@@ -48,7 +48,11 @@ end
 function M:_OnCFLoadAsset( obj )
 	self.stateLoad = LE_StateLoad.Loaded;
 	local _tp = self.cfgAsset.assetLType
-	if LE_AsType.Fab == _tp then
+	if not obj then
+		local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
+		error("=== Not has asset init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp);
+	end
+	if LE_AsType.Fab == _tp or LE_AsType.UI == _tp then
 		super.ctor(self,obj)
 		self:OnCF_Fab(obj)
 	elseif LE_AsType.Sprite == _tp then
@@ -66,4 +70,25 @@ end
 
 function M:OnCF_Texture( obj )
 end
+
+function M:OnUnLoad()
+	local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
+	if _isBl then
+		self.stateLoad = LE_StateLoad.UnLoad;
+		MgrRes.UnLoad(_abName,_assetName,_ltp);
+	else
+		error("=== OnUnLoad asset = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
+	end
+end
+
+function M:ReturnObj4Pool()
+	local _,_abName,_assetName = self:CfgAssetInfo();
+	MgrRes.ReturnObj(_abName,_assetName,self.gobj)
+end
+
+function M:pre_clean()
+	super.pre_clean( self )
+	self:OnUnLoad()
+end
+
 return M

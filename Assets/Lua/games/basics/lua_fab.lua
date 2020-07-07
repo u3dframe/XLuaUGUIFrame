@@ -41,7 +41,7 @@ end
 function M:VwCircle(isShow)
 end
 
-function M:SetVisible(state)
+function M:_SetVisible(state)
 	if self.stateView ==  state then return end
 	self.isVisible = (state == LE_StateView.Show);
 	self.stateView = state;
@@ -56,15 +56,15 @@ function M:SetVisible(state)
 end
 
 function M:Show()
-	self:SetVisible(LE_StateView.Show)
+	self:_SetVisible(LE_StateView.Show)
 end
 
 function M:Hide()
-	self:SetVisible(LE_StateView.Hide)
+	self:_SetVisible(LE_StateView.Hide)
 end
 
 function M:Destroy()
-	self:SetVisible(LE_StateView.Destroy)
+	self:_SetVisible(LE_StateView.Destroy)
 end
 
 function M:ReShow()
@@ -161,7 +161,7 @@ function M:Hiding(isMus)
 	if not _isBl then return end
 	self.enabled = false
 	self:_OnHide()
-	self:OnEnd(false)
+	self:_OnEnd(false)
 end
 
 function M:_OnHide()
@@ -177,7 +177,7 @@ function M:Destroying(isMus)
 	self.enabled = false
 	self.isVisible = false
 	self:_OnDestroy()
-	self:OnEnd(true);
+	self:_OnEnd(true);
 end
 
 function M:_OnDestroy()
@@ -187,7 +187,7 @@ end
 function M:OnDestroy()
 end
 
-function M:OnEnd(isDestroy)
+function M:_OnEnd(isDestroy)
 	isDestroy = isDestroy == true;
 	local _tmp = self.prefFuncEnd;
 	self.prefFuncEnd = nil
@@ -196,6 +196,10 @@ function M:OnEnd(isDestroy)
 		_tmp(_isInit)
 	end
 
+	self:OnEnd(isDestroy)
+end
+
+function M:OnEnd(isDestroy)
 	if isDestroy then
 		if not self:DestroyObj() then
 			self:clean()

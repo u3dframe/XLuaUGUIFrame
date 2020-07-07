@@ -12,7 +12,6 @@ function M:Init()
 end
 
 function M:ToLoginView()
-	UIRoot.Singler();
 	printInfo("=== 1")
 end
 

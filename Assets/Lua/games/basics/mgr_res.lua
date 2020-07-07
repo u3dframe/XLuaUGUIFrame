@@ -17,6 +17,7 @@ function M._InitLoadFuncs()
 	local _lb  = this.lbLoads or {}
 	this.lbLoads = _lb
 	_lb[LE_AsType.Fab] = this._LoadFab;
+	_lb[LE_AsType.UI] = this._LoadFab;
 	_lb[LE_AsType.Sprite] = this._LoadSprite;
 	_lb[LE_AsType.Texture] = this._LoadTexture;
 end
@@ -25,13 +26,14 @@ function M._GetAssetFuncs()
 	local _lb  = this.lbGets or {}
 	this.lbGets = _lb
 	_lb[LE_AsType.Fab] = this._Get4Fab;
+	_lb[LE_AsType.UI] = this._Get4Fab;
 	_lb[LE_AsType.Sprite] = this._Get4Sprite;
 	_lb[LE_AsType.Texture] = this._Get4Texture;
 end
 
 function M._LoadFab(abName,assetName,callLoad)
 	CResMgr.LoadFab(abName,assetName,function(obj)
-		-- printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
+		printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
 		if callLoad then
 			callLoad(obj);
 		end
@@ -40,7 +42,7 @@ end
 
 function M._LoadSprite(abName,assetName,callLoad)
 	CResMgr.LoadSprite(abName,assetName,function(obj)
-		-- printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
+		printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
 		if callLoad then
 			callLoad(obj);
 		end
@@ -49,7 +51,7 @@ end
 
 function M._LoadTexture(abName,assetName,callLoad)
 	CResMgr.LoadTexture(abName,assetName,function(obj)
-		-- printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
+		printInfo("== [%s] == [%s] == [%s] ",abName,assetName,obj)
 		if callLoad then
 			callLoad(obj);
 		end
@@ -66,11 +68,21 @@ function M.LoadAsset(abName,assetName,assetLType,callLoad)
 end
 
 function M.UnLoad(abName,assetName,assetLType)
-	if LE_AsType.Fab == assetLType then
-		CResMgr.UnLoadFab(abName,assetName);
-	else
-		CResMgr.UnLoadAsset(abName);
+	if LE_AsType.Fab ~= assetLType then
+		if LE_AsType.UI == assetLType then
+			this.ClearPool(abName,assetName);
+		else
+			CResMgr.UnLoadAsset(abName);
+		end
 	end
+end
+
+function M.ReturnObj(abName,assetName,gobj)
+	CResMgr.ReturnObj(abName,assetName,gobj);
+end
+
+function M.ClearPool(abName,assetName)
+	CResMgr.UnLoadPool(abName,assetName); -- 清除对象池
 end
 
 function M._Get4Fab(abName,assetName)

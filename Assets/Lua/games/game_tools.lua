@@ -12,6 +12,7 @@ local d_traceback = debug.traceback
 
 local DE_BUG = nil;
 local _error = error;
+local _isTrace = true -- 是否包含 traceback
 
 function logMust(fmt,...)
 	local str = str_format(tostring(fmt), ...)
@@ -41,10 +42,10 @@ function printLog(tag, fmt, ...)
 	if #({...}) > 0 then
 		tb_insert(t, str_format(tostring(fmt), ...))
 	else
-		tb_insert(t, fmt)
+		tb_insert(t, tostring(fmt))
 	end
 
-    if _isErr or _isThr then
+    if _isErr or _isThr or _isTrace then
         tb_insert(t, d_traceback("", 3))  -- 打印要少前3行数据
 	end
 	str = tb_concat(t)

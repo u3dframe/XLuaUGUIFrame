@@ -5,14 +5,14 @@
 	-- Desc : 
 ]]
 local str_format = string.format
-local super = LuCFabBasic
+local super = LCFabBasic
 local M = class( "lua_PrefabElement",super )
 
 function M:ctor( obj )
 	super.ctor(self,obj,"PrefabElement")
 end
 
-function M:IsHasGobj( elName )
+function M:IsHasChild( elName )
 	local _k = str_format("__isHas_%s",elName)
 	if not self[_k] then 
 		self[_k] = self.comp:IsHasGobj(elName); 
@@ -20,7 +20,7 @@ function M:IsHasGobj( elName )
 	return self[_k]
 end
 
-function M:GetGobjElement( elName )
+function M:GetChild( elName )
 	local _k = str_format("__gobj_%s",elName)
 	if not self[_k] then 
 		self[_k] = self.comp:GetGobjElement(elName); 
@@ -28,15 +28,15 @@ function M:GetGobjElement( elName )
 	return self[_k]
 end
 
-function M:GetComponent4Element( elName,strComp )
+function M:GetChildComponent( elName,strComp )
 	local _k = str_format("__com_%s_%s",elName,strComp)
 	if not self[_k] then 
-		self[_k] = self.comp:GetComponent4Element(elName); 
+		self[_k] = self.comp:GetComponent4Element( elName,strComp ); 
 	end
 	return self[_k]
 end
 
-function M:SetActive4Element( elName,isActive )
+function M:SetChildActive( elName,isActive )
 	self.comp:SetActive(elName,isActive == true);
 end
 

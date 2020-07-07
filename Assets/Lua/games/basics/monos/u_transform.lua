@@ -4,7 +4,7 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local super = LuUGobj
+local super = LUGobj
 local M = class( "lua_transform",super )
 
 function M:ctor( obj )
@@ -28,7 +28,6 @@ function M:ReXYZ( x,y,z )
 	z = tonumber(z) or 0
 	return x,y,z
 end
-
 
 function M:SetPostion( x,y,z )
 	x,y,z = self:ReXYZ(x,y,z)
@@ -81,8 +80,8 @@ function M:SetSizeDelta( x,y )
 end
 
 function M:SetParent( parent,isLocal )
-	isLocal = isLocal == true
-	self.trsf:SetParent(parent,isLocal);
+	local isWorld = not (isLocal == true)
+	self.trsf:SetParent(parent,isWorld);
 end
 
 function M:DestroyObj()

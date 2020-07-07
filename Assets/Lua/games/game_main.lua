@@ -10,7 +10,7 @@ function M.Init()
 	-- if GM_IsEditor then
 	--	require("manager.keycodecallback").Init()
 	-- end
-	Event.Brocast(Evt_ToView_Login);
+	Event.Brocast(Evt_GameEntryAfterUpRes);
 end
 
 return M

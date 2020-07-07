@@ -4,7 +4,7 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local super = LuUComonet
+local super = LUComonet
 local M = class( "lua_PrefabBasic",super )
 
 function M:ctor( obj,component )

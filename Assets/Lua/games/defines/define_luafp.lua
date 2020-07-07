@@ -2,10 +2,10 @@
 _LuaPacakge = {
 	[1] = "games/defines/",
 	[2] = "games/basics/",
-	[3] = "games/ugui/",
-	[4] = "games/net/",
-	[5] = "games/logics/",
-	[6] = "games/logics/login/",
+	[3] = "games/basics/monos/",
+	[4] = "games/basics/ugui/",
+	[5] = "games/net/",
+	[6] = "games/logics/",
 }
 
 -- 不需要全局变量的lua
@@ -22,27 +22,28 @@ _LuaFpBasic = {
 	{"","define_events",1}, -- 常量 事件 相关
 	{"","define_csharp",1}, -- 常量 CSharp 相关
 	{"LuaObject","lua_object",2}, -- 基础类
-	{"LuUGobj","u_gobj",2}, -- gobj
-	{"LuUTrsf","u_transform",2}, -- transform
-	{"LuUComonet","u_component",2}, -- component
-	{"LuCFabBasic","uc_fabbasic",2}, -- PrefabBasic
-	{"LuCFabElement","uc_fabelement",2}, -- PrefabElement
-	{"LuBase","ugui_base",3}, -- UGUI 组件 - 基础类
-	{"LuText","ugui_text",3}, -- UGUI 组件 - 文本
+	{"LUGobj","u_gobj",3}, -- gobj
+	{"LUTrsf","u_transform",3}, -- transform
+	{"LUComonet","u_component",3}, -- component
+	{"LCFabBasic","uc_fabbasic",3}, -- PrefabBasic
+	{"LCFabElement","uc_fabelement",3}, -- PrefabElement
+	{"LuBase","ugui_base",4}, -- UGUI 组件 - 基础类
+	{"LuText","ugui_text",4}, -- UGUI 组件 - 文本
+	{"LuaAsset","lua_asset",2}, -- 资源
+	{"LuaFab","lua_fab",2}, -- 为场景对象和ui_base对象的父类
+	{"MgrRes","mgr_res",2}, -- 控制 资源加载了
 }
 
 -- 中间
 _LuaFpMidle = {
-	{"","protocal",4}, -- 常量 网络层协议
-	{"Network","network",4}, -- 网络层
-	{"MgrRes","mgr_res",5}, -- 控制 资源加载了
-	{"LuaAsset","lua_asset",5}, -- 资源
-	{"LuaFab","lua_fab",5}, -- 为场景对象和ui_base对象的父类
-	{"UIBase","ui_base",5}, -- UI的基础类
-	{"UIRoot","ui_root",5}, -- 加载 UI的根uiroot
+	{"","protocal",5}, -- 常量 网络层协议
+	{"Network","network",5}, -- 网络层
+	{"UIBase","ui_base",6}, -- UI的基础类
+	{"UIRoot","ui_root",6}, -- 加载 UI的根uiroot
+	{"GEntry","game_entry",6}, -- 游戏入口
 }
 
 -- 最后
 _LuaFpEnd = {
-	{"MgrLogin","mgr_login",6}, -- 登录管理
+	{"MgrLogin","login/mgr_login",6}, -- 登录管理
 }
