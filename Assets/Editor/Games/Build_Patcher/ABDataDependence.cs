@@ -283,7 +283,7 @@ namespace Core.Kernel
         [MenuItem("Tools/Deps/SaveDeps", false, 31)]
         static public void SaveDeps()
         {
-            string _fp = string.Format("{0}Core/Kernel/Editor/Build_Patcher/_deps.json", BuildTools.m_dirData);
+            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirData);
             string _v = JsonMapper.ToJson(instance.m_dic);
             BuildTools.CreateFolder(_fp);
             File.WriteAllText(_fp, _v);
@@ -294,7 +294,8 @@ namespace Core.Kernel
         static public void ReLoadDeps()
         {
             ClearDeps();
-            string _fp = string.Format("{0}Core/Kernel/Editor/Build_Patcher/_deps.json", BuildTools.m_dirData);
+            // Core/Kernel/Editor/Build_Patcher/
+            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirData);
             string _v = BuildTools.GetText4File(_fp);
             
             if (!string.IsNullOrEmpty(_v))
