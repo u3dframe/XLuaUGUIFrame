@@ -11,9 +11,9 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 [RequireComponent(typeof(Text))]
 [AddComponentMenu("UI/UGUILocalize")]
-public class UGUILocalize : MonoBehaviour {
+public class UGUILocalize : GobjLifeListener {
 	// 取得对象
-	static public UGUILocalize Get(GameObject gobj,bool isAdd){
+	static public new UGUILocalize Get(GameObject gobj,bool isAdd){
 		UGUILocalize _r = gobj.GetComponent<UGUILocalize> ();
 		if (isAdd && UtilityHelper.IsNull(_r)) {
 			_r = gobj.AddComponent<UGUILocalize> ();
@@ -21,7 +21,7 @@ public class UGUILocalize : MonoBehaviour {
 		return _r;
 	}
 
-	static public UGUILocalize Get(GameObject gobj){
+	static public new UGUILocalize Get(GameObject gobj){
 		return Get(gobj,true);
 	}
 
@@ -30,24 +30,24 @@ public class UGUILocalize : MonoBehaviour {
 	bool m_isInit = false;
 	object[] fmtPars = null;
 
-	void Awake()
+	protected override void OnCall4Awake()
 	{
 		Init();
 	}
 
-	void  OnDisable()
+	protected override void OnCall4Hide()
 	{
 		Localization.onLocalize -= OnLocalize;
 	}	
 
-	void  OnEnable()
+	protected override void OnCall4Show()
 	{
 		Init ();
 		OnLocalize();
 		Localization.onLocalize += OnLocalize;
 	}
 
-	void  OnDestroy()
+	protected override void OnCall4Destroy()
 	{
 		Localization.onLocalize -= OnLocalize;
 	}

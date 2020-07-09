@@ -115,6 +115,8 @@ public static class ExampleConfig
                 typeof(DF_OnUpdate),
                 typeof(DF_OnSceneChange),
                 typeof(DF_OnNotifyDestry),
+                typeof(DF_UGUIPos),
+                typeof(DF_UGUIV2Bool),
             };
 
     //黑名单
