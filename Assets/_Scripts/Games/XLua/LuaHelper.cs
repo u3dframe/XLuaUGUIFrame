@@ -23,6 +23,11 @@ public sealed class LuaHelper  : UtilityHelper {
 	}
 
 	static public void ThrowError(string msg) {
-		throw new System.Exception(msg);
+		throw new Exception(msg);
+	}
+
+	static public bool IsElement(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is PrefabElement;
 	}
 }

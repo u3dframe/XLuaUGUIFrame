@@ -89,6 +89,7 @@ public static class ExampleConfig
                 typeof(PrefabElement),
                 typeof(Localization),
                 typeof(UGUILocalize),
+                typeof(UGUIButton),
                 typeof(AssetBase),
                 typeof(AssetInfo),
                 typeof(ABInfo),

@@ -236,4 +236,9 @@ public class UtilityHelper {
 	{
 		return null != uobj;
 	}
+
+	static public bool IsComponent(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is Component;
+	}
 }
