@@ -64,7 +64,7 @@ public class GameMgr : GobjLifeListener {
 	{
 		GameLanguage.Init();
 		Localization.language = GameLanguage.strCurLanguage;
-		
+		UGUIEventSystem.instance.Init(false);
 		LuaManager.instance.Init();
 	}
 
@@ -80,7 +80,7 @@ public class GameMgr : GobjLifeListener {
 	/// <summary>
 	/// 销毁
 	/// </summary>
-	void OnDestroy() {
+	protected override void OnCall4Destroy() {
 		onUpdate = null;
 		onLateUpdate = null;
 		upItem = null;

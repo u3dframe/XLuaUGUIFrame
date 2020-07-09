@@ -35,46 +35,9 @@ public class PrefabElement : PrefabBasic {
 	Dictionary<string,GameObject> m_dicName2Gobj = new Dictionary<string,GameObject>();
 	
 	bool isInit = false;
-
-	/// <summary>
-	/// 隐藏回调
-	/// </summary>
-	public System.Action m_callHide;
-
-	/// <summary>
-	/// 显示回调
-	/// </summary>
-	public System.Action m_callShow;
-
-	/// <summary>
-	/// 销毁回调
-	/// </summary>
-	// public System.Action m_callDestroy;
-	
-	void Awake()
-	{
-		Init();
+	protected override void OnCall4Start(){
+		this.Init();
 	}
-
-	void  OnDisable()
-	{
-		if (m_callHide != null)
-			m_callHide ();
-	}	
-
-	void  OnEnable()
-	{
-		Init ();
-
-		if (m_callShow != null)
-			m_callShow ();
-	}
-
-	// void  OnDestroy()
-	// {
-	// 	if (m_callDestroy != null)
-	// 		m_callDestroy ();
-	// }
 	
 	void Init()
 	{

@@ -7,8 +7,8 @@
 local super = LuaFab
 local M = class( "ui_base",super )
 
-function M:onAssetConfig( assetCfg )
-	local _cfg = super.onAssetConfig( self,assetCfg )
+function M:onAssetConfig( _cfg )
+	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.assetLType = LE_AsType.UI
 	_cfg.layer = LE_UILayer.Normal
 	return _cfg;

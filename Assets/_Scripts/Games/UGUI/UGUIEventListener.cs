@@ -2,6 +2,10 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
+public delegate void DF_UGUIPos(GameObject gameObject,Vector2 pos);
+public delegate void DF_UGUI2V2(GameObject gameObject,Vector2 pos,Vector2 delta);
+public delegate void DF_UGUIV2Bool(GameObject gameObject,bool isBl,Vector2 pos);
+
 /// <summary>
 /// 类名 : UGUIEventListener
 /// 作者 : Canyon / 龚阳辉
@@ -21,38 +25,45 @@ public class UGUIEventListener : EventTrigger {
 		return Get(gobj,true);
 	}
 
-	[System.NonSerialized]
-	public System.Action<GameObject,Vector2> onMouseEnter;
+	[HideInInspector] public DF_UGUIV2Bool onMouseEnter;
 
-	[System.NonSerialized]
-	public System.Action<GameObject,Vector2> onMouseExit;
+	[HideInInspector] public DF_UGUIPos onClick;
+	
+	[HideInInspector] public DF_UGUIPos onBegDrag;
+	
+	[HideInInspector] public DF_UGUI2V2 onDraging;
+	
+	[HideInInspector] public DF_UGUIPos onEndDrag;
+	
+	[HideInInspector] public DF_UGUIPos onDrop;
 
-	[System.NonSerialized]
-	public System.Action<GameObject,Vector2> onClick;
-	
-	[System.NonSerialized]
-	public System.Action<GameObject,Vector2> onBegDrag;
-	
-	[System.NonSerialized]
-	public System.Action<GameObject,Vector2,Vector2> onDraging;
-	
-	[System.NonSerialized]
-	public System.Action<GameObject,Vector2> onEndDrag;
-	
-	[System.NonSerialized]
-	public System.Action<GameObject,Vector2> onDrop;
+	[HideInInspector] public DF_UGUIV2Bool onPress;
 
 	// 移入
 	public override void OnPointerEnter (PointerEventData eventData){
 		if (onMouseEnter != null) {
-			onMouseEnter (gameObject, eventData.position);
+			onMouseEnter (gameObject,true,eventData.position);
 		}
 	}
 
 	// 移出
 	public override void OnPointerExit (PointerEventData eventData){
-		if (onMouseExit != null) {
-			onMouseExit (gameObject, eventData.position);
+		if (onMouseEnter != null) {
+			onMouseEnter (gameObject,false, eventData.position);
+		}
+	}
+
+	// 按下
+	public override void OnPointerDown (PointerEventData eventData){
+		if (onPress != null) {
+			onPress (gameObject, true, eventData.position);
+		}
+	}
+
+	// 抬起
+	public override void OnPointerUp (PointerEventData eventData){
+		if (onPress != null) {
+			onPress (gameObject, false, eventData.position);
 		}
 	}
 

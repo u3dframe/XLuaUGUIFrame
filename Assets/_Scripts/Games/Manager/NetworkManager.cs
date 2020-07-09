@@ -31,7 +31,7 @@ public class NetworkManager : GobjLifeListener {
 	/// <summary>
 	///  初始化
 	/// </summary>
-	void Awake(){
+	protected override void OnCall4Awake(){
 		socket = new SocketClient();
 		socket.OnRegister();
 		m_isOnUpdate = true;

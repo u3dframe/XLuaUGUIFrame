@@ -38,14 +38,13 @@ public class LuaManager : GobjLifeListener
 	/// <summary>
 	///  初始化
 	/// </summary>
-	void Awake(){
+	protected override void OnCall4Awake(){
 		luaEnv.AddLoader(new LuaFileLoader());
 		InitSelfLibs();
 		m_isOnUpdate = true;
 	}
 
-	void Start()
-	{
+	protected override void OnCall4Start(){
 		luaEnv.DoString("require('Main');","Main");
 		var _luaG = luaEnv.Global;
 		var luaStart = _luaG.Get<Action>("Main");

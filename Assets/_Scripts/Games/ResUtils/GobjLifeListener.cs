@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
 /// <summary>
@@ -26,8 +27,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	}
 
 	// 接口函数
-	[System.NonSerialized]
-	public bool m_isOnUpdate = true;
+	[HideInInspector] public bool m_isOnUpdate = true;
 	public bool IsOnUpdate(){ return this.m_isOnUpdate;} 
 	public virtual void OnUpdate(float dt) {}	
 
@@ -62,40 +62,80 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		}
 	}
 
-	[System.NonSerialized]
-	public string poolName = "";
-	
-	/// <summary>
-	/// 继承对象实现的销毁回调 (比代理事件快)
-	/// </summary>
-	protected virtual void OnCall4Destroy(){}
-	/// <summary>
-	/// 销毁回调
-	/// </summary>
-	public event Core.DF_OnNotifyDestry m_onDestroy;
-	
+	[HideInInspector] public string poolName = "";
+		
 	// 是否是存活的
-	private bool _alive = true;
+	private bool _alive = false;
 	public bool alive { get {return _alive;} }
 
-	void _ExcDestoryCall(){
-		var _call = this.m_onDestroy;
-		this.m_onDestroy = null;
-		if (_call != null)
-			_call (this);
+
+	/// <summary>
+	/// 继承对象可实现的函数 (比代理事件快)
+	/// </summary>
+	protected virtual void OnCall4Awake(){}
+	protected virtual void OnCall4Start(){}
+	protected virtual void OnCall4Show(){}
+	protected virtual void OnCall4Hide(){}
+	protected virtual void OnCall4Destroy(){}
+
+	
+	public Action m_callAwake;
+	public Action m_callStart;
+	public Action m_callShow; // 显示
+	public Action m_callHide; // 隐藏
+	public event Core.DF_OnNotifyDestry m_onDestroy; // 销毁
+
+	void Awake()
+	{
+		this._alive = true;
+		OnCall4Awake();
+		if(m_callAwake != null) m_callAwake ();
+	}
+
+	void Start() {
+		OnCall4Start ();
+		if(m_callStart != null) m_callStart ();
+	}
+
+	void  OnEnable()
+	{
+		this.enabled = true;
+		OnCall4Show ();
+		if (m_callShow != null) m_callShow ();
+	}
+
+	void  OnDisable()
+	{
+		this.enabled = false;
+		OnCall4Hide ();
+		if (m_callHide != null) m_callHide ();
 	}
 
 	void OnDestroy(){
 		// Debug.Log ("Destroy,poolName = " + poolName+",gobjname = " + gameObject.name);
 		this.m_isOnUpdate = false;
 		this._alive = false;
+		this.m_callAwake = null;
+		this.m_callStart = null;
+		this.m_callShow = null;
+		this.m_callHide = null;
 		OnCall4Destroy();
 		_ExcDestoryCall();
+		this._m_gobj = null;
+		this._m_trsf = null;
 	}
 
 	void OnApplicationQuit(){
 		this.m_isOnUpdate = false;
 		this._alive = false;
+	}
+
+	
+	void _ExcDestoryCall(){
+		var _call = this.m_onDestroy;
+		this.m_onDestroy = null;
+		if (_call != null)
+			_call (this);
 	}
 
 	public void DetroySelf(){
