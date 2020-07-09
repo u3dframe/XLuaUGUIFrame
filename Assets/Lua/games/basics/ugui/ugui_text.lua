@@ -7,8 +7,8 @@
 local super = LuBase
 local M = class( "ugui_text", super )
 
-function M:ctor( gobj )
-	super.ctor( self,gobj,"UGUILocalize" )
+function M:ctor( gobj,com )
+	super.ctor( self,gobj,com or "UGUILocalize" )
 end
 
 -- 本地化内容处理完毕

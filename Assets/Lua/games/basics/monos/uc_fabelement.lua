@@ -5,11 +5,20 @@
 	-- Desc : 
 ]]
 local str_format = string.format
+
 local super = LCFabBasic
 local M = class( "lua_PrefabElement",super )
 
-function M:ctor( obj )
-	super.ctor(self,obj,"PrefabElement")
+function M:makeElement( obj )
+	local _isEl,_el = CHelper.IsElement(obj)
+	if _isEl then
+		_el = obj;
+	end
+	return M.New( obj,_el )
+end
+
+function M:ctor( obj,component )
+	super.ctor(self,obj,component or "PrefabElement")
 end
 
 function M:IsHasChild( elName )
@@ -20,7 +29,7 @@ function M:IsHasChild( elName )
 	return self[_k]
 end
 
-function M:GetChild( elName )
+function M:GetElement( elName )
 	local _k = str_format("__gobj_%s",elName)
 	if not self[_k] then 
 		self[_k] = self.comp:GetGobjElement(elName); 
@@ -28,7 +37,7 @@ function M:GetChild( elName )
 	return self[_k]
 end
 
-function M:GetChildComponent( elName,strComp )
+function M:GetElementComponent( elName,strComp )
 	local _k = str_format("__com_%s_%s",elName,strComp)
 	if not self[_k] then 
 		self[_k] = self.comp:GetComponent4Element( elName,strComp ); 

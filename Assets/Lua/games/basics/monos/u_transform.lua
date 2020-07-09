@@ -4,8 +4,14 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
+local _tn = tonum10
+
 local super = LUGobj
 local M = class( "lua_transform",super )
+
+function M:makeTrsf( gobj )
+	return M.New( gobj )
+end
 
 function M:ctor( obj )
 	super.ctor(self,obj)
@@ -23,10 +29,22 @@ function M:ReXYZ( x,y,z )
 		x = x.x;
 	end
 
-	x = tonumber(x) or 0
-	y = tonumber(y) or 0
-	z = tonumber(z) or 0
+	x = _tn( x,0 )
+	y = _tn( y,0 )
+	z = _tn( z,0 )
 	return x,y,z
+end
+
+function M:GetChildCount( )
+	return self.trsf.childCount;
+end
+
+function M:GetChild( nIndex )
+	nIndex = _tn( nIndex,0 )
+	local _nc = self:GetChildCount()
+	if _nc > 0 and nIndex > 0 and _nc > nIndex then
+		return self.trsf:GetChild(nIndex)
+	end
 end
 
 function M:SetPostion( x,y,z )

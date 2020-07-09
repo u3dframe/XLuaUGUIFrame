@@ -7,20 +7,37 @@
 local super = LUTrsf
 local M = class( "lua_component",super )
 
-function M:ctor( obj, component )
+function M:makeComp( gobj,component )
+	return M.New( gobj,component )
+end
+
+function M:ctor( obj,component )
 	super.ctor(self,obj)
 	self._cf_ondestroy = self._cf_ondestroy or handler(self,self.OnCF_Destroy)
-	local com = self:GetComponent( component )
-	if com then
-		self:ReEvtDestroy(true)
-	else
-		printError( "can't find compnent by %s", component )
-	end
-	self.comp = com
+	self:InitComp(component)
 end
 
 function M:IsInitComp( )
 	return self.comp ~= nil;
+end
+
+function M:InitComp( component )
+	if not component then
+		return
+	end
+
+	if not self.comp then
+		local com = component;
+		if type(component) == "string" then
+			com = self:GetComponent( component )
+		end
+		self.comp = com
+		if com then
+			self:ReEvtDestroy(true)
+		else
+			printError( "can't find compnent by %s", component )
+		end
+	end
 end
 
 function M:DestroyObj()

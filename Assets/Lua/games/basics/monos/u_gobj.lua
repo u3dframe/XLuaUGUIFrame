@@ -4,6 +4,8 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
+local str_format = string.format
+
 local super = LuaObject
 local M = class( "lua_gobj",super )
 local this = M
@@ -20,6 +22,10 @@ function M.DontDestroyOnLoad(gobj)
 		UGameObject.DontDestroyOnLoad(gobj);
 		return true;
 	end
+end
+
+function M:makeGobj( gobj )
+	return M.New( gobj )
 end
 
 function M:ctor( obj )
@@ -39,7 +45,11 @@ function M:IsActive( )
 end
 
 function M:GetComponent( com )
-	return self.gobj:GetComponent( com )
+	local _k = str_format("__com_%s",com)
+	if not self[_k] then 
+		self[_k] = self.gobj:GetComponent( com )
+	end
+	return self[_k]
 end
 
 function M:SetActive( isActive )
