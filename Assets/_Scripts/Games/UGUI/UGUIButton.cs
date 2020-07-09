@@ -71,6 +71,13 @@ public class UGUIButton : GobjLifeListener {
         this.m_evt.enabled = true;
     }
 
+	protected override void OnCall4Destroy(){
+		this.m_onPress = null;
+		this.m_onClick = null;
+		this.m_evt = null;
+		RemoveExcept(this._selfID);
+	}
+	
 	void _OnPress(GameObject obj,bool isPress,Vector2 pos)
     {
 		if (IsFreezedAll()) return;
@@ -90,12 +97,5 @@ public class UGUIButton : GobjLifeListener {
 
 	bool IsFreezedAll(){
 		return isFreezedAll && !IsInExcept(_selfID);
-	}
-
-	protected override void OnCall4Destroy(){
-		this.m_onPress = null;
-		this.m_onClick = null;
-		this.m_evt = null;
-		RemoveExcept(this._selfID);
 	}
 }
