@@ -45,7 +45,7 @@ function M:OnCF_Fab( obj )
 	local _it
 	for _, v in pairs(LE_UILayer) do
 		if LE_UILayer.URoot ~= v and LE_UILayer.UpRes ~= v then
-			_it = self:GetChild(v);
+			_it = self:GetElement(v);
 			if _it then
 				self[str_format("l_%s", v)] = LUComonet.New(_it,"UGUICanvasAdaptive")
 			else
@@ -53,7 +53,7 @@ function M:OnCF_Fab( obj )
 			end
 		end
 	end
-	self.uiCamera = self:GetChildComponent("UICamera","Camera");
+	self.uiCamera = self:GetElementComponent("UICamera","Camera");
 end
 
 function M:SetUILayer( lbUIEntity )
