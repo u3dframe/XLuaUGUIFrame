@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System;
+using UObject = UnityEngine.Object;
+
 
 /// <summary>
 /// 类名 : 基础公用帮助脚本
@@ -215,22 +217,22 @@ public class UtilityHelper {
 	}
 
 	// 在编辑模式下，这个函数有问题，即便为null对象，经过判断就不为空了
-	static public bool IsNull(System.Object obj)
+	static public bool IsNull(object obj)
 	{
-		return System.Object.ReferenceEquals(null,obj);
+		return object.ReferenceEquals(obj,null);
 	}
 
-	static public bool IsNotNull(System.Object obj)
+	static public bool IsNotNull(object obj)
 	{
 		return !IsNull(obj);
 	}
 
-	static public bool IsNull(UnityEngine.Object uobj)
+	static public bool IsNull(UObject uobj)
 	{
 		return null == uobj;
 	}
 
-	static public bool IsNotNull(UnityEngine.Object uobj)
+	static public bool IsNotNull(UObject uobj)
 	{
 		return null != uobj;
 	}
