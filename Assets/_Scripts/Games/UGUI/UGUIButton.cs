@@ -43,7 +43,7 @@ public class UGUIButton : GobjLifeListener {
 
 	int _selfID = 0;
 	Vector3 v3Scale;
-	public bool m_isPress = true;
+	public bool m_isPressScale = true;
 	[Range(0.5f,1.5f)]
     public float m_scale = 0.98f;
 
@@ -84,7 +84,7 @@ public class UGUIButton : GobjLifeListener {
 
         if (this.m_onPress != null) this.m_onPress(m_gobj,isPress,pos);
 
-		if(!this.m_isPress) return;
+		if(!this.m_isPressScale) return;
 		m_trsf.localScale =  isPress ? (v3Scale * m_scale) : v3Scale;
     }
 

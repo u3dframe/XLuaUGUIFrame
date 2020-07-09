@@ -27,8 +27,9 @@ _LuaFpBasic = {
 	{"LUComonet","u_component",3}, -- component
 	{"LCFabBasic","uc_fabbasic",3}, -- PrefabBasic
 	{"LCFabElement","uc_fabelement",3}, -- PrefabElement
-	{"LuBase","ugui_base",4}, -- UGUI 组件 - 基础类
-	{"LuText","ugui_text",4}, -- UGUI 组件 - 文本
+	{"LuBase","ugui_base",4}, -- 组件 - 基础类
+	{"LuText","ugui_text",4}, -- 组件 - 文本
+	{"LuBtn","ugui_button",4}, -- 组件 - 按钮
 	{"LuaAsset","lua_asset",2}, -- 资源
 	{"LuaFab","lua_fab",2}, -- 为场景对象和ui_base对象的父类
 	{"MgrRes","mgr_res",2}, -- 控制 资源加载了
