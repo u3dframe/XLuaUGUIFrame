@@ -32,6 +32,7 @@ function M.RmExcept( ... )
 end
 
 function M:ctor( gobj,callFunc,val,isNoScale )
+	assert(gobj,"btn is null")
 	local _tmp = CBtn.Get(gobj)
 	super.ctor( self,gobj,_tmp )
 	self.callFunc = callFunc;

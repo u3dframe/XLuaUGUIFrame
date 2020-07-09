@@ -29,7 +29,7 @@ function M:makeGobj( gobj )
 end
 
 function M:ctor( obj )
-	assert( obj )
+	assert( obj,"gobj is null" )
 	super.ctor(self)
 	self.obj = obj
 	self.objType = type(obj)

@@ -18,6 +18,10 @@ function M:makeElement( obj )
 end
 
 function M:ctor( obj,component )
+	assert(obj,"element is null")
+	if true == component then
+		component = CPElement.Get(obj)
+	end
 	super.ctor(self,obj,component or "PrefabElement")
 end
 

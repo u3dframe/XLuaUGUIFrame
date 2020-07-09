@@ -19,6 +19,7 @@ CGameFile = CS.Core.GameFile
 CGobjLife = CS.GobjLifeListener;
 CPElement = CS.PrefabElement;
 CHelper = CS.LuaHelper;
+CTxt = CS.UGUILocalize;
 CBtn = CS.UGUIButton;
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])

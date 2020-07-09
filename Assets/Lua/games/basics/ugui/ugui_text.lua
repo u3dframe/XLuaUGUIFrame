@@ -8,6 +8,10 @@ local super = LuBase
 local M = class( "ugui_text", super )
 
 function M:ctor( gobj,com )
+	assert(gobj,"element is null")
+	if true == com then
+		com = CTxt.Get(gobj)
+	end
 	super.ctor( self,gobj,com or "UGUILocalize" )
 end
 
