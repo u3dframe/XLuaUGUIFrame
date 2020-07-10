@@ -9,6 +9,7 @@ public class EditorUGUIEx
 	static string _fpInAsset4Font = "Assets/_Develop/Builds/fnts/fzzy.ttf";
     static string _fpInAsset4Item = "Assets/_Develop/Builds/prefabs/ui/ui_item.prefab";
     static Font font;
+    static int layerUI = LayerMask.NameToLayer("UI");
 
     // 重写Hierarchy的右键菜单
     // https://www.xuanyusong.com/archives/3893
@@ -44,6 +45,7 @@ public class EditorUGUIEx
                 GameObject go = new GameObject(name,type);
                 go.GetComponent<MaskableGraphic>().raycastTarget = raycastTarget;
                 go.transform.SetParent(_active,false);
+                go.layer = layerUI;
                 Selection.activeGameObject = go;
                 com = go.GetComponent(type);
             }
@@ -121,6 +123,7 @@ public class EditorUGUIEx
         GameObject gobj = GameObject.Instantiate(_obj,_active,false) as GameObject;
 		if(gobj == null) return;
 		gobj.name = "ui_item";
+        gobj.layer = layerUI;
 		gobj.SetActive(true);
     }
 }
