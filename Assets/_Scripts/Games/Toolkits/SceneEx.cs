@@ -7,7 +7,7 @@ using System.Collections;
 /// 日期 : 2017-03-21 10:37
 /// 功能 : 场景的雾效，摄像机参数等
 /// </summary>
-[ExecuteInEditMode]
+// [ExecuteInEditMode]
 public class SceneEx : MonoBehaviour
 {
 	static public SceneEx Get(GameObject gobj,bool isAdd){

@@ -25,10 +25,11 @@ public class UGUILocalize : GobjLifeListener {
 		return Get(gobj,true);
 	}
 
-	public string m_key = "";
+	public string m_key = "key";
 	public Text m_text;
 	bool m_isInit = false;
 	object[] fmtPars = null;
+	string _val = "";
 
 	protected override void OnCall4Awake()
 	{
@@ -62,12 +63,11 @@ public class UGUILocalize : GobjLifeListener {
 
 	void OnLocalize()
 	{
-		if(!m_text)
-			return;
-		string _val = "";
+		if(!m_text) return;
 		if(fmtPars == null || fmtPars.Length <= 0) _val = Localization.Get(m_key);
 		else _val = Localization.Format(m_key,fmtPars);
 		_val =  (_val == null) ? ((m_key == null) ? "" : m_key) : _val;
+		Debug.LogErrorFormat("===[{0}] = [{1}]",m_key,_val);
 		m_text.text = _val;
 	}
 

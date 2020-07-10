@@ -8,7 +8,7 @@ using UnityEngine.UI;
 /// 日期 : 2020-07-07 10:37
 /// 功能 : 控制按钮单击事件
 /// </summary>
-[ExecuteInEditMode]
+// [ExecuteInEditMode]
 [RequireComponent(typeof(UGUIEventListener))]
 [AddComponentMenu("UI/UGUIButton")]
 public class UGUIButton : GobjLifeListener {

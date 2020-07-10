@@ -6,7 +6,7 @@ using System.Collections;
 /// 类名 : GameObject对象 生命周期 监听
 /// 作者 : Canyon
 /// 日期 : 2017-03-21 10:37
-/// 功能 : 只针对 OnDestroy的回调
+/// 功能 : this.enabled 不能在自身的 回调事件里面设置(只能通过外包设置)
 /// </summary>
 public class GobjLifeListener : MonoBehaviour,IUpdate {
 	static public bool IsNull(UnityEngine.Object uobj)
@@ -97,16 +97,14 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		if(m_callStart != null) m_callStart ();
 	}
 
-	void  OnEnable()
+	void OnEnable()
 	{
-		this.enabled = true;
 		OnCall4Show ();
 		if (m_callShow != null) m_callShow ();
 	}
 
-	void  OnDisable()
+	void OnDisable()
 	{
-		this.enabled = false;
 		OnCall4Hide ();
 		if (m_callHide != null) m_callHide ();
 	}

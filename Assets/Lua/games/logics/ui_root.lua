@@ -27,7 +27,7 @@ end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
-	_cfg.abName = "prefabs/uiroot.fab"
+	_cfg.abName = "prefabs/ui/uiroot.ui"
 	-- _cfg.assetName = "uiroot.prefab"
 	_cfg.isStay = true
 	_cfg.layer = LE_UILayer.URoot
