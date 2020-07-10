@@ -63,4 +63,15 @@ function M:_ReEvtDestroy(isBind)
 	end
 end
 
+function M:SetEnabled( isBl )
+	if self:IsInitComp() then
+		self.comp.enabled = (isBl == true);
+	end
+end
+
+function M:SetActive( isActive )
+	super.SetActive( self,isActive )
+	self:SetEnabled( self.isActive )
+end
+
 return M
