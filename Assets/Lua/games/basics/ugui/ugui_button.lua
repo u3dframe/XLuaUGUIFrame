@@ -1,5 +1,5 @@
 --[[
-	-- ugui的文本
+	-- btn 按钮
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
