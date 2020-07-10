@@ -57,6 +57,9 @@ public static class ExampleConfig
                 typeof(System.Collections.Generic.List<int>),
                 typeof(Action<string>),
                 typeof(UnityEngine.Debug),
+                typeof(RenderSettings),
+                typeof(LightmapSettings),
+
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
                 typeof(UIBehaviour),

@@ -5,7 +5,7 @@ using System.Collections;
 /// 类名 : 烘培光照贴图
 /// 作者 : Canyon
 /// 日期 : 2017-03-21 10:37
-/// 功能 : 挂在场景根节点上面，保存场景烘培的贴图信息
+/// 功能 : 场景烘培的贴图信息
 /// </summary>
 [ExecuteInEditMode]
 public class LightmapEx : MonoBehaviour
