@@ -10,6 +10,7 @@ function M.Init()
 	-- if GM_IsEditor then
 	--	require("manager.keycodecallback").Init()
 	-- end
+	Evt_No_Use_Coroutine = false
 	Event.Brocast(Evt_GameEntryAfterUpRes);
 end
 

@@ -99,8 +99,9 @@ _M._AUTHOR = "Elijah Frederickson"
 _M._COPYRIGHT = "Copyright (C) 2012 LoDC"
 
 local function spawn(f)
-    if No_Use_Coroutine == true then
+    if true == Evt_No_Use_Coroutine then
         f()
+        return
     end
     
     return coroutine.resume(coroutine.create(function()
