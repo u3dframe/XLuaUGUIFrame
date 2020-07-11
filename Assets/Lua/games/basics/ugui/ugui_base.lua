@@ -5,21 +5,21 @@
 	-- Desc : 
 ]]
 
-local _clsEle,_clsGobj,_csTxt
+local _clsEle,_clsGobj,_clsTxt
 
 local super = LUComonet
 local M = class( "ugui_base",super )
 
 function M:_Init( callFunc,val )
-	if not _csTxt then
-		_clsEle,_clsGobj,_csTxt = LCFabElement,LUGobj,LuText
+	if not _clsTxt then
+		_clsEle,_clsGobj,_clsTxt = LCFabElement,LUGobj,LuText
 	end
 	local _tmp,_tmp2 = self:GetComponent("PrefabElement")
 	if _tmp then
 		_tmp = _clsEle.New(_tmp,_tmp)
 		self.lbComp = _tmp
 		_tmp2 = _tmp:GetElementComponent("text","Text")
-		if _tmp2 then self.lbTxt = _csTxt.New(_tmp2,true) end
+		if _tmp2 then self.lbTxt = _clsTxt.New(_tmp2,true) end
 		
 		_tmp2 = _tmp:GetElement("select")
 		if _tmp2 then self.lbSel = _clsGobj.New(_tmp2) end
@@ -27,7 +27,7 @@ function M:_Init( callFunc,val )
 		_tmp = self:GetChild(0)
 		if _tmp then
 			_tmp2 = _tmp:GetComponent("Text")
-			if _tmp2 then self.lbTxt = _csTxt.New(_tmp2,true) end
+			if _tmp2 then self.lbTxt = _clsTxt.New(_tmp2,true) end
 		end
 	end
 	
