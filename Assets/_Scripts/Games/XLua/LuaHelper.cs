@@ -22,12 +22,23 @@ public sealed class LuaHelper  : UtilityHelper {
 		return false;
 	}
 
-	static public void ThrowError(string msg) {
-		throw new Exception(msg);
-	}
-
 	static public bool IsElement(object obj) {
 		if(IsNull(obj))	return false;
 		return obj is PrefabElement;
+	}
+
+	static public void GetRectSize(GameObject gobj,ref float w,ref float h) {
+		w = 0;h = 0;
+		if(IsNull(gobj)) return;
+		GetRectSize(gobj.transform,ref w,ref h);
+	}
+
+	static public void GetRectSize(Transform trsf,ref float w,ref float h) {
+		w = 0;h = 0;
+		if(IsNull(trsf)) return;
+		RectTransform _r = trsf as RectTransform;
+		var v2 = _r.rect.size;
+		w = v2.x;
+		h = v2.y;
 	}
 }

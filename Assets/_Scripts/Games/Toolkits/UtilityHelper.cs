@@ -29,6 +29,10 @@ public class UtilityHelper {
 		return (long)ts.TotalMilliseconds;
 	}
 
+	static public void ThrowError(string msg) {
+		throw new Exception(msg);
+	}
+
 	static public bool IsNull(UObject uobj)
 	{
 		return null == uobj;
