@@ -29,25 +29,47 @@ public class UtilityHelper {
 		return (long)ts.TotalMilliseconds;
 	}
 
+	static public bool IsNull(UObject uobj)
+	{
+		return null == uobj;
+	}
+
+	static public bool IsNoNull(UObject uobj)
+	{
+		return null != uobj;
+	}
+	
+	// 在编辑模式下，这个函数有问题，即便为null对象，经过判断就不为空了
+	static public bool IsNull(object obj)
+	{
+		return object.ReferenceEquals(obj,null);
+	}
+
+	static public bool IsNoNull(object obj)
+	{
+		return !IsNull(obj);
+	}
+
+	static public bool IsComponent(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is Component;
+	}
+
 	static public T Get<T>(GameObject go) where T : Component {
-		if (go != null) {
-			return go.GetComponent<T>();
-		}
-		return null;
+		if(IsNull(go)) return null;
+		return go.GetComponent<T>();
 	}
 
 	static public T Get<T>(Transform trsf) where T : Component {
-		if (trsf != null) {
-			return trsf.GetComponent<T>();
-		}
-		return null;
+		if(IsNull(trsf)) return null;
+		return trsf.GetComponent<T>();
 	}
 
 	/// <summary>
 	/// 搜索子物体组件-GameObject版
 	/// </summary>
 	static public T Get<T>(GameObject go, string subnode) where T : Component {
-		if (go != null) {
+		if (IsNoNull(go)) {
 			Transform sub = go.transform.Find(subnode);
 			if (sub != null) return sub.GetComponent<T>();
 		}
@@ -58,7 +80,7 @@ public class UtilityHelper {
 	/// 搜索子物体组件-Transform版
 	/// </summary>
 	static public T Get<T>(Transform go, string subnode) where T : Component {
-		if (go != null) {
+		if (IsNoNull(go)) {
 			Transform sub = go.Find(subnode);
 			if (sub != null) return sub.GetComponent<T>();
 		}
@@ -76,7 +98,7 @@ public class UtilityHelper {
 	/// 添加组件
 	/// </summary>
 	static public T Add<T>(GameObject go) where T : Component {
-		if (go != null) {
+		if (IsNoNull(go)) {
 			T[] ts = go.GetComponents<T>();
 			for (int i = 0; i < ts.Length; i++) {
 				if (ts[i] != null) GameObject.Destroy(ts[i]);
@@ -97,7 +119,7 @@ public class UtilityHelper {
 	/// 递归查找子对象
 	/// </summary>
 	static public Transform ChildRecursion(Transform trsf, string subnode) {
-		if (trsf == null) return null;
+		if(IsNull(trsf)) return null;
 		if(trsf.name.Equals(subnode)) return trsf;
 		int lens = trsf.childCount;
 		Transform _ret = null; 
@@ -110,9 +132,9 @@ public class UtilityHelper {
 	}
 
 	static public GameObject ChildRecursion(GameObject gobj, string subnode) {
-		if (gobj == null) return null;
+		if(IsNull(gobj)) return null;
 		Transform trsf = ChildRecursion(gobj.transform,subnode);
-		if (trsf == null) return null;
+		if(IsNull(trsf)) return null;
 		return trsf.gameObject;
 	}
 
@@ -120,18 +142,18 @@ public class UtilityHelper {
 	/// 查找子对象
 	/// </summary>
 	static public Transform ChildTrsf(Transform trsf, string subnode) {
-		if (trsf == null) return null;
+		if(IsNull(trsf)) return null;
 		return trsf.Find(subnode);
 	}
 
 	static public Transform ChildTrsf(GameObject gobj, string subnode) {
-		if(gobj == null) return null;
+		if(IsNull(gobj)) return null;
 		return ChildTrsf(gobj.transform,subnode);
 	}
 
 	static public GameObject Child(Transform trsf, string subnode) {
 		Transform tf = ChildTrsf(trsf,subnode);
-		if (tf == null) return null;
+		if(IsNull(tf)) return null;
 		return tf.gameObject;
 	}
 
@@ -139,7 +161,7 @@ public class UtilityHelper {
 	/// 查找子对象
 	/// </summary>
 	static public GameObject Child(GameObject gobj, string subnode) {
-		if(gobj == null) return null;
+		if(IsNull(gobj)) return null;
 		return Child(gobj.transform, subnode);
 	}
 
@@ -147,7 +169,7 @@ public class UtilityHelper {
 	/// 取平级对象
 	/// </summary>
 	static public GameObject Peer(Transform trsf, string subnode) {
-		if(trsf == null) return null;
+		if(IsNull(trsf)) return null;
 		return Child(trsf.parent,subnode);
 	}
 	
@@ -155,7 +177,7 @@ public class UtilityHelper {
 	/// 取平级对象
 	/// </summary>
 	static public GameObject Peer(GameObject gobj, string subnode) {
-		if(gobj == null) return null;
+		if(IsNull(gobj)) return null;
 		return Peer(gobj.transform, subnode);
 	}
 
@@ -163,7 +185,7 @@ public class UtilityHelper {
 	/// 设置父节点
 	/// </summary>
 	static public void SetParent(Transform trsf,Transform trsfParent,bool isLocalZero) {
-		if(trsf == null) return;
+		if(IsNull(trsf)) return;
 		trsf.SetParent (trsfParent,!isLocalZero);
 	}
 
@@ -175,7 +197,7 @@ public class UtilityHelper {
 	/// 设置父节点
 	/// </summary>
 	static public void SetParent(GameObject gobj, GameObject gobjParent,bool isLocalZero) {
-		if(gobj == null) return;
+		if(IsNull(gobj)) return;
 		Transform trsf = gobj.transform;
 		Transform trsfParent = null;
 		if (gobjParent != null) trsfParent = gobjParent.transform;
@@ -184,6 +206,16 @@ public class UtilityHelper {
 
 	static public void SetParent(GameObject gobj, GameObject gobjParent) {
 		SetParent(gobj,gobjParent,true); 
+	}
+
+	static public GameObject Clone(GameObject gobj) {
+		if(IsNull(gobj)) return null;
+		return GameObject.Instantiate (gobj,gobj.transform.parent,false) as GameObject;
+	}
+
+	static public GameObject Clone(Transform trsf) {
+		if(IsNull(trsf)) return null;
+		return Clone(trsf.gameObject);
 	}
 
 	/// <summary>
@@ -214,31 +246,5 @@ public class UtilityHelper {
 
 	static public void LogError(string str) {
 		Debug.LogError(str);
-	}
-
-	// 在编辑模式下，这个函数有问题，即便为null对象，经过判断就不为空了
-	static public bool IsNull(object obj)
-	{
-		return object.ReferenceEquals(obj,null);
-	}
-
-	static public bool IsNotNull(object obj)
-	{
-		return !IsNull(obj);
-	}
-
-	static public bool IsNull(UObject uobj)
-	{
-		return null == uobj;
-	}
-
-	static public bool IsNotNull(UObject uobj)
-	{
-		return null != uobj;
-	}
-
-	static public bool IsComponent(object obj) {
-		if(IsNull(obj))	return false;
-		return obj is Component;
 	}
 }
