@@ -4,6 +4,7 @@
 UGameObject = CS.UnityEngine.GameObject
 UTransform = CS.UnityEngine.Transform
 URectTransform = CS.UnityEngine.RectTransform
+UWaitForSeconds = CS.UnityEngine.WaitForSeconds
 UWebRequest = CS.UnityEngine.Networking.UnityWebRequest
 UText = CS.UnityEngine.UI.Text
 UImage = CS.UnityEngine.UI.Image

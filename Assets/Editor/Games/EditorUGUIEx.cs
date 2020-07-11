@@ -83,7 +83,7 @@ public class EditorUGUIEx
         text.resizeTextMaxSize = 28;
         text.horizontalOverflow = HorizontalWrapMode.Wrap;
         text.verticalOverflow = VerticalWrapMode.Truncate;
-        // _gobj.AddComponent<Outline>();
+        _gobj.AddComponent<Outline>(); // 不加描边会模糊
 		_gobj.AddComponent<UGUILocalize>();
     }
 

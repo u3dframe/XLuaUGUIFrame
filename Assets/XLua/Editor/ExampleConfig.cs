@@ -59,6 +59,7 @@ public static class ExampleConfig
                 typeof(UnityEngine.Debug),
                 typeof(RenderSettings),
                 typeof(LightmapSettings),
+                typeof(WaitForSeconds),
 
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),

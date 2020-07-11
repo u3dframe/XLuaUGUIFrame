@@ -12,7 +12,7 @@ local d_traceback = debug.traceback
 
 local DE_BUG = nil;
 local _error = error;
-local _isTrace = true -- 是否包含 traceback
+local _isTrace = false -- 是否包含 traceback
 
 function logMust(fmt,...)
 	local str = str_format(tostring(fmt), ...)
