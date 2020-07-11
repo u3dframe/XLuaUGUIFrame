@@ -6,7 +6,7 @@
 ]]
 
 local tb_has = table.contains
-local _lbKeys = { "__cname","__supers","__create","__index","__newindex" }
+local _lbKeys = { "__cname","class","__supers","__create","__index","__newindex" }
 
 local M = class( "lua_object" )
 function M:ctor( )

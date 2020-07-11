@@ -56,6 +56,7 @@ function M:LoadAsset()
 end
 
 function M:_OnCFLoadAsset( obj )
+	if self.stateLoad ~= LE_StateLoad.Loading then return end
 	self.stateLoad = LE_StateLoad.Loaded;
 	local _tp = self.cfgAsset.assetLType
 	if not obj then
