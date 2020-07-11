@@ -63,7 +63,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	}
 
 	[HideInInspector] public string poolName = "";
-		
+	[HideInInspector] public string csAlias = "life"; // CSharp 别名
 	// 是否是存活的
 	private bool _alive = false;
 	public bool alive { get {return _alive;} }

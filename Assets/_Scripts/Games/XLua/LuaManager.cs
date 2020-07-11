@@ -39,6 +39,7 @@ public class LuaManager : GobjLifeListener
 	///  初始化
 	/// </summary>
 	protected override void OnCall4Awake(){
+		this.csAlias = "LuaMgr";
 		luaEnv.AddLoader(new LuaFileLoader());
 		InitSelfLibs();
 		m_isOnUpdate = true;

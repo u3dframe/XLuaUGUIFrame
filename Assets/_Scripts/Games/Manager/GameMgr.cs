@@ -54,7 +54,8 @@ public class GameMgr : GobjLifeListener {
 	IUpdate upItem = null;
 	List<ILateUpdate> upLateList = new List<ILateUpdate>();
 	ILateUpdate upLateItem = null;
-	int upLens = 0;
+	[SerializeField] int upLens = 0;
+	[SerializeField] int lateLens = 0;
 	float _dt = 0;
 	
 	/// <summary>
@@ -62,6 +63,7 @@ public class GameMgr : GobjLifeListener {
 	/// </summary>
 	public void Init()
 	{
+		this.csAlias = "GMgr";
 		GameLanguage.Init();
 		Localization.language = GameLanguage.strCurLanguage;
 		UGUIEventSystem.instance.Init(false);
@@ -111,8 +113,8 @@ public class GameMgr : GobjLifeListener {
 
 	void _Exc_LateUp(){
 		upLateList.AddRange(mListLateUps);
-		upLens = upLateList.Count;
-		for (int i = 0; i < upLens; i++)
+		lateLens = upLateList.Count;
+		for (int i = 0; i < lateLens; i++)
 		{
 			upLateItem = upLateList[i];
 			if(upLateItem != null && upLateItem.IsOnLateUpdate()){
