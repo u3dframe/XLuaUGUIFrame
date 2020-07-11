@@ -16,6 +16,21 @@ function M:getLuaName()
 	return self.__cname
 end
 
+function M:ReEvent4OnUpdate(isBind)
+	self._lfUp = self._lfUp or handler_pcall(self,self._OnUpdate)
+	if Event then
+		Event.RemoveListener(Evt_Update,self._lfUp)
+		if isBind == true then
+			Event.AddListener(Evt_Update,self._lfUp);
+		end
+	end
+end
+
+function M:_OnUpdate(dt)
+	self:OnUpdate(dt)
+end
+function M:OnUpdate(dt) end
+
 function M:_clean()
 	local _tpv
 	for k, v in pairs(self) do

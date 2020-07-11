@@ -10,17 +10,23 @@ local super = LuaObject
 local M = class( "lua_gobj",super )
 local this = M
 
-function M.Destroy(gobj)
+function M.CsDestroy(gobj)
 	if gobj ~= nil then
 		UGameObject.Destroy(gobj);
 		return true;
 	end
 end
 
-function M.DontDestroyOnLoad(gobj)
+function M.CsDontDestroyOnLoad(gobj)
 	if gobj ~= nil then
 		UGameObject.DontDestroyOnLoad(gobj);
 		return true;
+	end
+end
+
+function M.CsClone(gobj)
+	if gobj ~= nil then
+		return CHelper.Clone(gobj);	
 	end
 end
 
@@ -66,14 +72,18 @@ function M:IsActiveInView( )
 	end
 end
 
+function M:Clone()
+	return this.CsClone(self.gobj)
+end
+
 function M:DestroyObj()
 	local _gobj = self.gobj
 	self.gobj = nil
-	return this.Destroy(_gobj)
+	return this.CsDestroy(_gobj)
 end
 
 function M:DonotDestory( )
-	this.DontDestroyOnLoad(self.gobj)
+	this.CsDontDestroyOnLoad(self.gobj)
 end
 
 return M

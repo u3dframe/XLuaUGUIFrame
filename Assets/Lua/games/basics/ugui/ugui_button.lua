@@ -10,11 +10,11 @@ local super = LuBase
 local M = class( "ugui_button", super )
 local this = M
 
-function M.IsFreezeAll(isAll)
+function M.CsIsFreezeAll(isAll)
 	CBtn.isFreezedAll = (isAll == true)
 end
 
-function M.AddExcept( ... )
+function M.CsAddExcept( ... )
 	local _ids,_id = {...}
 	for _, v in ipairs(_ids) do
 		_id = _tn(v) or v:GetInstanceID()
@@ -22,7 +22,7 @@ function M.AddExcept( ... )
 	end
 end
 
-function M.RmExcept( ... )
+function M.CsRmExcept( ... )
 	local _ids,_id = {...}
 	for _, v in ipairs(_ids) do
 		_id = _tn(v) or v:GetInstanceID()

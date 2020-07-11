@@ -16,6 +16,7 @@ end
 function M:ctor( obj )
 	super.ctor(self,obj)
 	self.trsf = self.gobj.transform
+	-- self.rectTrsf = self:GetComponent("RectTransform")
 end
 
 function M:IsInitTrsf( )
@@ -52,9 +53,9 @@ function M:SetPostion( x,y,z )
 	self.trsf.position = {x = x, y = y, z = z}
 end
 
-function M:SetLocalPostion( x,y,z )
+function M:SetLocalPosition( x,y,z )
 	x,y,z = self:ReXYZ(x,y,z)
-	self.trsf.localPostion = {x = x, y = y, z = z}
+	self.trsf.localPosition = {x = x, y = y, z = z}
 end
 
 function M:SetLocalScale( x,y,z )
@@ -87,6 +88,16 @@ function M:SetAnchoredPosition( x,y )
 	self.trsf.anchoredPosition3D = {x = x, y = y}
 end
 
+function M:SetAnchorMin( x,y )
+	x,y = self:ReXYZ(x,y)
+	self.trsf.anchorMin = {x = x, y = y}
+end
+
+function M:SetAnchorMax( x,y )
+	x,y = self:ReXYZ(x,y)
+	self.trsf.anchorMax = {x = x, y = y}
+end
+
 function M:SetPivot( x,y )
 	x,y = self:ReXYZ(x,y)
 	self.trsf.pivot = {x = x, y = y}
@@ -97,6 +108,12 @@ function M:SetSizeDelta( x,y )
 	self.trsf.sizeDelta = {x = x, y = y}
 end
 
+function M:GetRectSize( )
+	if not self:IsInitTrsf() then return 0,0 end
+	local w,h = CHelper.GetRectSize(self.trsf,0,0);
+	return w,h;
+end
+
 function M:SetParent( parent,isLocal )
 	local isWorld = not (isLocal == true)
 	self.trsf:SetParent(parent,isWorld);
@@ -104,6 +121,7 @@ end
 
 function M:DestroyObj()
 	self.trsf = nil
+	self.rectTrsf = nil
 	return super.DestroyObj(self)
 end
 

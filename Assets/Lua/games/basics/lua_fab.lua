@@ -21,26 +21,12 @@ function M:IsLoadedAndShow()
 end
 
 function M:ReEvent4OnUpdate(isBind)
-	self.__lfuncUp = self.__lfuncUp or handler_pcall(self,self._OnUpdate)
-	Event.RemoveListener(Evt_Update,self.__lfuncUp)
-	if isBind == true then
-		if self.cfgAsset.isUpdate  == true then
-			Event.AddListener(Evt_Update,self.__lfuncUp);
-		end
-	end
+	isBind = (isBind == true) and (self.cfgAsset.isUpdate == true)
+	super.ReEvent4OnUpdate(self,isBind)
 end
 
-function M:_OnUpdate(dt)
-	self:OnUpdate(dt)
-	
-	if self.stateLoad ~= LE_StateLoad.Loaded then return end
-	self:OnUpdateLoaded(dt)
-end
-
-function M:OnUpdate(dt)
-end
-
-function M:OnUpdateLoaded(dt)
+function M:_IsNoLoaded()
+	return self.stateLoad ~= LE_StateLoad.Loaded
 end
 
 function M:IsVwCircle4Load()

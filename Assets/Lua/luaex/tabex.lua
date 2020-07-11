@@ -168,24 +168,30 @@ function table.keyOf(src, value)
     end
 end
 
-function table.foreach(src, fnkv)
+function table.foreach(src, fnvk)
     for k, v in pairs(src) do
-        fnkv(k,v);
+        fnvk(v,k);
     end
 end
 
-function table.foreach_new(src, fnkv)
+function table.foreachArrs(src, fnvk)
+    for k, v in ipairs(src) do
+        fnvk(v,k);
+    end
+end
+
+function table.foreach_new(src, fnvk)
     local _ret = {}
     for k, v in pairs(src) do
-        _ret[k] = fnkv(k,v);
+        _ret[k] = fnvk(v,k);
     end
     return _ret;
 end
 
-function table.filter(src,fn)
+function table.filter(src,fnvk)
     local n = {}
     for k, v in pairs(src) do
-        if fn(v, k) then
+        if fnvk(v, k) then
             n[k] = v
         end
     end
@@ -291,11 +297,21 @@ function table.clear(src,isDeep)
 	return _clear(src,isDeep)
 end
 
-function table.getKV(src,itKey,itVal)
+function table.getVK(src,itKey,itVal)
 	if src and itKey and itVal then
 		for k, v in pairs( src ) do
 			if v[itKey] == itVal then
-				return k,v;
+				return v,k;
+			end
+		end
+	end
+end
+
+function table.getVK4Arr(src,itKey,itVal)
+	if src and itKey and itVal then
+		for k, v in ipairs( src ) do
+			if v[itKey] == itVal then
+				return v,k;
 			end
 		end
 	end

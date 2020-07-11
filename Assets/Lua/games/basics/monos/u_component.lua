@@ -74,4 +74,13 @@ function M:SetActive( isActive )
 	self:SetEnabled( self.isActive )
 end
 
+function M:_OnUpdate(dt)
+	super._OnUpdate( self,dt )
+	if self:_IsNoLoaded() then return end
+	self:OnUpdateLoaded(dt)
+end
+
+function M:_IsNoLoaded() return return (not self:IsInitTrsf()) end
+function M:OnUpdateLoaded(dt) end
+
 return M
