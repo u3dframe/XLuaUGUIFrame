@@ -16,17 +16,17 @@ function M:ctor( gobj,com )
 end
 
 -- 本地化内容处理完毕
-function M:setText( val )
+function M:SetText( val )
 	self.ucom:SetText(val);
 end
 
 -- 格式化文本,是 {0} 的模式，非lua的 %s
-function M:setTextFmt( val, ... )
+function M:SetTextFmt( val, ... )
 	local _pars = {...}
 	self.ucom:SetText(val,unpack(_pars));
 end
 
-function M:setUText( val )
+function M:SetUText( val )
 	self.ucom:SetUText(val)
 end
 

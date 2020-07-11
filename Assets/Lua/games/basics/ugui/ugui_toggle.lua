@@ -4,111 +4,84 @@
 	-- Date : 2020-07-10 13:25
 	-- Desc : 
 ]]
-
-local _tn = tonumber
-local _clsEle,_clsGobj,_csTxt = LCFabElement,LUGobj,LuText
 local super = LuBase
 local M = class( "ugui_toggle", super )
 local this = M
 
-function M:ctor(gobj,uniqueID,valStr,callFunc,isNoCall4False)
-	self.gobj = gobj.gameObject;
-	self.uniqueID = uniqueID;
-	self.callFunc = callFunc;
-	self.isValChg = callFunc ~= nil;
-
-	self.togObj = self.gobj:GetComponent("Toggle");
-	if self.togObj then
-		self.isOn = self.togObj.isOn;
-		self.isFirst = self.isOn;
-		if self.isValChg then
-			self.togObj.onValueChanged:AddListener(function (state)
-				self:OnValueChanged(state);
-			end);
-		end
-	end
-
-	local uiCom = self.gobj:GetComponent("UIComponent");
-	if uiCom then
-		self.txtVal = uiCom:GetComponent("Label","Text");
-		self:SetTextVal(ReStr(valStr));
-
-		self.gobjDef = uiCom:GetGameObject("Def");
-	end
-
-	self.uCom = uiCom;  -- 提供外部使用
-
+function M:ctor(uniqueID,gobj,callFunc,val,isNoCall4False)
+	super.ctor( self,gobj,"Toggle" )
+	self.uniqueID = uniqueID
 	isNoCall4False = isNoCall4False == true
-	self:SetIsCanCall(not isNoCall4False);
-end
+	self._lfChanged = self._lfChanged or handler(self,self.OnValueChanged)
 
--- 执行回调函数
-function M:ExcuteCallFunc()
-	if self.callFunc then
-		self.callFunc(self);
+	if self.comp then
+		self.isOn = self.comp.isOn
+		self.isFirst = self.isOn
 	end
+
+	self:SetIsCanCall(not isNoCall4False)
+	self:_Init(callFunc,val)
+	self:AddListener(callFunc)
 end
 
 function M:SetIsOn(isOn)
-	isOn = isOn == true;
-	if self.togObj then
-		local _preIsOn = self.togObj.isOn;
+	isOn = isOn == true
+	if self.comp then
+		local _preIsOn = self.comp.isOn
 		if _preIsOn ~= isOn then
-			self.togObj.isOn = isOn;
+			self.comp.isOn = isOn
 		elseif self.isValChg and self.isFirst then
-			self.isFirst = nil;
-			self:OnValueChanged(isOn);
+			self.isFirst = nil
+			self:OnValueChanged(isOn)
 		end
 	end
 
-	if not (self.isValChg and self.togObj) then
-		self.isOn = isOn;
+	if not (self.isValChg and self.comp) then
+		self.isOn = isOn
 	end
-
 end
 
 function M:OnValueChanged( isState )
-	self.isOn = isState;
+	self.isOn = isState
 	if self.isOn or self.isCanCall then
-		self:ExcuteCallFunc();
+		self:ExcuteCallFunc()
 	end
-	self:SetActiveDef(not self.isOn);
+	self:SetActiveDef(not self.isOn)
 end
 
 function M:SetIsCanCall( isCanCall )
-	self.isCanCall = isCanCall == true;
+	self.isCanCall = isCanCall == true
 end
 
-function M:SetTextVal(valStr)
-	if self.txtVal then
-		valStr = valStr or "";
-		if "" ~= valStr then
-			valStr = ReStr(valStr);
-		end
-		self.strVal = valStr;
-		self.txtVal.text = valStr;
+function M:AddListener(func)
+	self.isValChg = func ~= nil
+	if self.isValChg then
+		self.comp.onValueChanged:AddListener(self._lfChanged)
 	end
-	return self;
+	self:SetCallFunc(func)
 end
 
 function M:RemoveListeners()
-	if self.togObj then
-		self.togObj.onValueChanged:RemoveAllListeners();
+	if self.comp then
+		self.comp.onValueChanged:RemoveAllListeners()
 	end
 end
 
 function M:RebindClick(callFunc)
-	self.callFunc = callFunc;
-	local csIBtn = IButton.Get(self.gobj);
-	csIBtn.clickCallBack = function ()
-		self:OnValueChanged(not self.isOn);
-	end
+	self.callFunc = callFunc
+	self.lbBtn = self.lbBtn or LuBtn.New(self.gobj)
+	self._lfuncBtn = self._lfuncBtn or function() self:OnValueChanged(not self.isOn) end
+	self.lbBtn:SetCallFunc(self._lfuncBtn)
+	self:RemoveListeners()
 end
 
 function M:SetActiveDef(isActive)
-	if self.gobjDef then
-		self.gobjDef:SetActive(isActive == true);
-	end
+	self:SetActiveSelect(isActive)
+end
+
+function M:pre_clean()
+	super.pre_clean( self )
+	self:RemoveListeners()
 end
 
 return M

@@ -4,8 +4,11 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local M = class( "lua_object" )
 
+local tb_has = table.contains
+local _lbKeys = { "__cname","__supers","__create","__index","__newindex" }
+
+local M = class( "lua_object" )
 function M:ctor( )
 end
 
@@ -16,7 +19,7 @@ end
 function M:_clean()
 	local _tpv
 	for k, v in pairs(self) do
-		if k ~= "__cname" and k ~= "__supers" and k ~= "__create" and k ~= "__index" and k ~= "__newindex" then
+		if not tb_has(_lbKeys,k) then
 			_tpv = type(v)
 			if  _tpv ~= "function" then
 				if (_tpv == "table") and (v ~= self) and type(v.clean) == "function" then

@@ -67,6 +67,7 @@ public static class ExampleConfig
                 typeof(MaskableGraphic),
                 typeof(Text),
                 typeof(Image),
+                typeof(Toggle),
                 typeof(RawImage),
                 typeof(EventTrigger), // UGUIEventListener 的 父类
                 //------------------------ 导出 工程封装的类 ---------------------

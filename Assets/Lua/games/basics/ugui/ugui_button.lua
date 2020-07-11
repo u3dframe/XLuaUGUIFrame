@@ -6,7 +6,6 @@
 ]]
 
 local _tn = tonumber
-local _clsEle,_clsGobj,_csTxt = LCFabElement,LUGobj,LuText
 local super = LuBase
 local M = class( "ugui_button", super )
 local this = M
@@ -18,7 +17,7 @@ end
 function M.AddExcept( ... )
 	local _ids,_id = {...}
 	for _, v in ipairs(_ids) do
-		_id = _tn(v) or v:GetInstanceID();
+		_id = _tn(v) or v:GetInstanceID()
 		CBtn.AddExcept(v)
 	end
 end
@@ -26,34 +25,20 @@ end
 function M.RmExcept( ... )
 	local _ids,_id = {...}
 	for _, v in ipairs(_ids) do
-		_id = _tn(v) or v:GetInstanceID();
+		_id = _tn(v) or v:GetInstanceID()
 		CBtn.RemoveExcept(v)
 	end
 end
 
 function M:ctor( gobj,callFunc,val,isNoScale )
-	assert(gobj,"btn is null")
-	local _tmp = CBtn.Get(gobj)
+	assert(gobj,"btn ctor is null")
+	local _tmp,_tmp2 = CBtn.Get(gobj)
 	super.ctor( self,gobj,_tmp )
-	self.callFunc = callFunc;
 	_tmp.m_onClick = handler(self,self.OnClickSelf)
 
-	_tmp = self:GetComponent("PrefabElement");
-	if _tmp then
-		_tmp = _clsEle.New(_tmp,_tmp)
-		self.lbComp = _tmp
-		self.lbTxt = _csTxt.New(_tmp:GetElement("text"));
-		self.lbSel = _clsGobj.New(_tmp:GetElement("select"));
-	else
-		_tmp = self:GetChild(0);
-		if _tmp then
-			_tmp = _tmp:GetComponent("UGUILocalize");
-			self.lbTxt = _csTxt.New(_tmp,_tmp);
-		end
-	end
+	self:_Init(callFunc,val)
 
-	self:SetTextVal(val)
-	_tmp = (not isNoScale);
+	_tmp = (not isNoScale)
 	self:SetRaycastTarget(true,_tmp)
 	self:SetIsPressScale(_tmp)
 end
@@ -64,27 +49,18 @@ function M:OnClickSelf(gobj,pos)
 		return
 	end
 
-	self.respName = "";
+	self.respName = ""
 	if gobj then
-		self.respName = gobj.name;
+		self.respName = gobj.name
 	end
 
-	if self.callFunc then
-		self.callFunc(self);
-	end
-end
-
-function M:SetTextVal(val)
-	if self.lbTxt then
-		self.txtVal:SetText(val);
-	end
-	return self;
+	self:ExcuteCallFunc()
 end
 
 function M:SetRaycastTarget( isBl,isNoSync )
-	self.isRaycastTarget = isBl == true;
+	self.isRaycastTarget = isBl == true
 	if not isNoSync then
-		self:SetIsPressScale(self.isRaycastTarget);
+		self:SetIsPressScale(self.isRaycastTarget)
 	end
 end
 
@@ -93,17 +69,10 @@ function M:SetIsPressScale( isBl )
 		return
 	end
 
-	isBl = isBl == true;
+	isBl = isBl == true
 	if isBl ~= self.isPressScale then
-		self.isPressScale = isBl;
-		self.comp.m_isPressScale = self.isPressScale;
-	end
-end
-
-function M:SetSelectState( isBl )
-	self.isSelect = isBl == true;
-	if self.lbSel then
-		self.lbSel:SetActive(self.isSelect)
+		self.isPressScale = isBl
+		self.comp.m_isPressScale = self.isPressScale
 	end
 end
 
