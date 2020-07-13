@@ -44,9 +44,11 @@ _LuaFpMidle = {
 	{"UIBase","ui_base",6}, -- UI的基础类
 	{"UIRoot","ui_root",6}, -- 加载 UI的根uiroot
 	{"GEntry","game_entry",6}, -- 游戏入口
+	{"MgrBase","mgr_base",6}, -- 管理基础类
 }
 
 -- 最后
 _LuaFpEnd = {
+	{"MgrScene","scene/mgr_scene",6}, -- 场景管理
 	{"MgrLogin","login/mgr_login",6}, -- 登录管理
 }

@@ -1,4 +1,10 @@
 --主入口函数。从这里开始lua逻辑
+local _evt
+local function evt()
+	if not _evt then _evt = Event end
+	return _evt
+end
+
 function Main()
 	require("games/game_main").Init()
 	-- print("logic start")	 		
@@ -7,26 +13,30 @@ end
 --场景切换通知
 function OnLevelWasLoaded(level)
 	collectgarbage("collect")
-	if Event then
-		Event.Brocast(Evt_SceneLoaded,level)
-		print("Event Brocast OnLevelWasLoaded")	 
+	_evt = evt()
+	if _evt then
+		_evt.Brocast(Evt_SceneLoaded,level)
+		printInfo("Event Brocast OnLevelWasLoaded = [%s]",level)
 	end
 end
 
 function Update(dt)
-	if Event then
-		Event.Brocast(Evt_Update,dt);
+	_evt = evt()
+	if _evt then
+		_evt.Brocast(Evt_Update,dt);
 	end
 end
 
 function LateUpdate()
-	if Event then
-		Event.Brocast(Evt_LateUpdate);
+	_evt = evt()
+	if _evt then
+		_evt.Brocast(Evt_LateUpdate);
 	end
 end
 
 function OnApplicationQuit()
-	if Event then
-		Event.Brocast(Evt_OnAppQuit);
+	_evt = evt()
+	if _evt then
+		_evt.Brocast(Evt_OnAppQuit);
 	end
 end

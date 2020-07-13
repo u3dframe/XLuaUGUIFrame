@@ -17,11 +17,12 @@ CNetMgr = CS.NetworkManager
 -- CABMgr = CS.Core.AssetBundleManager
 CResMgr = CS.Core.ResourceManager
 CGameFile = CS.Core.GameFile
-CGobjLife = CS.GobjLifeListener;
-CPElement = CS.PrefabElement;
-CHelper = CS.LuaHelper;
-CTxt = CS.UGUILocalize;
-CBtn = CS.UGUIButton;
+CGobjLife = CS.GobjLifeListener
+CPElement = CS.PrefabElement
+CHelper = CS.LuaHelper
+CTxt = CS.UGUILocalize
+CBtn = CS.UGUIButton
+CLoadSceneMgr = CS.MgrLoadScene
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])
 GM_IsEditor = CGameFile.isEditor

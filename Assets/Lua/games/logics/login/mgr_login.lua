@@ -5,10 +5,11 @@
 	-- Desc : 
 ]]
 
-local M = {}
+local super,_evt = MgrBase,Event
+local M = class( "mgr_login",super )
 
 function M:Init()
-	Event.AddListener(Evt_ToView_Login,handler(self,self.ToLoginView));
+	_evt.AddListener(Evt_ToView_Login,handler(self,self.ToLoginView));
 end
 
 function M:ToLoginView()

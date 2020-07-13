@@ -80,7 +80,7 @@ function M:_OnUpdate(dt)
 	self:OnUpdateLoaded(dt)
 end
 
-function M:_IsNoLoaded() return return (not self:IsInitTrsf()) end
+function M:_IsNoLoaded() return (not self:IsInitTrsf()) end
 function M:OnUpdateLoaded(dt) end
 
 return M

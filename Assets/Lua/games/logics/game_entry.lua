@@ -5,17 +5,18 @@
 	-- Desc : 
 ]]
 
-local _MG = _G;
+local _urt,_evt = UIRoot,Event
 
 local M = {}
 
 function M:Init()
-	Event.AddListener(Evt_GameEntryAfterUpRes,handler(self,self.EntryAfterUpRes));
+	_evt.AddListener(Evt_GameEntryAfterUpRes,handler(self,self.EntryAfterUpRes))
 end
 
 function M:EntryAfterUpRes()
-	UIRoot.singler()
-	Event.Brocast(Evt_ToView_Login);
+	_urt.singler()
+	_evt.Brocast(Evt_ToChangeScene)
+	_evt.Brocast(Evt_ToView_Login)
 end
 
 return M
