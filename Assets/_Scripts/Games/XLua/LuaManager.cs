@@ -57,10 +57,14 @@ public class LuaManager : GobjLifeListener
 		{
 			luaStart();
 		}
+
+#if UNITY_5_4_OR_NEWER
+		SceneManager.sceneLoaded += _OnSceneLoaded;
+#endif
 	}
 
 #if UNITY_5_4_OR_NEWER
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    void _OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         OnLevelLoaded(scene.buildIndex);
     }

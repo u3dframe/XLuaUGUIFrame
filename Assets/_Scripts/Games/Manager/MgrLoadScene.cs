@@ -26,6 +26,7 @@ public class MgrLoadScene : GobjLifeListener {
 		}
 	}
 	
+	[SerializeField]
 	string m_curName = null;
 	Action m_callLoadedScene;
 	

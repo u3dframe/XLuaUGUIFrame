@@ -9,9 +9,4 @@ public class Launcher : MonoBehaviour
     {
         GameMgr.instance.Init();
     }
-
-    // Update is called once per frame
-    // void Update()
-    // {    
-    // }
 }
