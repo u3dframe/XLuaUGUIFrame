@@ -183,7 +183,7 @@ MonoBehaviour:
   isLerpHeight: 0
   height: 5
   heightDamping: 2
-  isAutoRotate: 0
+  isLerpRotate: 0
   rotationDamping: 3
   offsetHeight4Call: 0.05
   offsetWidth4Call: 0.05

@@ -60,6 +60,8 @@ public static class ExampleConfig
                 typeof(RenderSettings),
                 typeof(LightmapSettings),
                 typeof(WaitForSeconds),
+                typeof(AudioClip),
+                typeof(AudioSource),
 
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
@@ -100,6 +102,9 @@ public static class ExampleConfig
                 typeof(ABInfo),
                 // typeof(AssetBundleManager),
                 typeof(ResourceManager),
+                typeof(MgrLoadScene),
+                typeof(SmoothFollower),
+                typeof(MainCameraManager),
                 //---------------------------------------------------------------  
             };
 
@@ -122,6 +127,7 @@ public static class ExampleConfig
                 typeof(DF_OnNotifyDestry),
                 typeof(DF_UGUIPos),
                 typeof(DF_UGUIV2Bool),
+                typeof(DF_KeyState),
             };
 
     //黑名单

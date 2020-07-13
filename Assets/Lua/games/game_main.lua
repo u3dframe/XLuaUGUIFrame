@@ -7,9 +7,9 @@ function M.Init()
 	require("games/game_manager").Init()
 	setPTabFunc(printInfo); -- 设置打印table的公共外部函数
 	-- 按键控制 发布真机包时 会移除
-	-- if GM_IsEditor then
-	--	require("manager.keycodecallback").Init()
-	-- end
+	if GM_IsEditor then
+		require("keycode").Init()
+	end
 	Evt_No_Use_Coroutine = false
 	Event.Brocast(Evt_GameEntryAfterUpRes);
 end

@@ -68,6 +68,10 @@ public class GameMgr : GobjLifeListener {
 		Localization.language = GameLanguage.strCurLanguage;
 		UGUIEventSystem.instance.Init(false);
 		LuaManager.instance.Init();
+
+#if UNITY_EDITOR
+		DisposeUpEvent(KeyCodeManager.OnUpdate,true);
+#endif
 	}
 
 	void Update() {

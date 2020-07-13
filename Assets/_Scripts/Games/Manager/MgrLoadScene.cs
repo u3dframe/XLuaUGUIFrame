@@ -51,28 +51,30 @@ public class MgrLoadScene : GobjLifeListener {
 		if(name.Equals(m_curName)) return;
 		this.m_curName = name;
 		this.m_callLoadedScene = callLoadedScene;
-		StartCoroutine (LoadSceneByMgr(name));
+		StartCoroutine (CorLoadScene(name));
 	}
 	
 	public void LoadScene(string name){
 		LoadScene(name,null);
 	}
 
-	IEnumerator LoadSceneByApp(string name)
-	{
-		yield return _wait;
-		AsyncOperation asyncOper = Application.LoadLevelAsync(name);
-		yield return asyncOper;
-		ExcuteCallLoadedScene();
-	}
-
-	IEnumerator LoadSceneByMgr(string name)
+#if UNITY_2017_1_OR_NEWER
+	IEnumerator CorLoadScene(string name)
 	{
 		yield return _wait;
 		AsyncOperation asyncOper = SceneManager.LoadSceneAsync(name);
 		yield return asyncOper;
 		ExcuteCallLoadedScene();
 	}
+#else
+	IEnumerator CorLoadScene(string name)
+	{
+		yield return _wait;
+		AsyncOperation asyncOper = Application.LoadLevelAsync(name);
+		yield return asyncOper;
+		ExcuteCallLoadedScene();
+	}
+#endif
 
 	// 是否当前的Scene窗体
 	public bool IsCurScene(string name){
