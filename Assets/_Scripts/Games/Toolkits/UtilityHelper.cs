@@ -185,6 +185,27 @@ public class UtilityHelper {
 		return Peer(gobj.transform, subnode);
 	}
 
+	static public GameObject GetGobj(string name,bool isNew,bool isNoDestroy) {
+		GameObject gobj = GameObject.Find(name);
+		if (isNew && IsNull(gobj)) {
+			gobj = new GameObject(name);
+		}
+		if(isNoDestroy) GameObject.DontDestroyOnLoad (gobj);
+		return gobj;
+	}
+
+	static public GameObject GetGobj(string name,bool isNew) {
+		return GetGobj(name,isNew,false);
+	}
+
+	static public GameObject GetGobj(string name) {
+		return GetGobj(name,true);
+	}
+
+	static public GameObject GetGobjNo(string name) {
+		return GetGobj(name,true,true);
+	}
+
 	/// <summary>
 	/// 设置父节点
 	/// </summary>

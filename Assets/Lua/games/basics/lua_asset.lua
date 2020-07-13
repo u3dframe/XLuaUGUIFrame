@@ -4,8 +4,15 @@
 	-- Date : 2020-07-03 22:25
 	-- Desc : 
 ]]
-local tb = table
+
+local tb,_mRes = table,MgrRes
 local str_format = string.format
+
+local function m_res()
+	if not _mRes then _mRes = MgrRes end
+	return _mRes
+end
+
 local super = LCFabElement
 local M = class( "lua_asset",super )
 
@@ -49,7 +56,7 @@ function M:LoadAsset()
 	local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
 	if _isBl then
 		self.stateLoad = LE_StateLoad.Loading;
-		MgrRes.LoadAsset(_abName,_assetName,_ltp,self._lfLoadAsset);
+		m_res().LoadAsset(_abName,_assetName,_ltp,self._lfLoadAsset);
 	else
 		printError("=== LoadAsset asset info not init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
 	end
@@ -82,24 +89,33 @@ end
 function M:OnCF_Texture( obj )
 end
 
-function M:OnUnLoad()
+function M:_OnUnLoad()
 	local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
 	if _isBl then
 		self.stateLoad = LE_StateLoad.UnLoad;
-		MgrRes.UnLoad(_abName,_assetName,_ltp);
+		local _isPool = self:IsInitGobj() and (_ltp == LE_AsType.Fab)
+		if _isPool then
+			m_res().ReturnObj(_abName,_assetName,self.gobj)
+		else
+			m_res().UnLoad(_abName,_assetName,_ltp);
+		end
+	else
+		printError("=== _OnUnLoad asset = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
+	end
+end
+
+function M:OnUnLoad()
+	local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
+	if _isBl then
+		m_res().UnLoad(_abName,_assetName,_ltp);
 	else
 		printError("=== OnUnLoad asset = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
 	end
 end
 
-function M:ReturnObj4Pool()
-	local _,_abName,_assetName = self:CfgAssetInfo();
-	MgrRes.ReturnObj(_abName,_assetName,self.gobj)
-end
-
 function M:pre_clean()
 	super.pre_clean( self )
-	self:OnUnLoad()
+	self:_OnUnLoad()
 end
 
 return M

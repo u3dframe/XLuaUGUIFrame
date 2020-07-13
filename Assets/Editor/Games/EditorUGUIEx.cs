@@ -10,6 +10,7 @@ public class EditorUGUIEx
     static string _fpInAsset4Item = "Assets/_Develop/Builds/prefabs/ui/ui_item.prefab";
     static Font font;
     static int layerUI = LayerMask.NameToLayer("UI");
+    static bool needInCanvas = false;
 
     // 重写Hierarchy的右键菜单
     // https://www.xuanyusong.com/archives/3893
@@ -40,7 +41,8 @@ public class EditorUGUIEx
 		Transform _active = Selection.activeTransform;
         if (_active)
         {
-            if (_active.GetComponentInParent<Canvas>())
+            bool _isBl = !needInCanvas || _active.GetComponentInParent<Canvas>() != null;
+            if (_isBl)
             {
                 GameObject go = new GameObject(name,type);
                 go.GetComponent<MaskableGraphic>().raycastTarget = raycastTarget;

@@ -14,6 +14,11 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		return UtilityHelper.IsNull(uobj);
 	}
 
+	static protected GameObject GetGobj(string name)
+	{
+		return UtilityHelper.GetGobjNo(name);
+	}
+
 	static public GobjLifeListener Get(GameObject gobj,bool isAdd){
 		GobjLifeListener _r = gobj.GetComponent<GobjLifeListener> ();
 		if (isAdd && IsNull(_r)) {

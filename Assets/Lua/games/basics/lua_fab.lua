@@ -192,9 +192,13 @@ function M:_OnEnd(isDestroy)
 	end
 
 	self:OnEnd(isDestroy)
+	self:_OnExit(isDestroy)
 end
 
 function M:OnEnd(isDestroy)
+end
+
+function M:_OnExit(isDestroy)
 	if isDestroy then
 		if not self:DestroyObj() then
 			self:clean()

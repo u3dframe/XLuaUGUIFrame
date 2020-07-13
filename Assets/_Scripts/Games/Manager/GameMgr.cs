@@ -17,15 +17,8 @@ public class GameMgr : GobjLifeListener {
 	static public GameObject mgrGobj{
 		get{
 			if (IsNull(_mgrGobj)) {
-				string NM_Gobj = "GameManager";
-				_mgrGobj = GameObject.Find(NM_Gobj);
-				if (IsNull(_mgrGobj))
-				{
-					_mgrGobj = new GameObject(NM_Gobj);
-				}
-				GameObject.DontDestroyOnLoad (_mgrGobj);
+				_mgrGobj = GetGobj("GameManager");
 			}
-
 			return _mgrGobj;
 		}
 	}

@@ -5,6 +5,8 @@
 	-- Desc : 
 ]]
 
+local _csRes = CResMgr
+
 local M = {}
 local this = M
 
@@ -32,15 +34,15 @@ function M._GetAssetFuncs()
 end
 
 function M._LoadFab(abName,assetName,callLoad)
-	CResMgr.LoadFab(abName,assetName,callLoad)
+	_csRes.LoadFab(abName,assetName,callLoad)
 end
 
 function M._LoadSprite(abName,assetName,callLoad)
-	CResMgr.LoadSprite(abName,assetName,callLoad)
+	_csRes.LoadSprite(abName,assetName,callLoad)
 end
 
 function M._LoadTexture(abName,assetName,callLoad)
-	CResMgr.LoadTexture(abName,assetName,callLoad)
+	_csRes.LoadTexture(abName,assetName,callLoad)
 end
 
 function M.LoadAsset(abName,assetName,assetLType,callLoad)
@@ -53,33 +55,31 @@ function M.LoadAsset(abName,assetName,assetLType,callLoad)
 end
 
 function M.UnLoad(abName,assetName,assetLType)
-	if LE_AsType.Fab ~= assetLType then
-		if LE_AsType.UI == assetLType then
-			this.ClearPool(abName,assetName);
-		else
-			CResMgr.UnLoadAsset(abName);
-		end
+	if assetLType == LE_AsType.UI or assetLType == LE_AsType.Fab then
+		this.ClearPool(abName,assetName);
+	else
+		_csRes.UnLoadAsset(abName);
 	end
 end
 
 function M.ReturnObj(abName,assetName,gobj)
-	CResMgr.ReturnObj(abName,assetName,gobj);
+	_csRes.ReturnObj(abName,assetName,gobj);
 end
 
 function M.ClearPool(abName,assetName)
-	CResMgr.UnLoadPool(abName,assetName); -- 清除对象池
+	_csRes.UnLoadPool(abName,assetName); -- 清除对象池
 end
 
 function M._Get4Fab(abName,assetName)
-	return CResMgr.GetAsset4Fab(abName,assetName)
+	return _csRes.GetAsset4Fab(abName,assetName)
 end
 
 function M._Get4Sprite(abName,assetName)
-	return CResMgr.GetAsset4Fab(abName,assetName)
+	return _csRes.GetAsset4Fab(abName,assetName)
 end
 
 function M._Get4Texture(abName,assetName)
-	return CResMgr.GetAsset4Fab(abName,assetName)
+	return _csRes.GetAsset4Fab(abName,assetName)
 end
 
 function M.GetAsset(abName,assetName,assetLType)
