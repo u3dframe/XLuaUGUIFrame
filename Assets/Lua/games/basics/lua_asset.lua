@@ -65,13 +65,14 @@ end
 function M:_OnCFLoadAsset( obj )
 	if self.stateLoad ~= LE_StateLoad.Loading then return end
 	self.stateLoad = LE_StateLoad.Loaded;
-	local _tp = self.cfgAsset.assetLType
 	if not obj then
 		local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
 		printError("=== Not has asset init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp);
 	end
+	local _tp = self.cfgAsset.assetLType
 	if LE_AsType.Fab == _tp or LE_AsType.UI == _tp then
-		super.ctor(self,obj)
+		local _comp = self.cfgAsset.strComp
+		super.ctor(self,obj,_comp)
 		self:OnCF_Fab(obj)
 	elseif LE_AsType.Sprite == _tp then
 		self:OnCF_Sprite(obj);

@@ -5,9 +5,9 @@
 	-- Desc : 
 ]]
 
+local _mgrInput,_mgrCamera,_csMgr = MgrInput,MgrCamera
 local _scene1,_scene2 = "Loading01","Loading02"
 local super,_evt = MgrBase,Event
-local _csMgr
 local M = class( "mgr_scene",super )
 
 function M:Init()

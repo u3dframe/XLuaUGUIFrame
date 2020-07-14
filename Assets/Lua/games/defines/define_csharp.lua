@@ -10,7 +10,6 @@ UText = CS.UnityEngine.UI.Text
 UImage = CS.UnityEngine.UI.Image
 URawImage = CS.UnityEngine.UI.RawImage
 
-
 CWWWMgr = CS.Core.Kernel.WWWMgr
 CBtBuffer = CS.TNet.ByteBuffer
 CNetMgr = CS.NetworkManager
@@ -23,6 +22,9 @@ CHelper = CS.LuaHelper
 CTxt = CS.UGUILocalize
 CBtn = CS.UGUIButton
 CLoadSceneMgr = CS.MgrLoadScene
+CFollower = CS.SmoothFollower
+CMCaneraMgr = CS.MainCameraManager
+CInpMgr = CS.InputMgr
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])
 GM_IsEditor = CGameFile.isEditor

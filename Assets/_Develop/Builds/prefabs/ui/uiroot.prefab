@@ -47,6 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_isOnUpdate: 1
   poolName: 
+  csAlias: life
   m_gobjs:
   - {fileID: 5999145452730627902}
   - {fileID: 3642011444733226266}

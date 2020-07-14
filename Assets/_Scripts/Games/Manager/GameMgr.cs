@@ -27,10 +27,11 @@ public class GameMgr : GobjLifeListener {
 	static public GameMgr instance{
 		get{
 			if (IsNull(_instance)) {
-				_instance = mgrGobj.GetComponent<GameMgr>();
+				GameObject _gobj = mgrGobj;
+				_instance = _gobj.GetComponent<GameMgr>();
 				if (IsNull(_instance))
 				{
-					_instance = mgrGobj.AddComponent<GameMgr> ();
+					_instance = _gobj.AddComponent<GameMgr> ();
 				}
 			}
 			return _instance;
@@ -61,10 +62,7 @@ public class GameMgr : GobjLifeListener {
 		Localization.language = GameLanguage.strCurLanguage;
 		UGUIEventSystem.instance.Init(false);
 		LuaManager.instance.Init();
-
-#if UNITY_EDITOR
-		DisposeUpEvent(KeyCodeManager.OnUpdate,true);
-#endif
+		InputMgr.instance.Init();
 	}
 
 	void Update() {

@@ -57,12 +57,15 @@ public static class ExampleConfig
                 typeof(System.Collections.Generic.List<int>),
                 typeof(Action<string>),
                 typeof(UnityEngine.Debug),
+
+                //------------------------ u3d --------------------------------
                 typeof(RenderSettings),
                 typeof(LightmapSettings),
                 typeof(WaitForSeconds),
                 typeof(AudioClip),
                 typeof(AudioSource),
-
+                typeof(LayerMask),
+                typeof(RaycastHit),
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
                 typeof(UIBehaviour),
@@ -105,6 +108,7 @@ public static class ExampleConfig
                 typeof(MgrLoadScene),
                 typeof(SmoothFollower),
                 typeof(MainCameraManager),
+                typeof(InputMgr),
                 //---------------------------------------------------------------  
             };
 
@@ -127,7 +131,10 @@ public static class ExampleConfig
                 typeof(DF_OnNotifyDestry),
                 typeof(DF_UGUIPos),
                 typeof(DF_UGUIV2Bool),
-                typeof(DF_KeyState),
+                typeof(DF_InpKeyState),
+                typeof(DF_InpRayHit),
+                typeof(DF_InpVec2),
+                typeof(DF_InpScale),
             };
 
     //黑名单

@@ -243,6 +243,13 @@ public class UtilityHelper {
 		return Clone(trsf.gameObject);
 	}
 
+	static public bool IsInLayerMask(GameObject gobj, LayerMask layerMask) {
+        // 根据Layer数值进行移位获得用于运算的Mask值
+		if(IsNull(gobj)) return false;
+        int objLayerMask = 1 << gobj.layer;
+        return (layerMask.value & objLayerMask) > 0;
+    }
+	
 	/// <summary>
 	/// 网络可用
 	/// </summary>

@@ -44,7 +44,10 @@ _LuaFpMidle = {
 	{"UIBase","ui_base",6}, -- UI的基础类
 	{"UIRoot","ui_root",6}, -- 加载 UI的根uiroot
 	{"GEntry","game_entry",6}, -- 游戏入口
+	{"SceneBase","scene_base",6}, --场景对象基础类
 	{"MgrBase","mgr_base",6}, -- 管理基础类
+	{"MgrInput","mgr_input",6}, -- 管理 - 场景单击
+	{"MgrCamera","mgr_camera",6}, -- 管理 - 场景摄像头
 }
 
 -- 最后
