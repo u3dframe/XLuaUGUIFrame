@@ -63,6 +63,7 @@ function M:NewTxt(elName)
 	if _gobj then
 		return utxt().New(_gobj)
 	end
+	printError("=== NewTxt no child, name = [%s]",elName)
 end
 
 function M:NewBtn(elName,callFunc,val,isNoScale)
@@ -70,6 +71,7 @@ function M:NewBtn(elName,callFunc,val,isNoScale)
 	if _gobj then
 		return ubtn().New(_gobj,callFunc,val,isNoScale)
 	end
+	printError("=== NewBtn no child, name = [%s]",elName)
 end
 
 function M:NewTog(elName,uniqueID,callFunc,val,isNoCall4False)
@@ -77,6 +79,7 @@ function M:NewTog(elName,uniqueID,callFunc,val,isNoCall4False)
 	if _gobj then
 		return utog().New(uniqueID,_gobj,callFunc,val,isNoCall4False)
 	end
+	printError("=== NewTog no child, name = [%s]",elName)
 end
 
 function M:NewScl(elName,funcCreat,funcSetData,gobjItem)
@@ -84,6 +87,7 @@ function M:NewScl(elName,funcCreat,funcSetData,gobjItem)
 	if _gobj then
 		return uscl().New(_gobj,funcCreat,funcSetData,gobjItem)
 	end
+	printError("=== NewScl no child, name = [%s]",elName)
 end
 
 return M
