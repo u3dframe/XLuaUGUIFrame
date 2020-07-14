@@ -16,20 +16,25 @@ local super = LuBase
 local M = class( "ugui_scroll", super )
 local this = M
 
-function M:ctor(gobj,gobjItem,funcCreat,funcSetData)
+function M:ctor(gobj,funcCreat,funcSetData,gobjItem)
 	if not _clsTrsf then
 		_clsTrsf = LUTrsf
 	end
 
 	super.ctor( self,gobj,"ScrollRect" )
+
+	local _sr = self.comp
+	local _cont = _sr.content
+	if not gobjItem then
+		gobjItem = _cont.transform:GetChild(0)
+	end
 	assert(gobjItem,"== cell is null")
 	self.lbItem = _clsTrsf.New(gobjItem)
 
 	self.funcCreat = funcCreat
 	self.funcSetData = funcSetData	
 	
-	local _sr = self.comp
-	self.lbContent = _clsTrsf.New(_sr.content.gameObject)
+	self.lbContent = _clsTrsf.New(_cont)
 	self.lbContent:SetPivot(0,1)
 	self.lbContent:SetAnchorMin(0, 1)
 	self.lbContent:SetAnchorMax(0, 1)
