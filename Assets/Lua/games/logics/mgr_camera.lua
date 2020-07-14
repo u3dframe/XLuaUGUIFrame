@@ -16,7 +16,7 @@ end
 function M:GetCamera()
 	if self.lbCamera then return self.lbCamera end
 	self.lbCamera = SceneBase.New({
-		abName = "prefabs/MCamera.fab",
+		abName = "prefabs/m_camera.fab",
 		strComp = "MainCameraManager",
 		isStay = true,
 	});

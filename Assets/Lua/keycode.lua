@@ -47,7 +47,7 @@ local function _OnCall(key,state)
 end
 
 function M.Init()
-	local _CKeyCode = CS.KeyCodeManager
+	local _CKeyCode = CInpMgr
 	for _,v in ipairs(_code_keys) do
 		_CKeyCode.RegKeyCode(v,_OnCall);
 	end

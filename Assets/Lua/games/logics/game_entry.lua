@@ -15,7 +15,8 @@ end
 
 function M:EntryAfterUpRes()
 	_urt.singler()
-	_evt.Brocast(Evt_ToChangeScene)
+	-- _evt.Brocast(Evt_ToChangeScene)
+	_evt.Brocast(Evt_View_MainCamera)
 	_evt.Brocast(Evt_ToView_Login)
 end
 
