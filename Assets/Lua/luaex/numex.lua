@@ -35,7 +35,7 @@ end
 function tonum(val,base,def)
 	base = base or 10;
 	def = def or 0;
-    return tonumber(val, base) or def;
+    return tonumber(tostring(val), base) or def;
 end
 
 function tonum16(val,def)

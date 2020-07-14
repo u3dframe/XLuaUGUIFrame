@@ -35,9 +35,7 @@ function M:onAssetConfig( _cfg )
 	return _cfg;
 end
 
-function M:OnCF_Fab( obj )
-	super.OnCF_Fab( self,obj )
-
+function M:OnInit()
 	if not self:IsInitTrsf() then
 		return
 	end

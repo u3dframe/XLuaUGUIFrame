@@ -15,11 +15,16 @@ end
 
 function M:GetCamera()
 	if self.lbCamera then return self.lbCamera end
-	self.lbCamera = SceneBase.New({
+	self.lbCamera = _base.New({
 		abName = "prefabs/m_camera.fab",
 		strComp = "MainCameraManager",
 		isStay = true,
-	});
+	})
+	self.lbCamera.OnInit = function(_s)
+		_s:SetParent(nil,true)
+		_s:DonotDestory()
+		_s:SetEulerAngles(0,0,0)
+	end
 	self.lbCamera:View(true)
 	return self.lbCamera
 end

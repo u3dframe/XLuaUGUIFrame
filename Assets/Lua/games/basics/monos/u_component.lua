@@ -35,7 +35,7 @@ function M:InitComp( component )
 		if com then
 			self:ReEvtDestroy(true)
 		else
-			printError( "can't find compnent by %s", component )
+			printError( "=== can't find compnent by [%s] , gname = [%s]", component,self.g_name )
 		end
 	end
 end

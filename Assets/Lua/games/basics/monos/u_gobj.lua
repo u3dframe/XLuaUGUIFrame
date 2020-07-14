@@ -40,6 +40,7 @@ function M:ctor( obj )
 	self.obj = obj
 	self.objType = type(obj)
 	self.gobj = obj.gameObject or obj.gobj
+	self.g_name = self.gobj.name
 end
 
 function M:IsInitGobj()
