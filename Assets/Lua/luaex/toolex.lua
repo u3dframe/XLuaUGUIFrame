@@ -42,7 +42,7 @@ function handler_pcall( obj, method )
 		if _pcall == nil then
 			_pcall = pcall
 		end
-		local _ok,_err = pcall( method,obj, ... )
+		local _ok,_err = _pcall( method,obj, ... )
 		if not _ok then
 			printError("====[%s].[%s] , error = %s",obj,method,_err)
 		end
