@@ -27,7 +27,6 @@ public class MainCameraManager : MonoBehaviour
 	public SmoothFollower m_follower { get;private set; }
 	
 	void Awake(){
-		GameObject.DontDestroyOnLoad(this.gameObject);
 		if(m_camera){
 			m_follower = SmoothFollower.Get(m_camera.gameObject);
 			m_follower.target = m_target;
