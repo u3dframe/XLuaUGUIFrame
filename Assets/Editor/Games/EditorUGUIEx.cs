@@ -50,6 +50,8 @@ public class EditorUGUIEx
                 go.layer = layerUI;
                 Selection.activeGameObject = go;
                 com = go.GetComponent(type);
+
+                EditorUtility.SetDirty(_active);
             }
             else
             {
