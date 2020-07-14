@@ -53,6 +53,7 @@ namespace Core{
 		public bool isAutoHandler4MoreThanMax = true;
 		private bool preIsAutoHandler = true;
 
+		private bool m_isStartLoad = false;
 		public DF_LoadedFab m_cfLoadedFab = null;
 
 		private GameObjectPool (string poolName, int initCount, int maxSize,Transform root)
@@ -104,9 +105,16 @@ namespace Core{
 			string[] _ars = GameFile.Split(poolName,m_cSp,true);
 			if(_ars != null && _ars.Length > 2){
 				this.abName = _ars[0];
-				this.assetName = _ars[1];
-				this.poolObject = abMgr.LoadAsset<GameObject>(this.abName,this.assetName,OnLoadedCall);
+				this.assetName = _ars[1];				
 			}
+		}
+
+		public GameObjectPool StartLoad(DF_LoadedFab cfLoaded) {
+			this.m_cfLoadedFab += cfLoaded;
+			if(m_isStartLoad) return this;
+			this.m_isStartLoad = true;
+			this.poolObject = abMgr.LoadAsset<GameObject>(this.abName,this.assetName,OnLoadedCall);
+			 return this;
 		}
 		
 		// 设置最大数量
