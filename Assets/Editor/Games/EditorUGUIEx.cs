@@ -43,24 +43,22 @@ public class EditorUGUIEx
 	static Component CreateUIObject(Type type, string name, bool raycastTarget = false) {
         Component com = null;
 		Transform _active = Selection.activeTransform;
-        if (_active)
+        bool _isBl = (!needInCanvas) || (_active != null && _active.GetComponentInParent<Canvas>() != null);
+        if (_isBl)
         {
-            bool _isBl = !needInCanvas || _active.GetComponentInParent<Canvas>() != null;
-            if (_isBl)
-            {
-                GameObject go = new GameObject(name,type);
-                go.GetComponent<MaskableGraphic>().raycastTarget = raycastTarget;
-                go.transform.SetParent(_active,false);
-                go.layer = layerUI;
-                Selection.activeGameObject = go;
-                com = go.GetComponent(type);
+            GameObject go = new GameObject(name,type);
+            go.GetComponent<MaskableGraphic>().raycastTarget = raycastTarget;
+            go.transform.SetParent(_active,false);
+            go.layer = layerUI;
+            Selection.activeGameObject = go;
+            com = go.GetComponent(type);
 
+            if(_active)
                 EditorUtility.SetDirty(_active);
-            }
-            else
-            {
-                throw new System.Exception("必须在画布下创建UI");
-            }
+        }
+        else
+        {
+            throw new System.Exception("必须在画布下创建UI");
         }
         return com;
     }
