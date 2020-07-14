@@ -10,7 +10,11 @@ public class EditorUGUIEx
     static string _fpInAsset4Item = "Assets/_Develop/Builds/prefabs/ui/ui_item.prefab";
     static Font font;
     static int layerUI = LayerMask.NameToLayer("UI");
+#if UNITY_2017_1_OR_NEWER
     static bool needInCanvas = false;
+#else
+    static bool needInCanvas = true;
+#endif
 
     // 重写Hierarchy的右键菜单
     // https://www.xuanyusong.com/archives/3893
