@@ -106,7 +106,7 @@ public class LuaManager : GobjLifeListener
 	}
 
 	public bool CFuncLua(string funcName, params object[] args) {
-		LuaFunction func = luaEnv.Global.Get<LuaFunction>(funcName);
+		LuaFunction func = luaEnv.Global.GetInPath<LuaFunction>(funcName);
 		if (func != null) {
 			int lens = 0;
 			if(args != null){

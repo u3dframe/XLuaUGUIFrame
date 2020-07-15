@@ -41,6 +41,7 @@ _LuaFpBasic = {
 _LuaFpMidle = {
 	{"","protocal",5}, -- 常量 网络层协议
 	{"Network","network",5}, -- 网络层
+	{"UIPubs","ui_pubs",6}, -- UI的Pubs
 	{"UIBase","ui_base",6}, -- UI的基础类
 	{"UIRoot","ui_root",6}, -- 加载 UI的根uiroot
 	{"GEntry","game_entry",6}, -- 游戏入口
