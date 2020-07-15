@@ -69,6 +69,11 @@ namespace Core
 		// 取得文本内容
 		static public string GetText(string fn){
 			string _fp = GetPath (fn);
+#if UNITY_EDITOR
+		if(fn.EndsWith(".csv")){
+			_fp = string.Format("{0}CsvTxts/{1}",m_appAssetPath,fn);
+		}
+#endif
 			if (File.Exists (_fp)) {
 				return File.ReadAllText (_fp);
 			}
