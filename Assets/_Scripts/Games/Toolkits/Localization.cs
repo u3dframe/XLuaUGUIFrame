@@ -38,6 +38,15 @@ static public class Localization
 			}
 		}
 	}
+
+	static private Dictionary<string, string> GetCurrDict (string language)
+	{
+		if(mDicLgs.ContainsKey(language))
+		{
+			return mDicLgs[language];
+		}
+		return null;
+	}
 	
 	static public bool ReLoad (string language,bool isCsv)
 	{
@@ -53,7 +62,7 @@ static public class Localization
 		if (string.IsNullOrEmpty(val)) return false;
 		string[] _rows = GameFile.SplitRow(val);
 		if (GameFile.IsNullOrEmpty(_rows)) return false;
-		mCTemp = mDicLgs[language];
+		mCTemp = GetCurrDict(language);
 		if(mCTemp == null)
 			mCTemp = new Dictionary<string, string>();
 		mCTemp.Clear();

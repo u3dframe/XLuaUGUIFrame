@@ -105,7 +105,10 @@ local function spawn(f)
     end
     
     return coroutine.resume(coroutine.create(function()
-        f()
+        local ok,err = xpcall(f,debug.traceback)
+        if not ok then
+            _G.printError(err)
+        end
     end))
 end
 _M.Spawn = spawn

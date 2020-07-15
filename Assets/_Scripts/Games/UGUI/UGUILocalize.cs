@@ -67,7 +67,7 @@ public class UGUILocalize : GobjLifeListener {
 		if(fmtPars == null || fmtPars.Length <= 0) _val = Localization.Get(m_key);
 		else _val = Localization.Format(m_key,fmtPars);
 		_val =  (_val == null) ? ((m_key == null) ? "" : m_key) : _val;
-		Debug.LogErrorFormat("===[{0}] = [{1}]",m_key,_val);
+		// Debug.LogErrorFormat("===[{0}] = [{1}]",m_key,_val);
 		m_text.text = _val;
 	}
 
