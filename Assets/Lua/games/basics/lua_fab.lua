@@ -133,7 +133,7 @@ function M:_JudgeLoad()
 end
 
 function M:_IsLogViewTime()
-	return (not self.cfgAsset.isNoLogVTime) and LOG_VIEW_USE_TIME
+	return (self.cfgAsset.isLogVTime == true) and (LOG_VIEW_USE_TIME == true)
 end
 
 function M:_OnView()
