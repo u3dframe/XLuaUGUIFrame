@@ -132,9 +132,13 @@ function M:_JudgeLoad()
 	end
 end
 
+function M:_IsLogViewTime()
+	return (not self.cfgAsset.isNoLogVTime) and LOG_VIEW_USE_TIME
+end
+
 function M:_OnView()
 	local _t1,_t2,_t3 = nil
-	local _isLog = LOG_VIEW_USE_TIME
+	local _isLog = self:_IsLogViewTime()
 	if _isLog then
 		_func_time = _func_time or os.clock
 		_t1 = _func_time()
