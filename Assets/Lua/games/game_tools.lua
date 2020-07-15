@@ -15,7 +15,10 @@ local _error = error;
 local _isTrace = false -- 是否包含 traceback
 
 function logMust(fmt,...)
-	local str = str_format(tostring(fmt), ...)
+	local str = tostring(fmt)
+	if #({...}) > 0 then
+		str = str_format( str , ... )
+	end
 	CHelper.Log(str)
 end
 
