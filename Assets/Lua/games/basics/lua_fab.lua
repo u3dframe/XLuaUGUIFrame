@@ -134,20 +134,21 @@ end
 
 function M:_OnView()
 	local _t1,_t2,_t3 = nil
-	if LOG_VIEW_USE_TIME then
+	local _isLog = LOG_VIEW_USE_TIME
+	if _isLog then
 		_func_time = _func_time or os.clock
 		_t1 = _func_time()
 	end
 
 	self:_OnInit() -- 初始化
 
-	if LOG_VIEW_USE_TIME then
+	if _isLog then
 		_t2 = _func_time()
 	end
 
 	self:_OnShow() -- 显示刷新
 
-	if LOG_VIEW_USE_TIME then
+	if _isLog then
 		_t3 = _func_time()
 		logMust("=== view [%s],use time,OnInit = [%s], OnShow = [%s]",self.cfgAsset.assetName,(_t2 - _t1),(_t3 -_t2))
 	end
