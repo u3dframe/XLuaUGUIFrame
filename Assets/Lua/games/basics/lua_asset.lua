@@ -22,13 +22,21 @@ function M:ctor(assetCfg)
 		assetName = nil,
 		assetLType = LE_AsType.Fab,
 	}	
-	self:onAssetConfig(assetCfg or self.cfgAsset)
+	assetCfg = self:onAssetConfig(assetCfg)
+	self:_onAssetConfig(assetCfg)
 	self._lfLoadAsset = handler(self,self._OnCFLoadAsset);
 	self.stateLoad = LE_StateLoad.None;
 end
 
 function M:onAssetConfig( assetCfg )
-	return tb.merge(self.cfgAsset, assetCfg)
+	return assetCfg or self.cfgAsset;
+end
+
+function M:_onAssetConfig( cfg )
+	if cfg ~= self.cfgAsset and type(cfg) == "table" then
+		return tb.merge(self.cfgAsset, cfg)
+	end
+	return self.cfgAsset
 end
 
 function M:IsInitAsset()

@@ -73,6 +73,14 @@ function string.contains(src,val)
     return isRet,begIndex,endIndex;
 end
 
+function string.starts(src,sbeg)
+    return str_sub(src,1,str_len(sbeg)) == sbeg
+ end
+ 
+function string.ends(src,send)
+    return send == '' or str_sub(src,-str_len(send)) == send
+ end
+
 function string.replace(inStr,pat,val)
     return str_gsub(inStr,pat,val);
 end
