@@ -3,3 +3,12 @@ vscode 过滤掉 .meta文件，操作如下:
 2. Settings (设置) 选卡的搜索栏中 搜索 files.exclude
 3. 在搜索结果里面，单击 Add Pattern (添加模式)
 4. 添加 **/*.meta 即可
+
+vscode lua unity插件
+1.C#
+2.Debugger for Unity
+3.Lua Debug
+4.ShaderLabFormatter
+5.vscode-lua
+6.vscode-lua-format
+7.vscode-luacheck
