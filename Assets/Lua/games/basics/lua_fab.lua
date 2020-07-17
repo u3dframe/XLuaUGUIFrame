@@ -7,7 +7,6 @@
 
 local _func_time = nil
 local cfg_backup = {}
-local str_format = string.format
 
 local super = LuaAsset
 local M = class( "lua_fab",super )
@@ -232,7 +231,7 @@ end
 function M:pre_clean()
 	super.pre_clean( self )
 	
-	local _key = str_format("%s",self)
+	local _key = self:SFmt("%s",self)
 	cfg_backup[_key] = self.cfgAsset;
 	self.cfgAsset = nil
 	self:ReEvent4OnUpdate()
@@ -241,7 +240,7 @@ end
 function M:clean_end()
 	super.clean_end( self )
 
-	local _key = str_format("%s",self)
+	local _key = self:SFmt("%s",self)
 	local _cfgAsset = cfg_backup[_key];
 	self.cfgAsset = _cfgAsset
 	cfg_backup[_key] = nil

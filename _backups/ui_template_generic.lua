@@ -14,6 +14,7 @@ local M = class( "ui_xxx",super )
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.abName = "login/uilogin" -- ui 资源 ab 名，在prefab/ui/文件夹下
+	_cfg.isLogVTime = true
 	-- _cfg.assetName = "uiroot.prefab" -- ab里面的资源Asset名
 	-- _cfg.assetLType = LE_AsType.UI 资源类型
 	-- _cfg.layer = LE_UILayer.Normal -- 所在层级 默认是 Normal 层

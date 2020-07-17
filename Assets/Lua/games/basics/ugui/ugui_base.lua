@@ -11,9 +11,7 @@ local super = LUComonet
 local M = class( "ugui_base",super )
 
 function M:_Init( callFunc,val )
-	if not _clsTxt then
-		_clsEle,_clsGobj,_clsTxt = LCFabElement,LUGobj,LuText
-	end
+	_clsEle,_clsGobj,_clsTxt = (_clsEle or LCFabElement),(_clsGobj or LUGobj),(_clsTxt or LuText)
 	local _tmp,_tmp2 = self:GetComponent("PrefabElement")
 	if _tmp then
 		_tmp = _clsEle.New(_tmp,_tmp)

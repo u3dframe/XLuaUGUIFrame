@@ -4,7 +4,6 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local str_format = string.format
 
 local super = LuaObject
 local M = class( "lua_gobj",super )
@@ -52,7 +51,7 @@ function M:IsActive( )
 end
 
 function M:GetComponent( com )
-	local _k = str_format("__com_%s",com)
+	local _k = self:SFmt("__com_%s",com)
 	if not self[_k] then 
 		self[_k] = self.gobj:GetComponent( com )
 	end

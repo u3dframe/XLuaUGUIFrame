@@ -6,7 +6,6 @@
 ]]
 
 local tb,_mRes = table,MgrRes
-local str_format = string.format
 
 local function m_res()
 	if not _mRes then _mRes = MgrRes end
@@ -52,7 +51,7 @@ function M:CfgAssetInfo()
 	local _isAs = (type(_assetName) == "string")
 	if _isAb and not _isAs then
 		_assetName = CGameFile.GetFileNameNoSuffix(_abName)
-		_assetName = str_format("%s.%s",_assetName,LE_AsType[_ltp])
+		_assetName = self:SFmt("%s.%s",_assetName,LE_AsType[_ltp])
 		_isAs = true
 	end
 	self.cfgAsset.assetName = _assetName
@@ -73,11 +72,12 @@ end
 function M:_OnCFLoadAsset( obj )
 	if self.stateLoad ~= LE_StateLoad.Loading then return end
 	self.stateLoad = LE_StateLoad.Loaded;
-	if not obj then
+	local _isNoObj,_tp = (not obj)
+	if _isNoObj then
 		local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
 		printError("=== Not has asset init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp);
 	end
-	local _tp = self.cfgAsset.assetLType
+	_tp = self.cfgAsset.assetLType
 	if LE_AsType.Fab == _tp or LE_AsType.UI == _tp then
 		local _comp = self.cfgAsset.strComp
 		super.ctor(self,obj,_comp)
@@ -86,6 +86,9 @@ function M:_OnCFLoadAsset( obj )
 		self:OnCF_Sprite(obj);
 	elseif LE_AsType.Texture == _tp then
 		self:OnCF_Texture(obj);
+	end
+	if self.lfAssetLoaded then
+		self.lfAssetLoaded(_isNoObj,obj)
 	end
 end
 

@@ -5,7 +5,7 @@
 	-- Desc : 公共函数
 ]]
 
-local _c_trsf,_c_comp,_c_ele,_utxt, _ubtn, _utog, _uscl = nil
+local _c_trsf,_c_comp,_c_ele,_lasset,_utxt,_ubtn,_utog,_uscl,_uimg = nil
 local function c_trsf()
     if not _c_trsf then
         _c_trsf = LUTrsf
@@ -25,6 +25,13 @@ local function c_ele()
         _c_ele = LCFabElement
     end
     return _c_ele
+end
+
+local function l_asset()
+    if not _lasset then
+        _lasset = LuaAsset
+    end
+    return _lasset
 end
 
 local function utxt()
@@ -55,6 +62,13 @@ local function uscl()
     return _uscl
 end
 
+local function uimg()
+    if not _uimg then
+        _uimg = LuImg
+    end
+    return _uimg
+end
+
 local M = class("ui_pubs")
 
 function M:NewTrsf(elName)
@@ -79,6 +93,20 @@ function M:NewEle(elName)
         return c_ele().New(_gobj)
     end
     printError("=== NewEle is Null, name = [%s]", elName)
+end
+
+function M:NewAsset(ab,asset,atp,callFunc)
+    local _lb = l_asset().New({
+        abName = ab,
+        assetName = asset,
+        assetLType = atp
+    })
+    _lb.lfAssetLoaded = function(isNo,obj)
+        if callFunc ~= nil then
+            callFunc(isNo,obj)
+        end
+    end
+    return _lb
 end
 
 function M:NewTxt(elName)
@@ -111,6 +139,16 @@ function M:NewScl(elName, funcCreat, funcSetData, gobjItem)
         return uscl().New(_gobj, funcCreat, funcSetData, gobjItem)
     end
     printError("=== NewScl is Null, name = [%s]", elName)
+end
+
+function M:NewImg(elName,compName)
+    if (compName == nil) or (compName == "Image") or (compName == "RawImage") then
+        local _gobj = self:GetElement(elName)
+        if _gobj then
+            return uimg().New(_gobj,compName)
+        end
+    end
+    printError("=== NewImg is Null, name = [%s],comp = [%s]", elName,compName)
 end
 
 return M

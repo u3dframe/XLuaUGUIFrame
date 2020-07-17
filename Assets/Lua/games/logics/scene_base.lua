@@ -5,10 +5,6 @@
 	-- Desc : 
 ]]
 
-local _str_beg = string.starts
-local _str_end = string.ends
-local _str_fmt = string.format
-
 local super = LuaFab
 local M = class( "scene_base",super )
 
@@ -20,12 +16,7 @@ end
 
 function M:onMergeConfig( _cfg )
 	_cfg = super.onMergeConfig( self,_cfg )
-	if not _str_beg(_cfg.abName,"prefabs/") then
-		_cfg.abName = _str_fmt("%s%s","prefabs/",_cfg.abName)
-	end
-	if not _str_end(_cfg.abName,".fab") then
-		_cfg.abName = _str_fmt("%s.fab",_cfg.abName)
-	end
+	_cfg.abName = self:ReSBegEnd( _cfg.abName,"prefabs/",".fab" )
 	return _cfg;
 end
 

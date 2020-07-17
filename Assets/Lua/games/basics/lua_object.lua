@@ -5,6 +5,10 @@
 	-- Desc : 
 ]]
 
+local _str_beg = string.starts
+local _str_end = string.ends
+local _str_fmt = string.format
+
 local tb_has = table.contains
 local _lbKeys = { "__cname","class","__supers","__create","__index","__newindex" }
 
@@ -12,8 +16,27 @@ local M = class( "lua_object" )
 function M:ctor( )
 end
 
-function M:getLuaName()
+function M:getCName()
 	return self.__cname
+end
+
+function M:SFmt( s_fmt,... )
+	return _str_fmt( s_fmt , ... )
+end
+
+function M:ReSBegEnd( sSrc,sBeg,sEnd )
+	if not sSrc then return "" end
+	if sBeg and not _str_beg(sSrc,sBeg) then
+		sSrc = _str_fmt("%s%s",sBeg,sSrc)
+	end
+	if sEnd and not _str_end(sSrc,sEnd) then
+		sSrc = _str_fmt("%s%s",sSrc,sEnd)
+	end
+	return sSrc
+end
+
+function M:ReSEnd( sSrc,sEnd )
+	return self:ReSBegEnd(sSrc,nil,sEnd)
 end
 
 function M:ReEvent4OnUpdate(isBind)
@@ -49,13 +72,17 @@ end
 function M:pre_clean()
 end
 
-function M:clean()
-	self:pre_clean()
-	self:_clean()
-	self:clean_end()
+function M:on_clean()
 end
 
 function M:clean_end()
+end
+
+function M:clean()
+	self:pre_clean()
+	self:on_clean()
+	self:_clean()
+	self:clean_end()
 end
 
 return M

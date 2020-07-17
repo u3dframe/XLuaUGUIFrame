@@ -28,12 +28,13 @@ function M.RequireByTab(lb)
 		end
 		_fp = str_format(fmt_s1_s2,_fp,v[2])
 		_entity = require(_fp)
-		if type(_entity) == "table" and _entity.Init then
-			_entity:Init();
-		end
-
+		
 		if not (v[1] == "" or v[1] == "nil") then
 			_MG[v[1]] = _entity;
+		end
+
+		if type(_entity) == "table" and _entity.Init then
+			_entity:Init();
 		end
 	end
 end

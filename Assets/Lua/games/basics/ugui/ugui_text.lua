@@ -17,7 +17,7 @@ function M:ctor( obj,com )
 	super.ctor( self,gobj,com or "UGUILocalize" )
 end
 
-function M:GetText()
+function M:GetTextVal()
 	return self.comp.m_textVal
 end
 

@@ -32,6 +32,7 @@ _LuaFpBasic = {
 	{"LuBtn","ugui_button",4}, -- 组件 - 按钮
 	{"LuTog","ugui_toggle",4}, -- 组件 - toggle
 	{"LuScl","ugui_scroll",4}, -- 组件 - 循环滚动
+	{"LuImg","ugui_image",4}, -- 组件 - 图片
 	{"LuaAsset","lua_asset",2}, -- 资源
 	{"LuaFab","lua_fab",2}, -- 为场景对象和ui_base对象的父类
 	{"MgrRes","mgr_res",2}, -- 控制 资源加载了

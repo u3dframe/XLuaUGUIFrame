@@ -4,7 +4,7 @@
 	-- Date : 2020-07-05 09:25
 	-- Desc : 
 ]]
-local str_format = string.format
+
 local tb_remove = table.remove
 local tb_insert = table.insert
 local tb_contain = table.contains
@@ -45,7 +45,7 @@ function M:OnInit()
 		if LE_UILayer.URoot ~= v and LE_UILayer.UpRes ~= v then
 			_it = self:GetElement(v);
 			if _it then
-				self[str_format("l_%s", v)] = LUComonet.New(_it,"UGUICanvasAdaptive")
+				self[self:SFmt("l_%s", v)] = LUComonet.New(_it,"UGUICanvasAdaptive")
 			else
 				printError("=== not has layer child = [%s]",v)
 			end
@@ -56,7 +56,7 @@ end
 
 function M:SetUILayer( lbUIEntity )
 	local _lay = lbUIEntity:GetLayer()
-	local _key = str_format("l_%s", _lay)
+	local _key = self:SFmt("l_%s", _lay)
 	local _lb = self[_key];
 	if not _lb then
 		self._lbLayer = self._lbLayer or {}
