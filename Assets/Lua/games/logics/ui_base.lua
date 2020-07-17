@@ -17,16 +17,21 @@ function M:ctor(assetCfg)
 	super2.ctor( self )
 end
 
-function M:_onAssetConfig( _cfg )
-	_cfg = super._onAssetConfig( self,_cfg )
+function M:onAssetConfig( _cfg )
+	_cfg = super.onAssetConfig( self,_cfg )
+	_cfg.assetLType = LE_AsType.UI
+	_cfg.layer = LE_UILayer.Normal
+	return _cfg;
+end
+
+function M:onMergeConfig( _cfg )
+	_cfg = super.onMergeConfig( self,_cfg )
 	if not _str_beg(_cfg.abName,"prefabs/ui/") then
 		_cfg.abName = _str_fmt("%s%s","prefabs/ui/",_cfg.abName)
 	end
 	if not _str_end(_cfg.abName,".ui") then
 		_cfg.abName = _str_fmt("%s.ui",_cfg.abName)
 	end
-	_cfg.assetLType = LE_AsType.UI
-	_cfg.layer = LE_UILayer.Normal
 	return _cfg;
 end
 

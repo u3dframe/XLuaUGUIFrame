@@ -16,7 +16,7 @@ end
 function M:GetCamera()
 	if self.lbCamera then return self.lbCamera end
 	self.lbCamera = _base.New({
-		abName = "prefabs/m_camera.fab",
+		abName = "m_camera",
 		strComp = "MainCameraManager",
 		isStay = true,
 	})

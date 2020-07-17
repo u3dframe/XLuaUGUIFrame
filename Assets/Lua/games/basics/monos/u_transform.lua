@@ -43,7 +43,7 @@ end
 function M:GetChild( nIndex )
 	nIndex = _tn( nIndex,0 )
 	local _nc = self:GetChildCount()
-	if _nc > 0 and nIndex > 0 and _nc > nIndex then
+	if _nc > 0 and nIndex >= 0 and _nc > nIndex then
 		return self.trsf:GetChild(nIndex)
 	end
 end

@@ -23,7 +23,7 @@ function M:ctor(assetCfg)
 		assetLType = LE_AsType.Fab,
 	}	
 	assetCfg = self:onAssetConfig(assetCfg)
-	self:_onAssetConfig(assetCfg)
+	self:onMergeConfig(assetCfg)
 	self._lfLoadAsset = handler(self,self._OnCFLoadAsset);
 	self.stateLoad = LE_StateLoad.None;
 end
@@ -32,7 +32,7 @@ function M:onAssetConfig( assetCfg )
 	return assetCfg or self.cfgAsset;
 end
 
-function M:_onAssetConfig( cfg )
+function M:onMergeConfig( cfg )
 	if cfg ~= self.cfgAsset and type(cfg) == "table" then
 		return tb.merge(self.cfgAsset, cfg)
 	end

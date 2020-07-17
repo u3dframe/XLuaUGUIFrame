@@ -30,8 +30,10 @@ function M.CsRmExcept( ... )
 	end
 end
 
-function M:ctor( gobj,callFunc,val,isNoScale )
-	assert(gobj,"btn ctor is null")
+function M:ctor( obj,callFunc,val,isNoScale )
+	assert(obj,"btn's obj is null")
+	local gobj = obj.gameObject
+	assert(gobj,"btn's gobj is null")
 	local _tmp,_tmp2 = CBtn.Get(gobj)
 	super.ctor( self,gobj,_tmp )
 	_tmp.m_onClick = handler(self,self.OnClickSelf)

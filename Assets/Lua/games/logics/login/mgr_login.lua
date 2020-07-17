@@ -13,12 +13,19 @@ function M:Init()
 end
 
 function M:ToLoginView()
-	printInfo("======1")
 	local ui = UIBase.New({
-		abName = "prefabs/ui/login/uilogin.ui",
-		-- assetName = "updateui.prefab",
+		abName = "login/uilogin",
 	});
-	-- ui.lfLoaded = function() UIRoot.singler() end
+
+	ui.OnInit = function(_s)
+		_s.lbBtn01 = _s:NewBtn("button",function()
+			printInfo("click buttion")
+		end,2)
+	end
+
+	ui.OnShow = function(_s)
+		_s.lbBtn01:SetText(4)
+	end
 	ui:View(true)
 	-- coroutine.wait(20)
 	-- printInfo("======2")
