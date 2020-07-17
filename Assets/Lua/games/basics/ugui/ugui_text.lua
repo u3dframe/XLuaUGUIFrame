@@ -17,6 +17,10 @@ function M:ctor( obj,com )
 	super.ctor( self,gobj,com or "UGUILocalize" )
 end
 
+function M:GetText()
+	return self.comp.m_textVal
+end
+
 -- 本地化内容处理完毕
 function M:SetText( val )
 	self.comp:SetText(val);

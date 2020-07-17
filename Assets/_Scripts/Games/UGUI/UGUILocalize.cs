@@ -25,11 +25,20 @@ public class UGUILocalize : GobjLifeListener {
 		return Get(gobj,true);
 	}
 
-	public string m_key = "key";
+	public string m_key = "";
 	public Text m_text;
 	bool m_isInit = false;
+	bool m_isUseLocalize = true;
 	object[] fmtPars = null;
-	string _val = "";
+	string _sval = "";
+	
+	public string m_textVal{
+		get{
+			if(m_text != null && !m_text.text.Equals(_sval))
+				_sval = m_text.text;
+			return _sval;
+		}
+	}
 
 	protected override void OnCall4Awake()
 	{
@@ -64,16 +73,26 @@ public class UGUILocalize : GobjLifeListener {
 
 	void OnLocalize()
 	{
-		if(!m_text) return;
-		if(fmtPars == null || fmtPars.Length <= 0) _val = Localization.Get(m_key);
-		else _val = Localization.Format(m_key,fmtPars);
-		_val =  (_val == null) ? ((m_key == null) ? "" : m_key) : _val;
-		// Debug.LogErrorFormat("===[{0}] = [{1}]",m_key,_val);
-		m_text.text = _val;
+		if(!m_isUseLocalize || !m_text) return;
+
+		if(string.IsNullOrEmpty(m_key)){
+			_sval = "";
+		}else{
+			if(fmtPars == null || fmtPars.Length <= 0) _sval = Localization.Get(m_key);
+			else _sval = Localization.Format(m_key,fmtPars);
+		}
+		_SetTextVal(_sval);
+	}
+
+	void _SetTextVal(string val){
+		_sval = (val == null) ? (m_key == null ? "" : m_key) : val;
+		// Debug.LogErrorFormat("===[{0}] = [{1}]",m_key,_sval);
+		m_text.text = _sval;
 	}
 
 	public void SetText(string key){
 		this.m_key = key;
+		this.m_isUseLocalize = true;
 		OnLocalize();
 	}
 
@@ -84,13 +103,15 @@ public class UGUILocalize : GobjLifeListener {
 	public void SetUText(string val){
 		if(!m_text)
 			return;
+		this.m_isUseLocalize = false;
 		val =  (val == null) ? "" : val;
-		m_text.text = val;
+		_SetTextVal(val);
 	}
 
 	public void Format(string key,object[] pars){
 		this.m_key = key;
 		this.fmtPars = pars;
+		this.m_isUseLocalize = true;
 		OnLocalize();
 	}
 
