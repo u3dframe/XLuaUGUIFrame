@@ -34,6 +34,7 @@ public class UGUILocalize : GobjLifeListener {
 	protected override void OnCall4Awake()
 	{
 		Init();
+		this.csAlias = "U_TLOC";
 	}
 
 	protected override void OnCall4Hide()

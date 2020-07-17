@@ -88,8 +88,9 @@ public class LuaManager : GobjLifeListener
 		if(luLateUpdate != null) luLateUpdate();
 	}
 	
-	void OnApplicationQuit(){
+	protected new void OnApplicationQuit(){
 		if(luaOnApplicationQuit != null) luaOnApplicationQuit();
+		base.OnApplicationQuit();
 	}
 
 	void InitSelfLibs()
@@ -138,8 +139,14 @@ public class LuaManager : GobjLifeListener
 		}
 	}
 
+	protected override void _OnClear(){
+		luaUpdate = null;
+		luLateUpdate = null;
+		luaOnApplicationQuit = null;
+		luaSceneChange = null;
+	}
+
 	protected override void OnCall4Destroy(){
 		luaEnv.Dispose();
-		luaUpdate = null;
 	}
 }

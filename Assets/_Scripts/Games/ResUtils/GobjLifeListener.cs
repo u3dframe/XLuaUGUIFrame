@@ -68,10 +68,11 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	}
 
 	[HideInInspector] public string poolName = "";
-	[HideInInspector] public string csAlias = "life"; // CSharp 别名
+	[HideInInspector] public string csAlias = ""; // CSharp 别名
 	// 是否是存活的
-	private bool _alive = false;
-	public bool alive { get {return _alive;} }
+	private bool _isAlive = false;
+	public bool isAlive { get {return _isAlive;} }
+	public bool isAppQuit { get;private set;}
 
 
 	/// <summary>
@@ -92,9 +93,12 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 
 	void Awake()
 	{
-		this._alive = true;
+		this._isAlive = true;
 		OnCall4Awake();
 		if(m_callAwake != null) m_callAwake ();
+		if(string.IsNullOrEmpty(this.csAlias)){
+			this.csAlias = this.m_gobj.name;
+		}
 	}
 
 	void Start() {
@@ -116,24 +120,29 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 
 	void OnDestroy(){
 		// Debug.Log ("Destroy,poolName = " + poolName+",gobjname = " + gameObject.name);
+		if(!this.isAppQuit){
+			OnCall4Destroy();
+			_ExcDestoryCall();
+		}
+		_OnClear();
+	}
+
+	protected void OnApplicationQuit(){
+		this.isAppQuit = true;
+		_OnClear();
+	}
+	
+	protected virtual void _OnClear(){
 		this.m_isOnUpdate = false;
-		this._alive = false;
+		this._isAlive = false;
 		this.m_callAwake = null;
 		this.m_callStart = null;
 		this.m_callShow = null;
 		this.m_callHide = null;
-		OnCall4Destroy();
-		_ExcDestoryCall();
 		this._m_gobj = null;
 		this._m_trsf = null;
 	}
 
-	void OnApplicationQuit(){
-		this.m_isOnUpdate = false;
-		this._alive = false;
-	}
-
-	
 	void _ExcDestoryCall(){
 		var _call = this.m_onDestroy;
 		this.m_onDestroy = null;

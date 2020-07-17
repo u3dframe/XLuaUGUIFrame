@@ -21,6 +21,7 @@ public class MgrLoadScene : GobjLifeListener {
 				{
 					_instance = _gobj.AddComponent<MgrLoadScene> ();
 				}
+				_instance.csAlias = "LSMgr";
 			}
 			return _instance;
 		}

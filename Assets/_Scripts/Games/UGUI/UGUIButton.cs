@@ -59,6 +59,7 @@ public class UGUIButton : GobjLifeListener {
         this.m_evt = UGUIEventListener.Get(m_gobj);
         this.m_evt.onPress = _OnPress;
         this.m_evt.onClick = _OnClick;
+		this.csAlias = "U_BTN";
     }
 
 	protected override void OnCall4Hide()

@@ -118,6 +118,16 @@ public class InputMgr : GobjLifeListener {
 	
 	protected override void OnCall4Awake(){
 		this.maxDistance = Screen.height > Screen.width ? Screen.height : Screen.width;
+		this.csAlias = "InpMgr";
+	}
+	protected override void _OnClear() {
+#if UNITY_EDITOR
+		if(m_diCalls != null) m_diCalls.Clear();
+#endif
+		m_lfScale = null;
+		m_lfRotate = null;
+		m_lfSlide = null;
+		m_lfRayHit = null;
 	}
 	
     void Update () {
