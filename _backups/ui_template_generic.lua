@@ -48,7 +48,7 @@ end
 function M:OnUpdateLoaded(dt)
 end
 
--- 自定义的刷新事件绑定函数(必要，父类已经帮调用了该函数)
+-- 自定义的刷新事件绑定函数(父类已经帮调用了该函数)
 function M:ReEvent4Self(isBind)
 	-- _evt.RemoveListener(Evt_ToChangeScene,self._lfXxx); -- 移除事件
 	if isBind == true then
