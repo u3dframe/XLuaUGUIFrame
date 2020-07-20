@@ -85,7 +85,7 @@ end
 
 function M:SetAnchoredPosition( x,y )
 	x,y = self:ReXYZ(x,y)
-	self.trsf.anchoredPosition3D = {x = x, y = y}
+	self.trsf.anchoredPosition = {x = x, y = y}
 end
 
 function M:SetAnchorMin( x,y )
