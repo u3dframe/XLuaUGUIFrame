@@ -26,6 +26,9 @@ function M:ReEvent4OnUpdate(isBind)
 	super.ReEvent4OnUpdate(self,isBind)
 end
 
+function M:ReEvent4Self(isBind)
+end
+
 function M:_IsNoLoaded()
 	return self.stateLoad ~= LE_StateLoad.Loaded
 end
@@ -167,6 +170,7 @@ function M:OnInit()
 end
 
 function M:_OnShow()
+	self:ReEvent4Self(true)
 	self:OnShow();
 end
 
@@ -205,6 +209,7 @@ function M:OnDestroy()
 end
 
 function M:_OnEnd(isDestroy)
+	self:ReEvent4Self(false)
 	isDestroy = isDestroy == true;
 	local _tmp = self.prefFuncEnd;
 	self.prefFuncEnd = nil

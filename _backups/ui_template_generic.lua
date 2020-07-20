@@ -38,19 +38,18 @@ end
 
 -- 显示的时候都会调用，做数据的刷新更新(必要)
 function M:OnShow()
-	self:_ReEvent4UI(true)
 end
 
 -- 隐藏，销毁都会调用(必要)
 function M:OnEnd(isDestroy)
-	self:_ReEvent4UI()
 end
 
 -- 当isUpdate = true,资源加载完毕后，每帧才会回调(非必要)
 function M:OnUpdateLoaded(dt)
 end
 
-function M:_ReEvent4UI(isBind)
+-- 自定义的刷新事件绑定函数(必要，父类已经帮调用了该函数)
+function M:ReEvent4Self(isBind)
 	-- _evt.RemoveListener(Evt_ToChangeScene,self._lfXxx); -- 移除事件
 	if isBind == true then
 		-- _evt.AddListener(Evt_ToChangeScene,self._lfXxx); -- 添加事件
