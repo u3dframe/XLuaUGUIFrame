@@ -75,6 +75,7 @@ public static class ExampleConfig
                 typeof(Image),
                 typeof(Toggle),
                 typeof(RawImage),
+                typeof(InputField),
                 typeof(EventTrigger), // UGUIEventListener 的 父类
                 //------------------------ 导出 工程封装的类 ---------------------
                 typeof(PathEx),

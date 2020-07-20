@@ -27,15 +27,17 @@ _LuaFpBasic = {
 	{"LUComonet","u_component",3}, -- component
 	{"LCFabBasic","uc_fabbasic",3}, -- PrefabBasic
 	{"LCFabElement","uc_fabelement",3}, -- PrefabElement
+	{"LuaAsset","lua_asset",2}, -- 资源
+	{"LuaFab","lua_fab",2}, -- 为场景对象和ui_base对象的父类
+	{"LuaPubs","lua_pubs",2}, -- 取得所有脚本的父类
+	{"MgrRes","mgr_res",2}, -- 控制 资源加载了
 	{"LuBase","ugui_base",4}, -- 组件 - 基础类
 	{"LuText","ugui_text",4}, -- 组件 - 文本
 	{"LuBtn","ugui_button",4}, -- 组件 - 按钮
 	{"LuTog","ugui_toggle",4}, -- 组件 - toggle
 	{"LuScl","ugui_scroll",4}, -- 组件 - 循环滚动
 	{"LuImg","ugui_image",4}, -- 组件 - 图片
-	{"LuaAsset","lua_asset",2}, -- 资源
-	{"LuaFab","lua_fab",2}, -- 为场景对象和ui_base对象的父类
-	{"MgrRes","mgr_res",2}, -- 控制 资源加载了
+	{"LuInpFld","ugui_inputfield",4}, -- 组件 - 输入框
 }
 
 -- 中间

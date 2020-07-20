@@ -5,13 +5,16 @@
 	-- Desc : 
 ]]
 
-local _clsEle,_clsGobj,_clsTxt
+local super,super2 = LUComonet,LuaPubs
+local M = class( "ugui_base",super,super2 )
 
-local super = LUComonet
-local M = class( "ugui_base",super )
+function M:ctor(obj,comp)
+	super.ctor( self,obj,comp )
+	super2.ctor( self )
+end
 
 function M:_Init( callFunc,val )
-	_clsEle,_clsGobj,_clsTxt = (_clsEle or LCFabElement),(_clsGobj or LUGobj),(_clsTxt or LuText)
+	local _clsEle,_clsGobj,_clsTxt = self:_ClsEle(),self:_ClsTrsf(),self:_ClsUTxt()
 	local _tmp,_tmp2 = self:GetComponent("PrefabElement")
 	if _tmp then
 		_tmp = _clsEle.New(_tmp,_tmp)

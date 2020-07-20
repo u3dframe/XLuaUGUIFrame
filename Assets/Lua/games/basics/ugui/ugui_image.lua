@@ -7,15 +7,14 @@
 
 local _LTP = LE_AsType
 
-local super,super2 = LuBase,UIPubs
-local M = class( "ugui_image",super,super2 )
+local super = LuBase
+local M = class( "ugui_image",super )
 
 function M:ctor( obj,com )
 	assert(obj,"text's obj is null")
 	local gobj = obj.gameObject
 	assert(gobj,"text's gobj is null")
 	super.ctor( self,gobj,com or "Image" )
-	super2.ctor( self )
 	self.lfCFImage = handler(self,self._OnCF_Image)
 end
 
