@@ -5,11 +5,8 @@
 	-- Desc : 
 ]]
 
-local _tn = tonumber
-local _utxt = LuText
 local super = LuBase
 local M = class( "ugui_inputfield", super )
-local this = M
 
 function M:ctor( obj,callFunc,val )
 	assert(obj,"inpfield's obj is null")
