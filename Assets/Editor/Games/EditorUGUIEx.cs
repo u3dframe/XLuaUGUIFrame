@@ -70,7 +70,7 @@ public class EditorUGUIEx
     }
 
     [MenuItem("GameObject/UGUI2/Text")]
-    static void NewText()
+    static Text NewText()
     {
 		if (font == null)
         {
@@ -91,6 +91,7 @@ public class EditorUGUIEx
         text.verticalOverflow = VerticalWrapMode.Truncate;
         _gobj.AddComponent<Outline>(); // 不加描边会模糊
 		_gobj.AddComponent<UGUILocalize>();
+        return text;
     }
 
     [MenuItem("GameObject/UGUI2/Button")]
@@ -131,5 +132,22 @@ public class EditorUGUIEx
 		gobj.name = "ui_item";
         gobj.layer = layerUI;
 		gobj.SetActive(true);
+    }
+
+    [MenuItem("GameObject/UGUI2/InputField")]
+    static void NewInputField()
+    {
+        Image img = CreateUIObject(typeof(Image),"inputfield",true) as Image;
+        img.rectTransform.sizeDelta = new Vector2(140, 50);
+        InputField inp = img.gameObject.AddComponent<InputField>();;
+        Text _t1 = NewText();
+        _t1.name = "placeholder";
+        inp.placeholder = _t1;
+        Selection.activeGameObject = inp.gameObject;
+
+        _t1 = NewText();
+        _t1.supportRichText = false;
+        inp.textComponent = _t1;
+        Selection.activeGameObject = inp.gameObject;
     }
 }
