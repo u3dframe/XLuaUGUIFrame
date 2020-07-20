@@ -170,8 +170,8 @@ function M:OnInit()
 end
 
 function M:_OnShow()
-	self:ReEvent4Self(true)
 	self:OnShow();
+	self:ReEvent4Self(true)
 end
 
 function M:OnShow()
