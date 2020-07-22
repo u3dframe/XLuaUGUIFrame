@@ -10,6 +10,7 @@ local tb_has = table.contains
 local tb_remove = table.remove
 local tb_rmvals = table.removeValues
 
+Network = require("games/net/network")
 CfgSvList = require("games/net/severlist")
 
 local _lbQueExcepts = {}
@@ -21,9 +22,8 @@ local M = class( "mgr_net",super )
 local this = M
 
 function M.Init()
-	_csMgr = CNetMgr
+	_csMgr = CNetMgr.instance
 	this._Init_Sproto()
-	local Network = require("games/net/network")
 	Network.Init(this.OnDispatch_Msg,this.OnConnection,this.OnDisConnection)
 end
 
@@ -93,8 +93,8 @@ function M.SendRequest( cmd,data,callback )
 		local msg = sender(cmd, data, _cur)
 		_csMgr:SendBytes(msg)
 	end
-	local _isExpt = tb_has(_lbQueExcepts,cmd)
-	if (not _isExpt) and this.isSending then
+	
+	if this.isSending and (not tb_has(_lbQueExcepts,cmd)) then
 		tb_insert( _r_ques,_lf )
 	else
 		_lf()

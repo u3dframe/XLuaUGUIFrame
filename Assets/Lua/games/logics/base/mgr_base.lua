@@ -5,6 +5,18 @@
 	-- Desc : 
 ]]
 
-local super = LuaObject
+local super,_mNet = LuaObject,MgrNet
 local M = class( "mgr_base",super )
+
+function M:SendRequest( cmd,data,callback )
+	_mNet.SendRequest( cmd,data,callback )
+end
+
+function M:AddPCall( cmd,callback )
+	_mNet.AddPushCall( cmd,callback )
+end
+
+function M:RemovePCall( cmd,callback )
+	_mNet.RmPushCall( cmd,callback )
+end
 return M

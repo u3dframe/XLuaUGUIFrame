@@ -215,7 +215,6 @@ function host:dispatch(...)
 		end
 	else
 		-- response
-		printTable(header_tmp)
 		local session = assert(header_tmp.session, "session not found")
 		local response = assert(self.__session[session], "Unknown session")
 		self.__session[session] = nil
