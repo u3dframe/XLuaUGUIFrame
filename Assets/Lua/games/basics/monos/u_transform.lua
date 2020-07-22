@@ -4,7 +4,7 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local _tn = tonum10
+local _tn = todecimal2
 
 local super = LUGobj
 local M = class( "lua_transform",super )

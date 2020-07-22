@@ -32,8 +32,12 @@ if bit then
 	bit_shr = bit.shr; -- 两个无符号整数,第一个参数是被移位的数，第二个参数是向右移动的位数
 end
 
+function isNum(val)
+    return type(val) == "number";
+end
+
 function tonum(val,base,def)
-	base = base or 10;
+	if isNum(val) then return val end
 	def = def or 0;
     return tonumber(tostring(val), base) or def;
 end
@@ -48,6 +52,11 @@ end
 
 function toint(val,def)
     return math_round(tonum10(val,def))
+end
+
+function todecimal2(val,def)
+	local _v = tonum(val,nil,def) * 100
+    return math_round(_v) / 100
 end
 
 local M = {};
