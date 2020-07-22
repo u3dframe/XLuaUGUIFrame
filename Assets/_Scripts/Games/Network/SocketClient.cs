@@ -86,11 +86,10 @@ public class SocketClient {
             ms.Position = 0;
             BinaryWriter writer = new BinaryWriter(ms);
             ushort msglen = (ushort)message.Length;
-            writer.Write(msglen);
+            writer.Write(Converter.GetBigEndian(msglen));
             writer.Write(message);
             writer.Flush();
             if (client != null && client.Connected) {
-                //NetworkStream stream = client.GetStream();
                 byte[] payload = ms.ToArray();
                 outStream.BeginWrite(payload, 0, payload.Length, new AsyncCallback(OnWrite), null);
             } else {
@@ -165,16 +164,10 @@ public class SocketClient {
         memStream.Write(bytes, 0, length);
         //Reset to beginning
         memStream.Seek(0, SeekOrigin.Begin);
-		int _lens = 4; // 2
+        int _lens = 2;
         while (RemainingBytes() > _lens) {
-			// ushort messageLen = reader.ReadUInt16();
-			int messageLen = (int) reader.ReadUInt32 ();
+			ushort messageLen = Converter.GetBigEndian(reader.ReadUInt16());
             if (RemainingBytes() >= messageLen) {
-                // MemoryStream ms = new MemoryStream();
-                // BinaryWriter writer = new BinaryWriter(ms);
-				// writer.Write(reader.ReadBytes((int)messageLen));
-                // ms.Seek(0, SeekOrigin.Begin);
-                // OnReceivedMessage(ms);
                 ByteBuffer _bbf = ByteBuffer.BuildWriter();
                 _bbf.WriteBytes(reader.ReadBytes(messageLen));
                 OnReceivedMessage(_bbf);
@@ -201,15 +194,6 @@ public class SocketClient {
     /// 接收到消息
     /// </summary>
     /// <param name="ms"></param>
-    // void OnReceivedMessage(MemoryStream ms) {
-    //     BinaryReader r = new BinaryReader(ms);
-    //     byte[] message = r.ReadBytes((int)(ms.Length - ms.Position));
-    //     //int msglen = message.Length;
-
-    //     ByteBuffer buffer = new ByteBuffer(message);
-    //     int mainId = buffer.ReadShort();
-    //     NetworkManager.AddEvent(mainId, buffer);
-    // }
     void OnReceivedMessage(ByteBuffer data) {
         ByteBuffer buffer = data.ToReader();
         NetworkManager.AddEvent(Protocal.Message, buffer);
@@ -237,7 +221,10 @@ public class SocketClient {
     /// </summary>
     public void SendMessage(ByteBuffer buffer) {
         WriteMessage(buffer.ToBytes());
-        // buffer.Close();
         ByteBuffer.ReBack(buffer);
+    }
+
+    public void SendMessage(byte [] msg) {
+        WriteMessage(msg);
     }
 }

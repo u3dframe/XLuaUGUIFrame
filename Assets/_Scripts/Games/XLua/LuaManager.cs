@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using XLua;
+using System.Runtime.InteropServices;
 #if UNITY_5_4_OR_NEWER
 using UnityEngine.SceneManagement;
 #endif
@@ -93,13 +94,28 @@ public class LuaManager : GobjLifeListener
 		base.OnApplicationQuit();
 	}
 
+	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
+	public static extern int luaopen_lpeg(IntPtr L);
+
+	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
+	public static extern int luaopen_sproto_core(IntPtr L);
+
+	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
+	public static int LoadSprotoCore(IntPtr L)
+	{
+		return luaopen_sproto_core(L);
+	}
+
+	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
+	public static int LoadLpeg(IntPtr L)
+	{
+		return luaopen_lpeg(L);
+	}
+
 	void InitSelfLibs()
 	{
-		/*
-        luaState.BeginPreLoad();
-        luaState.RegFunction("sproto.core", luaopen_sproto_core);
-        luaState.EndPreLoad();
-		*/
+		luaEnv.AddBuildin("sproto.core", LoadSprotoCore);
+		luaEnv.AddBuildin("lpeg", LoadLpeg);
 	}
 
 	public void LuaGC(){
