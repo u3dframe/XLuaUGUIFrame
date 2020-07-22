@@ -9,14 +9,19 @@ local str_format = string.format
 local tb_insert = table.insert
 local tb_concat = table.concat
 local d_traceback = debug.traceback
+local _sel = select
 
 local DE_BUG = nil;
 local _error = error;
 local _isTrace = false -- 是否包含 traceback
 
+function lensPars( ... )
+	return _sel( '#', ... )
+end
+
 function logMust(fmt,...)
 	local str = tostring(fmt)
-	if #({...}) > 0 then
+	if lensPars( ... ) > 0 then
 		str = str_format( str , ... )
 	end
 	CHelper.Log(str)
@@ -42,7 +47,7 @@ function printLog(tag, fmt, ...)
         "] "
 	}
 	
-	if #({...}) > 0 then
+	if lensPars( ... ) > 0 then
 		tb_insert(t, str_format(tostring(fmt), ...))
 	else
 		tb_insert(t, tostring(fmt))

@@ -292,6 +292,7 @@ function M:ShowScroll(nListCount,bIsVertical,bIsCallNoData,bIsAlpha)
 	if bIsVertical == nil then bIsVertical = self.isVertical end
 	if bIsCallNoData == nil then bIsCallNoData = self.isCallNoData end
 	if bIsAlpha == nil then bIsAlpha = self.isAlpha end
+	self.listCount = nListCount
 	self:ReInit(bIsVertical,bIsCallNoData,bIsAlpha)
 
 	self.hContent = self.isVertical and self.listCount * self.itemUnitLength or self.hContent

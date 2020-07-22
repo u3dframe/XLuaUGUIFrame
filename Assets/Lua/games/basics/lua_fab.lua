@@ -26,9 +26,6 @@ function M:ReEvent4OnUpdate(isBind)
 	super.ReEvent4OnUpdate(self,isBind)
 end
 
-function M:ReEvent4Self(isBind)
-end
-
 function M:_IsNoLoaded()
 	return self.stateLoad ~= LE_StateLoad.Loaded
 end
@@ -239,7 +236,6 @@ function M:pre_clean()
 	local _key = self:SFmt("%s",self)
 	cfg_backup[_key] = self.cfgAsset;
 	self.cfgAsset = nil
-	self:ReEvent4OnUpdate()
 end
 
 function M:clean_end()

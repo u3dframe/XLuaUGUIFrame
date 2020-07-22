@@ -8,6 +8,7 @@
 local _str_beg = string.starts
 local _str_end = string.ends
 local _str_fmt = string.format
+local _nPars = lensPars
 
 local tb_has = table.contains
 local _lbKeys = { "__cname","class","__supers","__create","__index","__newindex" }
@@ -20,8 +21,16 @@ function M:getCName()
 	return self.__cname
 end
 
+function M:Lens4Pars( ... )
+	return _nPars( ... )
+end
+
 function M:SFmt( s_fmt,... )
-	return _str_fmt( s_fmt , ... )
+	if _nPars( ... ) > 0 then
+		return _str_fmt( s_fmt , ... )
+	else
+		return tostring( s_fmt )
+	end
 end
 
 function M:ReSBegEnd( sSrc,sBeg,sEnd )
@@ -54,6 +63,8 @@ function M:_OnUpdate(dt)
 end
 function M:OnUpdate(dt) end
 
+function M:ReEvent4Self(isBind) end
+
 function M:_clean()
 	local _tpv
 	for k, v in pairs(self) do
@@ -70,6 +81,8 @@ function M:_clean()
 end
 
 function M:pre_clean()
+	self:ReEvent4OnUpdate(false)
+	self:ReEvent4Self(false)
 end
 
 function M:on_clean()

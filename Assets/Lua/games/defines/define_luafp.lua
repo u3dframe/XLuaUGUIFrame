@@ -46,6 +46,7 @@ _LuaFpMidle = {
 	{"Network","network",5}, -- 网络层
 	{"UIPubs","ui_pubs",6}, -- UI的Pubs
 	{"UIBase","ui_base",6}, -- UI的基础类
+	{"UICell","uicell_base",6}, -- UICell的基础类
 	{"UIRoot","ui_root",6}, -- 加载 UI的根uiroot
 	{"GEntry","game_entry",6}, -- 游戏入口
 	{"SceneBase","scene_base",6}, --场景对象基础类

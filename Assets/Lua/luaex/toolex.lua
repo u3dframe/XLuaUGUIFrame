@@ -298,3 +298,8 @@ function sortArrayByField( array, fields )
 
 	return sortd
 end
+
+-- lensPars
+function lens4Variable( ... )
+	return select( '#', ... )
+end
