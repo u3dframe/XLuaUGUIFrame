@@ -22,16 +22,24 @@ function M:SetActive( isActive )
 	self:ReEvent4Self(self.isActive)
 end
 
-function M:ShowViewByData(data)
-	local _isAcitve = (data ~= nil)
+function M:ShowViewByData(data,lbParent)
+	local _isAcitve = (data ~= nil) or (self.isVwEmpty == true)
 	self.data = data
+	self.lbParent = lbParent
 	self:SetActive(_isAcitve)
 	if _isAcitve then
-		self:OnShow()
+		if self.data == nil then
+			self:OnVwEmpty()
+		else
+			self:OnView()
+		end
 	end
 end
 
-function M:OnShow()
+function M:OnView()
+end
+
+function M:OnVwEmpty()
 end
 
 return M
