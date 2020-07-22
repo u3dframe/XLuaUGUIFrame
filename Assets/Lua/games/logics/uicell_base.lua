@@ -11,6 +11,27 @@ local M = class( "uicell_base",super,super2 )
 function M:ctor(gobj,comp)
 	super.ctor( self,gobj,comp )
 	super2.ctor( self )
+	self:_OnInit()
+end
+
+function M:OnInit()
+end
+
+function M:SetActive( isActive )
+	super.SetActive( self,isActive )
+	self:ReEvent4Self(self.isActive)
+end
+
+function M:ShowViewByData(data)
+	local _isAcitve = (data ~= nil)
+	self.data = data
+	self:SetActive(_isAcitve)
+	if _isAcitve then
+		self:OnShow()
+	end
+end
+
+function M:OnShow()
 end
 
 return M

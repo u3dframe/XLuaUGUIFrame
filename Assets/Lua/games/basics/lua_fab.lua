@@ -157,12 +157,6 @@ function M:_OnView()
 	end
 end
 
-function M:_OnInit()
-	if self.isInited then return end
-	self.isInited = true
-	self:OnInit();	
-end
-
 function M:OnInit()
 end
 

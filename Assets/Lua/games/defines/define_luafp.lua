@@ -21,6 +21,7 @@ _LuaFpBasic = {
 	{"","define_global",1}, -- 常量 Lua 全局变量
 	{"","define_events",1}, -- 常量 事件 相关
 	{"","define_csharp",1}, -- 常量 CSharp 相关
+	{"LuaBasic","lua_basic",2}, -- Basic 类
 	{"LuaObject","lua_object",2}, -- 基础类
 	{"LUGobj","u_gobj",3}, -- gobj
 	{"LUTrsf","u_transform",3}, -- transform
