@@ -187,7 +187,13 @@ public class BuildTools : Core.EditorGameFile
 
     public static void BuildNow(bool isBuildAB = true)
     {
-        EditorUtility.DisplayProgressBar("BuildNow", "Start BuildNow ...", 0.00f);
+        // EditorUtility.DisplayProgressBar("BuildNow", "XLua/Clear Code ...", 0.01f);
+        // CSObjectWrapEditor.Generator.ClearAll();
+
+        // EditorUtility.DisplayProgressBar("BuildNow", "XLua/Generate Code ...", 0.02f);
+        // CSObjectWrapEditor.Generator.GenAll();
+
+        EditorUtility.DisplayProgressBar("BuildNow", "Start BuildNow ...", 0.05f);
         float count = MgrABDataDependence.instance.m_dic.Count;
         int curr = 0;
         foreach (var item in MgrABDataDependence.instance.m_dic.Values)
