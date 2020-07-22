@@ -6,6 +6,9 @@
 	-- 界面需要绑定脚本 PrefabeElement.cs
 ]]
 
+local _clsCell = require("xxx/xx/xx1") -- 列表单元
+local _clsPart = require("xxx/xx/xx2") -- 界面部分part
+
 local _mgr -- 界面管理脚本
 local super,_evt = UIBase,Event
 local M = class( "ui_xxx",super )
@@ -25,6 +28,7 @@ end
 
 -- 初始化对象只调用一次(必要)
 function M:OnInit()
+	local _tmp
 	-- _mgr = Mgrxxxx -- 配置在 define_luafp 里面的管理脚本
 	-- self.lbTxtXxx = self:NewTxt("elementName");
 	-- self.lbBtnXxx = self:NewBtn("elementName",callFunc,val,isNoScale)
@@ -32,12 +36,19 @@ function M:OnInit()
 	-- self.lbSclXxx = self:NewScl(elName,funcCreat,funcSetData,gobjItem)
 	-- self.lbTrsfXxx = self:NewTrsf(elName);
 	-- self.lbCompXXX = self:NewComp(elName,compName);
+	
+	_tmp = self:GetElement("elName")
+	self.lbPartXxx = _clsPart.New(_tmp,self)
+	
+	_tmp = self:GetElement("elName")
+	self.lbCellXxx = _clsCell.New(_tmp)
 
 	-- self._lfXxx = self._lfXxx or handler(self,self.xxxFunc) -- 定义事件
 end
 
 -- 显示的时候都会调用，做数据的刷新更新(必要)
 function M:OnShow()
+	self.lbPartXxx:ShowViewByData(data)
 end
 
 -- 隐藏，销毁都会调用(必要)
