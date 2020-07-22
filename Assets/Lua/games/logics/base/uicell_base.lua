@@ -24,9 +24,9 @@ function M:SetActive( isActive )
 	self:ReEvent4Self(self.isActive)
 end
 
-function M:ShowViewByData(data)
+function M:ShowViewByData( data,... )
 	local _isAcitve = (data ~= nil) or (self.isVwEmpty == true)
-	self.data = data
+	self:SetData( data,... )
 	self:SetActive(_isAcitve)
 	if _isAcitve then
 		if self.data == nil then
@@ -35,6 +35,10 @@ function M:ShowViewByData(data)
 			self:OnView()
 		end
 	end
+end
+
+function M:SetData( data,... )
+	self.data = data
 end
 
 function M:OnView()
