@@ -36,17 +36,6 @@ function M:_Init( callFunc,val )
 	self:SetText(val)
 end
 
-function M:SetCallFunc(func)
-	self.callFunc = func
-end
-
--- 执行回调函数
-function M:ExcuteCallFunc()
-	if self.callFunc then
-		self.callFunc(self)
-	end
-end
-
 function M:SetText(val)
 	if self.lbTxt and val then
 		self.lbTxt:SetText(val)

@@ -40,4 +40,16 @@ function M:ReSEnd( sSrc,sEnd )
 	return self:ReSBegEnd(sSrc,nil,sEnd)
 end
 
+function M:SetCallFunc(func)
+	self.callFunc = func
+	return self
+end
+
+-- 执行回调函数
+function M:ExcuteCallFunc(data)
+	if self.callFunc then
+		self.callFunc(data or self)
+	end
+end
+
 return M

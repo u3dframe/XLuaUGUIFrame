@@ -6,6 +6,7 @@ _LuaPacakge = {
 	[4] = "games/basics/ugui/",
 	[5] = "games/net/",
 	[6] = "games/logics/",
+	[7] = "games/logics/base/",
 }
 
 -- 不需要全局变量的lua
@@ -45,15 +46,16 @@ _LuaFpBasic = {
 _LuaFpMidle = {
 	{"","protocal",5}, -- 常量 网络层协议
 	{"Network","network",5}, -- 网络层
-	{"UIPubs","ui_pubs",6}, -- UI的Pubs
-	{"UIBase","ui_base",6}, -- UI的基础类
-	{"UICell","uicell_base",6}, -- UICell的基础类
-	{"UIRoot","ui_root",6}, -- 加载 UI的根uiroot
+	{"UIPubs","ui_pubs",7}, -- UI的Pubs
+	{"UIBase","ui_base",7}, -- UI的基础类
+	{"UICell","uicell_base",7}, -- UICell的基础类
+	{"UIRow","uicell_row",7}, -- 行单元（多行多列使用）
+	{"UIRoot","ui_root",7}, -- 加载 UI的根uiroot
+	{"SceneBase","scene_base",7}, --场景对象基础类
+	{"MgrBase","mgr_base",7}, -- 管理基础类
+	{"MgrInput","mgr_input",7}, -- 管理 - 场景单击
+	{"MgrCamera","mgr_camera",7}, -- 管理 - 场景摄像头
 	{"GEntry","game_entry",6}, -- 游戏入口
-	{"SceneBase","scene_base",6}, --场景对象基础类
-	{"MgrBase","mgr_base",6}, -- 管理基础类
-	{"MgrInput","mgr_input",6}, -- 管理 - 场景单击
-	{"MgrCamera","mgr_camera",6}, -- 管理 - 场景摄像头
 }
 
 -- 最后

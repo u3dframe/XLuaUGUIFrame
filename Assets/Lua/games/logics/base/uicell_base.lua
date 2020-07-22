@@ -8,9 +8,10 @@
 local super,super2 = LCFabElement,UIPubs
 local M = class( "uicell_base",super,super2 )
 
-function M:ctor(gobj,lbParent,comp)
+function M:ctor(gobj,cfClick,lbParent,comp)
 	super.ctor( self,gobj,comp )
 	super2.ctor( self )
+	self:SetCallFunc(cfClick)
 	self.lbParent = lbParent
 	self:_OnInit()
 end
