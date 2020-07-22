@@ -8,9 +8,10 @@
 local super,super2 = LCFabElement,UIPubs
 local M = class( "uicell_base",super,super2 )
 
-function M:ctor(gobj,comp)
+function M:ctor(gobj,lbParent,comp)
 	super.ctor( self,gobj,comp )
 	super2.ctor( self )
+	self.lbParent = lbParent
 	self:_OnInit()
 end
 
@@ -22,10 +23,9 @@ function M:SetActive( isActive )
 	self:ReEvent4Self(self.isActive)
 end
 
-function M:ShowViewByData(data,lbParent)
+function M:ShowViewByData(data)
 	local _isAcitve = (data ~= nil) or (self.isVwEmpty == true)
 	self.data = data
-	self.lbParent = lbParent
 	self:SetActive(_isAcitve)
 	if _isAcitve then
 		if self.data == nil then
