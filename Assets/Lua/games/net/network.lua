@@ -1,68 +1,51 @@
 -- 网络层
+require("games/net/protocal")
+local _cfgPc = _G.Protocal
+local M,_evt = {},Event
+local this = M
 
-local M = {}
-local this = M;
-
-function M:Init()
-	Event.AddListener(Protocal.Connect, this.OnConnect); 
-    Event.AddListener(Protocal.Exception, this.OnException); 
-    Event.AddListener(Protocal.Disconnect, this.OnDisconnect);
-    Event.AddListener(Protocal.Message, this.OnMessage);
-
-    this._cfunc = {}
-    this._cfunc[ProtocalType.BINARY] = this._CallBinary;
-    this._cfunc[ProtocalType.PB_LUA] = this._CallPBLua;
-    this._cfunc[ProtocalType.PBC] = this._CallPBC;
-    this._cfunc[ProtocalType.SPROTO] = this._CallSproto;
+function M.Init(funcMsg,funcConnect,funcDisConnect)
+    this._lfMsg = funcMsg
+    this._lfConnect = funcConnect
+    this._lfDisConnect = funcDisConnect
+    
+    _cfgPc = _cfgPc or _G.Protocal
+	_evt.AddListener(_cfgPc.Connect, this.OnConnect)
+    _evt.AddListener(_cfgPc.Exception, this.OnException)
+    _evt.AddListener(_cfgPc.Disconnect, this.OnDisconnect)
+    _evt.AddListener(_cfgPc.Message, this.OnMessage)
 end
 
 --卸载网络监听--
 function M.Unload()
-    Event.RemoveListener(Protocal.Connect);
-    Event.RemoveListener(Protocal.Exception);
-    Event.RemoveListener(Protocal.Disconnect);
-    Event.RemoveListener(Protocal.Message);
-    logWarn('Unload Network...');
+    _evt.RemoveListener(_cfgPc.Connect)
+    _evt.RemoveListener(_cfgPc.Exception)
+    _evt.RemoveListener(_cfgPc.Disconnect)
+    _evt.RemoveListener(_cfgPc.Message)
 end
 
 function M.OnSocket(code,btBuffer)
-	Event.Brocast(tostring(code), btBuffer);
+	_evt.Brocast(tostring(code), btBuffer)
 end
 
 --当连接建立时--
-function M.OnConnect() 
-    logWarn("Game Server connected!!");
+function M.OnConnect()
+   if this._lfConnect then this._lfConnect() end
 end
 
 --异常断线--
-function M.OnException() 
-    -- NetManager:SendConnect();
-   	logError("OnException------->>>>");
+function M.OnException()
+    if this._lfDisConnect then this._lfDisConnect(true) end
 end
 
 --连接中断，或者被踢掉--
-function M.OnDisconnect() 
-    logError("OnDisconnect------->>>>");
+function M.OnDisconnect()
+    if this._lfDisConnect then this._lfDisConnect(false) end
 end
 
 --登录返回--
 function M.OnMessage(btBuffer)
-    local _cf = this._cfunc[Curr_PType];
-    if _cf  then
-        _cf(btBuffer)
-    end
-end
-
-function M._CallBinary(btBuffer)
-end
-
-function M._CallPBLua(btBuffer)
-end
-
-function M._CallPBC(btBuffer)
-end
-
-function M._CallSproto(btBuffer)
+    if this._lfMsg then this._lfMsg(btBuffer) end
 end
 
 return M

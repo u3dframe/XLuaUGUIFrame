@@ -66,11 +66,15 @@ namespace Core
 			DeleteFile (fn, false);
 		}
 
+		static private bool IsTextInCT(string fn){
+			return fn.EndsWith(".csv") || fn.IndexOf("protos/") != -1;
+		}
+
 		// 取得文本内容
 		static public string GetText(string fn){
 			string _fp = GetPath (fn);
 #if UNITY_EDITOR
-		if(fn.EndsWith(".csv")){
+		if(IsTextInCT(fn)){
 			_fp = string.Format("{0}CsvTxts/{1}",m_appAssetPath,fn);
 		}
 #endif

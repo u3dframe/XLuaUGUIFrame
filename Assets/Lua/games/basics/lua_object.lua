@@ -9,6 +9,7 @@ local _str_beg = string.starts
 local _str_end = string.ends
 local _str_fmt = string.format
 local _nPars = lensPars
+local _m_ceill = math.ceil
 
 local super = LuaBasic
 local M = class( "lua_object",super )
@@ -50,6 +51,16 @@ function M:ExcuteCallFunc(data)
 	if self.callFunc then
 		self.callFunc(data or self)
 	end
+end
+
+function M:MCeil( num )
+	return _m_ceill( num )
+end
+
+function M:NPage( num,column )
+	if (not num) or (num <= 0) or (not column) or (column <= 0) then return 0 end
+	if num <= column then return 1 end
+	return _m_ceill( num / column )
 end
 
 return M

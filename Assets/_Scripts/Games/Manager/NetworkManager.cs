@@ -59,7 +59,12 @@ public class NetworkManager : GobjLifeListener {
 	/// </summary>
 	protected override void OnCall4Destroy() {
 		GameMgr.DiscardUpdate(this);
+	}
+
+	protected override void _OnClear(){
+		mEvents.Clear();
 		socket.OnRemove();
+		socket = null;
 	}
 
 	/// <summary>
@@ -74,7 +79,6 @@ public class NetworkManager : GobjLifeListener {
 			Debug.LogErrorFormat("=== OnCF2Lua Fails,lua func = [{0}], code = [{1}]", lua_func, code);
 	}
 
-	[XLua.LuaCallCSharp]
 	public NetworkManager InitNet(string host, int port, string luaFunc) {
 		this.m_host = host;
 		this.m_port = port;
@@ -90,17 +94,23 @@ public class NetworkManager : GobjLifeListener {
 		}
 	}
 
-	public void ReConnect(string host, int port) {
+	public bool ShutDown() {
 		if (this.socket == null)
-			return;
+			return false;
 
+		this.socket.Close();
+		return true;
+	}
+
+	public void ReConnect(string host, int port) {
+		ShutDown();
+		
 		if (!string.IsNullOrEmpty(host)) {
 			this.m_host = host;
 		}
 		if (port > 0) {
 			this.m_port = port;
 		}
-		this.socket.Close();
 
 		SendConnect();
 	}
@@ -118,7 +128,6 @@ public class NetworkManager : GobjLifeListener {
 	/// <summary>
 	/// 发送SOCKET消息
 	/// </summary>
-	
 	public void SendMessage(ByteBuffer buffer) {
 		socket.SendMessage(buffer);
 	}

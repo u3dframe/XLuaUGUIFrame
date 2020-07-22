@@ -34,7 +34,7 @@ function M:ctor(gobj,clsLua,nColumn,cfClick,isAllActive)
 end
 
 -- 显示数据
-function M:ShowViewByList(listOrg,nRow,pars)
+function M:ShowViewByList(listOrg,nRow,...)
 	nRow = nRow <= 0 and 1 or nRow;
 	local count = #listOrg
 	local _isActive,_tmp,_nIndex
@@ -43,7 +43,7 @@ function M:ShowViewByList(listOrg,nRow,pars)
 		_nIndex = (nRow - 1) * self.nColumn + i;
 		_isActive = (_nIndex <= count) or self.isAllActive
 		if _isActive then			
-			_tmp:ShowViewByData(listOrg[_nIndex],_nIndex,pars)
+			_tmp:ShowViewByData(listOrg[_nIndex],_nIndex,...)
 		end
 		_tmp:SetActive(_isActive)
 	end
