@@ -1,0 +1,83 @@
+#base.c2s
+.package {
+    type 0 : integer
+    session 1 : integer
+    ud 2 : string
+}
+.intarray {
+    array 0 : *integer
+}
+.twoarray {
+    arr1 0 : *integer
+    arr2 1 : *integer
+}
+ping 1 {
+    request {
+        any 0 : integer(2)
+    }
+    response {
+        any 0 : integer(2)
+        ti 1 : integer(2)
+    }
+}
+#login.c2s
+.login_role_item {
+    level 0 : integer
+    rname 1 : string
+}
+json_login 4 {
+    request {
+        op 0 :string
+        json 1 :string
+    }
+    response {
+        e 0 :integer
+        m 1 :string
+        uid 2: string
+        token 3 : string
+        role 4 : *login_role_item
+        auth 5 : integer
+        ti 7 : integer
+    }
+}
+game_auth 10 {
+    request {
+        uid 0 :integer
+#		sid 1 :integer
+#		auth 2:integer
+    }
+    response {
+        e 0 : integer
+    }
+}
+.role_list_role {
+    rid 0 : integer
+    rname 1 : string
+}
+role_create 11 {
+    request {
+        rname 0 :string
+    }
+    response {
+        e 0 : integer
+        rid 1 : integer
+        roles 2 : *role_list_role(rid)
+    }
+}
+role_login 12 {
+    request {
+        rid 0 :integer
+    }
+    response {
+        e 0 : integer
+    }
+}
+chat_chating 30 {
+    request {
+        channel 0 : integer
+         content 1 : string
+    }
+    response {
+        e 0 : integer
+    }
+}

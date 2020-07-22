@@ -1,0 +1,59 @@
+#base.s2c
+.package {
+    type 0 : integer
+    session 1 : integer
+    ud 2 : string
+}
+.intarray {
+    array 0 : *integer
+}
+.twoarray {
+    arr1 0 : *integer
+    arr2 1 : *integer
+}
+pushtext 1 {
+    request {
+        text 0 : string
+    }
+}
+#login.s2c
+.role_list_role {
+    rid 0 : string
+    rname 1 : string
+}
+role_list 4 {
+    request {
+        roles 0 : *role_list_role(rid)
+    }
+}
+game_over 5 {
+    request {
+        why 0 : string
+    }
+}
+role_object 10 {
+    request {
+        rid 0 : integer
+        rname 1 : string
+    }
+}
+role_attrs 11 {
+    request {
+        ids 0 : *integer
+        vals 1 : *integer(4)
+    }
+}
+role_attrs_change 12 {
+    request {
+        ids 0 : *integer
+        vals 1 : *integer(4)
+    }
+}
+chat_chating 40 {
+    request {
+        rid 0 : integer
+        rname 1 : string
+        channel 2 : integer
+        content 3 : string
+    }
+}

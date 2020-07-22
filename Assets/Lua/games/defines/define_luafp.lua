@@ -44,8 +44,7 @@ _LuaFpBasic = {
 
 -- 中间
 _LuaFpMidle = {
-	{"","protocal",5}, -- 常量 网络层协议
-	{"Network","network",5}, -- 网络层
+	{"MgrNet","mgr_net",5}, -- 网络层
 	{"UIPubs","ui_pubs",7}, -- UI的Pubs
 	{"UIBase","ui_base",7}, -- UI的基础类
 	{"UICell","uicell_base",7}, -- UICell的基础类
