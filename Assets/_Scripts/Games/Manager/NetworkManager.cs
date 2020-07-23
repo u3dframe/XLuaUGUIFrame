@@ -59,11 +59,11 @@ public class NetworkManager : GobjLifeListener {
 	/// </summary>
 	protected override void OnCall4Destroy() {
 		GameMgr.DiscardUpdate(this);
+		socket.OnRemove();
 	}
 
 	protected override void _OnClear(){
 		mEvents.Clear();
-		socket.OnRemove();
 		socket = null;
 	}
 
