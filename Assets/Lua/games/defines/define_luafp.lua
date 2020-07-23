@@ -6,7 +6,8 @@ _LuaPacakge = {
 	[4] = "games/basics/ugui/",
 	[5] = "games/net/",
 	[6] = "games/logics/",
-	[7] = "games/logics/base/",
+	[7] = "games/logics/_base/",
+	[8] = "games/logics/_coms/",
 }
 
 -- 不需要全局变量的lua
@@ -48,17 +49,17 @@ _LuaFpMidle = {
 	{"UIPubs","ui_pubs",7}, -- UI的Pubs
 	{"UIBase","ui_base",7}, -- UI的基础类
 	{"UICell","uicell_base",7}, -- UICell的基础类
-	{"UIRow","uicell_row",7}, -- 行单元（多行多列使用）
 	{"UIRoot","ui_root",7}, -- 加载 UI的根uiroot
 	{"SceneBase","scene_base",7}, --场景对象基础类
 	{"MgrBase","mgr_base",7}, -- 管理基础类
 	{"MgrInput","mgr_input",7}, -- 管理 - 场景单击
 	{"MgrCamera","mgr_camera",7}, -- 管理 - 场景摄像头
+	{"UIRow","uicell_row",8}, -- 行单元（多行多列使用）
 	{"GEntry","game_entry",6}, -- 游戏入口
 }
 
 -- 最后
 _LuaFpEnd = {
-	{"MgrScene","scene/mgr_scene",6}, -- 场景管理
+	{"MgrScene","_scene/mgr_scene",6}, -- 场景管理
 	{"MgrLogin","login/mgr_login",6}, -- 登录管理
 }
