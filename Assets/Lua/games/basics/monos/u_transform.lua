@@ -5,6 +5,7 @@
 	-- Desc : 
 ]]
 local _tn = todecimal2
+local _tz = tonum10
 
 local super = LUGobj
 local M = class( "lua_transform",super )
@@ -41,7 +42,7 @@ function M:GetChildCount( )
 end
 
 function M:GetChild( nIndex )
-	nIndex = _tn( nIndex,0 )
+	nIndex = _tz( nIndex,0 )
 	local _nc = self:GetChildCount()
 	if _nc > 0 and nIndex >= 0 and _nc > nIndex then
 		return self.trsf:GetChild(nIndex)

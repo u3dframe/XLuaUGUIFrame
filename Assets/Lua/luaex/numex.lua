@@ -37,7 +37,6 @@ function isNum(val)
 end
 
 function tonum(val,base,def)
-	if isNum(val) then return val end
 	def = def or 0;
     return tonumber(tostring(val), base) or def;
 end
@@ -47,6 +46,7 @@ function tonum16(val,def)
 end
 
 function tonum10(val,def)
+	if isNum(val) then return val end
 	return tonum(val,10,def);
 end
 
@@ -54,9 +54,24 @@ function toint(val,def)
     return math_round(tonum10(val,def))
 end
 
+function todecimal(val,acc,def)
+	local _pow = 1
+	if isNum(acc) then
+		for i = 1,acc do
+			_pow = _pow * 10
+		end
+	end
+
+	local _v = tonum(val,nil,def) * _pow
+    return math_round(_v) / _pow
+end
+
+function todecimal0(val,def)
+	return todecimal(val,nil,def)
+end
+
 function todecimal2(val,def)
-	local _v = tonum(val,nil,def) * 100
-    return math_round(_v) / 100
+	return todecimal(val,2,def)
 end
 
 local M = {};
@@ -148,7 +163,7 @@ function M.bitOr(n1,n2)
 	if bit_bor then
 		return bit_bor(n1,n2);
 	else
-		return n1 | n2;
+		return (n1 | n2);
 	end
 end
 
@@ -156,7 +171,7 @@ function M.bitAnd(n1,n2)
 	if bit_band then
 		return bit_band(n1,n2);
 	else
-		return n1 & n2
+		return (n1 & n2);
 	end
 end
 
