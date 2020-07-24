@@ -9,6 +9,7 @@ local tb_insert = table.insert
 local tb_cid = table.contains_id
 local tb_rm = table.removeValuesFunc
 local tb_for = table.foreachArrs
+local tb_vk = table.getVK
 local _tEx,_nEx = TimeEx,NumEx
 local _dTr,_pErr,_clr = debug.traceback,printError,clearLT
 local _tLb,_ok,_err = {}
@@ -116,7 +117,7 @@ end
 
 function M.AddDelayFunc(cmd,delay,func,loop)
 	this._lbFuncDelays = this._lbFuncDelays or {}
-	local _v = table.getVK(this._lbFuncDelays,"cmd",cmd)
+	local _v = tb_vk(this._lbFuncDelays,"cmd",cmd)
 	loop = (loop or 1)
 	if _v and _v.delay > 0.01 then
 		_v.delay = delay
