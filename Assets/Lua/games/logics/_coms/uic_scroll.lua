@@ -48,7 +48,6 @@ function M:ctor(lbCfg)
 	self.lfClick = cfClick
 	self.lfShow = cfShow
 	self.exts = _ext
-	
 
 	self._lfCkCell = handler(self,self._OnClickCell)
 	local _lfCCell = handler(self,self._CreateCell)
@@ -67,7 +66,7 @@ end
 
 function M:_CreateCell(newGo)
 	if self.isUseRow then
-		return _row.New(newGo,self.clsLua,self.nColumn,self._lfCkCell)
+		return _row.New(newGo,self.clsLua,self.nColumn,self._lfCkCell,self.isAllActive)
 	end
 	return self.clsLua.New(newGo,self._lfCkCell)
 end
