@@ -23,7 +23,7 @@ function M:ctor(lbCfg)
 	local isVertical = lbCfg.isVertical == true
 	local isCallNoData = lbCfg.isCallNoData == true
 	local isAlpha = lbCfg.isAlpha == true
-	local _ext = (lbCfg.ext_1 ~= nil) and {} or nil
+	local _ext,_tmp = (lbCfg.ext_1 ~= nil) and {} or nil
 	for i = 1,10 do
 		_tmp = lbCfg[self:SFmt("ext_%s",i)]
 		if _tmp then
@@ -33,7 +33,7 @@ function M:ctor(lbCfg)
 
 	_clr(lbCfg)
 
-	local _tmp = clsLua
+	_tmp = clsLua
 	if (type(_tmp) == "string") then
 		_tmp =  require(_tmp)
 	end
