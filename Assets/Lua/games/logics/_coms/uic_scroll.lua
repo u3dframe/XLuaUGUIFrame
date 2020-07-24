@@ -77,9 +77,10 @@ function M:_ShowCell(lbCell,nRow)
 		return
 	end
 	if self.isUseRow then
-		return _row:ShowViewByList(self.listData,nRow,_upk(self.exts))
+		lbCell:ShowViewByList(self.listData,nRow,_upk(self.exts))
+	else
+		lbCell:ShowViewByData(self.listData[nRow],_upk(self.exts))
 	end
-	lbCell:ShowViewByData(self.listData[nRow],_upk(self.exts))
 end
 
 function M:_OnClickCell(lbCell)

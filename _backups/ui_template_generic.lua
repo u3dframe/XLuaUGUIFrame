@@ -44,11 +44,29 @@ function M:OnInit()
 	self.lbCellXxx = _clsCell.New(_tmp)
 
 	-- self._lfXxx = self._lfXxx or handler(self,self.xxxFunc) -- 定义事件
+	
+	-- 多行多列的
+	self.lbUSclXxx = self:NewUScl(elName,{
+		clsLua = _clsCell,
+		cfClick = function(lbCell) end,
+		nColumn = 5,
+		isVertical = true/nil
+		ext_1 = _lfBegDrag,
+		ext_2 = _lfDrag,
+		ext_3 = _lfEndDrag,
+	})
+	-- 单行单列
+	self.lbUSclXxx = self:NewUScl(elName,{
+		clsLua = _clsCell,
+		cfClick = function(lbCell) end,
+		isVertical = true/nil
+	})
 end
 
 -- 显示的时候都会调用，做数据的刷新更新(必要)
 function M:OnShow()
 	self.lbPartXxx:ShowViewByData(data)
+	self.lbUSclXxx:ShowScroll(listData)
 end
 
 -- 隐藏，销毁都会调用(必要)
