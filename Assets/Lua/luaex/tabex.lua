@@ -48,6 +48,10 @@ function table.contains_func(src,func,obj)
     return false
 end
 
+function table.contains_id(src,obj)
+    return table.contains_func(src,lfc_equalId,obj)
+end
+
 local function _keys_vals(src,sortFunc,isKey)
     local _ret = {};
     if type(src) == "table" then
