@@ -23,7 +23,7 @@ function M:ctor(lbCfg)
 	local isVertical = lbCfg.isVertical == true
 	local isCallNoData = lbCfg.isCallNoData == true
 	local isAlpha = lbCfg.isAlpha == true
-	local _ext,_tmp = (lbCfg.ext_1 ~= nil) and {} or nil
+	local _ext,_tmp = {}
 	for i = 1,10 do
 		_tmp = lbCfg[self:SFmt("ext_%s",i)]
 		if _tmp then
@@ -76,8 +76,8 @@ function M:_CreateCell(newGo)
 end
 
 function M:_ShowCell(lbCell,nRow)
-	if self.cfShow then
-		self.cfShow(lbCell,nRow)
+	if self.lfShow then
+		self.lfShow(lbCell,nRow,_upk(self.exts))
 		return
 	end
 	if self.isUseRow then
