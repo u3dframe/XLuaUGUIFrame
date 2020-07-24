@@ -42,6 +42,7 @@ function M:ctor(lbCfg)
 	super2.ctor( self )
 	
 	self.clsLua = _tmp
+	self.tpClsLua = type(_tmp)
 	self.nColumn = self:TInt( nColumn,0 )
 	self.isUseRow = self.nColumn > 1
 	self.isAllActive = (isAllActive == true)
@@ -67,6 +68,9 @@ end
 function M:_CreateCell(newGo)
 	if self.isUseRow then
 		return _row.New(newGo,self.clsLua,self.nColumn,self._lfCkCell,self.isAllActive)
+	end
+	if self.tpClsLua == "function" then
+		return self.clsLua(newGo)
 	end
 	return self.clsLua.New(newGo,self._lfCkCell)
 end

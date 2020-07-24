@@ -26,7 +26,7 @@ function M:ReEvent4OnUpdate(isBind)
 	super.ReEvent4OnUpdate(self,isBind)
 end
 
-function M:_IsNoLoaded()
+function M:IsNoLoaded()
 	return self.stateLoad ~= LE_StateLoad.Loaded
 end
 
@@ -117,7 +117,7 @@ function M:OnCF_Fab( obj )
 end
 
 function M:_JudgeLoad()
-	if self.stateLoad ~= LE_StateLoad.Loaded then return end
+	if self:IsNoLoaded() then return end
 	if self:IsVwCircle4Load() then
 		-- 隐藏转圈
 		self:VwCircle(false)
