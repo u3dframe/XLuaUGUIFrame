@@ -88,7 +88,7 @@ function M:_ShowCell(lbCell,nRow)
 end
 
 function M:_OnClickCell(lbCell)
-	if self.cfClick then self.cfClick(lbCell) end
+	if self.lfClick then self.lfClick(lbCell) end
 end
 
 return M
