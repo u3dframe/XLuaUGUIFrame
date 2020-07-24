@@ -77,7 +77,7 @@ function M:_ShowCell(lbCell,nRow)
 		return
 	end
 	if self.isUseRow then
-		return lbCell:ShowViewByList(self.listData,nRow,_upk(self.exts))
+		return _row:ShowViewByList(self.listData,nRow,_upk(self.exts))
 	end
 	lbCell:ShowViewByData(self.listData[nRow],_upk(self.exts))
 end
