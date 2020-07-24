@@ -10,6 +10,7 @@ local _lbKeys = { "__cname","class","__supers","__create","__index","__newindex"
 
 local M = class( "lua_basic" )
 function M:ctor( )
+	self.isUping = true
 end
 
 function M:getCName()
@@ -26,13 +27,18 @@ function M:OnInit()
 end
 
 function M:ReEvent4OnUpdate(isBind)
-	self._lfUp = self._lfUp or handler_pcall(self,self._OnUpdate)
+	self._lfUp = self._lfUp or handler_pcall(self,self.__OnUpdate)
 	if Event then
 		Event.RemoveListener(Evt_Update,self._lfUp)
 		if isBind == true then
 			Event.AddListener(Evt_Update,self._lfUp);
 		end
 	end
+end
+
+function M:__OnUpdate(dt)
+	if not self.isUping then return end
+	self:_OnUpdate(dt)
 end
 
 function M:_OnUpdate(dt)

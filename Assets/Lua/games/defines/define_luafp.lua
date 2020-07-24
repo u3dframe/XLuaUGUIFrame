@@ -54,7 +54,9 @@ _LuaFpMidle = {
 	{"MgrBase","mgr_base",7}, -- 管理基础类
 	{"MgrInput","mgr_input",7}, -- 管理 - 场景单击
 	{"MgrCamera","mgr_camera",7}, -- 管理 - 场景摄像头
+	{"LTimer","lua_timer",8}, -- sv时间(延迟，定点)
 	{"UIRow","uicell_row",8}, -- 行单元（多行多列使用）
+	{"UIScl","uic_scroll",8}, -- 固定循环
 	{"GEntry","game_entry",6}, -- 游戏入口
 }
 

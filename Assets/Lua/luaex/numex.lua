@@ -3,17 +3,18 @@
 -- Date : 2016-05-25 09:25
 -- Desc : base : 随机数值最大值 , isSeek 是否重置随机种子需要先引起(属于底层基础)
 -- math.random([n [, m]]) 无参调用,产生(0,1)之间的浮点随机数,只有参数n,产生1-n之间的整数.
+-- math.fmod(x,y) = 取x/y的余数?;math.modf(v) = 取整数,小数
 local os = os
 local str_format = string.format
 local tb_insert = table.insert
 local tb_concat = table.concat
 
 local math = math
-local math_random = math.random
-local math_randomseed = math.randomseed
-local math_floor = math.floor
+local m_random = math.random
+local m_randomseed = math.randomseed
+local m_floor = math.floor
 math.round = math.round or function(val)
-	local nVal = math_floor(val)
+	local nVal = m_floor(val)
 	local fVal = val;
 	if nVal ~= 0 then
 		fVal = val - nVal;
@@ -23,7 +24,8 @@ math.round = math.round or function(val)
 	end
 	return nVal;
 end
-local math_round = math.round
+local m_round = math.round
+local m_modf = math.modf
 
 if bit then
 	bit_band = bit.band; -- 一个或多个无符号整数 '与 &' 运算 得到值
@@ -51,7 +53,8 @@ function tonum10(val,def)
 end
 
 function toint(val,def)
-    return math_round(tonum10(val,def))
+	if not isNum(val) then val = tonum(val,nil,def) end
+    return m_round(val)
 end
 
 function todecimal(val,acc,def)
@@ -63,7 +66,7 @@ function todecimal(val,acc,def)
 	end
 
 	local _v = tonum(val,nil,def) * _pow
-    return math_round(_v) / _pow
+    return m_round(_v) / _pow
 end
 
 function todecimal0(val,def)
@@ -80,7 +83,7 @@ local this = M;
 function M.onSeek()
 	local _time = os.time();
 	local _seed = tostring(_time):reverse():sub(1, 6);
-	math_randomseed(_seed);
+	m_randomseed(_seed);
 end
 
 -- 保留小数
@@ -100,7 +103,7 @@ function M.nextFloat(base,isSeek)
 		this.onSeek();
 	end
 	base = tonum10(base,10000);
-	return math_random() * base;
+	return m_random() * base;
 end
 
 -- 产生 : 小于base并保留npos位的小数
@@ -124,7 +127,7 @@ function M.nextInt(base,isSeek)
 		return this.nextInt(2);
 	end
 
-	return math_random(base);
+	return m_random(base);
 end
 
 -- 产生 : 整数 [0~base)
@@ -138,7 +141,7 @@ function M.nextNum( min,max,isSeek )
 	if isSeek == true then
 		this.onSeek();
 	end
-	return math_random(min,max);
+	return m_random(min,max);
 end
 
 -- 随机 - bool值
@@ -198,6 +201,15 @@ function M.bitRight(org,pos)
 	end
 end
 
+-- 取整数或小数
+function M.modDecimal(num,isInt)
+	if (num == nil or num == 0) then
+		return 0;
+	end
+	local _i,_d = m_modf(num)
+	return (isInt == true) and _i or _d
+end
+
 -- 求余数
 function M.modf(src,divisor)
 	if (src == nil or src == 0) or (divisor == nil or divisor == 0) then
@@ -207,7 +219,7 @@ function M.modf(src,divisor)
 		return src;
 	end
 	
-	local _fl = math_floor(src / divisor);
+	local _fl = m_floor(src / divisor);
 	return src - (_fl * divisor);
 end
 

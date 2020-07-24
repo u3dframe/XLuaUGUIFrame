@@ -35,7 +35,7 @@ end
 function M:NewTxt(elName)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsUTxt().New(_gobj)
+        return self:_ClsUTxt().New(_gobj,true)
     end
     printError("=== NewTxt is Null, name = [%s]", elName)
 end
@@ -81,4 +81,26 @@ function M:NewInpFld(elName,val)
     end
     printError("=== NewInpFld is Null, name = [%s]", elName)
 end
+
+-- lbCfg = {clsLua,cfClick,cfShow,nColumn,isAllActive,isVertical,isCallNoData,isAlpha,ext_1~10} 
+-- 里面字段的意义
+-- clsLua - 自己的子元素脚本,可以为路径，也可以为require对象 (必要)
+-- cfClick - 单击cell元素 (非必要)
+-- cfShow - 显示cell元素 (非必要)
+-- nColumn - 列数 (非必要 - 多行多列的)
+-- isAllActive - 显示全都 (非必要 - 多行多列的)
+-- isVertical - 是否纵向滚动 (必要 - ugui_scroll 的)
+-- isCallNoData - 是否回到Show，在没Data的时候 (非必要 - ugui_scroll 的)
+-- isAlpha - 是否让计算单元Alpha (非必要 - ugui_scroll 的)
+-- ext_1~10 - 透传参数1~10 (非必要 - 要透传时，必须有ext_1)
+function M:NewUScl(elName,lbCfg,elNameItem)
+    local _gobj = self:GetElement(elName)
+    if _gobj then
+        lbCfg.gobj = _gobj
+        if elNameItem then lbCfg.gobjCell = self:GetElement(elNameItem) end
+        return self:_ClsUIScl().New(lbCfg)
+    end
+    printError("=== NewUScl is Null, name = [%s]", elName)
+end
+
 return M

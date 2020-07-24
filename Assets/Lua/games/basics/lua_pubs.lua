@@ -5,7 +5,9 @@
 	-- Desc : 减少自身内部引用
 ]]
 
-local _c_trsf,_c_comp,_c_ele,_lasset,_utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
+local _c_trsf,_c_comp,_c_ele,_lasset,_lfab = nil
+local _utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
+local _cl_scl = nil
 
 local M = class("lua_pubs")
 
@@ -37,6 +39,13 @@ function M:_ClsAsset()
     return _lasset
 end
 
+function M:_ClsFab()
+    if not _lfab then
+        _lfab = LuaFab
+    end
+    return _lfab
+end
+
 function M:_ClsUTxt()
     if not _utxt then
         _utxt = LuText
@@ -53,7 +62,7 @@ end
 
 function M:_ClsUTog()
     if not _utog then
-        _utog = LuScl
+        _utog = LuTog
     end
     return _utog
 end
@@ -91,6 +100,13 @@ function M:NewAsset(ab,asset,atp,callFunc)
         end
     end
     return _lb
+end
+
+function M:_ClsUIScl()
+    if not _cl_scl then
+        _cl_scl = UIScl
+    end
+    return _cl_scl
 end
 
 return M

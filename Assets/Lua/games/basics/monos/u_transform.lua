@@ -4,8 +4,6 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local _tn = todecimal2
-local _tz = tonum10
 
 local super = LUGobj
 local M = class( "lua_transform",super )
@@ -31,9 +29,9 @@ function M:ReXYZ( x,y,z )
 		x = x.x;
 	end
 
-	x = _tn( x,0 )
-	y = _tn( y,0 )
-	z = _tn( z,0 )
+	x = self:TF2( x )
+	y = self:TF2( y )
+	z = self:TF2( z )
 	return x,y,z
 end
 
@@ -42,7 +40,7 @@ function M:GetChildCount( )
 end
 
 function M:GetChild( nIndex )
-	nIndex = _tz( nIndex,0 )
+	nIndex = self:TInt( nIndex )
 	local _nc = self:GetChildCount()
 	if _nc > 0 and nIndex >= 0 and _nc > nIndex then
 		return self.trsf:GetChild(nIndex)

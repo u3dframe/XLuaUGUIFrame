@@ -7,12 +7,11 @@
 
 local tb_insert = table.insert
 
-local super,super2 = LUTrsf,UIPubs
-local M = class( "uicell_row",super,super2 )
+local super = LUTrsf
+local M = class( "uicell_row",super )
 
 function M:ctor(gobj,clsLua,nColumn,cfClick,isAllActive)
 	super.ctor( self,gobj )
-	super2.ctor( self )
 	
 	self.nColumn = nColumn
 	self.isAllActive = (isAllActive == true)
