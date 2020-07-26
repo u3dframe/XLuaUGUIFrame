@@ -12,6 +12,9 @@ local M = class( "mgr_xxx",super )
 function M:Init()
 	-- self.lbUI = _clsUI.New()
 	-- _evt.AddListener(Evt_ToView_Login,handler(self,self.xxxxFunc));
+	-- self:SendRequest( cmd,data,func)
+	-- self:AddPCall( cmd,func)
+	-- self:RemovePCall( cmd,func)
 end
 
 function M:GetUI()

@@ -13,6 +13,8 @@ function M:Init()
 end
 
 function M:ToLoginView()
+	LTimer.ReLocTime()
+
 	local ui = UIBase.New({
 		abName = "login/uilogin",
 	});
@@ -21,10 +23,16 @@ function M:ToLoginView()
 		_s.lbBtn01 = _s:NewBtn("button",function()
 			printInfo("click buttion")
 		end,2)
+
+		_s.lbCDDown = LCDown.New(function(_lb) 
+			printTable("===isEnd")
+			_lb:SetText(4)
+		end,LE_TmType.A_D_H_M_S,_s.lbBtn01.lbTxt)
 	end
 
 	ui.OnShow = function(_s)
-		_s.lbBtn01:SetText(4)
+		-- _s.lbBtn01:SetText(4)
+		_s.lbCDDown:Start(10)
 	end
 	ui:View(true)
 	-- coroutine.wait(20)

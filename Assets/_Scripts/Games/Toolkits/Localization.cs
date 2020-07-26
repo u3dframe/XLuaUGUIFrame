@@ -73,10 +73,14 @@ static public class Localization
 		string _k,_v;
 		for(int i = 0; i < lens; i++){
 			_cols = GameFile.Split(_rows[i],spt,true);
-			if(_cols == null || _cols.Length <= 1)
+			if(_cols == null || _cols.Length < 1)
 				continue;
 			_k = _cols[0];
-			_v = _cols[1].Replace("\\n","\n");
+			if(_cols.Length > 1)
+				_v = _cols[1].Replace("\\n","\n");
+			else
+				_v = "";
+			
 			// 判断下
 			if(mCTemp.ContainsKey(_k))
 				Debug.LogErrorFormat("==== has same key = [{0}],val = [{1}] ",_k,_v);
@@ -150,8 +154,11 @@ static public class Localization
 	}
 	
 	static public string Format (string key, params object[] parameters) {
-		if(Exists(key))
-			return string.Format(Get(key), parameters); 
+		if(Exists(key)){
+			string _fmt = Get(key);
+			// Debug.LogError(parameters[0].GetType());
+			return string.Format(_fmt, parameters); 
+		}
 		return null;
 	}
 }

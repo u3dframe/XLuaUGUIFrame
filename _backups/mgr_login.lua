@@ -34,6 +34,10 @@ function M:ToLoginView()
 	_glife:DetroySelf(false);
 	coroutine.wait(3)
 	printError("=== 5")
+	printInfo(string.csFmt2Luafmt("{0}天{1}时{2}分{3}秒"))
+	printInfo(string.csFmt2Luafmt("{0}天{1}时{2}分{3}秒{4}"))
+	printInfo(string.csFmt2Luafmt("时{2}分{3}秒"))
+	printInfo(string.csFmt2Luafmt("{0:D2}:{1:D2}:{2:D2}"))
 end
 
 function M:OnUpdate(dt)

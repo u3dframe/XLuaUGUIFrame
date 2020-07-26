@@ -8,7 +8,7 @@ local str_upper = string.upper
 local str_format = string.format
 local tb_insert = table.insert
 local tb_concat = table.concat
-local d_traceback = debug.traceback
+local _deTrk = debug.traceback
 local _sel = select
 
 local DE_BUG = nil;
@@ -54,7 +54,7 @@ function printLog(tag, fmt, ...)
 	end
 
     if _isErr or _isThr or _isTrace then
-        tb_insert(t, d_traceback("", 3))  -- 打印要少前3行数据
+        tb_insert(t, _deTrk("", 3))  -- 打印要少前3行数据
 	end
 	str = tb_concat(t)
 	if _isErr then

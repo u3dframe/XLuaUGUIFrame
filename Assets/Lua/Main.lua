@@ -16,7 +16,7 @@ function OnLevelWasLoaded(level)
 	_evt = evt()
 	if _evt then
 		_evt.Brocast(Evt_SceneLoaded,level)
-		printInfo("Event Brocast OnLevelWasLoaded = [%s]",level)
+		-- printInfo("Event Brocast OnLevelWasLoaded = [%s]",level)
 	end
 end
 

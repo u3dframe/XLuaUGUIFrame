@@ -130,6 +130,9 @@ public class LuaManager : GobjLifeListener
 				lens = args.Length;
 			}
 			switch(lens){
+				case 0:
+					func.Call();
+					break;
 				case 1:
 					func.Action(args[0]);
 					break;
@@ -137,7 +140,7 @@ public class LuaManager : GobjLifeListener
 					func.Action(args[0],args[1]);
 					break;
 				default:
-					func.Call();
+					func.Call(args);
 					break;
 			}
 			return true;

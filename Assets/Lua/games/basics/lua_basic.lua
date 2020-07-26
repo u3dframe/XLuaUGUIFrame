@@ -17,6 +17,10 @@ function M:getCName()
 	return self.__cname
 end
 
+function M:IsClass(clsName)
+	return self.__cname == clsName
+end
+
 function M:_OnInit()
 	if self.isInited then return end
 	self.isInited = true
@@ -27,7 +31,7 @@ function M:OnInit()
 end
 
 function M:ReEvent4OnUpdate(isBind)
-	self._lfUp = self._lfUp or handler_pcall(self,self.__OnUpdate)
+	self._lfUp = self._lfUp or handler_xpcall(self,self.__OnUpdate)
 	if Event then
 		Event.RemoveListener(Evt_Update,self._lfUp)
 		if isBind == true then

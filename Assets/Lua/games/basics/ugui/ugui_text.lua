@@ -23,13 +23,15 @@ end
 
 -- 本地化内容处理完毕
 function M:SetText( val )
+	if val == nil or val == "" then
+		val = 1
+	end
 	self.comp:SetText(val);
 end
 
 -- 格式化文本,是 {0} 的模式，非lua的 %s
 function M:SetTextFmt( val, ... )
-	local _pars = {...}
-	self.comp:SetText(val,unpack(_pars));
+	self.comp:Format( val,... );
 end
 
 function M:SetUText( val )

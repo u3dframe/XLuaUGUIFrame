@@ -92,7 +92,7 @@ function M.getDHMS( ms )
 
   ms = ms % this.DAY;
   local hh,mm,ss = this.getHMS(ms);
-  return dd,hh,mm,ss;
+  return hh,mm,ss,dd;
 end
 
 function M.getHMSBySec( sec )

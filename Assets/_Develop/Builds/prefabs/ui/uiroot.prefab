@@ -170,8 +170,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0
@@ -292,8 +292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0
@@ -452,8 +452,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0
@@ -574,8 +574,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0
@@ -696,8 +696,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0
@@ -818,8 +818,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0
@@ -1014,8 +1014,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0
@@ -1136,8 +1136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_standard_width: 1280
-  m_standard_height: 720
+  m_standard_width: 1920
+  m_standard_height: 1080
   device_width: 0
   device_height: 0
   cav_width: 0

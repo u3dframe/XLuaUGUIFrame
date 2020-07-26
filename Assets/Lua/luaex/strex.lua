@@ -5,6 +5,7 @@
 
 local tb_insert = table.insert
 local tb_remove = table.remove
+local tb_join = table.concat
 
 local str_format = string.format
 local str_upper = string.upper
@@ -39,27 +40,38 @@ function string.toHtml(str,isRestroe)
     return str;
 end
 
-function string.split(inStr,sep,isFind)
+function string.split(inStr,sep,sepType,useType)
     local _lt = {};
     inStr = tostring(inStr);
     if inStr == nil or inStr == "" then
         return _lt;
     end
 
-    sep = tostring(sep);
     if sep == nil or sep == "" then
         sep = "%s";
+    else
+        sep = tostring(sep);
+    end
+    
+    if (not sepType) then
+        sep = "([^"..sep.."]+)";
+    elseif sepType == 1 then
+        sep = "[^"..sep.."]+";
     end
 
-    if isFind == true then
+    if useType == 1 then
         local pos = 1;
         for nBen,nEnd in function() return str_find(inStr, sep, pos, true) end do
             tb_insert(_lt, str_sub(inStr, pos, nBen - 1))
             pos = nEnd + 1
         end
         tb_insert(_lt, str_sub(inStr, pos))
+    elseif useType == 2 then
+        str_gsub(inStr,sep,function ( w )
+            tb_insert(_lt,w)
+        end)
     else
-        for str in str_gmatch(inStr, "([^"..sep.."]+)") do
+        for str in str_gmatch(inStr, sep) do
             tb_insert(_lt,str);
         end
     end
@@ -171,4 +183,20 @@ end
 function string.isHasSpace(inStr)
     local _isHas = string.contains(inStr,"[ \t\n\r　]");
 	return _isHas;
+end
+
+function string.csFmt2Luafmt(inStr)
+    if not inStr then return "" end
+    local _sbeg = string.starts
+    local _send = string.ends
+    local _ss = string.split(inStr,"{%d}") -- {%d([^:[D]?[%d]*])?}
+    _ss = tb_join(_ss,"%s")
+    if _sbeg(inStr,"{0}") then
+        _ss = "%s" .. _ss
+    end
+    local _end = str_sub(inStr,-3)
+    if _sbeg(_end,"{") and _send(_end,"}") then
+        _ss = _ss .. "%s"
+    end
+	return _ss;
 end

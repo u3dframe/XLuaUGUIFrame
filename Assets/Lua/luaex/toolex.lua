@@ -22,7 +22,9 @@ local str_gsub = string.gsub
 local str_rep = string.rep
 local str_byte = string.byte
 
-local _pcall;
+local _pcall = pcall
+local _xpcall = xpcall
+local _deTrk = debug.traceback
 
 local _unpack = unpack or table.unpack
 function unpack( arg )
@@ -39,10 +41,16 @@ end
 
 function handler_pcall( obj, method )
 	return function( ... )
-		if _pcall == nil then
-			_pcall = pcall
-		end
 		local _ok,_err = _pcall( method,obj, ... )
+		if not _ok then
+			printError("====[%s].[%s] , error = %s",obj,method,_err)
+		end
+    end
+end
+
+function handler_xpcall( obj, method )
+	return function( ... )
+		local _ok,_err = _xpcall( method,_deTrk,obj, ... )
 		if not _ok then
 			printError("====[%s].[%s] , error = %s",obj,method,_err)
 		end

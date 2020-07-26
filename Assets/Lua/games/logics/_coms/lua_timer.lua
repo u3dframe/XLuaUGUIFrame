@@ -77,7 +77,7 @@ end
 
 function M.SetSvTime(svTimeSec)
 	this.isUping = false
-	local _svSec = self:TF( svTimeSec,3 )
+	local _svSec = this:TF( svTimeSec,3 )
 	local _nowSec = this.GetLocTime()
 	_tEx.setDiffSec(_svSec - _nowSec)
 	if (this.lastSvSec) then
@@ -86,12 +86,16 @@ function M.SetSvTime(svTimeSec)
 	this.lastSvSec = _svSec
 	this.cdSec = 1 - _nEx.modDecimal(_svSec)
 	_svSec = (this.cdSec == 1) and 0 or this.cdSec
-	local _lb = this.getDate()
+	local _lb = this.GetSvDate()
 	this.curMin = _lb.min
 	this.curHour = _lb.hour
 	this.cdMin = (this.oneMin - _lb.sec) + _svSec
 	this.cdHour = (this.oneHour - this.curMin * this.oneMin) + this.cdMin
 	this.isUping = true
+end
+
+function M.ReLocTime()
+	this.SetSvTime(this.GetLocTime())
 end
 
 function M.GetLocTime()
@@ -129,6 +133,9 @@ function M.AddDelayFunc(cmd,delay,func,loop)
 end
 
 function M._ExcDelayFunc(dt)
+	if not this._lbFuncDelays or #this._lbFuncDelays <= 0 then
+		return
+	end
 	for _, v in ipairs(this._lbFuncDelays) do
 		if v.delay > 0 then
 			v.delay = v.delay - dt
@@ -157,6 +164,11 @@ function M._ExcDelayFunc(dt)
 	end
 
 	_clr(_tLb)
+end
+
+function M.GetHMS(diffSec,isDay)
+	if (isDay == true) then return _tEx.getDHMSBySec(diffSec) end
+	return _tEx.getHMSBySec(diffSec)
 end
 
 function M.OutGame()
