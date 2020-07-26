@@ -17,7 +17,7 @@ function M:getCName()
 	return self.__cname
 end
 
-function M:IsClass(clsName)
+function M:IsSameClass(clsName)
 	return self.__cname == clsName
 end
 

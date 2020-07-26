@@ -31,7 +31,7 @@ function M:ctor( endCallFunc,tmType,obj,fmt )
     self:SetFmt(fmt)
     if obj then
         if type(obj) == "table" then
-            if obj.IsClass and obj:IsClass("ugui_text") then
+            if obj.IsSameClass and obj:IsSameClass("ugui_text") then
                 self.lbTxt = obj
             else
                 obj = obj.gobj
@@ -94,24 +94,23 @@ function M:OnUpSecond()
     local _remainder = (self.isAdd) and (_tm - self.startTime) or (self.endTime - _tm)
     
     if _remainder >= 0 then
-        local _fmt = (self.fmtObj or self.ltmKey)
         if self.tmType == LE_TmType.A_S or self.tmType == LE_TmType.UTC_S then
             if self.fmtType == "function" then
-                _fmt(self,_remainder)
+                self._fmt(self,_remainder)
             else
-                self:SetText(_fmt,_remainder)
+                self:SetText(self._fmt,_remainder)
             end
         else
             local _h,_m,_s,_d = _ltimer.GetHMS(_remainder,(self.tmType == LE_TmType.A_D_H_M_S))
             if self.fmtType == "function" then
-                _fmt(self,_h,_m,_s,_d)
+                self._fmt(self,_h,_m,_s,_d)
             else
                 if self.tmType == LE_TmType.A_D_H_M_S then
-                    self:SetText(_fmt,_d,_h,_m,_s)
+                    self:SetText(self._fmt,_d,_h,_m,_s)
                 elseif self.tmType == LE_TmType.A_H_M_S or self.tmType == LE_TmType.UTC_H_M_S then
-                    self:SetText(_fmt,_h,_m,_s)
+                    self:SetText(self._fmt,_h,_m,_s)
                 elseif self.tmType == LE_TmType.A_M_S or self.tmType == LE_TmType.UTC_M_S then
-                    self:SetText(_fmt,(_m + _h * 60),_s)
+                    self:SetText(self._fmt,(_m + _h * 60),_s)
                 end
             end
         end
@@ -125,9 +124,14 @@ function M:_OnEnd()
     self:ExcuteCallFunc()
 end
 
+function M:on_clean()
+    self.fmtObj,self.fmtType,self._fmt,self.callFunc = nil
+end
+
 function M:SetFmt(fmt)
     self.fmtObj = fmt
     self.fmtType = type(self.fmtObj)
+    self._fmt = (self.fmtObj or self.ltmKey)
 end
 
 function M:SetText( val,... )
