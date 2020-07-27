@@ -58,6 +58,13 @@ function M:ctor(gobj,funcCreat,funcSetData,gobjItem)
 	self.wCell,self.hCell = self.lbItem:GetRectSize()
 end
 
+function M:on_clean()
+	self.funcCreat,self.funcSetData = nil
+	if self.comp then
+		self.comp.onValueChanged:RemoveAllListeners()
+	end
+end
+
 function M:ReInit(bIsVertical,bIsCallNoData,bIsAlpha)
 	self.isVertical = (bIsVertical == true)
 	self.isCallNoData = (bIsCallNoData == true)

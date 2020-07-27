@@ -79,8 +79,7 @@ function M:SetActiveDef(isActive)
 	self:SetActiveSelect(isActive)
 end
 
-function M:pre_clean()
-	super.pre_clean( self )
+function M:on_clean()
 	self:RemoveListeners()
 end
 
