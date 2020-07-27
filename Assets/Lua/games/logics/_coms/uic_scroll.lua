@@ -66,18 +66,18 @@ function M:ShowScroll(listData)
 end
 
 function M:_CreateCell(newGo)
+	if self.tpClsLua == "function" then
+		return self.clsLua(newGo,self._lfCkCell)
+	end
 	if self.isUseRow then
 		return _row.New(newGo,self.clsLua,self.nColumn,self._lfCkCell,self.isAllActive)
-	end
-	if self.tpClsLua == "function" then
-		return self.clsLua(newGo)
 	end
 	return self.clsLua.New(newGo,self._lfCkCell)
 end
 
 function M:_ShowCell(lbCell,nRow)
 	if self.lfShow then
-		self.lfShow(lbCell,nRow,_upk(self.exts))
+		self.lfShow(lbCell,self.listData[nRow],_upk(self.exts))
 		return
 	end
 	if self.isUseRow then
