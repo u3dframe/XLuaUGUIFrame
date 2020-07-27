@@ -13,7 +13,15 @@ function M:ctor(gobj,cfClick,lbParent,comp)
 	super2.ctor( self )
 	self:SetCallFunc(cfClick)
 	self.lbParent = lbParent
+
+	if self.callFunc ~= nil then
+		self.lbBtnSelf = self:_ClsUBtn().New(self.gobj,handler(self,self.OnClickSelf))
+	end
 	self:_OnInit()
+end
+
+function M:OnClickSelf()
+	self:ExcuteCallFunc(self)
 end
 
 function M:OnInit()
