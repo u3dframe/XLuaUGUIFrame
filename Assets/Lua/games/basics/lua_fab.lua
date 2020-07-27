@@ -165,7 +165,7 @@ function M:OnShow()
 end
 
 function M:Hiding(isMus)
-	local _isBl = (isMus == true) or (self.enabled == true and self.isVisible == true);
+	local _isBl = (isMus == true) or (self.enabled == true);
 	if not _isBl then return end
 	self.enabled = false
 	self:_OnHide()
@@ -217,6 +217,8 @@ function M:_OnExit(isDestroy)
 		if not self:DestroyObj() then
 			self:clean()
 		end
+	else
+		self:SetActive(false)
 	end
 end
 
