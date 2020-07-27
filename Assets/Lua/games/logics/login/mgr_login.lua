@@ -32,6 +32,7 @@ function M:ToLoginView()
 		end,LE_TmType.A_D_H_M_S,_s.lbBtn01.lbTxt)
 
 		if ui:IsGLife() then
+			printInfo("=====isGilfe")
 			ui.m_callShow = function() printTable("-----show") end
 			ui.m_callHide = function() printTable("-----hide") end
 		end
