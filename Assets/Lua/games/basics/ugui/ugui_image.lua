@@ -43,7 +43,16 @@ function M:SetImage( sAtals,sImg,nType )
 		sAtals = self:ReAtals(sAtals)
 	end
 	sImg = self:RePng(sImg)
-	self._pre_lbImg = self._lbImg
+	if sAtals == self._sAtals and sImg == self._sImg then return end
+	self._sAtals = sAtals
+	self._sImg = sImg
+
+	if self._lbImg and self._lbImg:IsNoLoaded() then
+		self._lbImg:OnUnLoad()
+	else
+		self._pre_lbImg = self._lbImg
+	end
+	
 	self._lbImg = self:NewAsset(sAtals,sImg,_LTP.Sprite,self.lfCFImage)
 end
 

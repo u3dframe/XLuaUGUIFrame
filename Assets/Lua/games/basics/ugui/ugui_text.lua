@@ -30,11 +30,23 @@ function M:SetText( val )
 end
 
 -- 格式化文本,是 {0} 的模式，非lua的 %s
-function M:SetTextFmt( val, ... )
+function M:FmtText( val, ... )
 	self.comp:Format( val,... );
 end
 
+function M:SetOrFmt( val, ... )
+	if self:Lens4Pars( ... ) > 0 then
+        self:FmtText( val,... )
+    else
+        self:SetText( val )
+    end
+end
+
 function M:SetUText( val )
+	if val == nil or val == "" then
+		self:SetText( val )
+		return
+	end
 	self.comp:SetUText(val)
 end
 

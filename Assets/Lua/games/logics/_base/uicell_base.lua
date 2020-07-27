@@ -17,6 +17,10 @@ function M:ctor(gobj,cfClick,lbParent,comp)
 	if self.callFunc ~= nil then
 		self.lbBtnSelf = self:_ClsUBtn().New(self.gobj,handler(self,self.OnClickSelf))
 	end
+	if self:IsGLife() then
+		self.m_callShow = function() self:ReEvent4Self(true) end
+		self.m_callHide = function() self:ReEvent4Self(false) end
+	end
 	self:_OnInit()
 end
 
@@ -25,11 +29,6 @@ function M:OnClickSelf()
 end
 
 function M:OnInit()
-end
-
-function M:SetActive( isActive )
-	super.SetActive( self,isActive )
-	self:ReEvent4Self(self.isActive)
 end
 
 function M:ShowViewByData( data,... )

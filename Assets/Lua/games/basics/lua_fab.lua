@@ -26,10 +26,6 @@ function M:ReEvent4OnUpdate(isBind)
 	super.ReEvent4OnUpdate(self,isBind)
 end
 
-function M:IsNoLoaded()
-	return self.stateLoad ~= LE_StateLoad.Loaded
-end
-
 function M:IsVwCircle4Load()
 	return (self.cfgAsset.isVwCircle == true)
 end

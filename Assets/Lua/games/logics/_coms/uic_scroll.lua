@@ -39,7 +39,6 @@ function M:ctor(lbCfg)
 	end
 	assert( _tmp,self:SFmt("scripte is null = [%s]",clsLua) )
 	super.ctor( self,gobj )
-	super2.ctor( self )
 	
 	self.clsLua = _tmp
 	self.tpClsLua = type(_tmp)
@@ -77,7 +76,7 @@ end
 
 function M:_ShowCell(lbCell,nRow)
 	if self.lfShow then
-		self.lfShow(lbCell,self.listData[nRow],_upk(self.exts))
+		self.lfShow(lbCell,nRow,_upk(self.exts))
 		return
 	end
 	if self.isUseRow then

@@ -36,18 +36,15 @@ function M:_Init( callFunc,val )
 	self:SetText(val)
 end
 
-function M:SetText(val)
-	if self.lbTxt and val then
-		self.lbTxt:SetText(val)
+function M:SetOrFmt( val, ... )
+	if self.lbTxt then
+		self.lbTxt:SetOrFmt( val, ... )
 	end
 	return self
 end
 
-function M:FormatText( val, ... )
-	if self.lbTxt then
-		self.lbTxt:SetTextFmt( val, ... )
-	end
-	return self
+function M:SetText(val)
+	return self:SetOrFmt(val)
 end
 
 function M:SetActiveSelect( isBl )

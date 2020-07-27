@@ -14,7 +14,7 @@ _LuaPacakge = {
 _LuaFpNoKey = {
 	"luaex/toolex",
 	"class",
-	"games/game_tools",
+	"games/tools/game_tools",
 }
 
 -- 基础
@@ -23,6 +23,7 @@ _LuaFpBasic = {
 	{"","define_global",1}, -- 常量 Lua 全局变量
 	{"","define_events",1}, -- 常量 事件 相关
 	{"","define_csharp",1}, -- 常量 CSharp 相关
+	{"LUtils","games/tools/utils"}, -- 工具类
 	{"LuaBasic","lua_basic",2}, -- Basic 类
 	{"LuaObject","lua_object",2}, -- 基础类
 	{"LUGobj","u_gobj",3}, -- gobj
@@ -58,6 +59,7 @@ _LuaFpMidle = {
 	{"UIRow","uicell_row",8}, -- 行单元（多行多列使用）
 	{"UIScl","uic_scroll",8}, -- 固定循环
 	{"LCDown","lua_countdown",8}, -- 倒计时
+	{"UIItem","ui_item",8}, -- type_id_num组件代码
 	{"GEntry","game_entry",6}, -- 游戏入口
 }
 

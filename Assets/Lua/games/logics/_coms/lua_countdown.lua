@@ -1,3 +1,10 @@
+--[[
+	-- 倒计时 
+	-- Author : canyon / 龚阳辉
+	-- Date   : 2020-07-26 18:45
+	-- Desc   : 必须在lua_timer设置服务器时间后
+]]
+
 LE_TmType = {
     UTC_H_M_S = 1, -- 标准 - 时分秒 00:00:00
     UTC_M_S = 2, -- 标准 - 分秒 00:00
@@ -5,9 +12,9 @@ LE_TmType = {
     A_D_H_M_S = 4, -- 0天0时0分1秒 / 0d 00:00:00
     A_H_M_S = 5, -- 0时0分1秒 / 00:00:00
     A_M_S = 6, -- 0分1秒 / 00:00
-    A_S = 7, -- 1秒 / 00s
+    A_S = 7, -- 1秒 / 0s
 
-    -- 一下该配置在csv里面去
+    -- 在csv里面去
     [1] = 93,
     [2] = 94,
     [3] = 95,
@@ -91,18 +98,22 @@ function M:OnUpSecond()
         return
     end
 
+    if (not self.fmtIsFunc) and (not self.lbTxt) then
+        return
+    end
+
     local _remainder = (self.isAdd) and (_tm - self.startTime) or (self.endTime - _tm)
     
     if _remainder >= 0 then
         if self.tmType == LE_TmType.A_S or self.tmType == LE_TmType.UTC_S then
-            if self.fmtType == "function" then
+            if self.fmtIsFunc then
                 self._fmt(self,_remainder)
             else
                 self:SetText(self._fmt,_remainder)
             end
         else
             local _h,_m,_s,_d = _ltimer.GetHMS(_remainder,(self.tmType == LE_TmType.A_D_H_M_S))
-            if self.fmtType == "function" then
+            if self.fmtIsFunc then
                 self._fmt(self,_h,_m,_s,_d)
             else
                 if self.tmType == LE_TmType.A_D_H_M_S then
@@ -125,22 +136,18 @@ function M:_OnEnd()
 end
 
 function M:on_clean()
-    self.fmtObj,self.fmtType,self._fmt,self.callFunc = nil
+    self.fmtObj,self.fmtIsFunc,self._fmt,self.callFunc = nil
 end
 
 function M:SetFmt(fmt)
     self.fmtObj = fmt
-    self.fmtType = type(self.fmtObj)
     self._fmt = (self.fmtObj or self.ltmKey)
+    self.fmtIsFunc = type(self._fmt) == "function"
 end
 
 function M:SetText( val,... )
     if not self.lbTxt then return end
-    if self:Lens4Pars( ... ) > 0 then
-        self.lbTxt:SetTextFmt( val,... )
-    else
-        self.lbTxt:SetText( val )
-    end
+    self.lbTxt:SetOrFmt( val,... )
 end
 
 return M

@@ -59,6 +59,22 @@ function M:CfgAssetInfo()
 	return (_isAb and _isAs),_abName,_assetName,_ltp;
 end
 
+function M:IsNoStateLoad(state)
+	return self.stateLoad ~= state
+end
+
+function M:IsStateLoad(state)
+	return self.stateLoad == state
+end
+
+function M:IsNoLoaded()
+	return self:IsNoStateLoad(LE_StateLoad.Loaded)
+end
+
+function M:IsLoaded()
+	return self:IsStateLoad(LE_StateLoad.Loaded)
+end
+
 function M:LoadAsset()
 	local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
 	if _isBl then
@@ -70,7 +86,7 @@ function M:LoadAsset()
 end
 
 function M:_OnCFLoadAsset( obj )
-	if self.stateLoad ~= LE_StateLoad.Loading then return end
+	if self:IsNoStateLoad(LE_StateLoad.Loading) then return end
 	self.stateLoad = LE_StateLoad.Loaded;
 	local _isNoObj,_tp = (not obj)
 	if _isNoObj then

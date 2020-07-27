@@ -53,6 +53,11 @@ public sealed class LuaHelper  : UtilityHelper {
 		return obj is PrefabElement;
 	}
 
+	static public bool IsGLife(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is GobjLifeListener;
+	}
+
 	static public void GetRectSize(GameObject gobj,ref float w,ref float h) {
 		w = 0;h = 0;
 		if(IsNull(gobj)) return;

@@ -53,8 +53,16 @@ function M:ReEvtDestroy(isBind)
 	return pcall(self._ReEvtDestroy,self,isBind)
 end
 
+function M:IsGLife(comp)
+	comp = comp or self.comp
+	if not comp then
+		return false
+	end
+	return CHelper.IsGLife(comp)
+end
+
 function M:_ReEvtDestroy(isBind)
-	if not self._cf_ondestroy then
+	if not self._cf_ondestroy or not self:IsGLife() then
 		return
 	end
 	self.comp:m_onDestroy("-",self._cf_ondestroy);
@@ -76,11 +84,11 @@ end
 
 function M:_OnUpdate(dt)
 	super._OnUpdate( self,dt )
-	if self:_IsNoLoaded() then return end
+	if self:IsNoLoaded() then return end
 	self:OnUpdateLoaded(dt)
 end
 
-function M:_IsNoLoaded() return (not self:IsInitTrsf()) end
+function M:IsNoLoaded() return (not self:IsInitTrsf()) end
 function M:OnUpdateLoaded(dt) end
 
 return M
