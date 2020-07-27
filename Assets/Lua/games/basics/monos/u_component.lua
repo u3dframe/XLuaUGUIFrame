@@ -89,7 +89,7 @@ function M:SetCF4OnShow( cfShow )
 	if not self:IsGLife() then
 		return
 	end
-
+	self.isSetCFOnShow = (cfShow ~= nil)
 	self.comp.m_callShow = cfShow;
 end
 
@@ -97,7 +97,7 @@ function M:SetCF4OnHide( cfHide )
 	if not self:IsGLife() then
 		return
 	end
-
+	self.isSetCFOnHide = (cfHide ~= nil)
 	self.comp.m_callHide = cfHide;
 end
 
@@ -124,6 +124,8 @@ function M:OnUpdateLoaded(dt) end
 function M:pre_clean()
 	super.pre_clean( self )
 	self:ReEvtDestroy(false)
+	if self.isSetCFOnShow then self:SetCF4OnShow() end
+	if self.isSetCFOnHide then self:SetCF4OnHide() end
 end
 
 return M
