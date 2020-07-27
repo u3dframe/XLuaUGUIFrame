@@ -6,6 +6,7 @@
 ]]
 local str_upper = string.upper
 local str_format = string.format
+local str_len = string.len
 local tb_insert = table.insert
 local tb_concat = table.concat
 local _deTrk = debug.traceback
@@ -14,6 +15,7 @@ local _sel = select
 local DE_BUG = nil;
 local _error = error;
 local _isTrace = false -- 是否包含 traceback
+local _n_mix_lens = 3200
 
 function lensPars( ... )
 	return _sel( '#', ... )
@@ -57,6 +59,14 @@ function printLog(tag, fmt, ...)
         tb_insert(t, _deTrk("", 3))  -- 打印要少前3行数据
 	end
 	str = tb_concat(t)
+
+	if GM_IsEditor == true then
+		local _lens = str_len(str)
+		if _n_mix_lens < _lens then
+			CGameFile.WriteText(str_format("../%s_%s.txt",TimeEx.getYyyyMMdd(),NumEx.nextStr(5)),str)
+		end
+	end
+
 	if _isErr then
 		CHelper.LogError(str)
 	elseif _isThr then

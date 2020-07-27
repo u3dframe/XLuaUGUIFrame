@@ -93,6 +93,15 @@ namespace Core
 			return _ret;
 		}
 
+		static public void WriteText(string fn,string content,bool isFilePath){
+			string _fp = isFilePath ? fn : GetFilePath (fn);
+			CreateText(_fp,content);
+		}
+
+		static public void WriteText(string fn,string content){
+			WriteText(fn,content,false);
+		}
+
 		// 文件是否存在可读写文件里
 		static public bool IsExistsFile(string fn,bool isFilePath){
 			string _fp = isFilePath ? fn : GetFilePath (fn);

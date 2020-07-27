@@ -6,7 +6,7 @@
 ]]
 
 local tb_has = table.contains
-local _lbKeys = { "__cname","class","__supers","__create","__index","__newindex","lbParent" }
+local _lbKeys = { "__cname","class","__supers","__create","__index","__newindex","lbParent","isUping" }
 
 local M = class( "lua_basic" )
 function M:ctor( )
@@ -31,10 +31,13 @@ function M:OnInit()
 end
 
 function M:ReEvent4OnUpdate(isBind)
-	self._lfUp = self._lfUp or handler_xpcall(self,self.__OnUpdate)
 	if Event then
-		Event.RemoveListener(Evt_Update,self._lfUp)
+		if self._lfUp then
+			Event.RemoveListener(Evt_Update,self._lfUp)
+		end
+
 		if isBind == true then
+			self._lfUp = self._lfUp or handler_xpcall(self,self.__OnUpdate)
 			Event.AddListener(Evt_Update,self._lfUp);
 		end
 	end

@@ -13,7 +13,7 @@ local M = class( "lua_fab",super )
 
 function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
-	self.stateView = LE_StateView.None;
+	self.stateView = LE_StateView.None
 	self:ReEvent4OnUpdate(true)
 end
 
@@ -35,8 +35,8 @@ end
 
 function M:_SetVisible(state)
 	if self.stateView ==  state then return end
-	self.isVisible = (state == LE_StateView.Show);
-	self.stateView = state;
+	self.isVisible = (state == LE_StateView.Show)
+	self.stateView = state
 
 	if self.isVisible then
 		self:Showing()
@@ -68,11 +68,11 @@ function M:ReShow()
 end
 
 function M:View(isShow)
-	isShow = isShow == true;
+	isShow = isShow == true
 	if isShow then
 		self:ReShow()
 	else
-		local _isStay = self.cfgAsset.isStay == true;
+		local _isStay = self.cfgAsset.isStay == true
 		if _isStay then
 			self:Hide()
 		else
@@ -98,8 +98,8 @@ end
 
 function M:_PreLoadUI()
 	if self._isPreLoad then return end
-	self._isPreLoad = true;
-	self.stateLoad = LE_StateLoad.PreLoad;
+	self._isPreLoad = true
+	self.stateLoad = LE_StateLoad.PreLoad
 	self:LoadAsset()
 end
 
@@ -107,7 +107,7 @@ function M:OnCF_Fab( obj )
 	if self:IsInitGobj() then
 		self:_JudgeLoad()
 	else
-		local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo();
+		local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo()
 		error("=== asset not exit = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
 	end
 end
@@ -157,7 +157,7 @@ function M:OnInit()
 end
 
 function M:_OnShow()
-	self:OnShow();
+	self:OnShow()
 	self:ReEvent4Self(true)
 end
 
@@ -165,46 +165,54 @@ function M:OnShow()
 end
 
 function M:Hiding(isMus)
-	local _isBl = (isMus == true) or (self.enabled == true);
+	local _isBl = (isMus == true) or (self.enabled == true)
 	if not _isBl then return end
-	self.enabled = false
+	self:_PreOnEnd(false)
 	self:_OnHide()
 	self:_OnEnd(false)
 end
 
 function M:_OnHide()
-	self:OnHide();
+	self:OnHide()
 end
 
 function M:OnHide()
 end
 
 function M:Destroying(isMus)
-	local _isBl = (isMus == true) or (self._isPreLoad == true);
+	local _isBl = (isMus == true) or (self._isPreLoad == true)
 	if not _isBl then return end
-	self.enabled = false
-	self.isVisible = false
+	self:_PreOnEnd(true)
 	self:_OnDestroy()
-	self:_OnEnd(true);
+	self:_OnEnd(true)
 end
 
 function M:_OnDestroy()
-	self:OnDestroy();
+	self:OnDestroy()
 end
 
 function M:OnDestroy()
 end
 
-function M:_OnEnd(isDestroy)
+function M:_PreOnEnd(isDestroy)
+	self.enabled = false
+	self.isVisible = false
 	self:ReEvent4Self(false)
-	isDestroy = isDestroy == true;
-	local _tmp = self.prefFuncEnd;
+	isDestroy = isDestroy == true
+	local _tmp = self.prefFuncEnd
 	self.prefFuncEnd = nil
 	local _isInit = self.isInited
 	if _tmp then
 		_tmp(_isInit)
 	end
 
+	self:PreOnEnd(isDestroy)
+end
+
+function M:PreOnEnd(isDestroy)
+end
+
+function M:_OnEnd(isDestroy)
 	self:OnEnd(isDestroy)
 	self:_OnExit(isDestroy)
 end
@@ -226,7 +234,7 @@ function M:pre_clean()
 	super.pre_clean( self )
 	
 	local _key = self:SFmt("%s",self)
-	cfg_backup[_key] = self.cfgAsset;
+	cfg_backup[_key] = self.cfgAsset
 	self.cfgAsset = nil
 end
 
@@ -234,7 +242,7 @@ function M:clean_end()
 	super.clean_end( self )
 
 	local _key = self:SFmt("%s",self)
-	local _cfgAsset = cfg_backup[_key];
+	local _cfgAsset = cfg_backup[_key]
 	self.cfgAsset = _cfgAsset
 	cfg_backup[_key] = nil
 end

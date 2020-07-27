@@ -6,6 +6,14 @@
 ]]
 local super = LUTrsf
 local M = class( "lua_component",super )
+local this = M
+
+function M.CsIsGLife(comp)
+	if comp ~= nil then
+		return CHelper.IsGLife(comp)
+	end
+	return false
+end
 
 function M:makeComp( gobj,component )
 	return M.New( gobj,component )
@@ -32,6 +40,7 @@ function M:InitComp( component )
 			com = self:GetComponent( component )
 		end
 		self.comp = com
+		self.strComp = tostring(component)
 		if com then
 			self:ReEvtDestroy(true)
 		else
@@ -53,12 +62,17 @@ function M:ReEvtDestroy(isBind)
 	return pcall(self._ReEvtDestroy,self,isBind)
 end
 
-function M:IsGLife(comp)
-	comp = comp or self.comp
-	if not comp then
+function M:IsGLife()
+	if not self.comp then
 		return false
 	end
-	return CHelper.IsGLife(comp)
+	local _k = self:SFmt("__isGLife_%s",self.strComp)
+	local _v = self[_k]
+	if _v == nil then
+		_v = this.CsIsGLife(self.comp)
+		self[_k] = _v
+	end
+	return _v
 end
 
 function M:_ReEvtDestroy(isBind)
@@ -69,6 +83,22 @@ function M:_ReEvtDestroy(isBind)
 	if isBind == true then
 		self.comp:m_onDestroy("+",self._cf_ondestroy);
 	end
+end
+
+function M:SetCF4OnShow( cfShow )
+	if not self:IsGLife() then
+		return
+	end
+
+	self.comp.m_callShow = cfShow;
+end
+
+function M:SetCF4OnHide( cfHide )
+	if not self:IsGLife() then
+		return
+	end
+
+	self.comp.m_callHide = cfHide;
 end
 
 function M:SetEnabled( isBl )
@@ -90,5 +120,10 @@ end
 
 function M:IsNoLoaded() return (not self:IsInitTrsf()) end
 function M:OnUpdateLoaded(dt) end
+
+function M:pre_clean()
+	super.pre_clean( self )
+	self:ReEvtDestroy(false)
+end
 
 return M

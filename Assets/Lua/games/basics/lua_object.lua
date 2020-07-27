@@ -18,6 +18,23 @@ local __tf2 = todecimal2
 local super = LuaBasic
 local M = class( "lua_object",super )
 
+function M:pre_clean()
+	super.pre_clean( self )
+	self.callFunc = nil
+end
+
+function M:SetCallFunc(func)
+	self.callFunc = func
+	return self
+end
+
+-- 执行回调函数
+function M:ExcuteCallFunc(data)
+	if self.callFunc then
+		self.callFunc(data or self)
+	end
+end
+
 function M:Lens4Pars( ... )
 	return _nPars( ... )
 end
@@ -53,18 +70,6 @@ end
 function M:IsEnd( sSrc,sEnd )
 	if not sSrc or not sEnd then return false end
 	return _str_end(sSrc,sEnd)
-end
-
-function M:SetCallFunc(func)
-	self.callFunc = func
-	return self
-end
-
--- 执行回调函数
-function M:ExcuteCallFunc(data)
-	if self.callFunc then
-		self.callFunc(data or self)
-	end
 end
 
 function M:MCeil( num )

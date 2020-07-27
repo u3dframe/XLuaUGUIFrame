@@ -285,8 +285,7 @@ namespace Core.Kernel
         {
             string _fp = string.Format("{0}_deps.json", BuildTools.m_dirData);
             string _v = JsonMapper.ToJson(instance.m_dic);
-            BuildTools.CreateFolder(_fp);
-            File.WriteAllText(_fp, _v);
+            BuildTools.WriteText(_fp,_v,true);
             AssetDatabase.Refresh();
         }
 
@@ -348,9 +347,8 @@ namespace Core.Kernel
                 }
             }
             string _v = builder.ToString();
-            string _fp = string.Format("{0}Core/Kernel/Editor/Build_Patcher/build_res_deps.txt", BuildTools.m_dirData);
-            BuildTools.CreateFolder(_fp);
-            File.WriteAllText(_fp, _v);
+            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirData);
+            BuildTools.WriteText(_fp, _v,true);
         }
     }
 }

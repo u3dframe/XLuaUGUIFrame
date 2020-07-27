@@ -65,14 +65,16 @@ namespace Core.Kernel
 		}
 
 		// 创建文件
-		static public bool CreateFile (string fn, byte[] buffs)
+		static public bool CreateText (string fn, byte[] buffs)
 		{
+			CreateFolder(fn);
 			File.WriteAllBytes (fn, buffs);
 			return true;
 		}
 
-		static public bool CreateFile (string fn, string contents)
+		static public bool CreateText (string fn, string contents)
 		{
+			CreateFolder(fn);
 			File.WriteAllText (fn, contents);
 			return true;
 		}

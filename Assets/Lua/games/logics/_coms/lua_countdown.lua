@@ -136,7 +136,7 @@ function M:_OnEnd()
 end
 
 function M:on_clean()
-    self.fmtObj,self.fmtIsFunc,self._fmt,self.callFunc = nil
+    self.fmtObj,self.fmtIsFunc,self._fmt = nil
 end
 
 function M:SetFmt(fmt)
