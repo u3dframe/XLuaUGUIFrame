@@ -129,8 +129,10 @@ function M.AddDelayFunc(cmd,delay,func,loop,duration)
 		_v.func = func
 		_v.loop = loop -- 负数标识无线循环
 	else
-		tb_insert(this._lbFuncDelays,{cmd = cmd,delay = delay,func = func,loop = loop,duration = (duration or delay)})
+		_v = {cmd = cmd,delay = delay,func = func,loop = loop,duration = (duration or delay)}
+		tb_insert(this._lbFuncDelays,_v)
 	end
+	return _v
 end
 
 function M._ExcDelayFunc(dt)
