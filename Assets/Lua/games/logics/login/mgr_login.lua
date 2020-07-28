@@ -30,10 +30,18 @@ function M:ToLoginView()
 			printTable("===isEnd")
 			-- _lb:SetText(4)
 			if ui.count <= 0 then
+				ui:Hiding(true)
 				ui.cfgAsset.isStay = nil
+				printTable(LTimer.GetSvTime())
+				LUtils.Wait(3,function(p1)
+					printInfo(p1)
+					printTable(LTimer.GetSvTime())
+					ui:View(false)	
+				end,"abcd")
+			else
+				ui.count = ui.count -1
+				ui:View(false)
 			end
-			ui.count = ui.count -1
-			ui:View(false)
 		end,LE_TmType.A_D_H_M_S,_s.lbBtn01.lbTxt)
 
 		if ui:IsGLife() then

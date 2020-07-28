@@ -63,7 +63,10 @@ function printLog(tag, fmt, ...)
 	if GM_IsEditor == true then
 		local _lens = str_len(str)
 		if _n_mix_lens < _lens then
-			CGameFile.WriteText(str_format("../%s_%s.txt",TimeEx.getYyyyMMdd(),NumEx.nextStr(5)),str)
+			local _fp = str_format("../%s_%s.txt",TimeEx.getYyyyMMdd(),NumEx.nextStr(5))
+			CGameFile.WriteText(_fp,str)
+			CHelper.Log("In _resRoot To See : " .. _fp)
+			return
 		end
 	end
 

@@ -59,9 +59,11 @@ public static class ExampleConfig
                 typeof(UnityEngine.Debug),
 
                 //------------------------ u3d --------------------------------
+                typeof(Camera),
                 typeof(RenderSettings),
                 typeof(LightmapSettings),
                 typeof(WaitForSeconds),
+                typeof(UnityWebRequest),
                 typeof(AudioClip),
                 typeof(AudioSource),
                 typeof(LayerMask),
@@ -107,6 +109,7 @@ public static class ExampleConfig
                 // typeof(AssetBundleManager),
                 typeof(ResourceManager),
                 typeof(MgrLoadScene),
+                typeof(LuaManager),
                 typeof(SmoothFollower),
                 typeof(MainCameraManager),
                 typeof(InputMgr),

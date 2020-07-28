@@ -158,11 +158,12 @@ public class LuaManager : GobjLifeListener
 		}
 	}
 
-	protected override void _OnClear(){
+	protected override void OnClear(){
 		luaUpdate = null;
 		luLateUpdate = null;
 		luaOnApplicationQuit = null;
 		luaSceneChange = null;
+		StopAllCoroutines();
 	}
 
 	protected override void OnCall4Destroy(){

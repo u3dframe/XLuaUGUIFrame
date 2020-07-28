@@ -120,7 +120,7 @@ public class InputMgr : GobjLifeListener {
 		this.maxDistance = Screen.height > Screen.width ? Screen.height : Screen.width;
 		this.csAlias = "InpMgr";
 	}
-	protected override void _OnClear() {
+	protected override void OnClear() {
 #if UNITY_EDITOR
 		if(m_diCalls != null) m_diCalls.Clear();
 #endif

@@ -132,7 +132,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		_OnClear();
 	}
 	
-	protected virtual void _OnClear(){
+	private void _OnClear(){
 		this.m_isOnUpdate = false;
 		this._isAlive = false;
 		this.m_callAwake = null;
@@ -141,6 +141,11 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		this.m_callHide = null;
 		this._m_gobj = null;
 		this._m_trsf = null;
+
+		OnClear();
+	}
+
+	protected virtual void OnClear(){
 	}
 
 	void _ExcDestoryCall(){

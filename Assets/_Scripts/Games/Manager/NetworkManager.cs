@@ -62,7 +62,7 @@ public class NetworkManager : GobjLifeListener {
 		socket.OnRemove();
 	}
 
-	protected override void _OnClear(){
+	protected override void OnClear(){
 		mEvents.Clear();
 		socket = null;
 	}

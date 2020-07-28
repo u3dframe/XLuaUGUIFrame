@@ -138,7 +138,9 @@ function M._ExcDelayFunc(dt)
 	end
 	for _, v in ipairs(this._lbFuncDelays) do
 		if v.delay > 0 then
-			v.delay = v.delay - dt
+			if not v.isPause then 
+				v.delay = v.delay - dt
+			end
 		else
 			v.loop = v.loop - 1
 			if v.func then
@@ -164,6 +166,13 @@ function M._ExcDelayFunc(dt)
 	end
 
 	_clr(_tLb)
+end
+
+function M.PauseDelayFunc(cmd,isPause)
+	local _v = tb_vk(this._lbFuncDelays,"cmd",cmd)
+	if _v then
+		_v.isPause = (isPause == true)
+	end
 end
 
 function M.GetHMS(diffSec,isDay)
