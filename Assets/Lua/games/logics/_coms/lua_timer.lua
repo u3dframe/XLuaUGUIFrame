@@ -119,16 +119,17 @@ function M.RemoveDelayFunc(cmd,isNoAll)
 	tb_rm(this._lbFuncDelays,_rf_delay,cmd,times)
 end
 
-function M.AddDelayFunc(cmd,delay,func,loop)
+function M.AddDelayFunc(cmd,delay,func,loop,duration)
 	this._lbFuncDelays = this._lbFuncDelays or {}
 	local _v = tb_vk(this._lbFuncDelays,"cmd",cmd)
 	loop = (loop or 1)
 	if _v and _v.delay > 0.01 then
 		_v.delay = delay
+		_v.duration = (duration or delay)
 		_v.func = func
 		_v.loop = loop -- 负数标识无线循环
 	else
-		tb_insert(this._lbFuncDelays,{cmd = cmd,delay = delay,func = func,loop = loop})
+		tb_insert(this._lbFuncDelays,{cmd = cmd,delay = delay,func = func,loop = loop,duration = (duration or delay)})
 	end
 end
 
@@ -155,6 +156,8 @@ function M._ExcDelayFunc(dt)
 
 			if v.loop == 0 then
 				tb_insert(_tLb,v.cmd)
+			else
+				v.delay = v.delay + v.duration
 			end
 		end
 	end
