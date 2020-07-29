@@ -11,7 +11,7 @@ local M = class( "ui_pubs",super )
 function M:NewTrsf(elName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsTrsf().New(_gobj)
+        return self:_ClsTrsf().New(_gobj):AddSupUIPubs()
     end
     if isNoPrint == true then return end
     printError("=== NewTrsf is Null, name = [%s]", elName)
@@ -20,7 +20,7 @@ end
 function M:NewComp(elName,compName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsComp().New(_gobj,compName)
+        return self:_ClsComp().New(_gobj,compName):AddSupUIPubs()
     end
     if isNoPrint == true then return end
     printError("=== NewComp is Null, name = [%s]", elName)
@@ -29,7 +29,7 @@ end
 function M:NewEle(elName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsEle().New(_gobj)
+        return self:_ClsEle().New(_gobj):AddSupUIPubs()
     end
     if isNoPrint == true then return end
     printError("=== NewEle is Null, name = [%s]", elName)
