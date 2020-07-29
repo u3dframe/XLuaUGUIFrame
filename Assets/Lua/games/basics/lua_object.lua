@@ -81,6 +81,10 @@ function M:AddSuppers( ... )
 	return self
 end
 
+function M:AddSupUIPubs()
+	return self:AddSuppers(UIPubs)
+end
+
 function M:SFmt( s_fmt,... )
 	if _nPars( ... ) > 0 then
 		return _str_fmt( s_fmt , ... )
