@@ -14,11 +14,8 @@ using UnityEngine.UI;
 public class UGUIButton : GobjLifeListener {
 	// 取得对象
 	static public new UGUIButton Get(GameObject gobj,bool isAdd){
-		UGUIButton _r = gobj.GetComponent<UGUIButton> ();
-		if (isAdd && UtilityHelper.IsNull(_r)) {
-			_r = gobj.AddComponent<UGUIButton> ();
-		}
-		return _r;
+		
+		return UtilityHelper.Get<UGUIButton>(gobj,isAdd);
 	}
 
 	static public new UGUIButton Get(GameObject gobj){

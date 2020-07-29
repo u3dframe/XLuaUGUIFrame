@@ -28,11 +28,7 @@ public class GameMgr : GobjLifeListener {
 		get{
 			if (IsNull(_instance)) {
 				GameObject _gobj = GameMgr.mgrGobj;
-				_instance = _gobj.GetComponent<GameMgr>();
-				if (IsNull(_instance))
-				{
-					_instance = _gobj.AddComponent<GameMgr> ();
-				}
+				_instance = UtilityHelper.Get<GameMgr>(_gobj,true);
 			}
 			return _instance;
 		}

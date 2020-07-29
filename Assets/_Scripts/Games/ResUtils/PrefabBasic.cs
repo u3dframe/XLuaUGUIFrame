@@ -11,11 +11,7 @@ using System.Collections.Generic;
 /// </summary>
 public class PrefabBasic : GobjLifeListener {
 	static public new PrefabBasic Get(GameObject gobj,bool isAdd){
-		PrefabBasic _r = gobj.GetComponent<PrefabBasic> ();
-		if (isAdd && IsNull(_r)) {
-			_r = gobj.AddComponent<PrefabBasic> ();
-		}
-		return _r;
+		return UtilityHelper.Get<PrefabBasic>(gobj,true);
 	}
 
 	static public new PrefabBasic Get(GameObject gobj){

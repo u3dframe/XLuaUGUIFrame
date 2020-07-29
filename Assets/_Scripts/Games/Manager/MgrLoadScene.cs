@@ -16,11 +16,7 @@ public class MgrLoadScene : GobjLifeListener {
 		get{
 			if (IsNull(_instance)) {
 				GameObject _gobj = GameMgr.mgrGobj;
-				_instance = _gobj.GetComponent<MgrLoadScene>();
-				if (IsNull(_instance))
-				{
-					_instance = _gobj.AddComponent<MgrLoadScene> ();
-				}
+				_instance = UtilityHelper.Get<MgrLoadScene>(_gobj,true);
 				_instance.csAlias = "LSMgr";
 			}
 			return _instance;

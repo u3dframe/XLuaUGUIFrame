@@ -16,11 +16,7 @@ public class LuaManager : GobjLifeListener
 		get{
 			if (IsNull(_instance)) {
 				GameObject _gobj = GameMgr.mgrGobj;
-				_instance = _gobj.GetComponent<LuaManager>();
-				if (IsNull(_instance))
-				{
-					_instance = _gobj.AddComponent<LuaManager> ();
-				}
+				_instance = UtilityHelper.Get<LuaManager>(_gobj,true);
 			}
 			return _instance;
 		}

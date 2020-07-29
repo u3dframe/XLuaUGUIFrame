@@ -72,4 +72,20 @@ public sealed class LuaHelper  : UtilityHelper {
 		w = v2.x;
 		h = v2.y;
 	}
+
+	static public Camera GetOrAddCamera(GameObject gobj){
+		return Get<Camera>(gobj,true);
+	}
+
+	static public Camera GetOrAddCamera(Transform trsf){
+		return Get<Camera>(trsf,true);
+	}
+
+	static public Animator GetOrAddAnimator(GameObject gobj){
+		return Get<Animator>(gobj,true);
+	}
+
+	static public Animator GetOrAddAnimator(Transform trsf){
+		return Get<Animator>(trsf,true);
+	}
 }

@@ -11,11 +11,7 @@ using System.Collections.Generic;
 /// </summary>
 public class PrefabElement : PrefabBasic {
 	static public new PrefabElement Get(GameObject gobj,bool isAdd){
-		PrefabElement _r = gobj.GetComponent<PrefabElement> ();
-		if (isAdd && IsNull(_r)) {
-			_r = gobj.AddComponent<PrefabElement> ();
-		}
-		return _r;
+		return UtilityHelper.Get<PrefabElement>(gobj,true);
 	}
 
 	static public new PrefabElement Get(GameObject gobj){

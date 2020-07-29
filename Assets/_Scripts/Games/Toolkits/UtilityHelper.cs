@@ -90,26 +90,48 @@ public class UtilityHelper {
 		return trsf.GetComponent<T>();
 	}
 
+	static public T Get<T>(GameObject gobj,bool isAdd) where T : Component {
+		if(IsNull(gobj)) return null;
+		T _r = gobj.GetComponent<T> ();
+		if (isAdd && IsNull(_r)) {
+			_r = gobj.AddComponent<T> ();
+		}
+		return _r;
+	}
+
+	static public T Get<T>(Transform trsf,bool isAdd) where T : Component {
+		if(IsNull(trsf)) return null;
+		return Get<T>(trsf.gameObject,isAdd);
+	}
+
 	/// <summary>
 	/// 搜索子物体组件-GameObject版
 	/// </summary>
 	static public T Get<T>(GameObject go, string subnode) where T : Component {
-		if (IsNoNull(go)) {
-			Transform sub = go.transform.Find(subnode);
-			if (sub != null) return sub.GetComponent<T>();
-		}
-		return null;
+		if(IsNull(go)) return null;
+		Transform sub = go.transform.Find(subnode);
+		return Get<T>(sub);
 	}
 
 	/// <summary>
 	/// 搜索子物体组件-Transform版
 	/// </summary>
-	static public T Get<T>(Transform go, string subnode) where T : Component {
-		if (IsNoNull(go)) {
-			Transform sub = go.Find(subnode);
-			if (sub != null) return sub.GetComponent<T>();
-		}
-		return null;
+	static public T Get<T>(Transform trsf, string subnode) where T : Component {
+		if(IsNull(trsf)) return null;
+		Transform sub = trsf.Find(subnode);
+		return Get<T>(sub);
+	}
+
+	static public T Get<T>(GameObject go, string subnode,bool isAdd) where T : Component {
+		if(IsNull(go)) return null;
+		Transform sub = go.transform.Find(subnode);
+		return Get<T>(sub,isAdd);
+	}
+
+	static public T Get<T>(Transform trsf, string subnode,bool isAdd) where T : Component {
+		if(IsNull(trsf)) return null;
+		Transform sub = trsf.Find(subnode);
+		return Get<T>(sub,isAdd);
 	}
 
 	/// <summary>
@@ -175,7 +197,7 @@ public class UtilityHelper {
 		if(IsNull(gobj)) return null;
 		return ChildTrsf(gobj.transform,subnode);
 	}
-
+	
 	static public GameObject Child(Transform trsf, string subnode) {
 		Transform tf = ChildTrsf(trsf,subnode);
 		if(IsNull(tf)) return null;

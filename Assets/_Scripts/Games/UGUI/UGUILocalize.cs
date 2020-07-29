@@ -14,11 +14,7 @@ using UnityEngine.UI;
 public class UGUILocalize : GobjLifeListener {
 	// 取得对象
 	static public new UGUILocalize Get(GameObject gobj,bool isAdd){
-		UGUILocalize _r = gobj.GetComponent<UGUILocalize> ();
-		if (isAdd && UtilityHelper.IsNull(_r)) {
-			_r = gobj.AddComponent<UGUILocalize> ();
-		}
-		return _r;
+		return UtilityHelper.Get<UGUILocalize>(gobj,isAdd);
 	}
 
 	static public new UGUILocalize Get(GameObject gobj){

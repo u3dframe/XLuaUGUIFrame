@@ -20,11 +20,7 @@ public class InputMgr : GobjLifeListener {
 		get{
 			if (IsNull(_instance)) {
 				GameObject _gobj = GameMgr.mgrGobj;
-				_instance = _gobj.GetComponent<InputMgr>();
-				if (IsNull(_instance))
-				{
-					_instance = _gobj.AddComponent<InputMgr> ();
-				}
+				_instance = UtilityHelper.Get<InputMgr>(_gobj,true);
 			}
 			return _instance;
 		}

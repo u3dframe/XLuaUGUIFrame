@@ -10,11 +10,7 @@ public class NetworkManager : GobjLifeListener {
 		get{
 			if (IsNull(_instance)) {
 				GameObject _gobj = GameMgr.mgrGobj;
-				_instance = _gobj.GetComponent<NetworkManager>();
-				if (IsNull(_instance))
-				{
-					_instance = _gobj.AddComponent<NetworkManager> ();
-				}
+				_instance = UtilityHelper.Get<NetworkManager>(_gobj,true);
 			}
 			return _instance;
 		}

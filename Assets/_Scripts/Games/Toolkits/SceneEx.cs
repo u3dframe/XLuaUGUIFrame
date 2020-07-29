@@ -11,11 +11,7 @@ using System.Collections;
 public class SceneEx : MonoBehaviour
 {
 	static public SceneEx Get(GameObject gobj,bool isAdd){
-		SceneEx _r = gobj.GetComponent<SceneEx> ();
-		if (isAdd && UtilityHelper.IsNull(_r)) {
-			_r = gobj.AddComponent<SceneEx> ();
-		}
-		return _r;
+		return UtilityHelper.Get<SceneEx>(gobj,isAdd);
 	}
 
 	static public SceneEx Get(GameObject gobj){

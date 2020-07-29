@@ -12,11 +12,7 @@ public class LightmapEx : MonoBehaviour
 {
 	static readonly LightmapData[] ltEmpty = new LightmapData[0];
 	static public LightmapEx Get(GameObject gobj,bool isAdd){
-		LightmapEx _r = gobj.GetComponent<LightmapEx> ();
-		if (isAdd && UtilityHelper.IsNull(_r)) {
-			_r = gobj.AddComponent<LightmapEx> ();
-		}
-		return _r;
+		return UtilityHelper.Get<LightmapEx>(gobj,isAdd);
 	}
 
 	static public LightmapEx Get(GameObject gobj){

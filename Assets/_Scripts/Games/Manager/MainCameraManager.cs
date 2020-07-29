@@ -11,11 +11,7 @@ public class MainCameraManager : MonoBehaviour
 {
 	// 取得对象
 	static public MainCameraManager Get(GameObject gobj,bool isAdd){
-		MainCameraManager _r = gobj.GetComponent<MainCameraManager> ();
-		if (isAdd && UtilityHelper.IsNull(_r)) {
-			_r = gobj.AddComponent<MainCameraManager> ();
-		}
-		return _r;
+		return UtilityHelper.Get<MainCameraManager>(gobj,isAdd);
 	}
 
 	static public MainCameraManager Get(GameObject gobj){
