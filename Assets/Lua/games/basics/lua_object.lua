@@ -66,8 +66,8 @@ function M:AddSuppers( ... )
 		_isMore = nLens > 1
 	end
 
+	_cls.super = _sups[1]
 	if _isOne then
-		_cls.super = _sups[1]
 		mt.__index = _cls.super
 	elseif _isMore then
 		mt.__index = function(_, key)
