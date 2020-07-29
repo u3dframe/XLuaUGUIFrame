@@ -14,6 +14,8 @@ local __tn = tonum
 local __ti = toint
 local __tf = todecimal
 local __tf2 = todecimal2
+local tb_ct = table.contains
+local type = type
 
 local super = LuaBasic
 local M = class( "lua_object",super )
@@ -37,6 +39,46 @@ end
 
 function M:Lens4Pars( ... )
 	return _nPars( ... )
+end
+
+function M:AddSuppers( ... )
+	local nLens = self:Lens4Pars( ... )
+	if nLens <= 0 then return self end
+	local _args = { ... }
+	local _cls = self.class
+	local _sups = _cls.__supers or {}
+	local _ncls = #_sups
+	for _, v in ipairs(_args) do
+		if (type(v) == "table") and (not tb_ct( _sups,v )) then
+			_sups[#_sups + 1] = v
+		end
+	end
+	nLens = #_sups
+	
+	if nLens == _ncls then return self end
+
+	_cls.__supers = _sups
+
+	local mt = getmetatable(_cls)
+	local _isOne,_isMore = false,(_ncls == 1)
+	if _ncls == 0 then
+		_isOne = nLens == 1
+		_isMore = nLens > 1
+	end
+
+	if _isOne then
+		_cls.super = _sups[1]
+		mt.__index = _cls.super
+	elseif _isMore then
+		mt.__index = function(_, key)
+			local supers = _cls.__supers
+			for i = 1, #supers do
+				local super = supers[i]
+				if super[key] then return super[key] end
+			end
+		end
+	end
+	return self
 end
 
 function M:SFmt( s_fmt,... )
