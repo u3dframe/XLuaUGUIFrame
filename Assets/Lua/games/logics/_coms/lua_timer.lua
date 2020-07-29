@@ -121,7 +121,7 @@ end
 
 function M.AddDelayFunc( cmd,delay,func,loop,duration,... )
 	this._lbFuncDelays = this._lbFuncDelays or {}
-	local _n00 = self:Lens4Pars( ... )
+	local _n00 = this:Lens4Pars( ... )
 	local _args = _n00 > 0 and { ... } or nil
 	local _v = tb_vk(this._lbFuncDelays,"cmd",cmd)
 	loop = (loop or 1)
