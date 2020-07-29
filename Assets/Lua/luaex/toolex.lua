@@ -33,6 +33,41 @@ function unpack( arg )
 	end
 end
 
+function do_pcall( isLog,method,obj,... )
+	local _ok,_err
+	if obj then
+		_ok,_err = _pcall( method,obj,... )
+	else
+		_ok,_err = _pcall( method,... )
+	end
+	if (not _ok) and (isLog == true) then
+		printError("====[%s].[%s] , error = %s",obj,method,_err)
+	end
+	return _ok,_err
+end
+
+function exc_pcall( method,obj,... )
+	return do_pcall( true,method,obj,... )
+end
+
+function do_xpcall( isLog,method,obj,... )
+	local _ok,_err
+	if obj then
+		_ok,_err = _xpcall( method,_deTrk,obj,... )
+	else
+		_ok,_err = _xpcall( method,_deTrk,... )
+	end
+
+	if (not _ok) and (isLog == true) then
+		printError("====[%s].[%s] , error = %s",obj,method,_err)
+	end
+	return _ok,_err
+end
+
+function exc_xpcall( method,obj,... )
+	return do_xpcall( true,method,obj,... )
+end
+
 function handler( obj, method )
     return function( ... )
         return method( obj, ... )
@@ -41,19 +76,13 @@ end
 
 function handler_pcall( obj, method )
 	return function( ... )
-		local _ok,_err = _pcall( method,obj, ... )
-		if not _ok then
-			printError("====[%s].[%s] , error = %s",obj,method,_err)
-		end
+		exc_pcall( method,obj,... )
     end
 end
 
 function handler_xpcall( obj, method )
 	return function( ... )
-		local _ok,_err = _xpcall( method,_deTrk,obj, ... )
-		if not _ok then
-			printError("====[%s].[%s] , error = %s",obj,method,_err)
-		end
+		exc_xpcall( method,obj,... )
     end
 end
 
@@ -177,6 +206,23 @@ end
 function extends( src,parent )
 	setmetatable(src,{__index = parent});
 	return src;
+end
+
+function weakTB( weakKey )
+	if weakKey ~= "k" and weakKey ~= "v" and weakKey ~= "kv" then
+		weakKey = "v"
+	end
+	return setmetatable({},{__mode = weakKey})
+end
+
+if not reimport then
+	--重新require一个lua文件，替代系统文件。
+	function reimport(name)
+		local package = package
+		package.loaded[name] = nil
+		package.preload[name] = nil
+		return require(name)    
+	end
 end
 
 ------ 排序相关 -----

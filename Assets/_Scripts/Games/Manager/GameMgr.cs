@@ -50,7 +50,6 @@ public class GameMgr : GobjLifeListener {
 	ILateUpdate upLateItem = null;
 	[SerializeField] int upLens = 0;
 	[SerializeField] int lateLens = 0;
-	float _dt = 0;
 	
 	/// <summary>
 	/// 初始化
@@ -66,8 +65,7 @@ public class GameMgr : GobjLifeListener {
 	}
 
 	void Update() {
-		_dt = Time.deltaTime;
-		_Exc_Up(_dt);
+		_Exc_Up(Time.deltaTime,Time.unscaledDeltaTime);
 	}
 	
 	void LateUpdate() {
@@ -89,21 +87,21 @@ public class GameMgr : GobjLifeListener {
 		upLateList.Clear();
 	}
 
-	void _Exc_Up(float dt){
+	void _Exc_Up(float dt,float unscaledDt){
 		upList.AddRange(mListUps);
 		upLens = upList.Count;
 		for (int i = 0; i < upLens; i++)
 		{
 			upItem = upList[i];
 			if(upItem != null && upItem.IsOnUpdate()){
-				upItem.OnUpdate(dt);
+				upItem.OnUpdate(dt,unscaledDt);
 			}
 		}
 		upList.Clear();
 
 		if(onUpdate != null)
 		{
-			onUpdate(dt);
+			onUpdate(dt,unscaledDt);
 		}
 	}
 

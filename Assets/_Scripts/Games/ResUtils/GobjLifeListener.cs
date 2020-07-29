@@ -34,7 +34,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	// 接口函数
 	[HideInInspector] public bool m_isOnUpdate = true;
 	public bool IsOnUpdate(){ return this.m_isOnUpdate;} 
-	public virtual void OnUpdate(float dt) {}	
+	public virtual void OnUpdate(float dt,float unscaledDt) {}	
 
 	// 自身对象
 	Transform _m_trsf;

@@ -92,8 +92,6 @@ v1.0
 
 ]]
 
-local _deTrk = debug.traceback
-
 local _M = { }
 _M._VERSION = "1.0"
 _M._M = _M
@@ -107,10 +105,7 @@ local function spawn(f)
     end
     
     return coroutine.resume(coroutine.create(function()
-        local ok,err = xpcall(f,_deTrk)
-        if not ok then
-            _G.printError(err)
-        end
+        exc_xpcall(f)
     end))
 end
 _M.Spawn = spawn

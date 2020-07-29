@@ -12,6 +12,27 @@ using UObject = UnityEngine.Object;
 /// 功能 : 泛型是不能被Tolua导成函数的
 /// </summary>
 public class UtilityHelper {
+	
+	static public readonly DateTime DT_Start = new DateTime(1970, 1, 1, 0, 0, 0);
+
+	static public DateTime ToTZLoc{
+		get{
+			return TimeZone.CurrentTimeZone.ToLocalTime(DT_Start);
+		} 
+	}
+	
+	static public long TickStartUtc{
+		get{
+			return ToTZLoc.ToUniversalTime().Ticks;
+		}
+	}
+	
+	static public long TickStartLoc{
+		get{
+			return ToTZLoc.ToLocalTime().Ticks;
+		}
+	}
+
 	/// <summary>
 	/// getType
 	/// </summary>
@@ -25,7 +46,7 @@ public class UtilityHelper {
 	}
 	
 	static public long GetTime() {
-		TimeSpan ts = new TimeSpan(DateTime.UtcNow.Ticks - new DateTime(1970, 1, 1, 0, 0, 0).Ticks);
+		TimeSpan ts = new TimeSpan(DateTime.UtcNow.Ticks - TickStartUtc);
 		return (long)ts.TotalMilliseconds;
 	}
 

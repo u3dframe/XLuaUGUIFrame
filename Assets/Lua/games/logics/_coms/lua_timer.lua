@@ -11,7 +11,7 @@ local tb_rm = table.removeValuesFunc
 local tb_for = table.foreachArrs
 local tb_vk = table.getVK
 local _tEx,_nEx = TimeEx,NumEx
-local _dTr,_pErr,_clr = debug.traceback,printError,clearLT
+local _dTr,_pErr,_clr,_unpack = debug.traceback,printError,clearLT,unpack
 local _tLb,_ok,_err = {}
 
 local super,_evt = LuaObject,Event
@@ -119,8 +119,10 @@ function M.RemoveDelayFunc(cmd,isNoAll)
 	tb_rm(this._lbFuncDelays,_rf_delay,cmd,times)
 end
 
-function M.AddDelayFunc(cmd,delay,func,loop,duration)
+function M.AddDelayFunc( cmd,delay,func,loop,duration,... )
 	this._lbFuncDelays = this._lbFuncDelays or {}
+	local _n00 = self:Lens4Pars( ... )
+	local _args = _n00 > 0 and { ... } or nil
 	local _v = tb_vk(this._lbFuncDelays,"cmd",cmd)
 	loop = (loop or 1)
 	if _v and _v.delay > 0.01 then
@@ -128,11 +130,16 @@ function M.AddDelayFunc(cmd,delay,func,loop,duration)
 		_v.duration = (duration or delay)
 		_v.func = func
 		_v.loop = loop -- 负数标识无线循环
+		_v.args = _args
 	else
-		_v = {cmd = cmd,delay = delay,func = func,loop = loop,duration = (duration or delay)}
+		_v = {cmd = cmd,delay = delay,func = func,loop = loop,duration = (duration or delay),args = _args}
 		tb_insert(this._lbFuncDelays,_v)
 	end
 	return _v
+end
+
+function M.AddDelayFunc1( cmd,delay,func,... )
+	return this.AddDelayFunc( cmd,delay,func,1,0,... )
 end
 
 function M._ExcDelayFunc(dt)
@@ -147,7 +154,11 @@ function M._ExcDelayFunc(dt)
 		else
 			v.loop = v.loop - 1
 			if v.func then
-				_ok,_err = xpcall(v.func,_dTr)
+				if v.args then
+					_ok,_err = xpcall(v.func,_dTr,_unpack(v.args))
+				else
+					_ok,_err = xpcall(v.func,_dTr)
+				end
 				if not _ok then
 					v.loop = 0
 					_pErr(_err)

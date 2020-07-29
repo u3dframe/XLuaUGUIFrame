@@ -7,5 +7,5 @@
 public class Updateable : IUpdate {
 	public bool m_isOnUpdate = true;
 	public bool IsOnUpdate(){ return this.m_isOnUpdate;} 
-    public virtual void OnUpdate(float dt) {}
+    public virtual void OnUpdate(float dt,float unscaledDt) {}
 }

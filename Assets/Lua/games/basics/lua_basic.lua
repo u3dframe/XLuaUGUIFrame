@@ -43,9 +43,9 @@ function M:ReEvent4OnUpdate(isBind)
 	end
 end
 
-function M:__OnUpdate(dt)
+function M:__OnUpdate(dt,unscaledDt)
 	if not self.isUping then return end
-	self:_OnUpdate(dt)
+	self:_OnUpdate((self.isDelayTime == true) and dt or unscaledDt)
 end
 
 function M:_OnUpdate(dt)

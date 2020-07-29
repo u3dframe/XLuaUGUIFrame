@@ -12,7 +12,7 @@ namespace Core
     public delegate void DF_LoadedFab(GameObject gobj);
     public delegate void DF_LoadedTex2D(Texture2D tex);
 	public delegate void DF_LoadedSprite(Sprite sprite);
-    public delegate void DF_OnUpdate(float dt);
+    public delegate void DF_OnUpdate(float dt,float unscaledDt);
     public delegate void DF_OnSceneChange(int level);
     public delegate void DF_OnNotifyDestry(GobjLifeListener obj);
 }

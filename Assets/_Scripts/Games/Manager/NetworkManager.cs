@@ -42,7 +42,7 @@ public class NetworkManager : GobjLifeListener {
 	/// <summary>
 	///  更新 - 接受到数据
 	/// </summary>
-	public override void OnUpdate(float dt) {
+	public override void OnUpdate(float dt,float unscaledDt) {
 		if (mEvents.Count > 0) {
 			while (mEvents.Count > 0) {
 				KeyValuePair<int, ByteBuffer> _event = mEvents.Dequeue();

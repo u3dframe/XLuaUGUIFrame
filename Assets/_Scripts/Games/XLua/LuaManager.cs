@@ -30,9 +30,9 @@ public class LuaManager : GobjLifeListener
 	internal static float lastGCTime = 0;
 	internal const float GCInterval = 1;//1 second 
 
-	private DF_OnUpdate luaUpdate;
+	private DF_OnUpdate luaUpdate,luaFixedUpdate;
 	private DF_OnSceneChange luaSceneChange;
-	private Action luLateUpdate,luaOnApplicationQuit;
+	private Action luaLateUpdate,luaOnApplicationQuit;
 
 	public void Init(){}
 
@@ -51,7 +51,8 @@ public class LuaManager : GobjLifeListener
 		var _luaG = luaEnv.Global;
 		var luaStart = _luaG.Get<Action>("Main");
 		luaUpdate = _luaG.Get<DF_OnUpdate>("Update");
-		luLateUpdate = _luaG.Get<Action>("LateUpdate");
+		luaFixedUpdate = _luaG.Get<DF_OnUpdate>("FixedUpdate");
+		luaLateUpdate = _luaG.Get<Action>("LateUpdate");
 		luaOnApplicationQuit = _luaG.Get<Action>("OnApplicationQuit");
 		luaSceneChange = _luaG.Get<DF_OnSceneChange>("OnLevelWasLoaded");
 		if (luaStart != null)
@@ -81,12 +82,24 @@ public class LuaManager : GobjLifeListener
 	}
 
 	void Update() {
+
 		if(!m_isOnUpdate) return;
-		OnUpdate(Time.deltaTime);
+
+		if(luaUpdate != null) luaUpdate(Time.deltaTime,Time.unscaledDeltaTime);
+
+		if (Time.unscaledTime - lastGCTime > GCInterval)
+		{
+			luaEnv.Tick();
+			lastGCTime = Time.unscaledTime;
+		}
 	}
 
 	void LateUpdate() {
-		if(luLateUpdate != null) luLateUpdate();
+		if(luaLateUpdate != null) luaLateUpdate();
+	}
+
+	void FixedUpdate() {
+		if(luaFixedUpdate != null) luaFixedUpdate(Time.fixedDeltaTime,Time.fixedUnscaledDeltaTime);
 	}
 	
 	protected new void OnApplicationQuit(){
@@ -148,19 +161,10 @@ public class LuaManager : GobjLifeListener
 		return false;
 	}
 
-	public override void OnUpdate(float dt){
-		if(luaUpdate != null) luaUpdate(dt);
-
-		if (Time.time - lastGCTime > GCInterval)
-		{
-			luaEnv.Tick();
-			lastGCTime = Time.time;
-		}
-	}
-
 	protected override void OnClear(){
 		luaUpdate = null;
-		luLateUpdate = null;
+		luaFixedUpdate = null;
+		luaLateUpdate = null;
 		luaOnApplicationQuit = null;
 		luaSceneChange = null;
 		StopAllCoroutines();

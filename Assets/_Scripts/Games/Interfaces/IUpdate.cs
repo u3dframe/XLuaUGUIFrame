@@ -6,5 +6,5 @@
 /// </summary>
 public interface IUpdate {
     bool IsOnUpdate(); // 是否可以调用 OnUpdate 函数
-    void OnUpdate(float dt);
+    void OnUpdate(float dt,float unscaledDt);
 }

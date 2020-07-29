@@ -1,4 +1,9 @@
--- 游戏入口
+--[[
+	-- 游戏 main 对象
+	-- Author : canyon / 龚阳辉
+	-- Date : 2020-06-23 20:26
+	-- Desc : 
+]]
 
 local M = {}
 

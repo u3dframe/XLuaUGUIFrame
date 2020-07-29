@@ -1,16 +1,23 @@
-fmt_s1_s2 = "%s%s"
-local str_format = string.format
+--[[
+	-- 游戏 管理
+	-- Author : canyon / 龚阳辉
+	-- Date : 2020-06-23 20:26
+	-- Desc : 管理 并 加载 luafp 中的对象
+]]
 
+fmt_p1_p2 = "%s%s"
+local str_format = string.format
+local _req = reimport or require
 local M = {}
 local this = M;
 
 --游戏初始化主要接口
 function M.Init()
-	require "games/defines/define_luafp"
+	_req "games/defines/define_luafp"
 
 	local _MG = _G;
 	for _,v in ipairs(_LuaFpNoKey) do
-		require(v)
+		_req(v)
 	end
 	this.RequireByTab(_LuaFpBasic);
 	this.RequireByTab(_LuaFpMidle);
@@ -25,8 +32,8 @@ function M.RequireByTab(lb)
 		if v[3] then
 			_fp = _LuaPacakge[v[3]] or ""
 		end
-		_fp = str_format(fmt_s1_s2,_fp,v[2])
-		_entity = require(_fp)
+		_fp = str_format(fmt_p1_p2,_fp,v[2])
+		_entity = _req(_fp)
 		
 		if not (v[1] == "" or v[1] == "nil") then
 			_MG[v[1]] = _entity;
