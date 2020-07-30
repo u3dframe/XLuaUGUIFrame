@@ -11,10 +11,12 @@ LE_AsType = {
     UI = 2,
     Sprite = 3,
     Texture = 4,
+    Playable = 5,
     [1] = "prefab",
     [2] = "prefab",
     [3] = "png",
     [4] = "png",
+    [5] = "playable",
 }
 
 -- asset 加载状态
