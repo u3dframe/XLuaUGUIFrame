@@ -66,7 +66,7 @@ function M._LoadAudioClip(abName,assetName,callLoad)
 end
 
 function M._LoadPlayable(abName,assetName,callLoad)
-	_csRes.LoadPlayableAsset(abName,assetName,callLoad)
+	_csRes.LoadTimelineAsset(abName,assetName,callLoad)
 end
 
 function M.LoadAsset(abName,assetName,assetLType,callLoad)
@@ -119,7 +119,7 @@ function M._Get4AudioClip(abName,assetName)
 end
 
 function M._Get4Playable(abName,assetName)
-	return _csRes.GetAsset4PlayableAsset(abName,assetName)
+	return _csRes.GetAsset4TimelineAsset(abName,assetName)
 end
 
 function M.GetAsset(abName,assetName,assetLType)

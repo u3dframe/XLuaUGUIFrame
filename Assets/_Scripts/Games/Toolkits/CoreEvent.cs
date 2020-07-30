@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using UnityEngine.Playables;
+using UnityEngine.Timeline;
 using System;
 /// <summary>
 /// 类名 : 定义 通用的 代理事件
@@ -16,7 +16,7 @@ namespace Core
     public delegate void DF_LoadedAnimator(Animator ator);
     public delegate void DF_LoadedAnimationClip(AnimationClip clip);
     public delegate void DF_LoadedAudioClip(AudioClip clip);
-    public delegate void DF_LoadedPlayableAsset(PlayableAsset pa);
+    public delegate void DF_LoadedTimelineAsset(TimelineAsset pa);
     public delegate void DF_OnUpdate(float dt,float unscaledDt);
     public delegate void DF_OnSceneChange(int level);
     public delegate void DF_OnNotifyDestry(GobjLifeListener obj);
