@@ -11,12 +11,18 @@ LE_AsType = {
     UI = 2,
     Sprite = 3,
     Texture = 4,
-    Playable = 5,
+    Animator = 5,
+    AnimationClip = 6,
+    AudioClip = 7,
+    Playable = 8,
     [1] = "prefab",
     [2] = "prefab",
     [3] = "png",
     [4] = "png",
-    [5] = "playable",
+    [5] = "controller",
+    [6] = "anim",
+    [7] = "mp3",
+    [8] = "playable",
 }
 
 -- asset 加载状态

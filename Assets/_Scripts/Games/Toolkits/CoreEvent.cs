@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Playables;
 using System;
 /// <summary>
 /// 类名 : 定义 通用的 代理事件
@@ -12,6 +13,10 @@ namespace Core
     public delegate void DF_LoadedFab(GameObject gobj);
     public delegate void DF_LoadedTex2D(Texture2D tex);
 	public delegate void DF_LoadedSprite(Sprite sprite);
+    public delegate void DF_LoadedAnimator(Animator ator);
+    public delegate void DF_LoadedAnimationClip(AnimationClip clip);
+    public delegate void DF_LoadedAudioClip(AudioClip clip);
+    public delegate void DF_LoadedPlayableAsset(PlayableAsset pa);
     public delegate void DF_OnUpdate(float dt,float unscaledDt);
     public delegate void DF_OnSceneChange(int level);
     public delegate void DF_OnNotifyDestry(GobjLifeListener obj);

@@ -83,6 +83,7 @@ function M:LoadAsset()
 	else
 		printError("=== LoadAsset asset info not init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
 	end
+	return self
 end
 
 function M:_OnCFLoadAsset( obj )

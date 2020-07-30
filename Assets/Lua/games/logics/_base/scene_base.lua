@@ -5,8 +5,8 @@
 	-- Desc : 
 ]]
 
-local super = LuaFab
-local M = class( "scene_base",super )
+local super,super2 = LuaFab,UIPubs
+local M = class( "scene_base",super,super2 )
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )

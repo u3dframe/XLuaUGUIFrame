@@ -88,7 +88,7 @@ function M:_ClsUInpFld()
     return _uinpfld
 end
 
-function M:NewAsset(ab,asset,atp,callFunc)
+function M:NewAsset(ab,asset,atp,callFunc,isNoAuto)
     local _lb = self:_ClsAsset().New({
         abName = ab,
         assetName = asset,
@@ -98,6 +98,9 @@ function M:NewAsset(ab,asset,atp,callFunc)
         if callFunc ~= nil then
             callFunc(isNo,obj)
         end
+    end
+    if not isNoAuto then
+        _lb:LoadAsset()
     end
     return _lb
 end

@@ -22,6 +22,10 @@ function M._InitLoadFuncs()
 	_lb[LE_AsType.UI] = this._LoadFab;
 	_lb[LE_AsType.Sprite] = this._LoadSprite;
 	_lb[LE_AsType.Texture] = this._LoadTexture;
+	_lb[LE_AsType.Animator] = this._LoadAnimator;
+	_lb[LE_AsType.AnimationClip] = this._LoadAnimationClip;
+	_lb[LE_AsType.AudioClip] = this._LoadAudioClip;
+	_lb[LE_AsType.Playable] = this._LoadPlayable;
 end
 
 function M._GetAssetFuncs()
@@ -31,6 +35,10 @@ function M._GetAssetFuncs()
 	_lb[LE_AsType.UI] = this._Get4Fab;
 	_lb[LE_AsType.Sprite] = this._Get4Sprite;
 	_lb[LE_AsType.Texture] = this._Get4Texture;
+	_lb[LE_AsType.Animator] = this._Get4Animator;
+	_lb[LE_AsType.AnimationClip] = this._Get4AnimationClip;
+	_lb[LE_AsType.AudioClip] = this._Get4AudioClip;
+	_lb[LE_AsType.Playable] = this._Get4Playable;
 end
 
 function M._LoadFab(abName,assetName,callLoad)
@@ -43,6 +51,22 @@ end
 
 function M._LoadTexture(abName,assetName,callLoad)
 	_csRes.LoadTexture(abName,assetName,callLoad)
+end
+
+function M._LoadAnimator(abName,assetName,callLoad)
+	_csRes.LoadAnimator(abName,assetName,callLoad)
+end
+
+function M._LoadAnimationClip(abName,assetName,callLoad)
+	_csRes.LoadAnimationClip(abName,assetName,callLoad)
+end
+
+function M._LoadAudioClip(abName,assetName,callLoad)
+	_csRes.LoadAudioClip(abName,assetName,callLoad)
+end
+
+function M._LoadPlayable(abName,assetName,callLoad)
+	_csRes.LoadPlayableAsset(abName,assetName,callLoad)
 end
 
 function M.LoadAsset(abName,assetName,assetLType,callLoad)
@@ -80,6 +104,22 @@ end
 
 function M._Get4Texture(abName,assetName)
 	return _csRes.GetAsset4Fab(abName,assetName)
+end
+
+function M._Get4Animator(abName,assetName)
+	return _csRes.GetAsset4Animator(abName,assetName)
+end
+
+function M._Get4AnimationClip(abName,assetName)
+	return _csRes.GetAsset4AnimationClip(abName,assetName)
+end
+
+function M._Get4AudioClip(abName,assetName)
+	return _csRes.GetAsset4AudioClip(abName,assetName)
+end
+
+function M._Get4Playable(abName,assetName)
+	return _csRes.GetAsset4PlayableAsset(abName,assetName)
 end
 
 function M.GetAsset(abName,assetName,assetLType)
