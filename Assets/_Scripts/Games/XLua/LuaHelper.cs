@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System;
+using UnityEngine.Playables;
 
 public sealed class LuaHelper  : UtilityHelper {
 	/// <summary>
@@ -88,4 +89,15 @@ public sealed class LuaHelper  : UtilityHelper {
 	static public Animator GetOrAddAnimator(Transform trsf){
 		return Get<Animator>(trsf,true);
 	}
+
+	static public PlayableDirector GetOrAddPlayableDirector(GameObject gobj)
+	{
+		return Get<PlayableDirector>(gobj, true);
+	}
+
+	static public PlayableDirector GetOrAddPlayableDirector(Transform trsf)
+	{
+		return Get<PlayableDirector>(trsf, true);
+	}
+
 }
