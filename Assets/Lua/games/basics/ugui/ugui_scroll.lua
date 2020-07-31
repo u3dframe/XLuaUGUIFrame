@@ -65,11 +65,12 @@ function M:on_clean()
 	end
 end
 
-function M:ReInit(bIsVertical,bIsCallNoData,bIsAlpha)
+function M:ReInit(bIsVertical,bIsCallNoData,bIsAlpha,iOffsetCell)
 	self.isVertical = (bIsVertical == true)
 	self.isCallNoData = (bIsCallNoData == true)
 	self.isAlpha = (bIsAlpha == true)
-	self.itemUnitLength = (self.isVertical == true) and self.hCell or self.wCell;
+	self.nCellOffset = self:TInt(iOffsetCell,1)
+	self.itemUnitLength = (self.isVertical == true) and (self.hCell + self.nCellOffset) or (self.wCell + self.nCellOffset);
 	self.scrollViewLength = (self.isVertical == true) and self.hSelf or self.wSelf;
 	self.isInit = true
 	return self
@@ -201,7 +202,7 @@ function M:UpdateAllItem(array,isMust)
 			_it1 = array[i]
 			_it2 = self.lbLItems[i]
 			_isData = false
-			if _it1 > 0 and _it1 <= self.listCount and (isMust == true or _it1 ~= self.curIndexArray[i]) then
+			if (isMust == true) or (_it1 > 0 and _it1 <= self.listCount and _it1 ~= self.curIndexArray[i]) then
 				_v = (_it1 - 1) * self.itemUnitLength
 				_it2.lbMy:SetLocalPosition(self.isVertical and 0 or _v, self.isVertical and (-1 * _v) or 0);
 				self.curIndexArray[i] = _it1

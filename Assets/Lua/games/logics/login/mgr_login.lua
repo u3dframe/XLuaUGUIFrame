@@ -53,9 +53,11 @@ function M:ToLoginView()
 		_s.lbCDShow = LCDown.New(function(_lb) ui:View(true) end,LE_TmType.UTC_S)
 
 		_s.lbScl = _s:NewUScl("scl_test",{
-			clsLua = function(go) return {gobj = go} end,
+			clsLua = UIItem,--- function(go) return {gobj = go} end,
 			cfClick = nil,
 			cfShow = function(lbCell,nRow)
+				-- printTable(lbCell,nRow)
+				-- printTable(nRow)
 			end,
 			isVertical = true
 		})
@@ -70,6 +72,10 @@ function M:ToLoginView()
 			{7,8,9},
 		}
 		_s.lbScl:ShowScroll(_listSv)
+
+		-- LUtils.Wait(3,function()
+		-- 	printTable(_s.lbScl,"lbScl")
+		-- end)
 	end
 
 	ui.OnEnd = function(_s,isDestroy)
