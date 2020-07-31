@@ -107,11 +107,6 @@ function M:SetEnabled( isBl )
 	end
 end
 
-function M:SetActive( isActive )
-	super.SetActive( self,isActive )
-	self:SetEnabled( self.isActive )
-end
-
 function M:_OnUpdate(dt)
 	super._OnUpdate( self,dt )
 	if self:IsNoLoaded() then return end

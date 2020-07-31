@@ -20,7 +20,7 @@ LE_ItVShowType = {
 local tb_lens = table.lens
 local m_max = math.max
 
-local super,_evt = LCFabElement,Event
+local super,_evt = UICell,Event
 local M = class( "ui_item",super )
 
 function M:ctor(gobj,callFunc,valType,isVwEmpty)

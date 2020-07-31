@@ -12,9 +12,8 @@ local tb_concat = table.concat
 local _deTrk = debug.traceback
 local _sel = select
 
-local DE_BUG = nil;
+local DE_BUG,_isTrace = nil,true;  -- 是否包含 traceback
 local _error,_print = error,print;
-local _isTrace = false -- 是否包含 traceback
 local _n_mix_lens = 3200
 
 function lensPars( ... )
@@ -30,12 +29,14 @@ function logMust(fmt,...)
 end
 
 function printLog(tag, fmt, ...)
+	local _isEditor = (GM_IsEditor == true)
 	if DE_BUG == nil then
 		if CDebug then
 			DE_BUG = CDebug.useLog
 		else
-			DE_BUG = GM_IsEditor == true
+			DE_BUG = _isEditor
 		end
+		_isTrace = _isEditor
 	end
 	local _isErr,str = tag == "ERR";
 	local _isThr = tag == "THR";
@@ -60,7 +61,7 @@ function printLog(tag, fmt, ...)
 	end
 	str = tb_concat(t)
 
-	if GM_IsEditor == true then
+	if _isEditor then
 		local _lens = str_len(str)
 		if _n_mix_lens < _lens then
 			local _fp = str_format("../%s_%s.txt",TimeEx.getYyyyMMdd(),NumEx.nextStr(5))
@@ -101,4 +102,5 @@ end
 
 function print(fmt,...)
 	-- _print
+	printInfo("请用 printInfo 打印")
 end

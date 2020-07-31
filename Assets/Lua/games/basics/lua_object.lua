@@ -85,6 +85,11 @@ function M:AddSupUIPubs()
 	return self:AddSuppers(UIPubs)
 end
 
+function M:IsHasSupper(clsSupper)
+	if not clsSupper or type(clsSupper) ~= "table" then return false end
+	return tb_ct(self.class.__supers,clsSupper)
+end
+
 function M:SFmt( s_fmt,... )
 	if _nPars( ... ) > 0 then
 		return _str_fmt( s_fmt , ... )

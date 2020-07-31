@@ -122,7 +122,11 @@ function M:_CreatItem(nIndex)
 	end
 	_lb = _lb or {}
 	_lb.gobj = _lb.gobj or newGO;
-	_lb.lbMy = _clsTrsf.New(_lb.gobj)
+	if (not _lb.IsHasSupper) then
+		_lb.lbMy = _clsTrsf.New(_lb.gobj)
+	else
+		_lb.lbMy = _lb
+	end
 
 	_tinsert(self.lbLItems,_lb);
 	_tinsert(self.curIndexArray,nIndex);
@@ -198,7 +202,7 @@ function M:UpdateAllItem(array,isMust)
 			_it2 = self.lbLItems[i]
 			_isData = false
 			if _it1 > 0 and _it1 <= self.listCount and (isMust == true or _it1 ~= self.curIndexArray[i]) then
-				_v = (_it1 - 1) * self.itemUnitLength				
+				_v = (_it1 - 1) * self.itemUnitLength
 				_it2.lbMy:SetLocalPosition(self.isVertical and 0 or _v, self.isVertical and (-1 * _v) or 0);
 				self.curIndexArray[i] = _it1
 				_isData = true

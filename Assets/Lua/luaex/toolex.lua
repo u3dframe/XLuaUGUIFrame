@@ -103,7 +103,7 @@ function callFunc( funcName )
 end
 
 local function _appendHeap( src )
-	return str_format("%s\n%s",src,debug.traceback());
+	return str_format("%s\n%s",src,_deTrk());
 end
 
 local function _sort_key( a,b )
@@ -186,10 +186,10 @@ function printTable( tb,title,rgb,notSort )
 		title = str_format(_fmtColor,rgb,title)
 	end
 
-	title = _appendHeap(title);
 	if type(_pfunc) == "function" then
 		_pfunc(title)
 	else
+		title = _appendHeap(title)
 		_print(title)
 	end
 end
