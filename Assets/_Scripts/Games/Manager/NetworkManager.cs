@@ -28,9 +28,8 @@ public class NetworkManager : GobjLifeListener {
 	///  初始化
 	/// </summary>
 	protected override void OnCall4Awake(){
+		InitSocket();
 		this.csAlias = "NetMgr";
-		socket = new SocketClient();
-		socket.OnRegister();
 		m_isOnUpdate = true;
 		GameMgr.RegisterUpdate(this);
 	}
@@ -76,11 +75,21 @@ public class NetworkManager : GobjLifeListener {
 	}
 
 	public NetworkManager InitNet(string host, int port, string luaFunc) {
-		this.m_host = host;
-		this.m_port = port;
+		if (!string.IsNullOrEmpty(host)) {
+			this.m_host = host;
+		}
+		if (port > 0) {
+			this.m_port = port;
+		}
 		if (!string.IsNullOrEmpty(luaFunc))
 			this.lua_func = luaFunc;
 		return this;
+	}
+
+	private void InitSocket(){
+		if(socket == null) return;
+		socket = new SocketClient();
+		socket.OnRegister();
 	}
 
 	///------------------------------------------------------------------------------------
@@ -98,16 +107,14 @@ public class NetworkManager : GobjLifeListener {
 		return true;
 	}
 
-	public void ReConnect(string host, int port) {
-		ShutDown();
+	public void Connect(string host, int port) {
+		InitSocket();
 		
-		if (!string.IsNullOrEmpty(host)) {
-			this.m_host = host;
-		}
-		if (port > 0) {
-			this.m_port = port;
-		}
-
+		bool isReConnect = !string.Equals(this.m_host,host) || this.m_port != port;
+		bool isConnect = isReConnect || !this.socket.IsConnected();
+		if(!isConnect) return;
+		if(isReConnect) ShutDown();
+		this.InitNet(host,port,this.lua_func);
 		SendConnect();
 	}
 

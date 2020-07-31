@@ -22,15 +22,18 @@ local str_gsub = string.gsub
 local str_rep = string.rep
 local str_byte = string.byte
 
-local _pcall = pcall
-local _xpcall = xpcall
-local _deTrk = debug.traceback
+local _pcall,_xpcall,_deTrk = pcall,xpcall,debug.traceback
+local _print,_printError = print
 
 local _unpack = unpack or table.unpack
 function unpack( arg )
 	if _unpack then
 		return _unpack(arg)
 	end
+end
+
+function setPErrorFunc( pErrorFunc )
+	_printError = pErrorFunc
 end
 
 function do_pcall( isLog,method,obj,... )
@@ -40,8 +43,8 @@ function do_pcall( isLog,method,obj,... )
 	else
 		_ok,_err = _pcall( method,... )
 	end
-	if (not _ok) and (isLog == true) then
-		printError("====[%s].[%s] , error = %s",obj,method,_err)
+	if (not _ok) and (isLog == true) and _printError then
+		_printError("====[%s].[%s] , error = %s",obj,method,_err)
 	end
 	return _ok,_err
 end
@@ -58,8 +61,8 @@ function do_xpcall( isLog,method,obj,... )
 		_ok,_err = _xpcall( method,_deTrk,... )
 	end
 
-	if (not _ok) and (isLog == true) then
-		printError("====[%s].[%s] , error = %s",obj,method,_err)
+	if (not _ok) and (isLog == true) and _printError then
+		_printError("====[%s].[%s] , error = %s",obj,method,_err)
 	end
 	return _ok,_err
 end
@@ -187,7 +190,7 @@ function printTable( tb,title,rgb,notSort )
 	if type(_pfunc) == "function" then
 		_pfunc(title)
 	else
-		print(title)
+		_print(title)
 	end
 end
 

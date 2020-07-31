@@ -89,7 +89,7 @@ public class SocketClient {
             writer.Write(Converter.GetBigEndian(msglen));
             writer.Write(message);
             writer.Flush();
-            if (client != null && client.Connected) {
+            if (IsConnected()) {
                 byte[] payload = ms.ToArray();
                 outStream.BeginWrite(payload, 0, payload.Length, new AsyncCallback(OnWrite), null);
             } else {
@@ -200,13 +200,20 @@ public class SocketClient {
     }
 
     /// <summary>
+    /// 是否链接
+    /// </summary>
+    public bool IsConnected() {
+        return (client != null && client.Connected);
+    }
+
+    /// <summary>
     /// 关闭链接
     /// </summary>
     public void Close() {
-        if (client != null) {
-            if (client.Connected) client.Close();
-            client = null;
-        }
+        if (IsConnected()){
+          client.Close();
+        } 
+        client = null;
     }
 
     /// <summary>

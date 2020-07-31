@@ -41,9 +41,17 @@ function M.OnDispatch_Msg(msg)
     local _type, name, args, resp = host:dispatch(msg:ReadBytes())
 	if _type == "RESPONSE" then
 		--客户端请求返回
-        local _cb =_cb_requs[name]
-    	_cb_requs[name] = nil
-		_cb(args)
+        local _cb,_isTips =_cb_requs[name]
+		_cb_requs[name] = nil
+		_isTips = (not _cb(args))
+		if _isTips then
+			local _e,_m = args.e,args.m
+			if _e and _e ~= 0 then
+				_m = _m or (resp .. _e)
+				_evt.Brocast(Evt_Error_Tips,_m)
+				printError(_m)
+			end
+		end
 		this._ExcSendQueue()
 	else
 		--服务器请求或者推送s2c
@@ -66,13 +74,20 @@ function M:on_clean()
 	_cursor,_cb_requs,_r_ques = 0,{},{}
 end
 
-function M.Shutdown( host,port,callback)
+function M.Shutdown()
     _csMgr:ShutDown()
 end
 
-function M.Connect( host,port,callback)
+function M.Connect(host,port,callback)
 	this._lfConnected = callback
-    _csMgr:ReConnect(host, port)
+    _csMgr:Connect(host, port)
+end
+
+function M.ReConnect(host,port,callback)
+	this.ShutDown()
+	LUtils.Wait(1,function(_h,_p,_cb)
+		this.Connect( _h,_p,_cb )	
+	end,host,port,callback)
 end
 
 function M.Response(response,result)

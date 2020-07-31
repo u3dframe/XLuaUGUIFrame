@@ -13,7 +13,7 @@ local _deTrk = debug.traceback
 local _sel = select
 
 local DE_BUG = nil;
-local _error = error;
+local _error,_print = error,print;
 local _isTrace = false -- 是否包含 traceback
 local _n_mix_lens = 3200
 
@@ -97,4 +97,8 @@ end
 
 function error(fmt,...)	
 	printLog("THR", fmt, ...)
+end
+
+function print(fmt,...)
+	-- _print
 end
