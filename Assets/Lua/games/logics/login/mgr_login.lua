@@ -51,11 +51,25 @@ function M:ToLoginView()
 		end
 
 		_s.lbCDShow = LCDown.New(function(_lb) ui:View(true) end,LE_TmType.UTC_S)
+
+		_s.lbScl = _s:NewUScl("scl_test",{
+			clsLua = function(go) return {gobj = go} end,
+			cfClick = nil,
+			cfShow = function(lbCell,nRow)
+			end,
+			isVertical = true
+		})
 	end
 
 	ui.OnShow = function(_s)
 		-- _s.lbBtn01:SetText(4)
-		_s.lbCDDown:Start(4)
+		-- _s.lbCDDown:Start(4)
+		local _listSv = {
+			{1,2,3},
+			{4,5,6},
+			{7,8,9},
+		}
+		_s.lbScl:ShowScroll(_listSv)
 	end
 
 	ui.OnEnd = function(_s,isDestroy)
