@@ -6,7 +6,7 @@ using System.Collections;
 
 public class EditorUGUIEx
 {
-	static string _fpInAsset4Font = "Assets/_Develop/Builds/fnts/fzzy.ttf";
+	static string _fpInAsset4Font = "Assets/_Develop/Builds/fnts/font.ttf";
     static string _fpInAsset4Item = "Assets/_Develop/Builds/prefabs/ui/ui_item.prefab";
     static Font font;
     static int layerUI = LayerMask.NameToLayer("UI");
