@@ -30,8 +30,8 @@ function M:OnInit()
 end
 
 function M:ShowViewByData( data,... )
-	local _isAcitve = (data ~= nil) or (self.isVwEmpty == true)
 	self:SetData( data,... )
+	local _isAcitve = (data ~= nil) or (self.isVwEmpty == true)
 	self:SetActive(_isAcitve)
 	if _isAcitve then
 		if self.data == nil then

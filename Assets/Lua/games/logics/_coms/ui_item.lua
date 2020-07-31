@@ -23,8 +23,9 @@ local m_max = math.max
 local super,_evt = UICell,Event
 local M = class( "ui_item",super )
 
-function M:ctor(gobj,callFunc,valType,isVwEmpty)
-	super.ctor( self,gobj,callFunc )
+-- 用[_]占位，兼容row传递参数
+function M:SetData(data,_,valType,isVwEmpty)
+	super.SetData( self,data )
 	self.valType = valType or LE_ItVShowType.NeedOrEmpty
 	self.isVwEmpty = isVwEmpty == true
 end
