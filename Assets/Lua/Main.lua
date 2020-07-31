@@ -51,3 +51,10 @@ function OnApplicationQuit()
 		_evt.Brocast(Evt_OnAppQuit);
 	end
 end
+
+function OnApplicationPause(isPause)
+	_evt = evt()
+	if _evt then
+		_evt.Brocast(Evt_OnAppPause,isPause);
+	end
+end
