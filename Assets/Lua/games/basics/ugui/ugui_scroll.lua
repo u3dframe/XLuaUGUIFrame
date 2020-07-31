@@ -29,8 +29,7 @@ function M:ctor(gobj,funcCreat,funcSetData,gobjItem)
 		gobjItem = _cont.transform:GetChild(0)
 	end
 	assert(gobjItem,"== cell is null")
-	self.lbItem = _clsTrsf.New(gobjItem)
-
+	
 	self.funcCreat = funcCreat
 	self.funcSetData = funcSetData	
 	
@@ -38,16 +37,18 @@ function M:ctor(gobj,funcCreat,funcSetData,gobjItem)
 	self.lbContent:SetPivot(0,1)
 	self.lbContent:SetAnchorMin(0, 1)
 	self.lbContent:SetAnchorMax(0, 1)
-
+	
+	self.lbItem = _clsTrsf.New(gobjItem)
 	self.lbItem:SetPivot(0,1)
 	self.lbItem:SetAnchorMin(0, 1)
 	self.lbItem:SetAnchorMax(0, 1)
 	self.lbItem:SetActive(false)
-	
+
+	self.isCInCon = CHelper.IsInParent(self.lbItem.gobj,self.lbContent.gobj)
 	self.curIndexArray ={} -- eg:{1,2,3,4} 
 	self.lbLItems = {} 	-- item table array
 
-	local _func = handler(self,self.OnValueChanged)
+	local _func = handler_xpcall(self,self.OnValueChanged)
 	_sr.onValueChanged:AddListener(_func);
 	self.normalVal = 0
 
@@ -115,9 +116,15 @@ function M:GetLocalPos4Cont()
 	return self.lbContent.trsf.localPosition
 end
 
---creat RankItem
 function M:_CreatItem(nIndex)
-	local newGO,_lb = self.lbItem:Clone()
+	local newGO,_lb;
+	if nIndex == 1 and self.isCInCon then
+		newGO = self.lbItem.gobj
+	end
+	if not newGO then
+		newGO = (not self.isCInCon) and self.lbContent.gobj or nil
+		newGO = self.lbItem:Clone(newGO)
+	end
 	if self.funcCreat then
 		_lb = self.funcCreat(newGO)
 	end

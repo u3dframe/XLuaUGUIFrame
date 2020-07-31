@@ -25,7 +25,13 @@ end
 
 function M.CsClone(gobj)
 	if gobj ~= nil then
-		return CHelper.Clone(gobj);	
+		return CHelper.Clone(gobj);
+	end
+end
+
+function M.CsCloneP2(gobj,parent)
+	if gobj ~= nil then
+		return CHelper.Clone(gobj,parent);
 	end
 end
 
@@ -72,7 +78,11 @@ function M:IsActiveInView( )
 	end
 end
 
-function M:Clone()
+function M:Clone(parent)
+	if parent then
+		parent = ("nil" ~= parent and "null" ~= parent) and parent or nil
+		return this.CsCloneP2(self.gobj,parent)
+	end
 	return this.CsClone(self.gobj)
 end
 

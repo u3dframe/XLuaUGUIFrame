@@ -73,9 +73,9 @@ function M:ToLoginView()
 		}
 		_s.lbScl:ShowScroll(_listSv)
 
-		-- LUtils.Wait(3,function()
-		-- 	printTable(_s.lbScl,"lbScl")
-		-- end)
+		LUtils.Wait(3,function()
+			printTable(_s.lbScl,"lbScl")
+		end)
 	end
 
 	ui.OnEnd = function(_s,isDestroy)

@@ -276,14 +276,34 @@ public class UtilityHelper {
 		SetParent(gobj,gobjParent,true); 
 	}
 
-	static public GameObject Clone(GameObject gobj) {
+	static public bool IsInParent(Transform trsf, Transform trsfParent) {
+		if(IsNull(trsf)) return false;
+		return trsf.parent == trsfParent;
+	}
+
+	static public bool IsInParent(GameObject gobj, GameObject gobjParent) {
+		return IsInParent(gobj?.transform,gobjParent?.transform);
+	}
+
+	static public GameObject Clone(GameObject gobj,Transform parent) {
 		if(IsNull(gobj)) return null;
-		return GameObject.Instantiate (gobj,gobj.transform.parent,false) as GameObject;
+		return GameObject.Instantiate (gobj,parent,false) as GameObject;
+	}
+
+	static public GameObject Clone(GameObject gobj,GameObject gobjParent) {
+		return Clone(gobj,gobjParent?.transform);
+	}
+
+	static public GameObject Clone(Transform trsf,Transform parent) {
+		return Clone (trsf?.gameObject,parent);
+	}
+
+	static public GameObject Clone(GameObject gobj) {
+		return Clone (gobj,gobj?.transform.parent);
 	}
 
 	static public GameObject Clone(Transform trsf) {
-		if(IsNull(trsf)) return null;
-		return Clone(trsf.gameObject);
+		return Clone(trsf?.gameObject);
 	}
 
 	static public bool IsInLayerMask(GameObject gobj, LayerMask layerMask) {
