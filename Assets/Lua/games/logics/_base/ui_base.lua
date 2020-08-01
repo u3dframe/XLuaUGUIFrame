@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _E_Layer,__mgr = LE_UILayer
+local _E_Layer,_E_AType,_E_HType,__mgr = LE_UILayer,LE_AsType,LE_UI_Mutex
 local function _mgr()
 	if not __mgr then __mgr = MgrUI end
 	return __mgr
@@ -19,11 +19,16 @@ function M:ctor(assetCfg)
 	super2.ctor( self )
 
 	self.strABAsset = self:SFmt("%s_%s",self.cfgAsset.abName,self.cfgAsset.assetName)
+	if self:GetLayer() == _E_Layer.Normal then
+		local hideType = self:GetMutexType()
+		hideType = hideType or _E_HType.MainAndSelf
+		self.cfgAsset.hideType = hideType
+	end
 end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
-	_cfg.assetLType = LE_AsType.UI
+	_cfg.assetLType = _E_AType.UI
 	_cfg.layer = _E_Layer.Normal
 	return _cfg;
 end
