@@ -157,6 +157,7 @@ namespace Core.Kernel
 
         static string[] mustFiles = {
             ".prefab",
+            //".playable",
             ".ttf",
             ".fontsettings",
         };

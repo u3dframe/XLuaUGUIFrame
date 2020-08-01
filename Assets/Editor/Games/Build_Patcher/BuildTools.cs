@@ -99,15 +99,18 @@ public class BuildTools : Core.EditorGameFile
         if (obj is GameObject)
         {
             GameObject gobj = obj as GameObject;
-            Animator[] arrsAnit = gobj.GetComponentsInChildren<Animator>(true);
-            foreach (var item in arrsAnit)
+            if (gobj.name.StartsWith("tl_") != true)//Timeline预制资源都不移除Animator
             {
-                if (item != null && item.runtimeAnimatorController == null)
+                Animator[] arrsAnit = gobj.GetComponentsInChildren<Animator>(true);
+                foreach (var item in arrsAnit)
                 {
-                    GameObject.DestroyImmediate(item, true);
+                    if (item != null && item.runtimeAnimatorController == null)
+                    {
+                        GameObject.DestroyImmediate(item, true);
+                    }
                 }
             }
-
+            
             Animation[] arrsAnim = gobj.GetComponentsInChildren<Animation>(true);
             foreach (var item in arrsAnim)
             {

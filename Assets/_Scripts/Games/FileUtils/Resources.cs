@@ -18,10 +18,13 @@ namespace Core.Kernel
         static public readonly System.Type tpGobj = typeof(GameObject);
         static public readonly System.Type tpTex2D = typeof(Texture2D);
         static public readonly System.Type tpSprite = typeof(Sprite);
+        static public readonly System.Type tpCube = typeof(Cubemap);
         static public readonly System.Type tpFont = typeof(Font);
         static public readonly System.Type tpShader = typeof(Shader);
         static public readonly System.Type tpMat = typeof(Material);
         static public readonly System.Type tpAdoClip = typeof(AudioClip);
+        static public readonly System.Type tpAnmClip = typeof(AnimationClip);
+        static public readonly System.Type tpTimeline = typeof(UnityEngine.Timeline.TimelineAsset);
 
         /// <summary>
         /// 路径转为以 Assets/ 开头的
