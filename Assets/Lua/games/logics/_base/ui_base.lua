@@ -5,18 +5,26 @@
 	-- Desc : 
 ]]
 
+local _E_Layer,__mgr = LE_UILayer
+local function _mgr()
+	if not __mgr then __mgr = MgrUI end
+	return __mgr
+end
+
 local super,super2 = LuaFab,UIPubs
 local M = class( "ui_base",super,super2 )
 
 function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
 	super2.ctor( self )
+
+	self.strABAsset = self:SFmt("%s_%s",self.cfgAsset.abName,self.cfgAsset.assetName)
 end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.assetLType = LE_AsType.UI
-	_cfg.layer = LE_UILayer.Normal
+	_cfg.layer = _E_Layer.Normal
 	return _cfg;
 end
 
@@ -30,22 +38,45 @@ function M:GetLayer()
 	return self.cfgAsset.layer
 end
 
+function M:GetMutexType()
+	return self.cfgAsset.hideType
+end
+
 function M:OnCF_Fab( obj )
 	super.OnCF_Fab( self,obj )
 	self:_SetSelfLayer()
 	if self.lfLoaded then
 		self.lfLoaded()
 	end
+	self.lfLoaded = nil
+end
+
+function M:OnViewBeforeOnInit()
+	self:HideOtherExcludeSelf()
 end
 
 function M:_SetSelfLayer()
 	local _lay = self:GetLayer()
-	if LE_UILayer.URoot == _lay then
+	if _E_Layer.URoot == _lay then
 		self:SetParent(nil,true)
 		self:DonotDestory()
-	elseif LE_UILayer.UpRes ~= _lay then
-		UIRoot.singler():SetUILayer(self)
+	elseif _E_Layer.UpRes ~= _lay then
+		_mgr().URoot():SetUILayer(self)
 	end
+end
+
+function M:View(isShow)
+	super.View( self,isShow )
+	if true == isShow then
+		_mgr().AddViewUI(self)
+	else
+		_mgr().RmViewUI(self)
+	end
+end
+
+-- 互斥其他界面
+function M:HideOtherExcludeSelf()
+	_mgr().HideOther(self)
 end
 
 return M

@@ -132,25 +132,34 @@ function M:_IsLogViewTime()
 end
 
 function M:_OnView()
-	local _t1,_t2,_t3 = nil
+	local _t1,_t2,_t3,_t4 = nil
 	local _isLog = self:_IsLogViewTime()
 	if _isLog then
 		_func_time = _func_time or os.clock
 		_t1 = _func_time()
 	end
 
-	self:_OnInit() -- 初始化
+	self:OnViewBeforeOnInit() -- 初始化之前
 
 	if _isLog then
 		_t2 = _func_time()
 	end
 
-	self:_OnShow() -- 显示刷新
+	self:_OnInit() -- 初始化
 
 	if _isLog then
 		_t3 = _func_time()
-		logMust("=== view [%s],use time,OnInit = [%s], OnShow = [%s]",self.cfgAsset.assetName,(_t2 - _t1),(_t3 -_t2))
 	end
+
+	self:_OnShow() -- 显示刷新
+
+	if _isLog then
+		_t4 = _func_time()
+		logMust("=== view [%s],use time,Before = [%s],OnInit = [%s], OnShow = [%s]",self.cfgAsset.assetName,(_t2 - _t1),(_t3 -_t2),(_t4 -_t3))
+	end
+end
+
+function M:OnViewBeforeOnInit()
 end
 
 function M:OnInit()

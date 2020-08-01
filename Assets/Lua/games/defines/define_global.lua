@@ -55,3 +55,13 @@ LE_UILayer = {
     Guide = "Guide",
     Top = "Top",
 }
+
+--UI开启的互斥关系
+LE_UI_Mutex = {
+	None	  = 1, -- 互斥: 无
+	All		  = 2, -- 互斥: 所有
+	SelfLayer = 3, -- 互斥: 自身相同layer
+	Main      = 4, -- 互斥: 主界面
+	AllExceptGuide = 5, -- 互斥: 所有(排除guide layer)
+	MainAndSelf    = 6, -- 互斥: 主界面 和 自身层级界面
+}

@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _urt,_evt = UIRoot,Event
+local _mgrUI,_evt = MgrUI,Event
 
 local M = {}
 
@@ -14,7 +14,7 @@ function M:Init()
 end
 
 function M:EntryAfterUpRes()
-	_urt.singler()
+	_mgrUI.URoot()
 	_evt.Brocast(Evt_ToChangeScene)
 	_evt.Brocast(Evt_View_MainCamera)
 	_evt.Brocast(Evt_ToView_Login)

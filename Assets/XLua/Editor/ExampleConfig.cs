@@ -128,17 +128,25 @@ public static class ExampleConfig
                 
                 typeof(DF_LoadedAsset),
                 typeof(DF_LoadedFab),
-                typeof(DF_LoadedSprite),
                 typeof(DF_LoadedTex2D),
+                typeof(DF_LoadedSprite),
+                typeof(DF_LoadedAnimator),
+                typeof(DF_LoadedAnimationClip),
+                typeof(DF_LoadedAudioClip),
+                typeof(DF_LoadedTimelineAsset),
+                typeof(DF_OnBool),
                 typeof(DF_OnUpdate),
                 typeof(DF_OnSceneChange),
                 typeof(DF_OnNotifyDestry),
+
                 typeof(DF_UGUIPos),
+                typeof(DF_UGUI2V2),
                 typeof(DF_UGUIV2Bool),
+
                 typeof(DF_InpKeyState),
-                typeof(DF_InpRayHit),
-                typeof(DF_InpVec2),
                 typeof(DF_InpScale),
+                typeof(DF_InpVec2),
+                typeof(DF_InpRayHit),
             };
 
     //黑名单
