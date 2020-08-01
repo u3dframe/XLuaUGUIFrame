@@ -24,11 +24,13 @@ public class LuaManager : GobjLifeListener
 
 	internal static LuaEnv luaEnv = new LuaEnv(); //all lua behaviour shared one luaenv only!
 	internal static float lastGCTime = 0;
-	internal const float GCInterval = 1;//1 second 
+	internal const float GCInterval = 5;//1 second 
 
 	private DF_OnUpdate luaUpdate,luaFixedUpdate;
 	private DF_OnSceneChange luaSceneChange;
 	private Action luaLateUpdate,luaOnApplicationQuit;
+	public bool m_isPaused{get; private set;}
+	private DF_OnBool luaAppPaused;
 
 	public void Init(){}
 
@@ -51,6 +53,7 @@ public class LuaManager : GobjLifeListener
 		luaLateUpdate = _luaG.Get<Action>("LateUpdate");
 		luaOnApplicationQuit = _luaG.Get<Action>("OnApplicationQuit");
 		luaSceneChange = _luaG.Get<DF_OnSceneChange>("OnLevelWasLoaded");
+		luaAppPaused = _luaG.Get<DF_OnBool>("OnApplicationPause");
 		if (luaStart != null)
 		{
 			luaStart();
@@ -101,6 +104,20 @@ public class LuaManager : GobjLifeListener
 	protected new void OnApplicationQuit(){
 		if(luaOnApplicationQuit != null) luaOnApplicationQuit();
 		base.OnApplicationQuit();
+	}
+
+	void OnApplicationFocus(bool hasFocus){
+        this.m_isPaused = !hasFocus;
+		_ExcCF_Pause();
+    }
+
+    void OnApplicationPause(bool pauseStatus){
+        this.m_isPaused = pauseStatus;
+		_ExcCF_Pause();
+    }
+
+	private void _ExcCF_Pause(){
+		if(luaAppPaused != null) luaAppPaused(this.m_isPaused);
 	}
 
 	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
@@ -163,6 +180,7 @@ public class LuaManager : GobjLifeListener
 		luaLateUpdate = null;
 		luaOnApplicationQuit = null;
 		luaSceneChange = null;
+		luaAppPaused = null;
 		StopAllCoroutines();
 	}
 
