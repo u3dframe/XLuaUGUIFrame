@@ -19,4 +19,9 @@ end
 function M:RemovePCall( cmd,callback )
 	_mNet.RmPushCall( cmd,callback )
 end
+
+function M:GetCfgData( cfgKey,idKey )
+	return MgrData:GetOneData(cfgKey,idKey)
+end
+
 return M

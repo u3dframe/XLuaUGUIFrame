@@ -7,7 +7,7 @@
 
 local _e_tip = Evt_Popup_Tips
 
-local super,_evt,_mDt = MgrBase,Event,MgrData
+local super,_evt = MgrBase,Event
 local M = class( "mgr_unlock", super)
 local this = M
 
@@ -20,7 +20,7 @@ function M.Init()
 end
 
 function M.GetData(id)
-	return _mDt:GetOneData("unlock",id)
+	return this:GetCfgData("unlock",id)
 end
 
 --解锁
