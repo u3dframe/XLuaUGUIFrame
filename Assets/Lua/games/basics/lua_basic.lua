@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _nPars = lensPars
+local _nPars,type = lensPars,type
 local tb_has,tb_insert = table.contains,table.insert
 local _lbKeys = { "__cname","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
 
