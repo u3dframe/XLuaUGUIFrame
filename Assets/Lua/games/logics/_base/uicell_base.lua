@@ -18,7 +18,7 @@ function M:ctor(gobj,cfClick,lbParent,comp)
 		self.lbBtnSelf = self:_ClsUBtn().New(self.gobj,handler(self,self.OnClickSelf))
 	end
 	self:SetCF4OnShow(function() self:ReEvent4Self(true) end)
-	self:SetCF4OnHide(function() self:ReEvent4Self(false) end)
+	self:SetCF4OnHide(function() self:RemoveEvents() end)
 	self:_OnInit()
 end
 

@@ -28,8 +28,8 @@ end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
-	_cfg.assetLType = _E_AType.UI
-	_cfg.layer = _E_Layer.Normal
+	_cfg.assetLType = _cfg.assetLType or _E_AType.UI
+	_cfg.layer = _cfg.layer or _E_Layer.Normal
 	return _cfg;
 end
 

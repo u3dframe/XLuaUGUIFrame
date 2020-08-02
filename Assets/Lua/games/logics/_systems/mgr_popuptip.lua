@@ -13,6 +13,7 @@ local this = M
 
 function M.Init()
 	this.isGoOn = true -- 控制是否可以继续Check
+	this.isPreGoOn = this.isGoOn
 	this.nMaxMsgSize = 20
 	this.lbQueMsg = {}
 	this._InitUI()
@@ -25,24 +26,41 @@ function M._InitUI()
 		abName = "commons/ui_popup_tip",
 		layer = LE_UILayer.Pop,
 		isStay = true,
+		isUpdate = true,
 	})
 	this.ui = ui
 
 	ui.OnInit = function(_s)
 		_s.lbTxt = ui:NewTxt("value")
+		_s:SetAnchoredPosition(0,0)
 	end
 
 	ui.OnShow = function(_s)
 		local _msg = this.GetPopopMsg()
 		_s.lbTxt:SetText(_msg)
+		
+		_s.speed = 600
+		_s.toY = 0
+		_s.cdTime = 0.5
+		
+		this.isPreGoOn = this.isGoOn
+		this.isGoOn = false
+	end
 
-		-- 播放动作
+	ui.OnUpdateLoaded = function(_s,_dt)
+		_s.cdTime = _s.cdTime - _dt
+		_s.toY = _s.toY + _dt * _s.speed
+		_s:SetAnchoredPosition(0,_s.toY)
+		if _s.cdTime <= 0 then
+			_s:View(false)
+		end
 	end
 
 	ui.OnExit = function(_s,isInited)
 		UIBase.OnExit(_s,isInited)
-		-- 得处理动作归位置
+		_s:SetAnchoredPosition(0,0)
 		if isInited then
+			this.isGoOn = this.isPreGoOn
 			this.CheckPopupTip()
 		end
 	end

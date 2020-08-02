@@ -130,7 +130,7 @@ end
 
 function M:_OnEnd()
     self.isUping = false
-    self:ReEvent4Self(false)
+    self:RemoveEvents()
     self:SetText(1)
     self:ExcuteCallFunc()
 end

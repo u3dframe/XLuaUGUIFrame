@@ -54,7 +54,9 @@ function M:ToLoginView()
 
 		_s.lbScl = _s:NewUScl("scl_test",{
 			clsLua = UIItem,--- function(go) return {gobj = go} end,
-			cfClick = nil,
+			cfClick = function(lbCell)
+				_evt.Brocast(Evt_Popup_Tips,"单击了按钮 = " .. tostring(lbCell.index))
+			end,
 			cfShow = function(lbCell,nRow)
 				-- printTable(lbCell,nRow)
 				-- printTable(nRow)

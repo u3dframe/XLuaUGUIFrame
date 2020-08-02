@@ -28,10 +28,11 @@ Vector3.__index = function(t,k)
 	
 	if var == nil then							
 		var = rawget(get, k)
-
-		if var == nil then							
-			var = rawget(t, k)
+		if var then
+			return var()
 		end
+
+		var = rawget(t, k)
 	end
 	
 	return var

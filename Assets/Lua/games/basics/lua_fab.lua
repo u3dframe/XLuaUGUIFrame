@@ -130,6 +130,7 @@ function M:_IsLogViewTime()
 end
 
 function M:_OnView()
+	self:ReEvent4OnUpdate(true)
 	local _t1,_t2,_t3,_t4 = nil
 	local _isLog = self:_IsLogViewTime()
 	if _isLog then
@@ -202,7 +203,7 @@ function M:OnDestroy()
 end
 
 function M:_PreOnEnd(isDestroy)
-	self:ReEvent4Self(false)
+	self:RemoveEvents()
 	self.enabled = false
 	self.isVisible = false
 	isDestroy = isDestroy == true

@@ -71,13 +71,18 @@ end
 function M:ReEvent4Self(isBind)
 end
 
+function M:RemoveEvents()
+	self:ReEvent4OnUpdate(false)
+	self:ReEvent4Self(false)
+end
+
 function M:_clean()
 	local _tpv
 	for k, v in pairs(self) do
 		if not tb_has(_lbKeys,k) then
 			_tpv = type(v)
 			if  _tpv ~= "function" then
-				if (_tpv == "table") and (v ~= self) and type(v.clean) == "function" then
+				if (_tpv == "table") and type(v.clean) == "function" and (v ~= self) then
 					v:clean()
 				end
 				self[k] = nil
@@ -87,8 +92,7 @@ function M:_clean()
 end
 
 function M:pre_clean()
-	self:ReEvent4OnUpdate(false)
-	self:ReEvent4Self(false)
+	self:RemoveEvents()
 end
 
 function M:on_clean()

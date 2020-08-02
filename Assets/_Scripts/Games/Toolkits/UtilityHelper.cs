@@ -306,6 +306,15 @@ public class UtilityHelper {
 		return Clone(trsf?.gameObject);
 	}
 
+	static public RectTransform ToRectTransform(Transform trsf) {
+		if(IsNull(trsf)) return null;
+		return trsf as RectTransform;
+	}
+
+	static public RectTransform ToRectTransform(GameObject gobj) {
+		return ToRectTransform(gobj?.transform);
+	}
+
 	static public bool IsInLayerMask(GameObject gobj, LayerMask layerMask) {
         // 根据Layer数值进行移位获得用于运算的Mask值
 		if(IsNull(gobj)) return false;
