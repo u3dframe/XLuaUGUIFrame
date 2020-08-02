@@ -5,6 +5,7 @@ Evt_FixedUpdate = "Evt_FixedUpdate"; -- fixedupdate 更新函数
 Evt_OnAppQuit = "Evt_OnAppQuit"; -- On App Quit
 Evt_OnAppPause = "Evt_OnAppPause"; -- On App Pause
 Evt_View_MainCamera = "Evt_View_MainCamera"; -- 显示主摄像机
+Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示
 Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示
 Evt_GameEntryAfterUpRes = "Evt_GameEntryAfterUpRes"; -- 游戏入库，这个地方是处理更新完毕后的入口
 Evt_UpEverySecond = "Evt_UpEverySecond"; -- 每秒更新

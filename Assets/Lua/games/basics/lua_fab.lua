@@ -6,8 +6,6 @@
 ]]
 
 local _func_time = nil
-local cfg_backup = {}
-
 local super = LuaAsset
 local M = class( "lua_fab",super )
 
@@ -204,15 +202,14 @@ function M:OnDestroy()
 end
 
 function M:_PreOnEnd(isDestroy)
+	self:ReEvent4Self(false)
 	self.enabled = false
 	self.isVisible = false
-	self:ReEvent4Self(false)
 	isDestroy = isDestroy == true
 	local _tmp = self.prefFuncEnd
 	self.prefFuncEnd = nil
-	local _isInit = self.isInited
 	if _tmp then
-		_tmp(_isInit)
+		_tmp(self.isInited)
 	end
 
 	self:PreOnEnd(isDestroy)
@@ -230,6 +227,7 @@ function M:OnEnd(isDestroy)
 end
 
 function M:_OnExit(isDestroy)
+	local _isInit = self.isInited
 	if isDestroy then
 		if not self:DestroyObj() then
 			self:clean()
@@ -237,23 +235,38 @@ function M:_OnExit(isDestroy)
 	else
 		self:SetActive(false)
 	end
+
+	self:OnExit(_isInit)
 end
 
-function M:pre_clean()
-	super.pre_clean( self )
-	
-	local _key = self:SFmt("%s",self)
-	cfg_backup[_key] = self.cfgAsset
-	self.cfgAsset = nil
+function M:OnExit(isInited)
 end
 
-function M:clean_end()
-	super.clean_end( self )
-
-	local _key = self:SFmt("%s",self)
-	local _cfgAsset = cfg_backup[_key]
-	self.cfgAsset = _cfgAsset
-	cfg_backup[_key] = nil
+function M:Set4NotClear(kk,vv)
+	self.cfgNotClear = self.cfgNotClear or {}
+	self.cfgNotClear[kk] = vv
 end
+
+function M:Get4NotClear(kk)
+	if self.cfgNotClear then
+		return self.cfgNotClear[kk]
+	end
+end
+
+function M:Clear4NotClear( ... )
+	if not self.cfgNotClear then return end
+	local nLens = self:Lens4Pars( ... )
+	if nLens <= 0 then return end
+	local _args = { ... }
+	for _, v in ipairs(_args) do
+		self.cfgNotClear[v] = nil
+	end
+end
+
+function M:ClearAll4NotClear()
+	self.cfgNotClear = {}
+end
+
+M.AddNoClearKeys("cfgAsset","cfgNotClear")
 
 return M

@@ -5,10 +5,23 @@
 	-- Desc : 
 ]]
 
-local tb_has = table.contains
+local _nPars = lensPars
+local tb_has,tb_insert = table.contains,table.insert
 local _lbKeys = { "__cname","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
 
 local M = class( "lua_basic" )
+
+function M.AddNoClearKeys( ... )
+	local nLens = _nPars( ... )
+	if nLens <= 0 then return end
+	local _args = { ... }
+	for _, v in ipairs(_args) do
+		if not tb_has(_lbKeys,v) then
+			tb_insert(_lbKeys,v)
+		end
+	end
+end
+
 function M:ctor( )
 	self.isUping = true
 end

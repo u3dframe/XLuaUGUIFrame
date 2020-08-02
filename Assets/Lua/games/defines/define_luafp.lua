@@ -8,6 +8,7 @@ _LuaPacakge = {
 	[6] = "games/logics/",
 	[7] = "games/logics/_base/",
 	[8] = "games/logics/_coms/",
+	[9] = "games/logics/_systems/",
 }
 
 -- 不需要全局变量的lua
@@ -66,6 +67,9 @@ _LuaFpMidle = {
 
 -- 最后
 _LuaFpEnd = {
+	{"MgrData", "mgr_data", 9}, -- 配置 
+	{"MgrUnlock", "mgr_unlock", 9}, -- 功能解锁
+	{"MgrPopTip", "mgr_popuptip", 9}, -- 文本弹出框
 	{"MgrScene","_scene/mgr_scene",6}, -- 场景管理
 	{"MgrLogin","login/mgr_login",6}, -- 登录管理
 }

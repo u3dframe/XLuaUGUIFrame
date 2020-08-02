@@ -7,7 +7,7 @@ using System.Collections;
 public class EditorUGUIEx
 {
 	static string _fpInAsset4Font = "Assets/_Develop/Builds/fnts/font.ttf";
-    static string _fpInAsset4Item = "Assets/_Develop/Builds/prefabs/ui/ui_item.prefab";
+    static string _fpInAsset4Item = "Assets/_Develop/Builds/prefabs/ui/commons/ui_item.prefab";
     static Font font;
     static int layerUI = LayerMask.NameToLayer("UI");
 #if UNITY_2017_1_OR_NEWER

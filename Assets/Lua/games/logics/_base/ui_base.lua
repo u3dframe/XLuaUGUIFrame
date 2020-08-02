@@ -84,4 +84,39 @@ function M:HideOtherExcludeSelf()
 	_mgr().HideOther(self)
 end
 
+function M:OnClickCloseSelf( isShowMain )
+	self:Set4NotClear("isCloseSelf",true)
+	isShowMain = (isShowMain == true)
+	local _isNml = _E_Layer.Normal == self:GetLayer()
+	local _isBackSelf = _isNml and (not isShowMain)
+	local _isPNUI = _isBackSelf and _mgr().GetIsOpenPreUI()
+	self:Set4NotClear("isShowMain",isShowMain)
+	self:Set4NotClear("isBackSelf",_isBackSelf)
+	self:Set4NotClear("isPreNormalUI",_isPNUI)
+	self:View(false)
+end
+
+function M:OnExit(isInited)
+	local _isClose = self:Get4NotClear("isCloseSelf")
+	local _isMain = self:Get4NotClear("isShowMain")
+	local _isPre = self:Get4NotClear("isPreNormalUI")
+	local _isBack = self:Get4NotClear("isBackSelf")
+	self:Clear4NotClear("isCloseSelf","isShowMain","isPreNormalUI","isBackSelf")
+
+	if (not isInited) then return end
+
+	if (_isPre == true) then
+		_mgr().OpenPreUI()
+	end
+
+	if (_isClose == true) then
+		if _isMain then
+			-- UIMain.View(true)
+			_mgr().ClearPreInfo()
+		else
+			_mgr().SetIsOpenPreUI(_isBack)
+		end
+	end
+end
+
 return M
