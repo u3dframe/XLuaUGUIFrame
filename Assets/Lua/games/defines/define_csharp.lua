@@ -10,6 +10,8 @@ UText = CS.UnityEngine.UI.Text
 UImage = CS.UnityEngine.UI.Image
 URawImage = CS.UnityEngine.UI.RawImage
 UCamera = CS.UnityEngine.Camera
+UAnimator =  CS.UnityEngine.Animator
+UTime = CS.UnityEngine.Time
 
 CWWWMgr = CS.Core.Kernel.WWWMgr
 CBtBuffer = CS.TNet.ByteBuffer
