@@ -131,4 +131,8 @@ function M.GetAsset(abName,assetName,assetLType)
 	end
 end
 
+function M.GetAB(abName)
+	return _csRes.GetABInfo(abName)
+end
+
 return M
