@@ -8,20 +8,23 @@
 local super,_mNet = LuaObject,MgrNet
 local M = class( "mgr_base",super )
 
-function M:SendRequest( cmd,data,callback )
+function M:SendRequest(cmd,data,callback)
 	_mNet.SendRequest( cmd,data,callback )
 end
 
-function M:AddPCall( cmd,callback )
+function M:AddPCall(cmd,callback)
 	_mNet.AddPushCall( cmd,callback )
 end
 
-function M:RemovePCall( cmd,callback )
+function M:RemovePCall(cmd,callback)
 	_mNet.RmPushCall( cmd,callback )
 end
 
-function M:GetCfgData( cfgKey,idKey )
-	return MgrData:GetOneData(cfgKey,idKey)
+function M:GetCfgData(cfgKey,idKey)
+	if idKey then
+		return MgrData:GetOneData( cfgKey,idKey )
+	end
+	return MgrData:GetConfig( cfgKey )
 end
 
 return M

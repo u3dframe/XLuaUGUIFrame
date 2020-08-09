@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local super,_evt,_base = MgrBase,Event,SceneBase
+local super,_evt,_base,_cmr = MgrBase,Event,SceneBase,LUCamera
 local M = class( "mgr_camera",super )
 
 function M:Init()
@@ -21,7 +21,8 @@ function M:GetLuaCamera()
 		isStay = true,
 	})
 	self.lbCamera.OnInit = function(_s)
-		_s.mainCamera = _s.comp.m_camera
+		local _c = _s.comp.m_camera
+		_s.mainCamera = _cmr.New(_c,_c)
 		_s:SetParent(nil,true)
 		_s:DonotDestory()
 		_s:SetEulerAngles(0,0,0)

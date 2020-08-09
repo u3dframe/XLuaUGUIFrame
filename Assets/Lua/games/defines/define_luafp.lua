@@ -30,6 +30,7 @@ _LuaFpBasic = {
 	{"LUGobj","u_gobj",3}, -- gobj
 	{"LUTrsf","u_transform",3}, -- transform
 	{"LUComonet","u_component",3}, -- component
+	{"LUCamera","u_camera",3}, -- Camera
 	{"LCFabBasic","uc_fabbasic",3}, -- PrefabBasic
 	{"LCFabElement","uc_fabelement",3}, -- PrefabElement
 	{"LuaAsset","lua_asset",2}, -- 资源
