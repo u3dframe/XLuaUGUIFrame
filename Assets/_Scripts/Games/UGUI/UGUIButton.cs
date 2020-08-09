@@ -92,7 +92,7 @@ public class UGUIButton : GobjLifeListener {
 			this.m_lastPos = pos;
 		}else{
 			var _pos = pos - this.m_lastPos;
-			this.m_isNoClick = _pos.sqrMagnitude <= maxDis2;
+			this.m_isNoClick = _pos.sqrMagnitude > maxDis2;
 		}
 
 		if(!this.m_isNoClick){
