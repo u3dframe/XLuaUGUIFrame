@@ -80,6 +80,11 @@ public class UtilityHelper {
 		return obj is Component;
 	}
 
+	static public bool IsCamera(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is Camera;
+	}
+
 	static public T Get<T>(GameObject go) where T : Component {
 		if(IsNull(go)) return null;
 		return go.GetComponent<T>();
