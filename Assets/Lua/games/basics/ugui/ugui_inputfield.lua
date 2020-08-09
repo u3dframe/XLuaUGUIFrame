@@ -35,4 +35,10 @@ function M:SetText4Main(val)
 	end
 end
 
+function M:SetUText4Main(val)
+	if self.lbTxtMain then
+		return self.lbTxtMain:SetUText(val)
+	end
+end
+
 return M

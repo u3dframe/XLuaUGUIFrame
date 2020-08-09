@@ -87,7 +87,7 @@ public class NetworkManager : GobjLifeListener {
 	}
 
 	private void InitSocket(){
-		if(socket == null) return;
+		if(socket != null) return;
 		socket = new SocketClient();
 		socket.OnRegister();
 	}
