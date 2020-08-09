@@ -42,10 +42,6 @@ function M:ShowViewByData( data,... )
 	end
 end
 
-function M:SetData( data,... )
-	self.data = data
-end
-
 function M:OnView()
 end
 

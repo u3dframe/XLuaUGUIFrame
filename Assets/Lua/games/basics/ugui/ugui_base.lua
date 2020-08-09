@@ -47,6 +47,13 @@ function M:SetText(val)
 	return self:SetOrFmt(val)
 end
 
+function M:SetUText(val)
+	if self.lbTxt then
+		self.lbTxt:SetUText( val )
+	end
+	return self
+end
+
 function M:SetActiveSelect( isBl )
 	self.isSelect = isBl == true
 	if self.lbSel then

@@ -76,6 +76,11 @@ function M:RemoveEvents()
 	self:ReEvent4Self(false)
 end
 
+function M:SetData( data,... )
+	self.data = data
+	return self
+end
+
 function M:_clean()
 	local _tpv
 	for k, v in pairs(self) do

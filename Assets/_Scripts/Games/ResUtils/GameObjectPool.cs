@@ -114,7 +114,7 @@ namespace Core{
 			if(m_isStartLoad) return this;
 			this.m_isStartLoad = true;
 			this.poolObject = abMgr.LoadAsset<GameObject>(this.abName,this.assetName,OnLoadedCall);
-			 return this;
+			return this;
 		}
 		
 		// 设置最大数量

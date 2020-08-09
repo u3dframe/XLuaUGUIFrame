@@ -33,12 +33,20 @@ function M:SetText4Main(val)
 	if self.lbTxtMain then
 		return self.lbTxtMain:SetText(val)
 	end
+	return self
 end
 
 function M:SetUText4Main(val)
 	if self.lbTxtMain then
 		return self.lbTxtMain:SetUText(val)
 	end
+	return self
 end
 
+function M:SetOrFmt4Main( val, ... )
+	if self.lbTxtMain then
+		self.lbTxtMain:SetOrFmt( val, ... )
+	end
+	return self
+end
 return M
