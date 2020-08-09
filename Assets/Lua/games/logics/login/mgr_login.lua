@@ -56,6 +56,11 @@ function M:ToLoginView()
 			clsLua = UIItem,--- function(go) return {gobj = go} end,
 			cfClick = function(lbCell)
 				_evt.Brocast(Evt_Popup_Tips,"单击了按钮 = " .. tostring(lbCell.index))
+				
+				local _ab = MgrRes.GetAB("fnts/font.ab_fnt")
+				printInfo(_ab)
+				_ab = MgrRes.GetAB("textures/ui_atlas/bgs/tm_alpha1.tex_atlas")
+				printInfo(_ab)
 			end,
 			cfShow = function(lbCell,nRow)
 				-- printTable(lbCell,nRow)
