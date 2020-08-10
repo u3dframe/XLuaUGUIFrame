@@ -53,6 +53,7 @@ public class UGUIButton : GobjLifeListener {
 
 	Vector2 m_lastPos;
 	bool m_isNoClick = false;
+	int m_typeClick = 0;
 
 	protected override void OnCall4Awake()
     {
@@ -90,6 +91,7 @@ public class UGUIButton : GobjLifeListener {
 		this.m_isNoClick = isPress;
 		if(isPress){
 			this.m_lastPos = pos;
+			m_typeClick = 1;
 		}else{
 			var _pos = pos - this.m_lastPos;
 			this.m_isNoClick = _pos.sqrMagnitude > maxDis2;
@@ -107,8 +109,8 @@ public class UGUIButton : GobjLifeListener {
 
 	void _OnClick(GameObject obj,Vector2 pos)
     {
-		if (IsFreezedAll() || m_isNoClick) return;
-
+		if (IsFreezedAll() || m_isNoClick || m_typeClick != 1) return;
+		m_typeClick = 0;
         if (this.m_onClick != null) this.m_onClick(m_gobj,pos);
     }
 
