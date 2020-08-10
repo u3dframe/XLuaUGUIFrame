@@ -38,9 +38,6 @@ public class UGUIButton : GobjLifeListener {
 		exceptInstanceIDs.Remove(intasnceID);
 	}
 
-	static public float maxDistance = 5f;
-	private float maxDis2 = 0;
-
 	int _selfID = 0;
 	Vector3 v3Scale;
 	public bool m_isPressScale = true;
@@ -51,10 +48,6 @@ public class UGUIButton : GobjLifeListener {
 	[HideInInspector] public DF_UGUIV2Bool m_onPress;
 	[HideInInspector] public DF_UGUIPos m_onClick;
 
-	Vector2 m_lastPos;
-	bool m_isNoClick = false;
-	int m_typeClick = 0;
-
 	protected override void OnCall4Awake()
     {
 		this._selfID = m_gobj.GetInstanceID ();
@@ -63,7 +56,6 @@ public class UGUIButton : GobjLifeListener {
         this.m_evt = UGUIEventListener.Get(m_gobj);
         this.m_evt.onPress = _OnPress;
         this.m_evt.onClick = _OnClick;
-		this.maxDis2 = maxDistance * maxDistance;
 		this.csAlias = "U_BTN";
     }
 
@@ -74,7 +66,6 @@ public class UGUIButton : GobjLifeListener {
 
     protected override void OnCall4Show()
     {
-		this.m_isNoClick = false;
         this.m_evt.enabled = true;
     }
 
@@ -88,18 +79,6 @@ public class UGUIButton : GobjLifeListener {
 	void _OnPress(GameObject obj,bool isPress,Vector2 pos)
     {
 		if (IsFreezedAll()) return;
-		this.m_isNoClick = isPress;
-		if(isPress){
-			this.m_lastPos = pos;
-			m_typeClick = 1;
-		}else{
-			var _pos = pos - this.m_lastPos;
-			this.m_isNoClick = _pos.sqrMagnitude > maxDis2;
-		}
-
-		if(!this.m_isNoClick){
-			_OnClick(obj,pos);
-		}
 
         if (this.m_onPress != null) this.m_onPress(m_gobj,isPress,pos);
 
@@ -109,8 +88,7 @@ public class UGUIButton : GobjLifeListener {
 
 	void _OnClick(GameObject obj,Vector2 pos)
     {
-		if (IsFreezedAll() || m_isNoClick || m_typeClick != 1) return;
-		m_typeClick = 0;
+		if (IsFreezedAll()) return;
         if (this.m_onClick != null) this.m_onClick(m_gobj,pos);
     }
 

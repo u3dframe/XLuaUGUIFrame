@@ -146,6 +146,20 @@ public class UtilityHelper {
 		return go.transform.Find(subnode).GetComponent<T>();
 	}
 
+	static public T GetInParent<T>(GameObject gobj) where T : Component {
+		if(IsNull(gobj)) return null;
+		T ret = gobj.GetComponent<T> ();
+		if (!ret) {
+			ret = gobj.GetComponentInParent<T> ();
+		}
+		return ret;
+	}
+
+	static public T GetInParent<T>(Transform trsf) where T : Component {
+		if(IsNull(trsf)) return null;
+		return GetInParent<T>(trsf.gameObject);
+	}
+
 	/// <summary>
 	/// 添加组件
 	/// </summary>
