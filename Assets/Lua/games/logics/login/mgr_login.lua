@@ -13,6 +13,11 @@ function M:Init()
 end
 
 function M:ToLoginView()
+	local _v = self:TF(100.001,1)
+	printTable(_v)
+end
+
+function M:TestView()
 	LTimer.ReLocTime()
 
 	local ui = UIBase.New({

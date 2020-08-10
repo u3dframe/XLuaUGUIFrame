@@ -67,6 +67,7 @@ function todecimal(val,acc,def,isRound)
 
 	local _v = tonum(val,nil,def) * _pow
 	_v = (isRound == true) and m_round(_v) or _v
+	_v = m_floor(_v)
     return _v / _pow
 end
 
