@@ -164,12 +164,12 @@ public class UtilityHelper {
 		if(IsNull(trsf)) return null;
 		T ret = trsf.GetComponent<T> ();
 		if (ret != null) return ret;
-		return GetInParentRecursion(trsf.parent);
+		return GetInParentRecursion<T>(trsf.parent);
 	}
 
 	static public T GetInParentRecursion<T>(GameObject gobj) where T : Component {
 		if(IsNull(gobj)) return null;
-		return GetInParentRecursion(gobj.transform);
+		return GetInParentRecursion<T>(gobj.transform);
 	}
 
 	/// <summary>
