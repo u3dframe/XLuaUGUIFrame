@@ -39,12 +39,13 @@ public class UGUIEventListener : EventTrigger {
 	[HideInInspector] public DF_UGUIV2Bool onPress;
 
 	
+	private Vector2 v2Start;
 	bool _isPressed = false,_isCanClick = false;
 
 	float press_time = 0,diff_time = 0,dis_curr = 0,
 	limit_time = 0.2f,limit_dis_min = 0.1f * 0.1f,limit_dis_max = 0;
 
-	private Vector2 v2Start;
+	[HideInInspector] public bool m_isSyncScroll = true;
 	ScrollRect _sclParent = null;
 
 	ScrollRect GetScrollInParent(Transform trsf)
@@ -101,7 +102,7 @@ public class UGUIEventListener : EventTrigger {
 		_isPressed = true;
 		press_time = Time.realtimeSinceStartup;
 		v2Start = eventData.position;
-		if(_sclParent != null){
+		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnBeginDrag(eventData);
 		}
 		if (onPress != null) {
@@ -117,7 +118,7 @@ public class UGUIEventListener : EventTrigger {
 			press_time = 0;
 		}
 
-		if(_sclParent != null){
+		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnEndDrag(eventData);
 		}
 
@@ -150,7 +151,7 @@ public class UGUIEventListener : EventTrigger {
     // 开始拖拽
     public override void OnBeginDrag(PointerEventData eventData)
     {
-		if(_sclParent != null){
+		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnBeginDrag(eventData);
 		}
         if (onBegDrag != null) {
@@ -160,7 +161,7 @@ public class UGUIEventListener : EventTrigger {
 	
 	// 推拽中
 	public override void OnDrag (PointerEventData eventData){
-		if(_sclParent != null){
+		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnDrag(eventData);
 		}
 		if (onDraging != null) {
@@ -171,7 +172,7 @@ public class UGUIEventListener : EventTrigger {
 	// 结束拖拽
     public override void OnEndDrag(PointerEventData eventData)
     {
-		if(_sclParent != null){
+		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnEndDrag(eventData);
 		}
         if (onEndDrag != null) {

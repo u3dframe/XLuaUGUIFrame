@@ -95,4 +95,8 @@ public class UGUIButton : GobjLifeListener {
 	bool IsFreezedAll(){
 		return isFreezedAll && !IsInExcept(_selfID);
 	}
+
+	public void IsSyncScroll(bool isSync){
+		this.m_evt.m_isSyncScroll = isSync;
+	}
 }

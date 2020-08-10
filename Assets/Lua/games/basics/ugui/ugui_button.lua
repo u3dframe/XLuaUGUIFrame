@@ -74,7 +74,19 @@ function M:SetIsPressScale( isBl )
 	isBl = isBl == true
 	if isBl ~= self.isPressScale then
 		self.isPressScale = isBl
-		self.comp.m_isPressScale = self.isPressScale
+		self.comp.m_isPressScale = isBl
+	end
+end
+
+function M:SetIsSyncScroll( isBl )
+	if not self.comp then
+		return
+	end
+
+	isBl = isBl == true
+	if isBl ~= self.isSyncScl then
+		self.isSyncScl = isBl
+		self.comp:IsSyncScroll(isBl)
 	end
 end
 
