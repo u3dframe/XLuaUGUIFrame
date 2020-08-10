@@ -139,9 +139,9 @@ public class UGUIEventListener : EventTrigger {
 			_isCanClick = dis_curr <= limit_dis_max && diff_time <= limit_time;
 		}
 		
-		if (!_isCanClick) return;
 		v2Start = eventData.position;
 		diff_time = 0;
+		if (!_isCanClick) return;
 		if (onClick != null) {
 			onClick (gameObject, eventData.position);
 		}
