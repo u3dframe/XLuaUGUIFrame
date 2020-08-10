@@ -22,8 +22,7 @@ function M:OnInit()
 	-- self._lfXxx = self._lfXxx or handler(self,self.xxxFunc) -- 定义事件
 end
 
-function M:SetData( data,xx1,xx2 )
-	super.SetData(self,data)
+function M:OnSetData( xx1,xx2 )
 	self.xx1 = xx1
 	self.xx2 = xx2
 end

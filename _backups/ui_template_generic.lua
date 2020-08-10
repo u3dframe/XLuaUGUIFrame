@@ -73,6 +73,9 @@ end
 function M:OnEnd(isDestroy)
 end
 
+function M:OnSetData()
+end
+
 -- 当isUpdate = true,资源加载完毕后，每帧才会回调(非必要)
 function M:OnUpdateLoaded(dt)
 end

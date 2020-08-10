@@ -134,17 +134,17 @@ function M:NPage( num,column )
 end
 
 -- 保留m位小数
-function M:TF( num,m,def )
+function M:TF( num,m,def,isRound )
 	def = def or 0
 	if (not num) then return def end
-	return __tf( num,m,def )
+	return __tf( num,m,def,isRound )
 end
 
 -- 保留两位小数
-function M:TF2( num,def )
+function M:TF2( num,def,isRound )
 	def = def or 0
 	if (not num) then return def end
-	return __tf2( num,def )
+	return __tf2( num,def,isRound )
 end
 
 function M:TNum( num,def )

@@ -91,9 +91,9 @@ function M:ReXYZ( x,y,z )
 		x = x.x;
 	end
 
-	x = self:TF2( x )
-	y = self:TF2( y )
-	z = self:TF2( z )
+	x = self:TF2( x,0,true )
+	y = self:TF2( y,0,true )
+	z = self:TF2( z,0,true )
 	return x,y,z
 end
 

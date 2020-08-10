@@ -57,7 +57,7 @@ function toint(val,def)
     return m_round(val)
 end
 
-function todecimal(val,acc,def)
+function todecimal(val,acc,def,isRound)
 	local _pow = 1
 	if isNum(acc) then
 		for i = 1,acc do
@@ -66,15 +66,16 @@ function todecimal(val,acc,def)
 	end
 
 	local _v = tonum(val,nil,def) * _pow
-    return m_round(_v) / _pow
+	_v = (isRound == true) and m_round(_v) or _v
+    return _v / _pow
 end
 
-function todecimal0(val,def)
-	return todecimal(val,nil,def)
+function todecimal0(val,def,isRound)
+	return todecimal(val,nil,def,isRound)
 end
 
-function todecimal2(val,def)
-	return todecimal(val,2,def)
+function todecimal2(val,def,isRound)
+	return todecimal(val,2,def,isRound)
 end
 
 local M = {};

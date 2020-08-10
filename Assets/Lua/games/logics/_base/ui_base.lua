@@ -49,7 +49,6 @@ end
 
 function M:OnCF_Fab( obj )
 	super.OnCF_Fab( self,obj )
-	self:_SetSelfLayer()
 	if self.lfLoaded then
 		self.lfLoaded()
 	end
@@ -57,6 +56,7 @@ function M:OnCF_Fab( obj )
 end
 
 function M:OnViewBeforeOnInit()
+	self:_SetSelfLayer()
 	self:HideOtherExcludeSelf()
 end
 

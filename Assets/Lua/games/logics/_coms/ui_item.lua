@@ -24,7 +24,7 @@ local super,_evt = UICell,Event
 local M = class( "ui_item",super )
 
 -- 用[_]占位，兼容row传递参数
-function M:SetData(_,valType,isVwEmpty)
+function M:OnSetData(_,valType,isVwEmpty)
 	self.valType = valType or LE_ItVShowType.NeedOrEmpty
 	self.isVwEmpty = isVwEmpty == true
 end

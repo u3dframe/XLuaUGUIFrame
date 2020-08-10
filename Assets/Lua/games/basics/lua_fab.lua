@@ -65,9 +65,10 @@ function M:ReShow()
 	end
 end
 
-function M:View(isShow)
+function M:View(isShow,data,...)
 	isShow = isShow == true
 	if isShow then
+		if data then self:SetData( data,... ) end
 		self:ReShow()
 	else
 		local _isStay = self.cfgAsset.isStay == true

@@ -113,7 +113,11 @@ function M:ToLoginView()
 		CGameFile.AppQuit()
 	end
 
-	ui:View(true)
+	
+	ui.OnSetData = function (_s,_dad)
+		ui.xxxDad = _dad
+	end
+	ui:View(true,"xxx","dad")
 end
 
 return M

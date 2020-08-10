@@ -77,7 +77,7 @@ end
 
 function M.SetSvTime(svTimeSec)
 	this.isUping = false
-	local _svSec = this:TF( svTimeSec,3 )
+	local _svSec = this:TF( svTimeSec,3,0,true )
 	local _nowSec = this.GetLocTime()
 	_tEx.setDiffSec(_svSec - _nowSec)
 	if (this.lastSvSec) then

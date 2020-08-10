@@ -76,12 +76,12 @@ function M:RemoveEvents()
 	self:ReEvent4Self(false)
 end
 
-function M:_SetData( data,... )
+function M:SetData( data,... )
 	self.data = data
-	return self:SetData( ... )
+	return self:OnSetData( ... )
 end
 
-function M:SetData( ... )
+function M:OnSetData( ... )
 	return self
 end
 
