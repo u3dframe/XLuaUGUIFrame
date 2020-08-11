@@ -29,7 +29,7 @@ function Event.AddListener(event,func,obj)
 	--conn this handler
 	local _func = func
 	if obj then
-		local _k = str_format("%s_%s",func,obj)
+		local _k = str_format("%s_%s_%s",event,func,obj)
 		_func = _hds[_k] or handler(obj,func)
 		_hds[_k] = _func
 	end
@@ -48,7 +48,7 @@ function Event.RemoveListener(event,func,obj)
 	if events[event] then
 		local _func = func
 		if obj then
-			local _k = str_format("%s_%s",func,obj)
+			local _k = str_format("%s_%s_%s",event,func,obj)
 			_func = _hds[_k] or func
 			_hds[_k] = nil
 		end

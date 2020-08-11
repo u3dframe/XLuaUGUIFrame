@@ -50,7 +50,8 @@ function M:_InitChild()
 	local nLen = self:GetChildCount()
 	local _tmp,_it = {}
 	for i = 1,nLen do
-		_it =  self:_CreateCell(self.trsf:GetChild(i - 1))
+		_it = self.trsf:GetChild(i - 1)
+		_it = self:_CreateCell(_it.gameObject)
 		tb_insert(_tmp,_it)
 	end
 	self.lbCells = _tmp
