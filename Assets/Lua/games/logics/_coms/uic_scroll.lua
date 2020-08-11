@@ -52,7 +52,7 @@ function M:ctor(lbCfg)
 	self._lfCkCell = handler(self,self._OnClickCell)
 	local _lfCCell = handler(self,self._CreateCell)
 	local _lfSCell = handler(self,self._ShowCell)
-	self.lbScl = _upub:_ClsUScl().New(self.gobj,_lfCCell,_lfSCell,gobjCell)
+	self.lbScl = _upub:NewSclBy(self.gobj,_lfCCell,_lfSCell,gobjCell)
 	self.lbScl:ShowScroll(0,isVertical,isCallNoData,isAlpha)
 end
 

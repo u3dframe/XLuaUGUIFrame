@@ -18,7 +18,7 @@ function M:ctor( obj,callFunc,val )
 
 	local _tmp = self.comp.textComponent
 	if _tmp then
-		self.lbTxtMain = self:_ClsUTxt().New(_tmp)
+		self.lbTxtMain = self:NewTxtBy(_tmp)
 	end
 end
 

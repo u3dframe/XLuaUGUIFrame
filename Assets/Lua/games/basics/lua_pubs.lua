@@ -18,6 +18,10 @@ function M:_ClsTrsf()
     return _c_trsf
 end
 
+function M:NewTrsfBy(gobj)
+    return self:_ClsTrsf().New( gobj )
+end
+
 function M:_ClsComp()
     if not _c_comp then
         _c_comp = LUComonet
@@ -25,11 +29,19 @@ function M:_ClsComp()
     return _c_comp
 end
 
+function M:NewCompBy(gobj,compName)
+    return self:_ClsComp().New( gobj,compName )
+end
+
 function M:_ClsEle()
     if not _c_ele then
         _c_ele = LCFabElement
     end
     return _c_ele
+end
+
+function M:NewEleBy(gobj)
+    return self:_ClsEle().New( gobj ):AddSupUIPubs()
 end
 
 function M:_ClsAsset()
@@ -53,11 +65,19 @@ function M:_ClsUTxt()
     return _utxt
 end
 
+function M:NewTxtBy(gobj)
+    return self:_ClsUTxt().New( gobj,true )
+end
+
 function M:_ClsUBtn()
     if not _ubtn then
         _ubtn = LuBtn
     end
     return _ubtn
+end
+
+function M:NewBtnBy(gobj, callFunc, val, isNoScale)
+    return self:_ClsUBtn().New( gobj, callFunc, val, isNoScale )
 end
 
 function M:_ClsUTog()
@@ -67,11 +87,19 @@ function M:_ClsUTog()
     return _utog
 end
 
+function M:NewTogBy(gobj, uniqueID, callFunc, val, isNoCall4False)
+    return self:_ClsUTog().New( uniqueID, gobj, callFunc, val, isNoCall4False )
+end
+
 function M:_ClsUScl()
     if not _uscl then
         _uscl = LuScl
     end
     return _uscl
+end
+
+function M:NewSclBy(gobj, funcCreat, funcSetData, gobjItem)
+    return self:_ClsUScl().New( gobj, funcCreat, funcSetData, gobjItem )
 end
 
 function M:_ClsUImg()
@@ -81,11 +109,21 @@ function M:_ClsUImg()
     return _uimg
 end
 
+function M:NewImgBy(gobj,compName)
+    if (compName == nil) or (compName == "Image") or (compName == "RawImage") then
+        return self:_ClsUImg().New( gobj,compName )
+    end
+end
+
 function M:_ClsUInpFld()
     if not _uinpfld then
         _uinpfld = LuInpFld
     end
     return _uinpfld
+end
+
+function M:NewInpFldBy(gobj,val,callFunc)
+    return self:_ClsUInpFld().New( gobj,callFunc,val )
 end
 
 function M:NewAsset(ab,asset,atp,callFunc,isNoAuto)
@@ -96,7 +134,7 @@ function M:NewAsset(ab,asset,atp,callFunc,isNoAuto)
     })
     _lb.lfAssetLoaded = function(isNo,obj)
         if callFunc ~= nil then
-            callFunc(isNo,obj)
+            callFunc( isNo,obj )
         end
     end
     if not isNoAuto then

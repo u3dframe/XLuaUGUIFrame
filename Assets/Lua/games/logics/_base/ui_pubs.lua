@@ -11,7 +11,7 @@ local M = class( "ui_pubs",super )
 function M:NewTrsf(elName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsTrsf().New(_gobj)
+        return self:NewTrsfBy(_gobj)
     end
     if isNoPrint == true then return end
     printError("=== NewTrsf is Null, name = [%s]", elName)
@@ -20,7 +20,7 @@ end
 function M:NewComp(elName,compName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsComp().New(_gobj,compName)
+        return NewCompBy(_gobj,compName)
     end
     if isNoPrint == true then return end
     printError("=== NewComp is Null, name = [%s]", elName)
@@ -29,7 +29,7 @@ end
 function M:NewEle(elName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsEle().New(_gobj):AddSupUIPubs()
+        return self:NewEleBy(_gobj):AddSupUIPubs()
     end
     if isNoPrint == true then return end
     printError("=== NewEle is Null, name = [%s]", elName)
@@ -38,7 +38,7 @@ end
 function M:NewTxt(elName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsUTxt().New(_gobj,true)
+        return self:NewTxtBy(_gobj)
     end
     if isNoPrint == true then return end
     printError("=== NewTxt is Null, name = [%s]", elName)
@@ -47,7 +47,7 @@ end
 function M:NewBtn(elName, callFunc, val, isNoScale,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsUBtn().New(_gobj, callFunc, val, isNoScale)
+        return self:NewBtnBy(_gobj, callFunc, val, isNoScale)
     end
     if isNoPrint == true then return end
     printError("=== NewBtn is Null, name = [%s]", elName)
@@ -56,7 +56,7 @@ end
 function M:NewTog(elName, uniqueID, callFunc, val, isNoCall4False,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsUTog().New(uniqueID, _gobj, callFunc, val, isNoCall4False)
+        return self:NewTogBy(uniqueID, _gobj, callFunc, val, isNoCall4False)
     end
     if isNoPrint == true then return end
     printError("=== NewTog is Null, name = [%s]", elName)
@@ -65,18 +65,16 @@ end
 function M:NewScl(elName, funcCreat, funcSetData, gobjItem,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsUScl().New(_gobj, funcCreat, funcSetData, gobjItem)
+        return self:NewSclBy(_gobj, funcCreat, funcSetData, gobjItem)
     end
     if isNoPrint == true then return end
     printError("=== NewScl is Null, name = [%s]", elName)
 end
 
 function M:NewImg(elName,compName,isNoPrint)
-    if (compName == nil) or (compName == "Image") or (compName == "RawImage") then
-        local _gobj = self:GetElement(elName)
-        if _gobj then
-            return self:_ClsUImg().New(_gobj,compName)
-        end
+    local _gobj = self:GetElement(elName)
+    if _gobj then
+        return self:NewImgBy(_gobj,compName)
     end
     if isNoPrint == true then return end
     printError("=== NewImg is Null, name = [%s],comp = [%s]", elName,compName)
@@ -85,7 +83,7 @@ end
 function M:NewInpFld(elName,val,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:_ClsUInpFld().New( _gobj,nil,val )
+        return self:NewInpFldBy( _gobj,val,nil )
     end
     if isNoPrint == true then return end
     printError("=== NewInpFld is Null, name = [%s]", elName)
