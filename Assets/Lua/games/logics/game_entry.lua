@@ -14,6 +14,7 @@ function M:Init()
 end
 
 function M:EntryAfterUpRes()
+	LTimer.ReLocTime()
 	_mgrUI.URoot()
 	_evt.Brocast(Evt_ToChangeScene)
 	_evt.Brocast(Evt_View_MainCamera)

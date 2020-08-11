@@ -5,28 +5,39 @@
 	-- Desc : 
 ]]
 
+local strRoot = "games/config/" --配置表根路径
+local str_split = string.split
+local _req = require
+local clearLoadLua,weakTB = clearLoadLua,weakTB
+
 UIType = {}
 
 local M = class( "mgr_data")
 
+local function _lfIndexLoad(t, k)
+	local _arrs = str_split(k,"_")
+	local _fn,_nm = _arrs[1],(_arrs[2] or _arrs[1])
+	local _fp = strRoot .. _fn
+	local _data = _req ( _fp )
+	for kk,vv in pairs(_data) do
+		t[_fn .. "_" .. kk] = vv
+	end
+	clearLoadLua(_fp)
+	return t[_fn .. "_" .. _nm]
+end
+
 function M:Init()
+	self._cfgDicWeak = weakTB("v",_lfIndexLoad)
 	self:_LoadCfgs()
 	self:_InitCfgs()
 end
 
+-- 添加常用文件
 function M:_LoadCfgs()
 	local _isOneXlsMoreSheet = true -- 一个系统Excel,有多工作表Sheet
-	local strRoot = "games/config/" --配置表根路径
 	local _lbCfgs = {
-			"unlock",  --功能开放表
-			"resource",--资源特效表
-			"scenemap",--场景地图表
-			"errtips", -- 服务器错误提示
-			"story",
 	}
-
-	local _req = reimport or require
-	local _fp,_data,_itm
+	local _fp,_data,_itm,_nk
 	self._cfgDic = {}
 	for _, v in ipairs(_lbCfgs) do
 		_fp = strRoot .. v
@@ -34,16 +45,19 @@ function M:_LoadCfgs()
 		if _data then
 			if _isOneXlsMoreSheet then
 				for kk,vv in pairs(_data) do
-					_itm = self._cfgDic[kk]
+					_nk = v .. "_" .. kk
+					_itm = self._cfgDic[_nk]
 					if (_itm) then
-						printError( "配置表[%s]的[%s]配置与配置表[%s]里面的配置相重复，請检查", _fp,kk,_itm.path )
+						printError( "配置表[%s]的[%s]配置重复，請检查", _fp,_nk )
 					else
-						self._cfgDic[kk] = { path = _fp,data = vv}
+						self._cfgDic[_nk] = vv
 					end
 				end
 			else
-				self._cfgDic[v] = { path = _fp,data = _data}
+				self._cfgDic[v] = _data
 			end
+			
+			clearLoadLua(_fp)
 		else
 			printError( "未查找到配置表[%s]，請检查是否添加", strRoot )
 		end
@@ -57,7 +71,11 @@ end
 function M:GetConfig(cfgKey)
 	local _vb = self._cfgDic[cfgKey]
 	if _vb then
-		return _vb.data
+		return _vb
+	end
+	_vb = self._cfgDicWeak[cfgKey]
+	if _vb then
+		return _vb
 	end
 	printError("未查找到[%s]的配置表，請查找是否添加", cfgKey)
 end

@@ -212,11 +212,11 @@ function extends( src,parent )
 	return src;
 end
 
-function weakTB( weakKey )
+function weakTB( weakKey,objIndex )
 	if weakKey ~= "k" and weakKey ~= "v" and weakKey ~= "kv" then
 		weakKey = "v"
 	end
-	return setmetatable({},{__mode = weakKey})
+	return setmetatable({},{ __mode = weakKey,__index = objIndex })
 end
 
 function clearLoadLua( luapath )	
