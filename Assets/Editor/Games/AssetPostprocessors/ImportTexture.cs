@@ -86,18 +86,21 @@ public class ImportTexture : AssetPostprocessor
     // 处理图片
     private void _ReTextureInfo(TextureImporter importer)
     {
-        bool _isAtlas = BuildTools.IsAtlasTexture(assetPath);
-        bool _isSng = BuildTools.IsSingleTexture(assetPath);
+        string fp = assetPath;
+        if(!BuildTools.IsInDevelop(fp))
+            return;
+
+        bool _isAtlas = BuildTools.IsAtlasTexture(fp);
+        bool _isSng = BuildTools.IsSingleTexture(fp);
         if (_isAtlas || _isSng)
         {
-            importer.spritePackingTag = null;
             if (importer.textureType != TextureImporterType.Sprite)
             {
                 importer.textureType = TextureImporterType.Sprite;
                 importer.alphaIsTransparency = false;
-                BuildTools.SetABInfo(importer);
+                importer.spritePackingTag = null;
+                ReBindAB4SngOrAtlas(importer, _isAtlas);
             }
-            ReBindAB4SngOrAtlas(importer, _isAtlas);
         }
         else
         {
@@ -122,8 +125,7 @@ public class ImportTexture : AssetPostprocessor
             BuildTools.SetABInfo(importer);
             return;
         }
-
-        (string _end, _, string _abExtension) = BuildTools.GetABEndName(fp);
+        (string _end, _, string _abExtension) = BuildTools.GetABEndName(fp,BuildTools.tpTex2D);
         if (string.IsNullOrEmpty(_end) || _end.EndsWith("error"))
         {
             BuildTools.SetABInfo(importer);
@@ -165,11 +167,12 @@ public class ImportTexture : AssetPostprocessor
     //贴图不存在、meta文件不存在、图片尺寸发生修改需要重新导入
     bool IsFirstImport(TextureImporter importer, ref int width, ref int height)
     {
-        Texture tex = AssetDatabase.LoadAssetAtPath<Texture2D>(assetPath);
+        string fp = assetPath;
+        Texture tex = AssetDatabase.LoadAssetAtPath<Texture2D>(fp);
         bool _isChg = (tex == null), _isReUd = false;
         if (!_isChg)
         {
-            string _assetMt = AssetDatabase.GetTextMetaFilePathFromAssetPath(assetPath);
+            string _assetMt = AssetDatabase.GetTextMetaFilePathFromAssetPath(fp);
             bool hasMeta = BuildTools.IsExistsInAssets(_assetMt);
             _isChg = !hasMeta;
         }

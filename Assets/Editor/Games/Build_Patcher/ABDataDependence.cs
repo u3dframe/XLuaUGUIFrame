@@ -153,6 +153,7 @@ namespace Core.Kernel
             ".meta",
             ".cs",
             ".fnt",
+            "redmine.txt",
         };
 
         static string[] mustFiles = {
