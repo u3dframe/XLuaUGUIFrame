@@ -6,7 +6,7 @@
 ]]
 
 local _c_trsf,_c_comp,_c_ele,_lasset,_lfab = nil
-local _utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
+local _uevt,_utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
 local _cl_scl,_cl_lst = nil
 
 local M = class("lua_pubs")
@@ -56,6 +56,17 @@ function M:_ClsFab()
         _lfab = LuaFab
     end
     return _lfab
+end
+
+function M:_ClsUEvt()
+    if not _uevt then
+        _uevt = LuEvtListener
+    end
+    return _uevt
+end
+
+function M:NewUEvtBy(gobj)
+    return self:_ClsUEvt().New( gobj,true )
 end
 
 function M:_ClsUTxt()

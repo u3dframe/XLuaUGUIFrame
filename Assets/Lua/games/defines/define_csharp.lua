@@ -24,6 +24,7 @@ CPElement = CS.PrefabElement
 CHelper = CS.LuaHelper
 CTxt = CS.UGUILocalize
 CBtn = CS.UGUIButton
+CEvtListener = CS.UGUIEventListener
 CLoadSceneMgr = CS.MgrLoadScene
 CFollower = CS.SmoothFollower
 CMCaneraMgr = CS.MainCameraManager

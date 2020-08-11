@@ -34,7 +34,7 @@ function M:ctor( obj,callFunc,val,isNoScale )
 	assert(obj,"btn's obj is null")
 	local gobj = obj.gameObject
 	assert(gobj,"btn's gobj is null")
-	local _tmp,_tmp2 = CBtn.Get(gobj)
+	local _tmp = CBtn.Get(gobj)
 	super.ctor( self,gobj,_tmp )
 	_tmp.m_onClick = handler(self,self.OnClickSelf)
 
@@ -43,6 +43,8 @@ function M:ctor( obj,callFunc,val,isNoScale )
 	_tmp = (not isNoScale)
 	self:SetRaycastTarget(true,_tmp)
 	self:SetIsPressScale(_tmp)
+
+	self.lbUEvt = self:NewUEvtBy(gobj)
 end
 
 -- 单击自身

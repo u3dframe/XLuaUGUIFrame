@@ -24,19 +24,19 @@ public class UGUIEventListener : EventTrigger {
 
 	static public float maxDistance = 70f;
 	
-	[HideInInspector] public DF_UGUIV2Bool onMouseEnter;
+	[HideInInspector] public event DF_UGUIV2Bool onMouseEnter;
 
-	[HideInInspector] public DF_UGUIPos onClick;
+	[HideInInspector] public event DF_UGUIPos onClick;
 	
-	[HideInInspector] public DF_UGUIPos onBegDrag;
+	[HideInInspector] public event DF_UGUIPos onBegDrag;
 	
-	[HideInInspector] public DF_UGUI2V2 onDraging;
+	[HideInInspector] public event DF_UGUI2V2 onDraging;
 	
-	[HideInInspector] public DF_UGUIPos onEndDrag;
+	[HideInInspector] public event DF_UGUIPos onEndDrag;
 	
-	[HideInInspector] public DF_UGUIPos onDrop;
+	[HideInInspector] public event DF_UGUIPos onDrop;
 
-	[HideInInspector] public DF_UGUIV2Bool onPress;
+	[HideInInspector] public event DF_UGUIV2Bool onPress;
 
 	
 	private Vector2 v2Start;

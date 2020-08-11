@@ -4,7 +4,6 @@
 	-- Date : 2020-07-11 12:25
 	-- Desc : 参照
 ]]
-local _clsTrsf
 local _tinsert = table.insert
 local _titKVArr = table.getVK4Arr
 local _tsort = table.sort
@@ -17,10 +16,6 @@ local M = class( "ugui_scroll", super )
 local this = M
 
 function M:ctor(gobj,funcCreat,funcSetData,gobjItem)
-	if not _clsTrsf then
-		_clsTrsf = LUTrsf
-	end
-
 	super.ctor( self,gobj,"ScrollRect" )
 
 	local _sr = self.comp
@@ -33,12 +28,12 @@ function M:ctor(gobj,funcCreat,funcSetData,gobjItem)
 	self.funcCreat = funcCreat
 	self.funcSetData = funcSetData	
 	
-	self.lbContent = _clsTrsf.New(_cont)
+	self.lbContent = self:NewTrsfBy(_cont)
 	self.lbContent:SetPivot(0,1)
 	self.lbContent:SetAnchorMin(0, 1)
 	self.lbContent:SetAnchorMax(0, 1)
 	
-	self.lbItem = _clsTrsf.New(gobjItem)
+	self.lbItem = self:NewTrsfBy(gobjItem)
 	self.lbItem:SetPivot(0,1)
 	self.lbItem:SetAnchorMin(0, 1)
 	self.lbItem:SetAnchorMax(0, 1)
@@ -131,7 +126,7 @@ function M:_CreatItem(nIndex)
 	_lb = _lb or {}
 	_lb.gobj = _lb.gobj or newGO;
 	if (not _lb.IsHasSupper) then
-		_lb.lbMy = _clsTrsf.New(_lb.gobj)
+		_lb.lbMy = self:NewTrsfBy(_lb.gobj)
 	else
 		_lb.lbMy = _lb
 	end
