@@ -50,6 +50,7 @@ function Event.RemoveListener(event,func,obj)
 		if obj then
 			local _k = str_format("%s_%s",func,obj)
 			_func = _hds[_k] or func
+			_hds[_k] = nil
 		end
 		events[event]:disconnect(_func)
 	end

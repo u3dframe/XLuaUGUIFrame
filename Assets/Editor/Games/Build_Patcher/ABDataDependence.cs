@@ -284,7 +284,7 @@ namespace Core.Kernel
         [MenuItem("Tools/Deps/SaveDeps", false, 31)]
         static public void SaveDeps()
         {
-            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirData);
+            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirDataNoAssets);
             string _v = JsonMapper.ToJson(instance.m_dic);
             BuildTools.WriteText(_fp,_v,true);
             AssetDatabase.Refresh();
@@ -295,7 +295,7 @@ namespace Core.Kernel
         {
             ClearDeps();
             // Core/Kernel/Editor/Build_Patcher/
-            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirData);
+            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirDataNoAssets);
             string _v = BuildTools.GetText4File(_fp);
             
             if (!string.IsNullOrEmpty(_v))
@@ -348,7 +348,7 @@ namespace Core.Kernel
                 }
             }
             string _v = builder.ToString();
-            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirData);
+            string _fp = string.Format("{0}_deps.json", BuildTools.m_dirDataNoAssets);
             BuildTools.WriteText(_fp, _v,true);
         }
     }

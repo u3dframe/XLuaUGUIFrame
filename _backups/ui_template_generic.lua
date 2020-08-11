@@ -43,8 +43,6 @@ function M:OnInit()
 	_tmp = self:GetElement("elName")
 	self.lbCellXxx = _clsCell.New(_tmp)
 
-	-- self._lfXxx = self._lfXxx or handler(self,self.xxxFunc) -- 定义事件
-	
 	-- 多行多列的
 	self.lbUSclXxx = self:NewUScl(elName,{
 		clsLua = _clsCell,
@@ -82,10 +80,13 @@ end
 
 -- 自定义的刷新事件绑定函数(非必要,处理事件刷新)
 function M:ReEvent4Self(isBind)
-	-- _evt.RemoveListener(Evt_ToChangeScene,self._lfXxx); -- 移除事件
+	-- _evt.RemoveListener(Evt_ToChangeScene,self.Refresh,self); -- 移除事件
 	if isBind == true then
-		-- _evt.AddListener(Evt_ToChangeScene,self._lfXxx); -- 添加事件
+		-- _evt.AddListener(Evt_ToChangeScene,self.Refresh,self); -- 添加事件
 	end
+end
+
+function M:Refresh()
 end
 
 return M
