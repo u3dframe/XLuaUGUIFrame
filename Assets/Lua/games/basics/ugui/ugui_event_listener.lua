@@ -62,4 +62,12 @@ function M:ReEvt_Drop(lfunc,obj,isBind)
 	end
 end
 
+function M:ReEvt_Press(lfunc,obj,isBind)
+	lfunc = self:_ReEvt_Func( lfunc,obj )
+	self.comp:onPress("-",lfunc);
+	if isBind == true then
+		self.comp:onPress("+",lfunc);
+	end
+end
+
 return M
