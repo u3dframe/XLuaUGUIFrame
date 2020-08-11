@@ -7,6 +7,7 @@
 
 local strRoot = "games/config/" --配置表根路径
 local str_split = string.split
+local str_contains = string.contains
 local _req = require
 local clearLoadLua,weakTB = clearLoadLua,weakTB
 
@@ -32,7 +33,7 @@ function M:Init()
 	self:_InitCfgs()
 end
 
--- 添加常用文件
+-- 添加常用配置
 function M:_LoadCfgs()
 	local _isOneXlsMoreSheet = true -- 一个系统Excel,有多工作表Sheet
 	local _lbCfgs = {
@@ -69,6 +70,9 @@ function M:_InitCfgs()
 end
 
 function M:GetConfig(cfgKey)
+	if cfgKey and not str_contains(cfgKey,"_") then
+		cfgKey = cfgKey .. "_" .. cfgKey
+	end
 	local _vb = self._cfgDic[cfgKey]
 	if _vb then
 		return _vb
