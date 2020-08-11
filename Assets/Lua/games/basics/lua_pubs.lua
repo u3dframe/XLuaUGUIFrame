@@ -7,7 +7,7 @@
 
 local _c_trsf,_c_comp,_c_ele,_lasset,_lfab = nil
 local _utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
-local _cl_scl = nil
+local _cl_scl,_cl_lst = nil
 
 local M = class("lua_pubs")
 
@@ -148,6 +148,13 @@ function M:_ClsUIScl()
         _cl_scl = UIScl
     end
     return _cl_scl
+end
+
+function M:_ClsUILst()
+    if not _cl_lst then
+        _cl_lst = UILst
+    end
+    return _cl_lst
 end
 
 return M

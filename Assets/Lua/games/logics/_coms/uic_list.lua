@@ -8,13 +8,12 @@
 local _clr,_upk,_req = clearLT,unpack,require
 local tb_insert = table.insert
 
-local super,super2 = LUTrsf,UIPubs
-local M = class( "uic_list",super,super2 )
+local super = LUTrsf
+local M = class( "uic_list",super )
 local this = M
 
 function M:ctor(lbCfg)
 	local gobj = lbCfg.gobj
-	local gobjCell = lbCfg.gobjCell
 	local clsLua = lbCfg.clsLua
 	local isAllActive = lbCfg.isAllActive == true
 	local cfClick = lbCfg.cfClick

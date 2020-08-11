@@ -111,4 +111,21 @@ function M:NewUScl(elName,lbCfg,elNameItem,isNoPrint)
     printError("=== NewUScl is Null, name = [%s]", elName)
 end
 
+-- lbCfg = {clsLua,cfClick,cfShow,isAllActive,ext_1~10} 
+-- 里面字段的意义
+-- clsLua - 自己的子元素脚本,可以为路径，也可以为require对象 (必要)
+-- cfClick - 单击cell元素 (非必要)
+-- cfShow - 显示cell元素 (非必要)
+-- isAllActive - 显示全都 (非必要 - 多行多列的)
+-- ext_1~10 - 透传参数1~10 (非必要 - 要透传时，必须有ext_1)
+function M:NewULst(elName,lbCfg,isNoPrint)
+    local _gobj = self:GetElement(elName)
+    if _gobj then
+        lbCfg.gobj = _gobj
+        return self:_ClsUILst().New(lbCfg)
+    end
+    if isNoPrint == true then return end
+    printError("=== NewUScl is Null, name = [%s]", elName)
+end
+
 return M
