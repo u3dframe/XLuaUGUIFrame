@@ -57,7 +57,7 @@ sysinfo.txt
 *.unitypackage
 .project
 .buildpath
-ProjectSettings*
+#ProjectSettings*
 
 # Crashlytics generated file
 crashlytics-build.properties

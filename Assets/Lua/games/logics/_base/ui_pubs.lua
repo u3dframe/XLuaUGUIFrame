@@ -56,7 +56,7 @@ end
 function M:NewTog(elName, uniqueID, callFunc, val, isNoCall4False,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:NewTogBy(uniqueID, _gobj, callFunc, val, isNoCall4False)
+        return self:NewTogBy( _gobj, uniqueID, callFunc, val, isNoCall4False)
     end
     if isNoPrint == true then return end
     printError("=== NewTog is Null, name = [%s]", elName)

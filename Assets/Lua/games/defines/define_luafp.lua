@@ -61,6 +61,7 @@ _LuaFpMidle = {
 	{"LTimer","lua_timer",8}, -- sv时间(延迟，定点)
 	{"UIRow","uicell_row",8}, -- 行单元（多行多列使用）
 	{"UIScl","uic_scroll",8}, -- 固定循环
+	{"UILst","uic_list",8}, -- 不固定的少量单元
 	{"LCDown","lua_countdown",8}, -- 倒计时
 	{"UIItem","ui_item",8}, -- type_id_num组件代码
 	{"GEntry","game_entry",6}, -- 游戏入口

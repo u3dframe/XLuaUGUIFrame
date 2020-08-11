@@ -12,7 +12,7 @@ function M:ctor(gobj,cfClick,lbParent,comp)
 	super.ctor( self,gobj,comp )
 	super2.ctor( self )
 	self:SetCallFunc(cfClick)
-	self.lbParent = lbParent
+	self:SetLBParent(lbParent)
 
 	if self.callFunc ~= nil then
 		self.lbBtnSelf = self:NewBtnBy(self.gobj,handler(self,self.OnClickSelf))

@@ -76,6 +76,11 @@ function M:RemoveEvents()
 	self:ReEvent4Self(false)
 end
 
+function M:SetLBParent(lbParent)
+	self.lbParent = lbParent
+	return self
+end
+
 function M:SetData( data,... )
 	self.data = data
 	return self:OnSetData( ... )

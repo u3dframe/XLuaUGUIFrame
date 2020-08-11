@@ -22,6 +22,7 @@ local str_gsub = string.gsub
 local str_rep = string.rep
 local str_byte = string.byte
 
+local package = package
 local _pcall,_xpcall,_deTrk = pcall,xpcall,debug.traceback
 local _print,_printError = print
 
@@ -218,12 +219,15 @@ function weakTB( weakKey )
 	return setmetatable({},{__mode = weakKey})
 end
 
+function clearLoadLua( luapath )	
+	package.loaded[luapath] = nil
+	package.preload[luapath] = nil
+end
+
 if not reimport then
 	--重新require一个lua文件，替代系统文件。
 	function reimport(name)
-		local package = package
-		package.loaded[name] = nil
-		package.preload[name] = nil
+		clearLoadLua(name)
 		return require(name)    
 	end
 end
