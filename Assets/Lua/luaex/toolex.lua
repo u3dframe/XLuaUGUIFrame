@@ -195,13 +195,20 @@ function printTable( tb,title,rgb,notSort )
 	end
 end
 
+local function _lfNewIndex ( t,k,v )
+	error(str_format("[%s] is a read-only table",t.name or t),2);
+end
+
+function readonlyTB( tb )
+	tb.__newindex = _lfNewIndex;
+	return tb;
+end
+
 function readonly( tb )
 	local _ret = {};
 	local _mt = {
 		__index = tb,
-		__newindex = function ( t,k,v )
-			error(str_format("[%s] is a read-only table",t.name or t),2);
-		end
+		__newindex = _lfNewIndex,
 	}
 	setmetatable(_ret,_mt);
 	return _ret;
