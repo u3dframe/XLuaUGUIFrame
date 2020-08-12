@@ -17,12 +17,12 @@ function M:ctor(gobj,cfClick,lbParent,comp)
 	if self.callFunc ~= nil then
 		self.lbBtnSelf = self:NewBtnBy(self.gobj,handler(self,self.OnClickSelf))
 	end
+	self:_OnInit()
 	self:SetCF4OnShow(function() self:ReEvent4Self(true) end)
 	self:SetCF4OnHide(function() self:RemoveEvents() end)
 	if self:IsActiveInView() then
 		self:ReEvent4Self(true)
 	end
-	self:_OnInit()
 end
 
 function M:OnClickSelf()

@@ -112,4 +112,6 @@ function M:_OnClickCell(lbCell)
 	if self.lfClick then self.lfClick(lbCell) end
 end
 
+M.AddNoClearKeys("clsLua")
+
 return M
