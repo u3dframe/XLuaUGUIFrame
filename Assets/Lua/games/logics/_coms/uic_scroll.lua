@@ -90,6 +90,10 @@ function M:_OnClickCell(lbCell)
 	if self.lfClick then self.lfClick(lbCell) end
 end
 
+function M:on_clean()
+	self.clsLua,self.lfClick,self.lfShow,self._lfCkCell = nil
+end
+
 M.AddNoClearKeys("clsLua")
 
 return M
