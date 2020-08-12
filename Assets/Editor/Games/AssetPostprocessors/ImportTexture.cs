@@ -97,8 +97,8 @@ public class ImportTexture : AssetPostprocessor
             if (importer.textureType != TextureImporterType.Sprite)
             {
                 importer.textureType = TextureImporterType.Sprite;
-                importer.alphaIsTransparency = false;
-                importer.spritePackingTag = null;
+                if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
+                if(importer.spritePackingTag != null) importer.spritePackingTag = null;
                 ReBindAB4SngOrAtlas(importer, _isAtlas);
             }
         }
@@ -107,8 +107,8 @@ public class ImportTexture : AssetPostprocessor
             if (importer.textureType == TextureImporterType.Sprite)
             {
                 importer.textureType = TextureImporterType.Default;
-                importer.mipmapEnabled = false;
-                importer.spritePackingTag = null;
+                if(importer.mipmapEnabled) importer.mipmapEnabled = false;
+                if(importer.spritePackingTag != null) importer.spritePackingTag = null;
                 // importer.assetBundleName = null;
                 // importer.assetBundleVariant = null;
                 BuildTools.SetABInfo(importer);
@@ -120,15 +120,19 @@ public class ImportTexture : AssetPostprocessor
     private void ReBindAB4SngOrAtlas(TextureImporter importer, bool isAtlas)
     {
         string fp = assetPath; // importer.assetPath
+        string _ab = importer.assetBundleName;
+        string _abV = importer.assetBundleVariant;
         if (!BuildTools.IsInBuild(fp))
         {
-            BuildTools.SetABInfo(importer);
+            if(!string.Equals(_ab,null) || !string.Equals(_abV,null))
+                BuildTools.SetABInfo(importer);
             return;
         }
         (string _end, _, string _abExtension) = BuildTools.GetABEndName(fp,BuildTools.tpTex2D);
         if (string.IsNullOrEmpty(_end) || _end.EndsWith("error"))
         {
-            BuildTools.SetABInfo(importer);
+            if(!string.Equals(_ab,null) || !string.Equals(_abV,null))
+                BuildTools.SetABInfo(importer);
             return;
         }
 
@@ -152,9 +156,10 @@ public class ImportTexture : AssetPostprocessor
             }
             _ret = _lft.Replace(_fn,_nm) + _end;
 #endif
-
         }
-        BuildTools.SetABInfo(importer, _ret, _abExtension);
+
+        if(!string.Equals(_ab,_ret) || !string.Equals(_abV,_abExtension))
+            BuildTools.SetABInfo(importer, _ret, _abExtension);
     }
 
     // 2的整数次幂
