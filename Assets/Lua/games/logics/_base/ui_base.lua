@@ -11,7 +11,7 @@ local function _mgr()
 	return __mgr
 end
 
-local super,super2 = LuaFab,UIPubs
+local super,super2,_evt = LuaFab,UIPubs,Event
 local M = class( "ui_base",super,super2 )
 
 function M:ctor(assetCfg)
@@ -111,8 +111,8 @@ function M:OnExit(isInited)
 
 	if (_isClose == true) then
 		if _isMain then
-			-- UIMain.View(true)
 			_mgr().ClearPreInfo()
+			_evt.Brocast(Evt_ToView_Main);
 		else
 			_mgr().SetIsOpenPreUI(_isBack)
 		end
