@@ -63,3 +63,4 @@ sysinfo.txt
 crashlytics-build.properties
 
 .vscode
+_deps.json
