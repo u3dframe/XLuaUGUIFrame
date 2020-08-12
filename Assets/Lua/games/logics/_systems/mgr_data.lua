@@ -9,7 +9,7 @@ local strRoot = "games/config/" --配置表根路径
 local str_split = string.split
 local str_contains = string.contains
 local _req = require
-local clearLoadLua,weakTB,readonlyTB = clearLoadLua,weakTB,readonlyTB
+local clearLoadLua,weakTB,readonly = clearLoadLua,weakTB,readonly
 
 UIType = {}
 
@@ -78,7 +78,7 @@ function M:GetConfig(cfgKey)
 		_vb = self._cfgDicWeak[cfgKey]
 	end
 	if _vb then
-		return readonlyTB(_vb)
+		return _vb
 	end
 	printError("未查找到[%s]的配置表，請查找是否添加", cfgKey)
 end
@@ -88,7 +88,7 @@ function M:GetOneData(cfgKey, idKey)
 	if _cfg then
 		_lb = _cfg[idKey] 
 		if (_lb) then
-			return readonlyTB(_lb)
+			return readonly(_lb)
 		end
 		printError("未查找到[%s]的配置表 ID = [%s] 的数据，請检查", cfgKey, idKey)
 	end
