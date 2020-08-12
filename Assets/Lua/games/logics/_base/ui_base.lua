@@ -70,8 +70,8 @@ function M:_SetSelfLayer()
 	end
 end
 
-function M:View(isShow)
-	super.View( self,isShow )
+function M:View(isShow,data,...)
+	super.View( self,isShow,data,... )
 	if true == isShow then
 		_mgr().AddViewUI(self)
 	else

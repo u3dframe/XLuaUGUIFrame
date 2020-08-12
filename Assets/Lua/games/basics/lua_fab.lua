@@ -68,7 +68,7 @@ end
 function M:View(isShow,data,...)
 	isShow = isShow == true
 	if isShow then
-		if data then self:SetData( data,... ) end
+		self:SetData( data,... )
 		self:ReShow()
 	else
 		local _isStay = self.cfgAsset.isStay == true
@@ -208,8 +208,14 @@ function M:_PreOnEnd(isDestroy)
 	self.enabled = false
 	self.isVisible = false
 	isDestroy = isDestroy == true
-	local _tmp = self.prefFuncEnd
-	self.prefFuncEnd = nil
+	local _tmp = self.lfPrefEnd1
+	self.lfPrefEnd1 = nil
+	if _tmp then
+		_tmp(self.isInited)
+	end
+
+	local _tmp = self.lfPrefEnd2
+	self.lfPrefEnd2 = nil
 	if _tmp then
 		_tmp(self.isInited)
 	end
