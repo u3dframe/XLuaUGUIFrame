@@ -156,22 +156,7 @@ public class EL_AssetRes
 
      void _ClearABName(bool isTip = false)
     {
-        EditorUtility.DisplayProgressBar("Clear", "ClearABName ...", 0.0f);
-        string[] arrs = AssetDatabase.GetAllAssetBundleNames();
-        int curr = 0;
-        float count = arrs.Length;
-        foreach (string strName in arrs)
-        {
-            AssetDatabase.RemoveAssetBundleName(strName, true);
-            curr++;
-            EditorUtility.DisplayProgressBar(string.Format("ClearABName - ({0}/{1})", curr, count), strName, (curr / count));
-        }
-        AssetDatabase.Refresh();
-
-        EditorUtility.ClearProgressBar();
-        BuildTools.DelABFolders();
-
-        BuildTools.ClearBuild();
+        BuildTools.ClearAllABNames();
         if (isTip)
             EditorUtility.DisplayDialog("提示", "资源名清除完成!", "确定");
     }

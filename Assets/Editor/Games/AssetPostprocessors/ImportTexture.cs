@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using System.Linq;
 #if UI_SPRITE_ATLAS
 using UnityEditor.U2D;
 using UnityEngine.U2D;
@@ -77,26 +78,53 @@ public class ImportTexture : AssetPostprocessor
                 importer.npotScale = TextureImporterNPOTScale.None;
                 importer.wrapMode = TextureWrapMode.Clamp;
                 importer.SaveAndReimport();
+                _ReTextureInfo(importer);
             }
+        }
+    }
 
-            _ReTextureInfo(importer);
+    [MenuItem("Assets/Tools/重置所有图片的AB")]
+    [MenuItem("Tools/重置所有图片的AB")]
+    static public void ReTextureAll()
+    {
+        string _fd = Application.dataPath;
+        string[] files = null;
+        
+        files = Directory.GetFiles(_fd, "*.png", SearchOption.AllDirectories);
+        
+        // files = Directory.GetFiles(_fd, "*.*", SearchOption.AllDirectories)
+        //     .Where(s => s.ToLower().EndsWith(".png") || s.ToLower().EndsWith(".jpg")).ToArray();
+        
+        Object obj = null;
+        string fpAsset = "";
+        TextureImporter _tai;
+        for (int i = 0; i < files.Length; i++)
+        {
+            fpAsset = files[i];
+            obj = BuildTools.Load4Develop(fpAsset);
+            if (obj == null)
+                continue;
+            fpAsset = BuildTools.GetPath(obj);
+            _tai = AssetImporter.GetAtPath(fpAsset) as TextureImporter;
+            _ReTextureInfo(_tai,true);
         }
     }
 
     // 处理图片
-    private void _ReTextureInfo(TextureImporter importer)
+    static private void _ReTextureInfo(TextureImporter importer,bool isMust = false)
     {
-        string fp = assetPath;
+        string fp = importer.assetPath;
         if(!BuildTools.IsInDevelop(fp))
             return;
 
         bool _isAtlas = BuildTools.IsAtlasTexture(fp);
         bool _isSng = BuildTools.IsSingleTexture(fp);
+        bool _isSpr = importer.textureType == TextureImporterType.Sprite;
         if (_isAtlas || _isSng)
         {
-            if (importer.textureType != TextureImporterType.Sprite)
+            if (isMust || !_isSpr)
             {
-                importer.textureType = TextureImporterType.Sprite;
+                if(!_isSpr) importer.textureType = TextureImporterType.Sprite;
                 if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
                 ReBindAB4SngOrAtlas(importer, _isAtlas);
@@ -104,9 +132,9 @@ public class ImportTexture : AssetPostprocessor
         }
         else
         {
-            if (importer.textureType == TextureImporterType.Sprite)
+            if (isMust || _isSpr)
             {
-                importer.textureType = TextureImporterType.Default;
+                if(_isSpr) importer.textureType = TextureImporterType.Default;
                 if(importer.mipmapEnabled) importer.mipmapEnabled = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
                 // importer.assetBundleName = null;
@@ -117,9 +145,9 @@ public class ImportTexture : AssetPostprocessor
     }
 
     // 重新绑定单图 - 图集的 abname
-    private void ReBindAB4SngOrAtlas(TextureImporter importer, bool isAtlas)
+    static private void ReBindAB4SngOrAtlas(TextureImporter importer, bool isAtlas)
     {
-        string fp = assetPath; // importer.assetPath
+        string fp = importer.assetPath;
         string _ab = importer.assetBundleName;
         string _abV = importer.assetBundleVariant;
         if (!BuildTools.IsInBuild(fp))

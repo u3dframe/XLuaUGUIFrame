@@ -63,27 +63,63 @@ public class BuildTools : Core.EditorGameFile
         MgrABDataDependence.Init(obj, isMust);
     }
 
+    static public void ClearObjABName(string abname)
+    {
+        string[] _arrs = AssetDatabase.GetAssetPathsFromAssetBundle(abname);
+        if(_arrs == null || _arrs.Length <= 0)
+            return;
+        
+        foreach (string assetPath in _arrs){
+            SetABInfo(assetPath);
+        }
+    }
+
     static int _CheckABName()
     {
         EditorUtility.DisplayProgressBar("DoBuild", "CheckABName ...", 0.0f);
+        AssetDatabase.RemoveUnusedAssetBundleNames();
         string[] strABNames = AssetDatabase.GetAllAssetBundleNames();
         float count = strABNames.Length;
         int curr = 0;
-        foreach (string strName in strABNames)
+        foreach (string abName in strABNames)
         {
             curr++;
-            EditorUtility.DisplayProgressBar(string.Format("CheckABName - ({0}/{1})", curr, count), strName, (curr / count));
-            if (strName.EndsWith("error"))
+            EditorUtility.DisplayProgressBar(string.Format("CheckABName - ({0}/{1})", curr, count), abName, (curr / count));
+            if (abName.EndsWith("error"))
             {
-                Debug.LogFormat("=Error ABName = [{0}]", strName);
-                AssetDatabase.RemoveAssetBundleName(strName, true);
+                ClearObjABName(abName);
+                AssetDatabase.RemoveAssetBundleName(abName, true);
+                Debug.LogFormat("=Error ABName = [{0}]", abName);
             }
         }
-
-        EditorUtility.DisplayProgressBar("DoBuild", "RemoveUnusedAssetBundleNames ...", 0.1f);
         AssetDatabase.RemoveUnusedAssetBundleNames();
+        EditorUtility.DisplayProgressBar("DoBuild", "RemoveUnusedAssetBundleNames ...", 0.1f);
         strABNames = AssetDatabase.GetAllAssetBundleNames();
         return strABNames.Length;
+    }
+
+    static public void ClearAllABNames(bool isClearBuild = true)
+    {
+        EditorUtility.DisplayProgressBar("Clear", "ClearABName ...", 0.0f);
+        AssetDatabase.RemoveUnusedAssetBundleNames();
+        string[] arrs = AssetDatabase.GetAllAssetBundleNames();
+        float count = arrs.Length;
+        int curr = 0;
+        foreach (string abName in arrs)
+        {
+            ClearObjABName(abName);
+            AssetDatabase.RemoveAssetBundleName(abName, true);
+            curr++;
+            EditorUtility.DisplayProgressBar(string.Format("ClearABName - ({0}/{1})", curr, count), abName, (curr / count));
+        }
+        AssetDatabase.RemoveUnusedAssetBundleNames();
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+
+        if(isClearBuild){
+            DelABFolders();
+            ClearBuild();
+        }
     }
 
     static void _ReBindABName(string objAssetPath)

@@ -8,6 +8,7 @@ Evt_View_MainCamera = "Evt_View_MainCamera"; -- 显示主摄像机
 Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示
 Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示
 Evt_GameEntryAfterUpRes = "Evt_GameEntryAfterUpRes"; -- 游戏入库，这个地方是处理更新完毕后的入口
+Evt_EnterGameBeforeMain = "Evt_EnterGameBeforeMain"; -- 进入主界面前
 Evt_UpEverySecond = "Evt_UpEverySecond"; -- 每秒更新
 Evt_UpEveryMin = "Evt_UpEveryMin"; -- 每分钟更新 参数 : 当前分钟 0 -59
 Evt_UpEveryHour = "Evt_UpEveryHour"; -- 每小时更新 参数 : 当前时钟 0 -23

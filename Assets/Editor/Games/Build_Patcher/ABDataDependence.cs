@@ -29,22 +29,22 @@ namespace Core.Kernel
 
         public ABDataDependence(string objAssetPath, bool isMust)
         {
-            Init(objAssetPath, isMust);
+            InitDeps(objAssetPath, isMust);
         }
 
         public ABDataDependence(Object obj, bool isMust)
         {
-            Init(obj, isMust);
+            InitDeps(obj, isMust);
         }
 
-        public void Init(string objAssetPath, bool isMust)
+        public void InitDeps(string objAssetPath, bool isMust)
         {
             // 相对于objAssetPath;
             Object obj = AssetDatabase.LoadAssetAtPath<Object>(objAssetPath);
-            Init(obj, isMust);
+            InitDeps(obj, isMust);
         }
 
-        public void Init(Object obj, bool isMust)
+        public void InitDeps(Object obj, bool isMust)
         {
             if (obj == null)
             {
@@ -216,26 +216,21 @@ namespace Core.Kernel
                 return;
 
             ABDataDependence _data = GetData(resPath);
-            if (_data != null)
-            {
-                if (!string.IsNullOrEmpty(beDeps))
-                {
-                    _data.AddBeDeps(beDeps);
-                    _data.m_nBeUsed++;
-                }
-            }
-            else
-            {
+            bool _isHas = _data != null;
+            if (_isHas) {
+                _data.InitDeps(obj,isMust);
+            } else {
                 _data = new ABDataDependence(obj, isMust);
                 instance.m_dic.Add(resPath, _data);
-                if (!string.IsNullOrEmpty(beDeps))
-                {
-                    _data.AddBeDeps(beDeps);
-                    _data.m_nBeUsed++;
-                }
+            }
+            
+            if (!string.IsNullOrEmpty(beDeps)) {
+                _data.AddBeDeps(beDeps);
+                _data.m_nBeUsed++;
+            }
 
-                foreach (var item in _data.m_lDependences)
-                {
+            if(!_isHas) {
+                foreach (var item in _data.m_lDependences) {
                     Init(item, false, resPath);
                 }
             }
