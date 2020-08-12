@@ -49,6 +49,7 @@ function M.AddViewUI(ui)
 	if not tb_con( _layVw,_layer ) then
 		tb_insert( _layVw,_layer )
 	end
+	this.uiViews[_layer] = _lb
 end
 
 function M.RmViewUI(ui)
