@@ -8,7 +8,7 @@
 local strRoot = "games/config/" --配置表根路径
 local str_split = string.split
 local str_contains = string.contains
-local _req = require
+local _req,pcall = require,pcall
 local clearLoadLua,weakTB,readonly = clearLoadLua,weakTB,readonly
 
 UIType = {}
@@ -18,12 +18,15 @@ local M = class( "mgr_data")
 local function _lfIndexLoad(t, k)
 	local _arrs = str_split(k,"_")
 	local _fn,_nm = _arrs[1],(_arrs[2] or _arrs[1])
-	local _fp = strRoot .. _fn
-	local _data = _req ( _fp )
+	local _fp,_data = strRoot .. _fn
+	pcall(function()
+		_data = _req( _fp )
+		clearLoadLua(_fp)
+	end)
+	if not _data then return end
 	for kk,vv in pairs(_data) do
 		t[_fn .. "_" .. kk] = vv
 	end
-	clearLoadLua(_fp)
 	return t[_fn .. "_" .. _nm]
 end
 

@@ -22,7 +22,7 @@ namespace Core
 
 		static public string crcDataPath {
 			get{
-				return CRCClass.GetCRC (m_dirDataNoAssets);
+				return CRCClass.GetCRCContent (m_dirDataNoAssets);
 			}
 		}
 
