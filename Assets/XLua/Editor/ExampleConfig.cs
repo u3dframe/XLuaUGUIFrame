@@ -115,6 +115,7 @@ public static class ExampleConfig
                 typeof(LuaManager),
                 typeof(SmoothFollower),
                 typeof(MainCameraManager),
+                typeof(RayScreenPointInfo),
                 typeof(InputMgr),
                 //---------------------------------------------------------------  
             };
