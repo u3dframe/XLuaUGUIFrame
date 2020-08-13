@@ -1,6 +1,7 @@
 -- U开头代表Unity的CSharp Class, C开头代表自身封装的CSharp Class
 
 -- UAnimation = UnityEngine.Animation
+UPlayerPrefs = CS.UnityEngine.PlayerPrefs
 UGameObject = CS.UnityEngine.GameObject
 UTransform = CS.UnityEngine.Transform
 URectTransform = CS.UnityEngine.RectTransform
@@ -33,4 +34,5 @@ CInpMgr = CS.InputMgr
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])
 GM_IsEditor = CGameFile.isEditor
+CRC_DPath = CGameFile.crcDataPath
 -- TP_UText = typeof(UText)

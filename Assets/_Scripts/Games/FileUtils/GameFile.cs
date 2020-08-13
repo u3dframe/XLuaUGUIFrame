@@ -20,6 +20,12 @@ namespace Core
 		static public readonly char[] m_cSpComma = ",".ToCharArray();
 		static public readonly char[] m_cSpEqual = "=".ToCharArray();
 
+		static public string crcDataPath {
+			get{
+				return CRCClass.GetCRC (m_dirDataNoAssets);
+			}
+		}
+
 		// 编辑模式
 		static public bool isEditor{
 			get{
