@@ -86,7 +86,7 @@ public class UGUILocalize : GobjLifeListener {
 			_sval = "";
 		}else{
 			if(fmtPars == null || fmtPars.Length <= 0) _sval = Localization.Get(m_key);
-			else _sval = Localization.Format(m_key,fmtPars);
+			else _sval = Localization.FormatMore(m_key,fmtPars);
 		}
 		_SetTextVal(_sval);
 	}

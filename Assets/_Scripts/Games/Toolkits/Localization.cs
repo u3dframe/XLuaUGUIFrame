@@ -152,13 +152,69 @@ static public class Localization
 			return mCurr[key];
 		return key;
 	}
+
+	static public string Get (int key) {
+		return Get(key.ToString());
+	}
 	
-	static public string Format (string key, params object[] parameters) {
+	static public string FormatMore (string key, params object[] parameters) {
 		if(Exists(key)){
 			string _fmt = Get(key);
 			// Debug.LogError(parameters[0].GetType());
 			return string.Format(_fmt, parameters); 
 		}
-		return null;
+		return key;
+	}
+
+	static public string Format(string key,object obj1){
+		return FormatMore(key,obj1);
+	}
+
+	static public string Format(string key,object obj1,object obj2){
+		return FormatMore(key,obj1,obj2);
+	}
+
+	static public string Format(string key,object obj1,object obj2,object obj3){
+		return FormatMore(key,obj1,obj2,obj3);
+	}
+
+	static public string Format(string key,object obj1,object obj2,object obj3,object obj4){
+		return FormatMore(key,obj1,obj2,obj3,obj4);
+	}
+
+	static public string Format(string key,object obj1,object obj2,object obj3,object obj4,object obj5){
+		return FormatMore(key,obj1,obj2,obj3,obj4,obj5);
+	}
+
+	static public string Format(string key,object obj1,object obj2,object obj3,object obj4,object obj5,object obj6){
+		return FormatMore(key,obj1,obj2,obj3,obj4,obj5,obj6);
+	}
+
+	static public string FormatMore (int key, params object[] parameters) {
+		return FormatMore(key.ToString(),parameters);
+	}
+
+	static public string Format(int key,object obj1){
+		return FormatMore(key,obj1);
+	}
+
+	static public string Format(int key,object obj1,object obj2){
+		return FormatMore(key,obj1,obj2);
+	}
+
+	static public string Format(int key,object obj1,object obj2,object obj3){
+		return FormatMore(key,obj1,obj2,obj3);
+	}
+
+	static public string Format(int key,object obj1,object obj2,object obj3,object obj4){
+		return FormatMore(key,obj1,obj2,obj3,obj4);
+	}
+
+	static public string Format(int key,object obj1,object obj2,object obj3,object obj4,object obj5){
+		return FormatMore(key,obj1,obj2,obj3,obj4,obj5);
+	}
+
+	static public string Format(int key,object obj1,object obj2,object obj3,object obj4,object obj5,object obj6){
+		return FormatMore(key,obj1,obj2,obj3,obj4,obj5,obj6);
 	}
 }

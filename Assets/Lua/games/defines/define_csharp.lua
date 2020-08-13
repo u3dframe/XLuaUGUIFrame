@@ -22,6 +22,7 @@ CGameFile = CS.Core.GameFile
 CGobjLife = CS.GobjLifeListener
 CPElement = CS.PrefabElement
 CHelper = CS.LuaHelper
+CLocliz = CS.Localization
 CTxt = CS.UGUILocalize
 CBtn = CS.UGUIButton
 CEvtListener = CS.UGUIEventListener
