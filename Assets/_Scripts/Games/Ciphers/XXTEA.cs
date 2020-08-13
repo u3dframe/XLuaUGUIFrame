@@ -6,7 +6,7 @@ using System.Text;
 /// Ancher : Canyon / 龚阳辉
 /// Create : 2020-02-29 11:28
 /// </summary>
-namespace Kernel.Core.Cipher
+namespace Core.Kernel.Cipher
 {
     public static class XXTEA
     {

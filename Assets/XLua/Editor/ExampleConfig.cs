@@ -59,6 +59,9 @@ public static class ExampleConfig
                 typeof(UnityEngine.Debug),
 
                 //------------------------ u3d --------------------------------
+                typeof(PlayerPrefs),
+                typeof(Animation),
+                typeof(Animator),
                 typeof(Camera),
                 typeof(RenderSettings),
                 typeof(LightmapSettings),
@@ -126,6 +129,8 @@ public static class ExampleConfig
                 typeof(UnityEngine.Events.UnityAction),
                 typeof(System.Collections.IEnumerator),
                 
+                typeof(DF_UWR),
+
                 typeof(DF_LoadedAsset),
                 typeof(DF_LoadedFab),
                 typeof(DF_LoadedTex2D),

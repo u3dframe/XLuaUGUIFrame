@@ -20,7 +20,7 @@ function M.Init()
 end
 
 function M.GetData(id)
-	return this:GetCfgData("unlock",id)
+	return this:GetCfgData("fnopen",id)
 end
 
 --解锁

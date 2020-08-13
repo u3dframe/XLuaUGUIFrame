@@ -24,6 +24,7 @@ _LuaFpBasic = {
 	{"","define_global",1}, -- 常量 Lua 全局变量
 	{"","define_events",1}, -- 常量 事件 相关
 	{"","define_csharp",1}, -- 常量 CSharp 相关
+	{"LGCache","games/tools/game_cache"}, -- 游戏缓存
 	{"LUtils","games/tools/utils"}, -- 工具类
 	{"LuaBasic","lua_basic",2}, -- Basic 类
 	{"LuaObject","lua_object",2}, -- 基础类

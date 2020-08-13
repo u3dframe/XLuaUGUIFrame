@@ -95,7 +95,7 @@ function M:GetOneData(cfgKey, idKey)
 end
 
 function M:_InitUnlock()
-	local _cfg = self:GetConfig("unlock")
+	local _cfg = self:GetConfig("fnopen")
 	if _cfg then
 		for k, v in pairs(_cfg) do
 			UIType[v.uitype] = k

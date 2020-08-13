@@ -3,7 +3,7 @@
 /// Ancher : Canyon / 龚阳辉
 /// Create : 2018-12-09 22:30
 /// </summary>
-namespace Kernel.Core.Cipher
+namespace Core.Kernel.Cipher
 {
 	public static class Base64Ex
     {
