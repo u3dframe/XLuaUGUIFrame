@@ -49,6 +49,7 @@ _LuaFpBasic = {
 
 -- 中间
 _LuaFpMidle = {
+	{"MgrWww","mgr_www",5}, -- 网络层
 	{"MgrNet","mgr_net",5}, -- 网络层
 	{"UIPubs","ui_pubs",7}, -- UI的Pubs
 	{"UIBase","ui_base",7}, -- UI的基础类
