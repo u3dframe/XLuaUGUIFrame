@@ -20,7 +20,7 @@ end
 function M:NewComp(elName,compName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return NewCompBy(_gobj,compName)
+        return self:NewCompBy(_gobj,compName)
     end
     if isNoPrint == true then return end
     printError("=== NewComp is Null, name = [%s]", elName)
@@ -29,7 +29,7 @@ end
 function M:NewEle(elName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:NewEleBy(_gobj):AddSupUIPubs()
+        return self:NewEleBy(_gobj)
     end
     if isNoPrint == true then return end
     printError("=== NewEle is Null, name = [%s]", elName)
