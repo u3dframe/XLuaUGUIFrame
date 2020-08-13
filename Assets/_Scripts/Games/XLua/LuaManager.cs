@@ -47,6 +47,8 @@ public class LuaManager : GobjLifeListener
 	protected override void OnCall4Start(){
 		luaEnv.DoString("require('Main');","Main");
 		var _luaG = luaEnv.Global;
+		_Init_Global(_luaG);
+
 		var luaStart = _luaG.Get<Action>("Main");
 		luaUpdate = _luaG.Get<DF_OnUpdate>("Update");
 		luaFixedUpdate = _luaG.Get<DF_OnUpdate>("FixedUpdate");
@@ -120,28 +122,77 @@ public class LuaManager : GobjLifeListener
 		if(luaAppPaused != null) luaAppPaused(this.m_isPaused);
 	}
 
+	public LuaTable NewLuaTable(){
+		LuaTable rTb = luaEnv.NewTable();
+		LuaTable meta = luaEnv.NewTable();
+		meta.Set("__index", luaEnv.Global);
+		rTb.SetMetaTable(meta);
+		meta.Dispose();
+		return rTb;
+	}
+
+	void _Init_Global(LuaTable _G){
+		_Init_G_Layer(_G);
+	}
+
+	void _Init_G_Layer(LuaTable _G){
+		LuaTable _nt = NewLuaTable();
+		string str = null;
+		for (int i = 0; i < 32; i++)
+		{
+			str = LayerMask.LayerToName(i);
+			if (!string.IsNullOrEmpty(str))
+			{
+				_nt.Set(str,i);
+			}
+		}
+		_G.Set("Layer",_nt);
+	}
+
+	
+
 	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
 	public static extern int luaopen_lpeg(IntPtr L);
 
 	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
 	public static extern int luaopen_sproto_core(IntPtr L);
 
+	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
+	public static extern int luaopen_cjson_safe(IntPtr L);
+
+	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
+	public static extern int luaopen_cjson(IntPtr L);
+
 	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
-	public static int LoadSprotoCore(IntPtr L)
+	public static int OpenLpeg(IntPtr L)
+	{
+		return luaopen_lpeg(L);
+	}
+
+	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
+	public static int OpenSprotoCore(IntPtr L)
 	{
 		return luaopen_sproto_core(L);
 	}
 
 	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
-	public static int LoadLpeg(IntPtr L)
+	public static int OpenCjson(IntPtr L)
 	{
-		return luaopen_lpeg(L);
+		return luaopen_cjson(L);
+	}
+
+	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
+	public static int OpenCjsonSafe(IntPtr L)
+	{
+		return luaopen_cjson_safe(L);
 	}
 
 	void InitSelfLibs()
 	{
-		luaEnv.AddBuildin("sproto.core", LoadSprotoCore);
-		luaEnv.AddBuildin("lpeg", LoadLpeg);
+		luaEnv.AddBuildin("sproto.core", OpenSprotoCore);
+		luaEnv.AddBuildin("lpeg", OpenLpeg);
+		luaEnv.AddBuildin("cjson", OpenCjson);
+		luaEnv.AddBuildin("cjson.safe", OpenCjsonSafe);
 	}
 
 	public void LuaGC(){

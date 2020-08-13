@@ -5,6 +5,8 @@
 	-- Desc : 
 ]]
 
+local _yStart,_ySpeed,_yTime = 150 , 450 , 0.6
+
 local tb_insert,tb_rm = table.insert,table.remove
 
 local super,_evt = MgrBase,Event
@@ -32,16 +34,16 @@ function M._InitUI()
 
 	ui.OnInit = function(_s)
 		_s.lbTxt = ui:NewTxt("value")
-		_s:SetAnchoredPosition(0,0)
+		_s:SetAnchoredPosition(0,_yStart)
 	end
 
 	ui.OnShow = function(_s)
 		local _msg = this.GetPopopMsg()
 		_s.lbTxt:SetText(_msg)
 		
-		_s.speed = 600
-		_s.toY = 0
-		_s.cdTime = 0.5
+		_s.speed = _ySpeed
+		_s.toY = _yStart
+		_s.cdTime = _yTime
 		
 		this.isPreGoOn = this.isGoOn
 		this.isGoOn = false

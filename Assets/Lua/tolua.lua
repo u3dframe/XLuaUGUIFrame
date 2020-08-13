@@ -6,6 +6,7 @@ function reimport(name)
     return require(name)    
 end
 
+LayerMask	= reimport "UnityEngine.LayerMask"
 Mathf		= reimport "UnityEngine.Mathf"
 Vector3		= reimport "UnityEngine.Vector3"
 Quaternion	= reimport "UnityEngine.Quaternion"

@@ -77,6 +77,32 @@ public class InputMgr : GobjLifeListener {
 		RegKeyCode(key,callBack,false);
 #endif
 	}
+
+	static long nCursor = 0;
+
+	class RayInfo{
+		public long m_cursor = 0;
+		public Vector2 m_pos = Vector2.zero;
+		public LayerMask m_layMask = 0;
+		public DF_InpRayHit m_call;
+		public float m_rayDisctance = Mathf.Infinity;
+		public bool m_isMustClear = true;
+		public bool m_isAllHit = false;
+		
+		public void ExcRayHit(Ray ray,RaycastHit hit){
+			if(m_call != null){
+				int hitLayer = hit.transform.gameObject.layer;
+				m_call(ray,hit,hitLayer);
+			}
+
+			if(m_isMustClear)
+				m_call = null;
+		}
+
+		public void Clear(){
+			m_call = null;	
+		}
+	}
 	
 	private EventSystem _currEvt;
 	// 单击到了UI上面
@@ -100,7 +126,6 @@ public class InputMgr : GobjLifeListener {
 	
 	bool m_isRay = false;
 	float m_rayDisctance = Mathf.Infinity;
-	Ray _ray;
 	LayerMask _lay_mask = 1 << 0 | 1 << 1 | 1 << 4;
 	
 	float maxDistance = 0;
@@ -111,11 +136,56 @@ public class InputMgr : GobjLifeListener {
 	bool _isClick = false;
 	Vector2 _v2T1,_v2T2;
 	float _f1,_f2,_f3;
+
+	
+	RayInfo rInfo;
+	Queue<RayInfo> m_queue1 = new Queue<RayInfo>();
+	Queue<RayInfo> m_queue2 = new Queue<RayInfo>();
 	
 	protected override void OnCall4Awake(){
 		this.maxDistance = Screen.height > Screen.width ? Screen.height : Screen.width;
 		this.csAlias = "InpMgr";
 	}
+
+	void _ClearQueue(Queue<RayInfo> queue){
+		if(queue == null || queue.Count <= 0) return;
+		RayInfo _rif;
+		while(queue.Count > 0){
+			_rif = queue.Dequeue();
+			_rif.Clear();
+		}
+	}
+
+	void _ExcRaycast(Queue<RayInfo> queue,bool isAll){
+		if(queue == null || queue.Count <= 0) return;
+		RayInfo _rif;
+		Ray _ray;
+		RaycastHit _hit;
+		RaycastHit[] _hits;
+		int _nlen = 0;
+		while(queue.Count > 0){
+			_rif = queue.Dequeue();
+			_ray = Camera.main.ScreenPointToRay(_rif.m_pos);
+			if(_rif.m_isAllHit){
+				_hits = Physics.RaycastAll(_ray,_rif.m_rayDisctance,_rif.m_layMask);
+				if(_hits != null && _hits.Length > 0){
+					_nlen = _hits.Length;
+					for (int i = 0; i < _nlen; i++) {
+						_rif.ExcRayHit(_ray,_hits[i]);
+					}
+				}
+			}else{
+				if(Physics.Raycast(_ray,out _hit,_rif.m_rayDisctance,_rif.m_layMask)){
+					// 返回第一个被碰撞到的对象
+					_rif.ExcRayHit(_ray,_hit);
+				}
+			}
+			
+			if(!isAll)
+				break;
+		}
+	}
+
 	protected override void OnClear() {
 #if UNITY_EDITOR
 		if(m_diCalls != null) m_diCalls.Clear();
@@ -124,6 +194,9 @@ public class InputMgr : GobjLifeListener {
 		m_lfRotate = null;
 		m_lfSlide = null;
 		m_lfRayHit = null;
+
+		_ClearQueue(m_queue1);
+		_ClearQueue(m_queue2);
 	}
 	
     void Update () {
@@ -147,13 +220,14 @@ public class InputMgr : GobjLifeListener {
 	void FixedUpdate()
     {
 		if(this.m_isRay){
-			this.m_isRay = false;
-			RaycastHit hit;
+			this.m_isRay = false;			
 			if(Physics.Raycast(_ray,out hit,this.m_rayDisctance,_lay_mask)){
 				// 返回第一个被碰撞到的对象
 				_ExcLFRayHit(_ray,hit,hit.transform.gameObject.layer);
 			}
 		}
+		_ExcRaycast(m_queue1,false);
+		_ExcRaycast(m_queue2,false);
 	}
 	
 	public void Init(){}
@@ -329,5 +403,17 @@ public class InputMgr : GobjLifeListener {
 		if(Input.GetMouseButtonUp(0)){
 			_JugdeClick(Input.mousePosition);
 		}
+	}
+
+	public void SendRay(Vector2 uiPos,LayerMask layerMask,DF_InpRayHit cfCall,bool isMust){
+		 
+	}
+
+	public void SendRay(float x,float y,bool isMust){
+		SendRay(new Vector2(x,y),isMust); 
+	}
+
+	public void SendRay(Vector2 uiPos,bool isMust){
+		 
 	}
 }
