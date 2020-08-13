@@ -17,7 +17,7 @@ function M.Init()
 end
 
 function M.SendWWW(url,callback,ext_1)
-	_csMgr.StartUWR( url,function(isState,uwr,pars)
+	_csMgr:StartUWR( url,function(isState,uwr,pars)
 		if callback then
 			local _d = nil
 			if isState == true then

@@ -11,7 +11,7 @@ local _fmt = string.format
 local fdir = "all1"
 
 local M = {
-    defEditorUrl = "http://dianyuesetting.com/static/frontend/" .. fdir .."/serverlist.json;",
+    defEditorUrl = "http://dianyuesetting.com/static/frontend/" .. fdir .."/serverlist.json",
     defUrl = "http://xxxx/" .. fdir .."/serverlist.json;",
     listUrl = {
     },
@@ -53,7 +53,7 @@ end
 function M.GetServerList(lfCall)
     local _cur = nil
     local _url = M.GetSvUrl(_cur)
-    _mgrWWW.SendWWW(url,lfCall)
+    _mgrWWW.SendWWW(_url,lfCall)
 end
 
 return M
