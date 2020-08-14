@@ -74,10 +74,10 @@ function M:ShowScroll(listData)
 	end
 	_count = #self.lbCells
 
-	local _nIdx,_it,_isActive = 1
-	for i = _count,1,-1 do
-		_isActive = self.isAllActive or (i <= nMax)
-		_it = self.lbCells[_nIdx]
+	local _it,_isActive
+	for i = 1,_count do
+		_isActive = self.isAllActive or (i <= nLen)
+		_it = self.lbCells[i]
 		if _it then
 			if _it.SetActive then
 				_it:SetActive(_isActive)
@@ -88,7 +88,6 @@ function M:ShowScroll(listData)
 				self:_ShowCell(_it,_nIdx)
 			end
 		end
-		_nIdx = _nIdx + 1
 	end
 end
 
