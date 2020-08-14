@@ -119,10 +119,9 @@ public class ImportTexture : AssetPostprocessor
         if(!BuildTools.IsInDevelop(fp))
             return;
 
-        bool _isAtlas = BuildTools.IsAtlasTexture(fp);
-        bool _isSng = BuildTools.IsSingleTexture(fp);
+        bool _isUIImag = BuildTools.IsUITexture(fp);
         bool _isSpr = importer.textureType == TextureImporterType.Sprite;
-        if (_isAtlas || _isSng)
+        if (_isUIImag)
         {
             if (isMust || !_isSpr)
             {
@@ -130,7 +129,6 @@ public class ImportTexture : AssetPostprocessor
                 if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
             }
-            BuildTools.ReBindAB4SngOrAtlas(importer);
         }
         else
         {
@@ -139,9 +137,9 @@ public class ImportTexture : AssetPostprocessor
                 if(_isSpr) importer.textureType = TextureImporterType.Default;
                 if(importer.mipmapEnabled) importer.mipmapEnabled = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
-                BuildTools.SetABInfo(importer);
             }
         }
+        BuildTools.ReBindAB4SngOrAtlas(importer);
     }
 
     // 2的整数次幂
