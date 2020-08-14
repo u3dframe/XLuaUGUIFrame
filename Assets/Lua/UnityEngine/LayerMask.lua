@@ -44,7 +44,7 @@ function LayerMask.GetMask(...)
 	return value
 end
 
-CS.UnityEngine.LayerMask = LayerMask
+-- CS.UnityEngine.LayerMask = LayerMask
 setmetatable(LayerMask, LayerMask)
 return LayerMask
 

@@ -98,8 +98,7 @@ public class InputMgr : GobjLifeListener {
 	public DF_InpVec2 m_lfSlide = null; // 滑动
 	public DF_InpRayHit m_lfRayHit = null; // 单击到物体
 
-	float m_rayDisctance = Mathf.Infinity;
-	LayerMask _lay_mask = 1 << 0 | 1 << 1 | 1 << 4;
+	private LayerMask _lay_mask = 1 << 0 | 1 << 1 | 1 << 4;
 	
 	float maxDistance = 0;
 	bool isSingleFinger = false;
@@ -154,12 +153,13 @@ public class InputMgr : GobjLifeListener {
 	void FixedUpdate()
     {
 		_ExcRaycastScreenPoint(m_queue_sp_1,5);
-		_ExcRaycastScreenPoint(m_queue_sp_2,1);
+		_ExcRaycastScreenPoint(m_queue_sp_2,2);
 	}
 	
 	public void Init(){}
 
-	public InputMgr InitCall(DF_InpScale cfScale,DF_InpVec2 cfRotate,DF_InpVec2 cfSlide,DF_InpRayHit cfRayHit){
+	public InputMgr InitCall(LayerMask masks,DF_InpScale cfScale,DF_InpVec2 cfRotate,DF_InpVec2 cfSlide,DF_InpRayHit cfRayHit){
+		this.SetLayerMask(masks);
 		this.m_lfScale = cfScale;
 		this.m_lfRotate = cfRotate;
 		this.m_lfSlide = cfSlide;
@@ -180,7 +180,7 @@ public class InputMgr : GobjLifeListener {
 		if(queue == null || queue.Count <= 0) return;
 		bool m_isBreak = false;
 		while(queue.Count > 0){
-			_ExcRaycastScreenPoint(queue.Dequeue());
+			_ExcCast(queue.Dequeue());
 			if(nCount != -1 && nCount != 0)
 				nCount--;
 
@@ -190,26 +190,8 @@ public class InputMgr : GobjLifeListener {
 		}
 	}
 
-	void _ExcRaycastScreenPoint(RayScreenPointInfo rayInfo){
-		Ray _ray = Camera.main.ScreenPointToRay(rayInfo.m_pos);
-		RaycastHit _hit;
-		RaycastHit[] _hits;
-
-		if(rayInfo.m_isAllHit){
-			_hits = Physics.RaycastAll(_ray,rayInfo.m_rayDisctance,rayInfo.m_layMask);
-			if(_hits != null && _hits.Length > 0){
-				int _nlen = _hits.Length;
-				for (int i = 0; i < _nlen; i++) {
-					rayInfo.ExcRayHit(_ray,_hits[i]);
-				}
-			}
-		}else{
-			if(Physics.Raycast(_ray,out _hit,rayInfo.m_rayDisctance,rayInfo.m_layMask)){
-				// 返回第一个被碰撞到的对象
-				rayInfo.ExcRayHit(_ray,_hit);
-			}
-		}
-
+	void _ExcCast(RayScreenPointInfo rayInfo){
+		rayInfo.DoCast();
 		rayInfo.Clear();
 		m_queue_pool.Enqueue(rayInfo);
 	}
@@ -252,14 +234,6 @@ public class InputMgr : GobjLifeListener {
 
 	public void SetLayerMaskBy(string nmLayer){
 		SetLayerMaskMore(nmLayer);
-	}
-
-	public void SetLayerMaskBy(string nmLayer,string nmLayer2){
-		SetLayerMaskMore(nmLayer,nmLayer2);
-	}
-
-	public void SetLayerMaskBy(string nmLayer,string nmLayer2,string nmLayer3){
-		SetLayerMaskMore(nmLayer,nmLayer2,nmLayer3);
 	}
 
 	void _ExcLFScroll(bool isBig,float val){
@@ -398,11 +372,16 @@ public class InputMgr : GobjLifeListener {
 		}
 	}
 
-	public void SendRay4ScreenPoint(RayScreenPointInfo rayInfo,bool isMust){
-		if(isMust){
-			_ExcRaycastScreenPoint(rayInfo);
+	public void SendRaycast4ScreenPoint(RayScreenPointInfo rayInfo,bool isImmediate){
+		if(isImmediate){
+			_ExcCast(rayInfo);
 		}else{
 			AddQueue(m_queue_sp_2,rayInfo);
 		}
+	}
+
+	public void SendRaycast4ScreenPoint(float x,float y,float distance,LayerMask masks,DF_InpRayHit cfCall,bool isImmediate){
+		RayScreenPointInfo rayInfo = ReRayScreenPointInfo(x,y,distance,masks,cfCall);
+		SendRaycast4ScreenPoint(rayInfo,isImmediate);
 	}
 }

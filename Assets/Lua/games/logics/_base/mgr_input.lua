@@ -5,16 +5,16 @@
 	-- Desc : 
 ]]
 
-local _csMgr,_lMask,Mathf
+local _lMask,Mathf,_csMgr = LayerMask,Mathf
 
 local super,_evt = MgrBase,Event
 local M = class( "mgr_input",super )
 local this = M
 
 function M.Init()
+	local _masks = this.GetMask( "Default" )
 	_csMgr = CInpMgr.instance:InitCall(this.OnCall_Scale,this.OnCall_Rotate,this.OnCall_Slide,this.OnCall_RayHit)
-	_lMask = LayerMask
-	Mathf = Mathf
+	_evt.AddListener(Evt_SendRay4ScreenPoint,this.SendRaycast4V2)
 end
 
 function M.OnCall_Scale(isBl,scale)
@@ -29,15 +29,30 @@ end
 function M.OnCall_RayHit(ray,hit,layer)
 end
 
-function M.SendRay4XY(x,y,lfCall,distance,isMust,...)
-	local _masks = _lMask.GetMask( ... )
-	distance = distance or Mathf.Infinity
-	local _info = _csMgr:ReRayScreenPointInfo(x,y,distance,_masks,lfCall)
-	_csMgr:SendRay4ScreenPoint(_info,(isMust == true))
+function M.SetMask(...)
+	local _masks = this.GetMask( ... )
+	_csMgr:SetLayerMask(_masks)
 end
 
-function M.SendRay4ScreenPoint(screenPoint,lfCall,distance,isMust,...)
-	this.SendRay4XY( screenPoint.x,screenPoint.y,lfCall,distance,isMust,... )
+
+function M.GetMask(...)
+	return _lMask.GetMask( ... )
+end
+
+function M.GetRayInfo(x,y,lfCall,distance,...)
+	local _masks = this.GetMask( ... )
+	distance = self:TF2(distance)
+	return _csMgr:ReRayScreenPointInfo(x,y,distance,_masks,lfCall)
+end
+
+function M.SendRaycast4ScreenPoint(x,y,lfCall,distance,isImmediate,...)
+	local _masks = this.GetMask( ... )
+	distance = self:TF2(distance)
+	_csMgr:SendRaycast4ScreenPoint(x,y,distance,_masks,lfCall,(isImmediate == true))
+end
+
+function M.SendRaycast4V2(screenPoint,lfCall,distance,isImmediate,...)
+	this.SendRaycast4ScreenPoint( screenPoint.x,screenPoint.y,lfCall,distance,isImmediate,... )
 end
 
 return M

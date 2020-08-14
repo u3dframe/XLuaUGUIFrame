@@ -45,10 +45,10 @@ public class LuaManager : GobjLifeListener
 	}
 
 	protected override void OnCall4Start(){
-		luaEnv.DoString("require('Main');","Main");
 		var _luaG = luaEnv.Global;
 		_Init_Global(_luaG);
 
+		luaEnv.DoString("require('Main');","Main");
 		var luaStart = _luaG.Get<Action>("Main");
 		luaUpdate = _luaG.Get<DF_OnUpdate>("Update");
 		luaFixedUpdate = _luaG.Get<DF_OnUpdate>("FixedUpdate");

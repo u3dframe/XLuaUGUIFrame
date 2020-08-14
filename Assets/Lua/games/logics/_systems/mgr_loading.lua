@@ -19,8 +19,8 @@ function M._InitUI()
 		abName = "commons/ui_loading",
 		isStay = true,
 		hideType = LE_UI_Mutex.None,
+		isUpdate = true,
 		-- layer = LE_UILayer.Pop,
-		-- isUpdate = true,
 	})
 	this.ui = ui
 
@@ -29,10 +29,13 @@ function M._InitUI()
 
 	ui.OnShow = function(_s)
 	end
+
+	ui.OnUpdateLoaded = function(_s,_dt)
+	end
 end
 
-function M.ViewLoading()
-	this.ui:View(true)
+function M.ViewLoading(isView)
+	this.ui:View(isView == true)
 end
 
 return M
