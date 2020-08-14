@@ -11,7 +11,8 @@ local this = M
 
 function M.Init()
 	this._InitUI()
-	_evt.AddListener(Evt_ToView_Loading,this.ViewLoading)
+	_evt.AddListener(Evt_Show_Loading,this.ShowLoading)
+	_evt.AddListener(Evt_Hide_Loading,this.ViewLoading)
 end
 
 function M._InitUI()
@@ -34,8 +35,12 @@ function M._InitUI()
 	end
 end
 
-function M.ViewLoading(isView)
-	this.ui:View(isView == true)
+function M.ShowLoading(progress)
+	this.ui:View(true,progress or 0)
+end
+
+function M.HideLoading()
+	this.ui:View(false)
 end
 
 return M

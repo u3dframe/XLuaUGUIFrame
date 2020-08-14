@@ -106,4 +106,12 @@ function M:_InitUnlock()
 	end
 end
 
+function M:GetCfgRes(idKey)
+	return self:GetOneData( "resource",idKey )
+end
+
+function M:GetCfgMap(idKey)
+	return self:GetOneData( "scenemap",idKey )
+end
+
 return M

@@ -9,6 +9,7 @@ _LuaPacakge = {
 	[7] = "games/logics/_base/",
 	[8] = "games/logics/_coms/",
 	[9] = "games/logics/_systems/",
+	[10] = "games/logics/_scene/",
 }
 
 -- 不需要全局变量的lua
@@ -24,6 +25,7 @@ _LuaFpBasic = {
 	{"","define_global",1}, -- 常量 Lua 全局变量
 	{"","define_events",1}, -- 常量 事件 相关
 	{"","define_csharp",1}, -- 常量 CSharp 相关
+	{"","global_scene",1}, -- 常量 场景的
 	{"LGCache","games/tools/game_cache"}, -- 游戏缓存
 	{"LUtils","games/tools/utils"}, -- 工具类
 	{"LuaBasic","lua_basic",2}, -- Basic 类
@@ -75,7 +77,11 @@ _LuaFpEnd = {
 	{"MgrData", "mgr_data", 9}, -- 配置 
 	{"MgrUnlock", "mgr_unlock", 9}, -- 功能解锁
 	{"MgrPopTip", "mgr_popuptip", 9}, -- 文本弹出框
-	{"MgrLoadScene","_scene/mgr_loadscene",6}, -- 加载场景管理
-	{"MgrScene","_scene/mgr_scene",6}, -- 场景管理
+	{"MgrLoadScene","mgr_loadscene",10}, -- 加载场景管理
+	{"SceneObject","scene_object",10}, -- 场景对象
+	{"SceneCreature","scene_creature",10}, -- 生物
+	{"SceneMonster","scene_monster",10}, -- 怪兽
+	{"SceneHero","scene_hero",10}, -- 英雄、伙伴
+	{"MgrScene","mgr_scene",10}, -- 场景管理
 	{"MgrLogin","login/mgr_login",6}, -- 登录管理
 }
