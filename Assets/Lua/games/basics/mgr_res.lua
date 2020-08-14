@@ -135,4 +135,8 @@ function M.GetAB(abName)
 	return _csRes.GetABInfo(abName)
 end
 
+function M.GetDependences(abName)
+	return _csRes.GetDependences(abName)
+end
+
 return M

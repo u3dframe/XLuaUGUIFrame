@@ -12,7 +12,7 @@ local this = M
 function M.Init()
 	this._InitUI()
 	_evt.AddListener(Evt_Show_Loading,this.ShowLoading)
-	_evt.AddListener(Evt_Hide_Loading,this.ViewLoading)
+	_evt.AddListener(Evt_Hide_Loading,this.HideLoading)
 end
 
 function M._InitUI()
@@ -25,18 +25,27 @@ function M._InitUI()
 	})
 	this.ui = ui
 
+	ui.OnSetData = function(_s,lfCallShow)
+		_s.lfCallShow = lfCallShow
+	end
+
 	ui.OnInit = function(_s)
 	end
 
 	ui.OnShow = function(_s)
+		local _lf = _s.lfCallShow
+		_s.lfCallShow = nil
+		if _lf then
+			_lf()
+		end
 	end
 
 	ui.OnUpdateLoaded = function(_s,_dt)
 	end
 end
 
-function M.ShowLoading(progress)
-	this.ui:View(true,progress or 0)
+function M.ShowLoading(progress,lfCallShow)
+	this.ui:View(true,(progress or 0),lfCallShow)
 end
 
 function M.HideLoading()

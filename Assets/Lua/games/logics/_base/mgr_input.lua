@@ -26,7 +26,7 @@ end
 function M.OnCall_Slide(v2Slide)
 end
 
-function M.OnCall_RayHit(ray,hit,layer)
+function M.OnCall_RayHit(hitTrsf)
 end
 
 function M.SetMask(...)
@@ -41,13 +41,13 @@ end
 
 function M.GetRayInfo(x,y,lfCall,distance,...)
 	local _masks = this.GetMask( ... )
-	distance = self:TF2(distance)
+	distance = this:TF2(distance)
 	return _csMgr:ReRayScreenPointInfo(x,y,distance,_masks,lfCall)
 end
 
 function M.SendRaycast4ScreenPoint(x,y,lfCall,distance,isImmediate,...)
 	local _masks = this.GetMask( ... )
-	distance = self:TF2(distance)
+	distance = this:TF2(distance)
 	_csMgr:SendRaycast4ScreenPoint(x,y,distance,_masks,lfCall,(isImmediate == true))
 end
 

@@ -21,6 +21,14 @@ function M:ctor(assetCfg)
 		abName = nil,
 		assetName = nil,
 		assetLType = _E_AType.Fab,
+		strComp = nil,
+		isUpdate = nil,
+		isVwCircle = nil,
+		isStay = nil,
+		isLogVTime = nil,
+
+		layer = nil,
+		hideType = nil,
 	}	
 	assetCfg = self:onAssetConfig(assetCfg)
 	self:onMergeConfig(assetCfg)
@@ -62,6 +70,14 @@ function M:_CfgAssetInfo()
 	local _isAb = (type(_abName) == "string")
 	local _isAs = (type(_assetName) == "string")
 	return (_isAb and _isAs),_abName,_assetName,self.cfgAsset.assetLType;
+end
+
+function M:GetAbName()
+	return self.cfgAsset.abName
+end
+
+function M:GetAssetName()
+	return self.cfgAsset.assetName
 end
 
 function M:IsNoStateLoad(state)

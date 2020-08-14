@@ -85,7 +85,7 @@ function M:ShowScroll(listData)
 				_it.gobj:SetActive(_isActive)
 			end
 			if _isActive then
-				self:_ShowCell(_it,_nIdx)
+				self:_ShowCell(_it,i)
 			end
 		end
 	end

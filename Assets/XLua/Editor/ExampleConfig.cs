@@ -59,6 +59,7 @@ public static class ExampleConfig
                 typeof(UnityEngine.Debug),
 
                 //------------------------ u3d --------------------------------
+                typeof(string[]),
                 typeof(PlayerPrefs),
                 typeof(Animation),
                 typeof(Animator),

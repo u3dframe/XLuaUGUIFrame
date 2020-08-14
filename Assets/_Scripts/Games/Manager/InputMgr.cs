@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public delegate void DF_InpKeyState(string key, int state);
 public delegate void DF_InpScale(bool isBig, float val);
 public delegate void DF_InpVec2(Vector2 val);
-public delegate void DF_InpRayHit(Ray ray,RaycastHit hit,int layer);
+public delegate void DF_InpRayHit(Transform hitTrsf);
 
 /// <summary>
 /// 类名 : Input 管理脚本
@@ -372,7 +372,7 @@ public class InputMgr : GobjLifeListener {
 		}
 	}
 
-	public void SendRaycast4ScreenPoint(RayScreenPointInfo rayInfo,bool isImmediate){
+	public void SendRaycast4ScreenPointBy(RayScreenPointInfo rayInfo,bool isImmediate){
 		if(isImmediate){
 			_ExcCast(rayInfo);
 		}else{
@@ -382,6 +382,6 @@ public class InputMgr : GobjLifeListener {
 
 	public void SendRaycast4ScreenPoint(float x,float y,float distance,LayerMask masks,DF_InpRayHit cfCall,bool isImmediate){
 		RayScreenPointInfo rayInfo = ReRayScreenPointInfo(x,y,distance,masks,cfCall);
-		SendRaycast4ScreenPoint(rayInfo,isImmediate);
+		SendRaycast4ScreenPointBy(rayInfo,isImmediate);
 	}
 }

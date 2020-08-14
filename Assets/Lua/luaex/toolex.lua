@@ -366,3 +366,23 @@ end
 function lens4Variable( ... )
 	return select( '#', ... )
 end
+
+function cs_arrs_len( arrs )
+	if not arrs then return 0 end
+	return arrs.Length
+end
+
+function cs_arrs_val( arrs,nIndex )
+	local _nlens = cs_arrs_len( arrs )
+	if _nlens <= 0 or _nlens <= nIndex then return end
+	return arrs[nIndex]
+end
+
+function cs_foreach_arrs( arrs,lfeach )
+	local _nlens = cs_arrs_len( arrs )
+	for i = 0,_nlens - 1 do
+		if lfeach then
+			lfeach(arrs[i],i)
+		end
+	end
+end

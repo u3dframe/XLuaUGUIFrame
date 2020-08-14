@@ -15,7 +15,7 @@ Evt_SceneChanged = "Evt_SceneChanged"; -- 场景切换完成 [ 晚于 Evt_SceneL
 Evt_MapLoad = "Evt_MapLoad"; -- 执行加载地图
 Evt_MapLoaded = "Evt_MapLoaded"; -- 地图加载完成
 
-Evt_SendRay4ScreenPoint = "Evt_SendRay4ScreenPoint"; -- 发射线 (v2,lfCall[ray,hit,layer],distance,isMust,nameLayers = [...] )
+Evt_SendRay4ScreenPoint = "Evt_SendRay4ScreenPoint"; -- 发射线 (v2,lfCall[ray,hit,layer],distance,isMust,nameLayers = ... )
 
 Evt_View_MainCamera = "Evt_View_MainCamera"; -- 显示主摄像机
 Evt_Show_Loading = "Evt_Show_Loading"; -- 显示 Loading 加载界面

@@ -13,10 +13,9 @@ public class RayScreenPointInfo{
 	public float m_rayDisctance = Mathf.Infinity;
 	public bool m_isAllHit = false;
 	
-	void _ExcRayHit(Ray ray,RaycastHit hit){
+	void _ExcRayHit(Transform hitTrsf){
 		if(m_call != null){
-			int hitLayer = hit.transform.gameObject.layer;
-			m_call(ray,hit,hitLayer);
+			m_call(hitTrsf);
 		}
 		m_call = null;
 	}
@@ -31,13 +30,17 @@ public class RayScreenPointInfo{
 			if(_hits != null && _hits.Length > 0){
 				int _nlen = _hits.Length;
 				for (int i = 0; i < _nlen; i++) {
-					_ExcRayHit(_ray,_hits[i]);
+					_ExcRayHit(_hits[i].transform);
 				}
+			}else{
+				_ExcRayHit(null);
 			}
 		}else{
 			if(Physics.Raycast(_ray,out _hit,m_rayDisctance,m_layMask)){
 				// 返回第一个被碰撞到的对象
-				_ExcRayHit(_ray,_hit);
+				_ExcRayHit(_hit.transform);
+			}else{
+				_ExcRayHit(null);
 			}
 		}
 
