@@ -11,12 +11,17 @@ public class ImportAllAssets : AssetPostprocessor
 {
     static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
-        foreach (string str in movedAssets)
-        {
-            if (str.Contains("textures/"))
-            {
-                AssetDatabase.ImportAsset(str);
+        int nLens = 0;
+        if(movedAssets != null) nLens = movedAssets.Length;
+        if(nLens > 0) {
+            foreach (string str in movedAssets) {
+                if (str.Contains("textures/")) {
+                    AssetDatabase.ImportAsset(str);
+                }
             }
+        } else {
+            AssetDatabase.SaveAssets();
         }
+        
     }
 }

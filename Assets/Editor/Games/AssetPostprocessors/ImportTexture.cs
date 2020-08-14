@@ -77,9 +77,11 @@ public class ImportTexture : AssetPostprocessor
                 importer.compressionQuality = 60;
                 importer.npotScale = TextureImporterNPOTScale.None;
                 importer.wrapMode = TextureWrapMode.Clamp;
+                
                 importer.SaveAndReimport();
-                _ReTextureInfo(importer);
+                return;
             }
+            _ReTextureInfo(importer);
         }
     }
 
@@ -127,8 +129,8 @@ public class ImportTexture : AssetPostprocessor
                 if(!_isSpr) importer.textureType = TextureImporterType.Sprite;
                 if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
-                ReBindAB4SngOrAtlas(importer, _isAtlas);
             }
+            BuildTools.ReBindAB4SngOrAtlas(importer);
         }
         else
         {
@@ -137,57 +139,9 @@ public class ImportTexture : AssetPostprocessor
                 if(_isSpr) importer.textureType = TextureImporterType.Default;
                 if(importer.mipmapEnabled) importer.mipmapEnabled = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
-                // importer.assetBundleName = null;
-                // importer.assetBundleVariant = null;
                 BuildTools.SetABInfo(importer);
             }
         }
-    }
-
-    // 重新绑定单图 - 图集的 abname
-    static private void ReBindAB4SngOrAtlas(TextureImporter importer, bool isAtlas)
-    {
-        string fp = importer.assetPath;
-        string _ab = importer.assetBundleName;
-        string _abV = importer.assetBundleVariant;
-        if (!BuildTools.IsInBuild(fp))
-        {
-            if(!string.Equals(_ab,null) || !string.Equals(_abV,null))
-                BuildTools.SetABInfo(importer);
-            return;
-        }
-        (string _end, _, string _abExtension) = BuildTools.GetABEndName(fp,BuildTools.tpTex2D);
-        if (string.IsNullOrEmpty(_end) || _end.EndsWith("error"))
-        {
-            if(!string.Equals(_ab,null) || !string.Equals(_abV,null))
-                BuildTools.SetABInfo(importer);
-            return;
-        }
-
-        string _fn = Core.Kernel.PathEx.GetFileNameNoSuffix(fp);
-        string _sfp = BuildTools.RelativePath(fp);
-        string _lft = _sfp.Split('.')[0];
-        string _ret = _lft + _end;
-        if (isAtlas)
-        {
-#if UI_SPRITE_ATLAS
-            _ret = "";
-#else
-            // 老模式导致图片
-            int nLastIndex = fp.LastIndexOf('/');
-            string _nm = fp.Substring(0, nLastIndex);
-            nLastIndex = _nm.LastIndexOf('/');
-            _nm = _nm.Substring(nLastIndex + 1);
-            if (!_nm.Equals(importer.spritePackingTag))
-            {
-                importer.spritePackingTag = _nm;
-            }
-            _ret = _lft.Replace(_fn,_nm) + _end;
-#endif
-        }
-
-        if(!string.Equals(_ab,_ret) || !string.Equals(_abV,_abExtension))
-            BuildTools.SetABInfo(importer, _ret, _abExtension);
     }
 
     // 2的整数次幂
@@ -202,7 +156,7 @@ public class ImportTexture : AssetPostprocessor
     {
         string fp = assetPath;
         Texture tex = AssetDatabase.LoadAssetAtPath<Texture2D>(fp);
-        bool _isChg = (tex == null), _isReUd = false;
+        bool _isChg = (tex == null);
         if (!_isChg)
         {
             string _assetMt = AssetDatabase.GetTextMetaFilePathFromAssetPath(fp);
@@ -213,7 +167,6 @@ public class ImportTexture : AssetPostprocessor
         (width, height) = GetTextureImporterSize(importer);
         string _v = importer.userData;
         string _v2 = string.Format("{0},{1}", width, height);
-        _isReUd = string.IsNullOrEmpty(_v);
 
         if (!_isChg)
         {
@@ -233,15 +186,9 @@ public class ImportTexture : AssetPostprocessor
                     _arr[0] = width.ToString();
                     _arr[1] = height.ToString();
                     _v2 = string.Join(",", _arr);
+                    importer.userData = _v2;
                 }
             }
-            _isReUd = _isReUd || _isChg;
-        }
-
-        if (_isReUd)
-        {
-            importer.userData = _v2;
-            importer.SaveAndReimport();
         }
         return _isChg;
     }
