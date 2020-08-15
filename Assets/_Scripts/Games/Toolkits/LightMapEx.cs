@@ -3,19 +3,19 @@ using System.Collections;
 
 /// <summary>
 /// 类名 : 烘培光照贴图
-/// 作者 : Canyon
+/// 作者 : Canyon / 龚阳辉
 /// 日期 : 2017-03-21 10:37
 /// 功能 : 场景烘培的贴图信息
 /// </summary>
 [ExecuteInEditMode]
-public class LightmapEx : MonoBehaviour
+public class LightMapEx : MonoBehaviour
 {
 	static readonly LightmapData[] ltEmpty = new LightmapData[0];
-	static public LightmapEx Get(GameObject gobj,bool isAdd){
-		return UtilityHelper.Get<LightmapEx>(gobj,isAdd);
+	static public LightMapEx Get(GameObject gobj,bool isAdd){
+		return UtilityHelper.Get<LightMapEx>(gobj,isAdd);
 	}
 
-	static public LightmapEx Get(GameObject gobj){
+	static public LightMapEx Get(GameObject gobj){
 		return Get(gobj,true);
 	}
 	

@@ -30,7 +30,7 @@ end
 
 function M:LoadScene(name)
 	self:_LoadScene(name,function()
-		_evt.Brocast(Evt_ChangedScene)
+		_evt.Brocast(Evt_SceneChanged)
 	end)
 end
 

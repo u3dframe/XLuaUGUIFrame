@@ -10,7 +10,8 @@ local LES_Object = LES_Object
 local super = SceneBase
 local M = class( "scene_object",super )
 
-function M:ctor(objType,nCursor,...)
+function M:ctor(objType,nCursor,assetCfg,...)
+	super.ctor( self,assetCfg )
 	self:SetObjType( objType )
 	self:SetCursor( nCursor )
 end

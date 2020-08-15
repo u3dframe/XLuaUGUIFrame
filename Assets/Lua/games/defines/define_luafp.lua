@@ -84,6 +84,7 @@ _LuaFpEnd = {
 	{"SceneCreature","scene_creature",10}, -- 生物
 	{"SceneMonster","scene_monster",10}, -- 怪兽
 	{"SceneHero","scene_hero",10}, -- 英雄、伙伴
+	{"SceneFactory","scene_factory",10}, -- 工厂对象
 	{"MgrScene","mgr_scene",10}, -- 场景管理
 	
 	{"MgrLogin","login/mgr_login",6}, 	-- 登录管理

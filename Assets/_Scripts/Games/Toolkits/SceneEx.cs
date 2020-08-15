@@ -3,7 +3,7 @@ using System.Collections;
 
 /// <summary>
 /// 类名 : 场景参数
-/// 作者 : Canyon
+/// 作者 : Canyon / 龚阳辉
 /// 日期 : 2017-03-21 10:37
 /// 功能 : 场景的雾效，摄像机参数等
 /// </summary>

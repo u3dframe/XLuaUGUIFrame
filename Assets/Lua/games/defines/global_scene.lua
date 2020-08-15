@@ -13,7 +13,10 @@ LES_State = {
 	Wait_Vw_Loading = 1,
 	Clear_Pre_Map_Objs = 2,
 	Clear_Pre_Map_Scene = 3,
-	Load_Map_Scene = 4,
-	Load_Map_Objs = 5,
-	Complete = 6,
+	Load_Scene = 4,
+	Wait_Loading_Scene = 5,
+	Load_Map_Scene = 6,
+	Load_Map_Objs = 7,
+	Complete = 8,
+	FinshedEnd = 9,
 }

@@ -158,8 +158,63 @@ public class BuildTools : Core.EditorGameFile
             CleanupMissingScripts(gobj);
 
             // 加上这句，才会保存修改后的prefab
-            PrefabUtility.SavePrefabAsset(gobj);
+            if(IsPrefabInstance(gobj,false)){
+                PrefabUtility.SavePrefabAsset(gobj);
+            }
         }
+    }
+
+    /// <summary>
+    /// 判断Object是否是预制体资源。
+    /// </summary>
+    /// <param name="includePrefabInstance">是否将预制体资源的Scene实例视为预制体资源？</param>
+    /// <returns>如果是则返回 `true` ，如果不是则返回 `false` 。</returns>
+    static public bool IsPrefabAsset(UnityEngine.Object obj, bool includePrefabInstance)
+    {
+        if (!obj)
+        {
+            return false;
+        }
+
+        var type = PrefabUtility.GetPrefabAssetType(obj);
+        if (type == PrefabAssetType.NotAPrefab)
+        {
+            return false;
+        }
+
+        var status = PrefabUtility.GetPrefabInstanceStatus(obj);
+        if (status != PrefabInstanceStatus.NotAPrefab && !includePrefabInstance)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// 判断GameObject是否是预制体资源的实例。
+    /// </summary>
+    /// <param name="includeMissingAsset">是否将丢失预制体关联的GameObject视为预制体实例？</param>
+    /// <returns>如果是则返回 `true` ，如果不是则返回 `false` 。</returns>
+    static public bool IsPrefabInstance(UnityEngine.GameObject gobj, bool includeMissingAsset)
+    {
+        if (!gobj)
+        {
+            return false;
+        }
+
+        var type = PrefabUtility.GetPrefabAssetType(gobj);
+        if (type == PrefabAssetType.NotAPrefab || (!includeMissingAsset && type == PrefabAssetType.MissingAsset))
+        {
+            return false;
+        }
+
+        var status = PrefabUtility.GetPrefabInstanceStatus(gobj);
+        if (status == PrefabInstanceStatus.NotAPrefab)
+        {
+            return false;
+        }
+        return true;
     }
 
     [MenuItem("Tools/Cleanup Missing Scripts")]

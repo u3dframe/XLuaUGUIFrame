@@ -38,7 +38,7 @@ function M._InitUI()
 		if _lf then
 			_lf()
 		end
-		_s:Refresh(self.data)
+		_s:Refresh(_s.data)
 	end
 
 	ui.ReEvent4Self = function(_s,isBind)
