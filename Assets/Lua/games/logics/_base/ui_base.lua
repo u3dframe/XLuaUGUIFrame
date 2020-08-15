@@ -119,4 +119,6 @@ function M:OnExit(isInited)
 	end
 end
 
+M.AddNoClearKeys("strABAsset")
+
 return M

@@ -29,7 +29,7 @@ function M.URoot()
 end
 
 local function _lf_equipLUI(item,p1)
-	return (item == p1) or (item.strABAsset == p1.strABAsset)
+	return (item == p1) or (item.strABAsset ~= nil and item.strABAsset == p1.strABAsset)
 end
 
 function M.AddViewUI(ui)
@@ -64,12 +64,12 @@ end
 function M.HideAll(layer,exceptUI)
 	layer = layer or _layVw
 	local _tpVal = type(layer)
-	if _tpVal == "string" then
-		this.HideOneLayer(layer,exceptUI)
-	elseif _tpVal == "table" then
+	if _tpVal == "table" then
 		for _,v in ipairs(layer) do
 			this.HideOneLayer(v,exceptUI)
 		end
+	else
+		this.HideOneLayer(layer,exceptUI)
 	end
 end
 

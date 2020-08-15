@@ -319,10 +319,10 @@ public class EL_AssetRes
     void _BuildUITexutre()
     {
         string[] _dirs = {
-            "Assets/_Develop/Builds/prefabs/ui/",
-            "Assets/_Develop/Builds/textures/ui_atlas/",
-            "Assets/_Develop/Builds/textures/ui_sngs/",
-            "Assets/_Develop/Builds/textures/ui_imgs/",
+            "Assets/_Develop/Builds/prefabs/ui",
+            "Assets/_Develop/Builds/textures/ui_atlas",
+            "Assets/_Develop/Builds/textures/ui_sngs",
+            "Assets/_Develop/Builds/textures/ui_imgs",
         };
         UnityEngine.Object _one = null;
         foreach (var item in _dirs)
@@ -340,8 +340,8 @@ public class EL_AssetRes
     void _BuildUITexutreUIEffect()
     {
         string[] _dirs = {
-            "Assets/_Develop/Builds/prefabs/",
-            "Assets/_Develop/Builds/textures/",
+            "Assets/_Develop/Builds/prefabs",
+            "Assets/_Develop/Builds/textures",
         };
         UnityEngine.Object _one = null;
         foreach (var item in _dirs)
@@ -359,7 +359,7 @@ public class EL_AssetRes
     void _BuildScene()
     {
         string[] _dirs = {
-            "Assets/_Develop/Scene/Builds/",
+            "Assets/_Develop/Scene/Builds",
         };
         UnityEngine.Object _one = null;
         foreach (var item in _dirs)
