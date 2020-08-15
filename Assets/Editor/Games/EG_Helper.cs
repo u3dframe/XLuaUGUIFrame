@@ -12,7 +12,10 @@ using UnityEditor;
 /// </summary>
 public static class EG_Helper {
     public const int h30 = 30;
+    public const int h28 = 28;
     public const int h26 = 26;
+    public const int h24 = 24;
+    public const int h22 = 22;
     public const int h20 = 20;
     public const int h18 = 18;
 

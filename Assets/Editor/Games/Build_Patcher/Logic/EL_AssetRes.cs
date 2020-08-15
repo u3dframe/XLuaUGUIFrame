@@ -21,20 +21,25 @@ public class EL_AssetRes
     SerializedProperty m_Property;
     List<UnityEngine.Object> m_list = null;
     bool m_isIntroduce = true;
-    GUIStyle style = new GUIStyle();
+    GUIStyle styleYellow = new GUIStyle();
     GUIStyle styleRed = new GUIStyle();
+    GUIStyle styleGreen = new GUIStyle();
     bool _isInited = false;
 
     Vector2 _v2Srl;
     int _nLensList = 0;
     float _calcListY = 0;
+    
+    bool m_fd1 = false,m_fd2 = false,m_fd3 = true,m_fd4 = false;
+
     private void Init()
     {
         if (_isInited)
             return;
         _isInited = true;
-        style.normal.textColor = Color.yellow;
+        styleYellow.normal.textColor = Color.yellow;
         styleRed.normal.textColor = Color.red;
+        styleGreen.normal.textColor = Color.green;
     }
 
     public float DrawView(SerializedObject obj, SerializedProperty field, List<UnityEngine.Object> list)
@@ -44,7 +49,7 @@ public class EL_AssetRes
         this.m_Object = obj;
         this.m_Property = field;
         this.m_list = list;
-        float _ret = EG_Helper.h30;
+        float _ret = EG_Helper.h24;
 
         if (m_Object == null)
         {
@@ -82,7 +87,7 @@ public class EL_AssetRes
         }
 
         _nLensList = list.Count;
-        _calcListY = ((_nLensList > 20 ? 20 : _nLensList) + 1) * EG_Helper.h18 + EG_Helper.h30 * 1f;
+        _calcListY = ((_nLensList > 20 ? 20 : _nLensList) + 1) * EG_Helper.h20 + EG_Helper.h26 * 1f;
         EG_Helper.FEG_BeginScroll(ref _v2Srl, _calcListY);
         {
             //开始检查是否有修改
@@ -90,7 +95,7 @@ public class EL_AssetRes
 
             //显示属性
             //第二个参数必须为true，否则无法显示子节点即List内容
-            EditorGUILayout.PropertyField(m_Property, new GUIContent("资源文件夹 : "), true);
+            EditorGUILayout.PropertyField(m_Property, new GUIContent("选定的资源文件夹 : "), true);
 
             //结束检查是否有修改
             if (EditorGUI.EndChangeCheck())
@@ -101,57 +106,122 @@ public class EL_AssetRes
         }
         EG_Helper.FEG_EndScroll();
 
+        _ret = EG_Helper.h24 * 8f + _calcListY + 10;
+
         EG_Helper.FEG_BeginVArea();
-        {
-            EG_Helper.FEG_Head("清除，删除等按钮集合");
-            EG_Helper.FEG_BeginH();
+        EG_Helper.FEG_Toggle("资源文件夹",ref m_fd1,styleGreen);
+        if(m_fd1){
             {
-                if (GUILayout.Button("删除 - 所有ab资源文件夹"))
+                EG_Helper.FEG_Head("加载或移除资源文件夹");
+                EG_Helper.FEG_BeginH();
                 {
-                    BuildTools.DelABFolders(true);
+                    if (GUILayout.Button("加载 - 资源文件夹"))
+                    {
+                        _ReLoadFolders(true);
+                    }
+
+                    if (GUILayout.Button("移除 - 资源文件夹"))
+                    {
+                        _ClearDirs(true);
+                    }
+
+                    if (GUILayout.Button("打包 - 资源文件夹"))
+                    {
+                        _DoMake();
+                    }
                 }
-                if (GUILayout.Button("清除 - 所有ab资源名"))
-                {
-                    _ClearABName(true);
-                }
-                if (GUILayout.Button("清除 - 资源文件夹"))
-                {
-                    _ClearDirs(true);
-                }
+                EG_Helper.FEG_EndH();
             }
-            EG_Helper.FEG_EndH();
+            _ret += EG_Helper.h26 * 2;
         }
+        _ret += EG_Helper.h24;
         EG_Helper.FEG_EndV();
 
         EG_Helper.FEG_BeginVArea();
-        {
-            EG_Helper.FEG_Head("打包操作按钮");
-            EG_Helper.FEG_BeginH();
+        EG_Helper.FEG_Toggle("AssetBundle文件夹",ref m_fd2,styleGreen);
+        if(m_fd2){
             {
-                if (GUILayout.Button("Re-LoadFolders"))
+                EG_Helper.FEG_Head("删除 AssetBundle");
+                EG_Helper.FEG_BeginH();
                 {
-                    _ReLoadFolders(true);
+                    if (GUILayout.Button("删除 - 所有ab资源文件夹"))
+                    {
+                        BuildTools.DelABFolders(true);
+                    }
+
+                    if (GUILayout.Button("清除 - 所有ab资源名"))
+                    {
+                        _ClearABName(true);
+                    }
                 }
-                if (GUILayout.Button("Re-AB"))
-                {
-                    _ReAB();
-                }
-                if (GUILayout.Button("BuildFolders"))
-                {
-                    _DoMake();
-                }
-                if (GUILayout.Button("Re-BuildAll"))
-                {
-                    _ReBuildAll();
-                }
+                EG_Helper.FEG_EndH();
             }
-            EG_Helper.FEG_EndH();
+            _ret += EG_Helper.h26 * 2;
         }
+        _ret += EG_Helper.h24;
+        EG_Helper.FEG_EndV();
+        
+        EG_Helper.FEG_BeginVArea();
+        EG_Helper.FEG_Toggle("UI，场景相关",ref m_fd3,styleYellow);
+        if(m_fd3){
+            {
+                EG_Helper.FEG_Head("打包UI，场景相关");
+                EG_Helper.FEG_BeginH();
+                {
+                    if (GUILayout.Button("打包 - UI,Texture"))
+                    {
+                        _BuildUITexutre();
+                    }
+
+                    if (GUILayout.Button("打包 - UI,Texture,UIEffect"))
+                    {
+                        _BuildUITexutreUIEffect();
+                    }
+
+                    if (GUILayout.Button("打包 - 场景资源"))
+                    {
+                        _BuildScene();
+                    }
+                }
+                EG_Helper.FEG_EndH();
+            }
+            _ret += EG_Helper.h26 * 2;
+        }
+        _ret += EG_Helper.h24;
         EG_Helper.FEG_EndV();
 
+        EG_Helper.FEG_BeginVArea();
+        EG_Helper.FEG_Toggle("打包AssetBundle相关",ref m_fd4,styleYellow);
+        if(m_fd4){
+            {
+                EG_Helper.FEG_Head("打包 AssetBundle");
+                EG_Helper.FEG_BeginH();
+                {
+                    if (GUILayout.Button("打包 - 已绑定ABName资源"))
+                    {
+                        _ReAB();
+                    }
+
+                    if (GUILayout.Button("打包 - 所有"))
+                    {
+                        _ReBuildAll(false);
+                    }
+
+                    if (GUILayout.Button("重新打包 - 所有(Re-BuildAll)"))
+                    {
+                        _ReBuildAll();
+                    }
+                }
+                EG_Helper.FEG_EndH();
+            }
+            _ret += EG_Helper.h26 * 2;
+        }
+        _ret += EG_Helper.h22;
         EG_Helper.FEG_EndV();
-        _ret = EG_Helper.h30 * 8f + _calcListY + 10;
-        return m_isIntroduce ? _ret + 60 : _ret;
+        
+        EG_Helper.FEG_EndV();
+
+        return m_isIntroduce ? _ret + 70 : _ret + 10;
     }
 
      void _ClearABName(bool isTip = false)
@@ -238,10 +308,68 @@ public class EL_AssetRes
         BuildTools.AnalyseDir4Deps(one);
     }
 
-    void _ReBuildAll()
+    void _ReBuildAll(bool isClear = true)
     {
-        _ClearABName();
+        if(isClear) _ClearABName();
         _ReLoadFolders();
+        m_Object.Update();
+        _DoMake();
+    }
+
+    void _BuildUITexutre()
+    {
+        string[] _dirs = {
+            "Assets/_Develop/Builds/prefabs/ui/",
+            "Assets/_Develop/Builds/textures/ui_atlas/",
+            "Assets/_Develop/Builds/textures/ui_sngs/",
+            "Assets/_Develop/Builds/textures/ui_imgs/",
+        };
+        UnityEngine.Object _one = null;
+        foreach (var item in _dirs)
+        {
+            _one = BuildTools.Load4Develop(item);
+            if (_one != null)
+            {
+                this.m_list.Add(_one);
+            }
+        }
+        m_Object.Update();
+        _DoMake();
+    }
+
+    void _BuildUITexutreUIEffect()
+    {
+        string[] _dirs = {
+            "Assets/_Develop/Builds/prefabs/",
+            "Assets/_Develop/Builds/textures/",
+        };
+        UnityEngine.Object _one = null;
+        foreach (var item in _dirs)
+        {
+            _one = BuildTools.Load4Develop(item);
+            if (_one != null)
+            {
+                this.m_list.Add(_one);
+            }
+        }
+        m_Object.Update();
+        _DoMake();
+    }
+
+    void _BuildScene()
+    {
+        string[] _dirs = {
+            "Assets/_Develop/Scene/Builds/",
+        };
+        UnityEngine.Object _one = null;
+        foreach (var item in _dirs)
+        {
+            _one = BuildTools.Load4Develop(item);
+            if (_one != null)
+            {
+                this.m_list.Add(_one);
+            }
+        }
         m_Object.Update();
         _DoMake();
     }
