@@ -49,8 +49,8 @@ function M:onMergeConfig( cfg )
 end
 
 function M:ReCheckCfgAsset()
-	local _abName = self.cfgAsset.abName
-	local _assetName = self.cfgAsset.assetName
+	local _abName = self:GetAbName()
+	local _assetName = self:GetAssetName()
 	local _ltp = (self.cfgAsset.assetLType or _E_AType.Fab)
 	local _isAb = (type(_abName) == "string")
 	local _isAs = (type(_assetName) == "string")
@@ -65,8 +65,8 @@ function M:ReCheckCfgAsset()
 end
 
 function M:_CfgAssetInfo()
-	local _abName = self.cfgAsset.abName
-	local _assetName = self.cfgAsset.assetName
+	local _abName = self:GetAbName()
+	local _assetName = self:GetAssetName()
 	local _isAb = (type(_abName) == "string")
 	local _isAs = (type(_assetName) == "string")
 	return (_isAb and _isAs),_abName,_assetName,self.cfgAsset.assetLType;
@@ -138,6 +138,14 @@ function M:OnCF_Sprite( obj )
 end
 
 function M:OnCF_Texture( obj )
+end
+
+function M:GetAbInfo()
+	if self:IsNoStateLoad(_E_SLoad.Loading) and self:IsNoStateLoad(_E_SLoad.Loaded) then return end
+	if self.csABInfo then
+		self.csABInfo = m_res().GetAB(self:GetAbName())
+	end
+	return self.csABInfo
 end
 
 function M:_OnUnLoad()

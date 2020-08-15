@@ -18,7 +18,7 @@ function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
 	super2.ctor( self )
 
-	self.strABAsset = self:SFmt("%s_%s",self.cfgAsset.abName,self.cfgAsset.assetName)
+	self.strABAsset = self:SFmt("%s_%s",self:GetAbName(),self:GetAssetName())
 	if self:GetLayer() == _E_Layer.Normal then
 		local hideType = self:GetMutexType()
 		hideType = hideType or _E_HType.MainAndSelf

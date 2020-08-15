@@ -11,8 +11,8 @@ local this = M
 
 function M.Init()
 	this._InitUI()
-	_evt.AddListener(Evt_Show_Loading,this.ShowLoading)
-	_evt.AddListener(Evt_Hide_Loading,this.HideLoading)
+	_evt.AddListener(Evt_Loading_Show,this.ShowLoading)
+	_evt.AddListener(Evt_Loading_Hide,this.HideLoading)
 end
 
 function M._InitUI()
@@ -20,7 +20,7 @@ function M._InitUI()
 		abName = "commons/ui_loading",
 		isStay = true,
 		hideType = LE_UI_Mutex.None,
-		isUpdate = true,
+		-- isUpdate = true,
 		-- layer = LE_UILayer.Pop,
 	})
 	this.ui = ui
@@ -38,9 +38,18 @@ function M._InitUI()
 		if _lf then
 			_lf()
 		end
+		_s:Refresh(self.data)
 	end
 
-	ui.OnUpdateLoaded = function(_s,_dt)
+	ui.ReEvent4Self = function(_s,isBind)
+		_evt.RemoveListener(Evt_Loading_UpPlg,_s.Refresh,_s)
+		if isBind == true then
+			_evt.AddListener(Evt_Loading_UpPlg,_s.Refresh,_s)
+		end
+	end
+
+	ui.Refresh = function(_s,progress)
+		printTable(progress)
 	end
 end
 

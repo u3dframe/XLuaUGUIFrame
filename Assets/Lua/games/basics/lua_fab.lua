@@ -155,7 +155,7 @@ function M:_OnView()
 
 	if _isLog then
 		_t4 = _func_time()
-		logMust("=== view [%s],use time,Before = [%s],OnInit = [%s], OnShow = [%s]",self.cfgAsset.assetName,(_t2 - _t1),(_t3 -_t2),(_t4 -_t3))
+		logMust("=== view [%s],use time,Before = [%s],OnInit = [%s], OnShow = [%s]",self:GetAssetName(),(_t2 - _t1),(_t3 -_t2),(_t4 -_t3))
 	end
 end
 
