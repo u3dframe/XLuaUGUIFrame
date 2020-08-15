@@ -62,6 +62,7 @@ function M:_Load_CurScene()
 		abName = this.cfgRes.rsaddress,
 	})
 	self.lbScene:View(true)
+	-- self.isUping = true
 end
 
 function M._Loading_End()

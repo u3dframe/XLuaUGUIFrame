@@ -14,14 +14,20 @@ public class ImportAllAssets : AssetPostprocessor
         int nLens = 0;
         if(movedAssets != null) nLens = movedAssets.Length;
         if(nLens > 0) {
+            bool isChg = false;
             foreach (string str in movedAssets) {
                 if (str.Contains("textures/")) {
-                    AssetDatabase.ImportAsset(str);
+                    TextureImporter _tImpt = TextureImporter.GetAtPath(str) as TextureImporter;
+                    if(_tImpt != null){
+                        ImportTexture.ReTextureInfo(_tImpt,true);
+                        _tImpt.SaveAndReimport();
+                        isChg = true;
+                    }
                 }
             }
-        } else {
-            AssetDatabase.SaveAssets();
-        }
-        
+            
+            if(isChg)
+                AssetDatabase.SaveAssets();
+        } 
     }
 }

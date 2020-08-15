@@ -24,6 +24,9 @@ public class ImportTexture : AssetPostprocessor
         TextureImporter importer = assetImporter as TextureImporter;
         if (importer != null)
         {
+            if(!BuildTools.IsInDevelop(importer.assetPath) || !BuildTools.IsTexture(importer.assetPath))
+                return;
+
             int width = 0, height = 0;
             if (IsFirstImport(importer, ref width, ref height) || m_nReset > 0)
             {
@@ -78,10 +81,10 @@ public class ImportTexture : AssetPostprocessor
                 importer.npotScale = TextureImporterNPOTScale.None;
                 importer.wrapMode = TextureWrapMode.Clamp;
                 
+                ReTextureInfo(importer);
                 importer.SaveAndReimport();
-                return;
+                // AssetDatabase.Refresh();
             }
-            _ReTextureInfo(importer);
         }
     }
 
@@ -108,15 +111,18 @@ public class ImportTexture : AssetPostprocessor
                 continue;
             fpAsset = BuildTools.GetPath(obj);
             _tai = AssetImporter.GetAtPath(fpAsset) as TextureImporter;
-            _ReTextureInfo(_tai,true);
+            ReTextureInfo(_tai,true);
         }
     }
 
     // 处理图片
-    static private void _ReTextureInfo(TextureImporter importer,bool isMust = false)
+    static public void ReTextureInfo(TextureImporter importer,bool isMust = false)
     {
         string fp = importer.assetPath;
         if(!BuildTools.IsInDevelop(fp))
+            return;
+
+        if(!BuildTools.IsTexture(fp))
             return;
 
         bool _isUIImag = BuildTools.IsUITexture(fp);
@@ -128,6 +134,7 @@ public class ImportTexture : AssetPostprocessor
                 if(!_isSpr) importer.textureType = TextureImporterType.Sprite;
                 if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
+                BuildTools.ReBindAB4SngOrAtlas(importer);
             }
         }
         else
@@ -137,9 +144,10 @@ public class ImportTexture : AssetPostprocessor
                 if(_isSpr) importer.textureType = TextureImporterType.Default;
                 if(importer.mipmapEnabled) importer.mipmapEnabled = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
+                BuildTools.ReBindAB4SngOrAtlas(importer);
             }
         }
-        BuildTools.ReBindAB4SngOrAtlas(importer);
+        
     }
 
     // 2的整数次幂
@@ -153,15 +161,9 @@ public class ImportTexture : AssetPostprocessor
     bool IsFirstImport(TextureImporter importer, ref int width, ref int height)
     {
         string fp = assetPath;
-        Texture tex = AssetDatabase.LoadAssetAtPath<Texture2D>(fp);
-        bool _isChg = (tex == null);
-        if (!_isChg)
-        {
-            string _assetMt = AssetDatabase.GetTextMetaFilePathFromAssetPath(fp);
-            bool hasMeta = BuildTools.IsExistsInAssets(_assetMt);
-            _isChg = !hasMeta;
-        }
-
+        string _assetMt = AssetDatabase.GetTextMetaFilePathFromAssetPath(fp);
+        bool hasMeta = BuildTools.IsExistsInAssets(_assetMt);
+        bool _isChg = !hasMeta;
         (width, height) = GetTextureImporterSize(importer);
         string _v = importer.userData;
         string _v2 = string.Format("{0},{1}", width, height);
@@ -169,7 +171,6 @@ public class ImportTexture : AssetPostprocessor
         if (!_isChg)
         {
             _isChg = string.IsNullOrEmpty(_v);
-            // _isChg = (tex.width != width && tex.height != height);
             if (!_isChg)
             {
                 string[] _arr = BuildTools.SplitComma(_v);

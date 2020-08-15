@@ -77,11 +77,15 @@ _LuaFpEnd = {
 	{"MgrData", "mgr_data", 9}, -- 配置 
 	{"MgrUnlock", "mgr_unlock", 9}, -- 功能解锁
 	{"MgrPopTip", "mgr_popuptip", 9}, -- 文本弹出框
+	{"MgrLoading","mgr_loading",9}, -- 加载界面
+	
 	{"MgrLoadScene","mgr_loadscene",10}, -- 加载场景管理
 	{"SceneObject","scene_object",10}, -- 场景对象
 	{"SceneCreature","scene_creature",10}, -- 生物
 	{"SceneMonster","scene_monster",10}, -- 怪兽
 	{"SceneHero","scene_hero",10}, -- 英雄、伙伴
 	{"MgrScene","mgr_scene",10}, -- 场景管理
-	{"MgrLogin","login/mgr_login",6}, -- 登录管理
+	
+	{"MgrLogin","login/mgr_login",6}, 	-- 登录管理
+	
 }
