@@ -108,9 +108,9 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+  spritePackingTag: btns
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 49,48
-  assetBundleName: textures/ui_atlas/btns/right.tex_atlas
+  assetBundleName: textures/ui_atlas/btns/btns.tex_atlas
   assetBundleVariant: 
