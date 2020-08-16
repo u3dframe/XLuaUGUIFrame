@@ -24,6 +24,7 @@ namespace Core.Kernel
         static public readonly System.Type tpMat = typeof(Material);
         static public readonly System.Type tpAdoClip = typeof(AudioClip);
         static public readonly System.Type tpAnmClip = typeof(AnimationClip);
+        static public readonly System.Type tpSVC = typeof(ShaderVariantCollection);
         static public readonly System.Type tpTimeline = typeof(UnityEngine.Timeline.TimelineAsset);
 
         /// <summary>

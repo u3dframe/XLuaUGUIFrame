@@ -29,13 +29,13 @@ public class SceneEx : MonoBehaviour
 	
 	void Awake () {
         if(Application.isPlaying){
-            LoadSettings();
+            LoadSetting();
         }
     }
 	
 #if UNITY_EDITOR
 	[ContextMenu("Save Fog")]
-	void _SaveFogSetting(){
+	void _SaveSetting(){
 		m_fogEnable = RenderSettings.fog;
 		m_fogMode = RenderSettings.fogMode;
 		m_fogColor = RenderSettings.fogColor;
@@ -47,7 +47,7 @@ public class SceneEx : MonoBehaviour
 #endif
 
 	[ContextMenu("Load Fog")]
-	public void LoadFogSetting ()
+	public void LoadSetting ()
 	{
 		RenderSettings.fog = m_fogEnable;
 		RenderSettings.fogMode = m_fogMode;
@@ -56,10 +56,5 @@ public class SceneEx : MonoBehaviour
 		RenderSettings.fogStartDistance = m_fogStartDistance;
 		RenderSettings.fogEndDistance = m_fogEndDistance;
 		RenderSettings.skybox = m_skybox;
-	}
-	
-	[ContextMenu("Load Scene Setting")]
-	void LoadSettings(){
-		LoadFogSetting();
 	}
 }

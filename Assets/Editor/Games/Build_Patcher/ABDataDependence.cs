@@ -162,6 +162,7 @@ namespace Core.Kernel
             //".playable",
             ".ttf",
             ".fontsettings",
+            ".shadervariants",
         };
 
         static private bool _IsIn(string fp, string[] arrs)

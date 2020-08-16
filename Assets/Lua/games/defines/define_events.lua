@@ -24,7 +24,8 @@ Evt_Loading_UpPlg = "Evt_Loading_UpPlg"; -- 更新 Loading 加载界面 的进�
 Evt_Loading_Hide = "Evt_Loading_Hide"; -- 隐藏 Loading 加载界面
 Evt_ToView_UpRes = "Evt_ToView_UpRes"; -- 更新界面
 
--------- 资源更新后所用事件
+-------- 资源更新完毕后 - 所用事件
+Evt_LoadAllShaders = "Evt_LoadAllShaders"; -- 加载所有的shaders
 Evt_GameEntryAfterUpRes = "Evt_GameEntryAfterUpRes"; -- 处理更新完毕后的入口
 
 -------- 界面所用事件

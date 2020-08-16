@@ -4,7 +4,7 @@ using System.Reflection;
 using System;
 using UnityEngine.Playables;
 
-public sealed class LuaHelper  : UtilityHelper {
+public sealed class LuaHelper : UtilityHelper {
 	/// <summary>
 	/// 清理内存
 	/// </summary>

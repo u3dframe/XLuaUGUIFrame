@@ -18,7 +18,7 @@ function M.Init()
 		require("keycode").Init()
 	end
 	Evt_No_Use_Coroutine = false
-	Event.Brocast(Evt_GameEntryAfterUpRes);
+	Event.Brocast(Evt_LoadAllShaders);
 end
 
 return M

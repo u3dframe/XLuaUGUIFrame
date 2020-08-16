@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _csRes = CResMgr
+local _csRes,_evt = CResMgr,Event
 
 local M = {}
 local this = M
@@ -13,6 +13,7 @@ local this = M
 function M.Init()
 	this._InitLoadFuncs()
 	this._GetAssetFuncs()
+	_evt.AddListener(Evt_LoadAllShaders,this.LoadShaders)
 end
 
 function M._InitLoadFuncs()
@@ -137,6 +138,18 @@ end
 
 function M.GetDependences(abName)
 	return _csRes.GetDependences(abName)
+end
+
+function M.LoadAllShaders(callLoaded)
+	_csRes.LoadShaders(callLoaded)
+end
+
+function M.LoadShaders()
+	this.LoadAllShaders(this.FinishLoadedShaders)
+end
+
+function M.FinishLoadedShaders()
+	_evt.Brocast(Evt_GameEntryAfterUpRes);
 end
 
 return M
