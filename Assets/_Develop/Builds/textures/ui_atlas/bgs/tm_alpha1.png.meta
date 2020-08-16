@@ -108,9 +108,9 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+  spritePackingTag: bgs
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 4,4
-  assetBundleName: 
+  assetBundleName: textures/ui_atlas/bgs/bgs.tex_atlas
   assetBundleVariant: 

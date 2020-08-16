@@ -108,9 +108,9 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+  spritePackingTag: main
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0
   userData: 123,47
-  assetBundleName: 
+  assetBundleName: textures/ui_atlas/main/main.tex_atlas
   assetBundleVariant: 
