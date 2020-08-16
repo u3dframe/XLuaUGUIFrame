@@ -5,6 +5,15 @@
 	-- Desc : 创建场景对象用的
 ]]
 
+local fdir = "games/logics/_scene/"
+local _req = reimport or require
+
+SceneObject = _req (fdir .. "scene_object") -- 场景对象
+local SceneMap = _req (fdir .. "scene_map") -- 场景Map
+SceneCreature = _req (fdir .. "scene_creature") -- 生物
+SceneMonster = _req (fdir .. "scene_monster") -- 怪兽
+local SceneHero = _req (fdir .. "scene_hero") -- 英雄、伙伴
+    
 local LES_Object = LES_Object
 
 local super,_evt = MgrBase,Event
@@ -13,34 +22,6 @@ local this = M
 
 function M.Init()
 	this.cursor = 0
-end
-
-function M.ClsSObj()
-    if not this._clsSObj then
-        this._clsSObj = SceneObject
-    end
-    return this._clsSObj
-end
-
-function M.ClsSCrt()
-    if not this._clsCrt then
-        this._clsCrt = SceneCreature
-    end
-    return this._clsCrt
-end
-
-function M.ClsSMost()
-    if not this._clsMost then
-        this._clsMost = SceneMonster
-    end
-    return this._clsMost
-end
-
-function M.ClsSHero()
-    if not this._clsHero then
-        this._clsHero = SceneHero
-    end
-    return this._clsHero
 end
 
 function M.AddCursor()
@@ -54,13 +35,15 @@ end
 
 function M.Create(objType,cfgAsset)
 	if objType == LES_Object.Object then
-		return this.ClsSObj().New(objType,this.AddCursor(),cfgAsset)
+		return SceneObject.New(objType,this.AddCursor(),cfgAsset)
+	elseif objType == LES_Object.MapObj then
+		return SceneMap.New(this.AddCursor(),cfgAsset)
 	elseif objType == LES_Object.Creature then
-		return this.ClsSCrt().New(objType,this.AddCursor(),cfgAsset)
+		return SceneCreature.New(objType,this.AddCursor(),cfgAsset)
 	elseif objType == LES_Object.Monster then
-		return this.ClsSMost().New(objType,this.AddCursor(),cfgAsset)
+		return SceneMonster.New(objType,this.AddCursor(),cfgAsset)
 	elseif objType == LES_Object.Partner or objType == LES_Object.Hero then
-		return this.ClsSHero().New(objType,this.AddCursor(),cfgAsset)
+		return SceneHero.New(objType,this.AddCursor(),cfgAsset)
 	end
 end
 

@@ -26,6 +26,15 @@ function M:NewComp(elName,compName,isNoPrint)
     printError("=== NewComp is Null, name = [%s]", elName)
 end
 
+function M:NewCmr(elName,isNoPrint)
+    local _gobj = self:GetElement(elName)
+    if _gobj then
+        return self:NewCmrBy(_gobj)
+    end
+    if isNoPrint == true then return end
+    printError("=== NewCmr is Null, name = [%s]", elName)
+end
+
 function M:NewEle(elName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then

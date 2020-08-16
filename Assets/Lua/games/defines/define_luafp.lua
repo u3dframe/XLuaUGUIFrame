@@ -80,11 +80,7 @@ _LuaFpEnd = {
 	{"MgrLoading","mgr_loading",9}, -- 加载界面
 	
 	{"MgrLoadScene","mgr_loadscene",10}, -- 加载场景管理
-	{"SceneObject","scene_object",10}, -- 场景对象
-	{"SceneCreature","scene_creature",10}, -- 生物
-	{"SceneMonster","scene_monster",10}, -- 怪兽
-	{"SceneHero","scene_hero",10}, -- 英雄、伙伴
-	{"SceneFactory","scene_factory",10}, -- 工厂对象
+	{"SceneFactory","scene_factory",10}, -- 场景工厂
 	{"MgrScene","mgr_scene",10}, -- 场景管理
 	
 	{"MgrLogin","login/mgr_login",6}, 	-- 登录管理

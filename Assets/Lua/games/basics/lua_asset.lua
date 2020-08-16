@@ -52,7 +52,7 @@ function M:ReCheckCfgAsset()
 	local _abName = self:GetAbName()
 	local _assetName = self:GetAssetName()
 	local _ltp = (self.cfgAsset.assetLType or _E_AType.Fab)
-	local _isAb = (type(_abName) == "string")
+	local _isAb = (type(_abName) == "string" and "" ~= _abName )
 	local _isAs = (type(_assetName) == "string")
 	if _isAb and not _isAs then
 		_assetName = CGameFile.GetFileNameNoSuffix(_abName)
@@ -117,8 +117,10 @@ function M:_OnCFLoadAsset( obj )
 	end
 	_tp = self.cfgAsset.assetLType
 	if _E_AType.Fab == _tp or _E_AType.UI == _tp then
-		local _comp = self.cfgAsset.strComp
-		super.ctor(self,obj,_comp)
+		if not _isNoObj then
+			local _comp = self.cfgAsset.strComp
+			super.ctor(self,obj,_comp)
+		end
 		self:OnCF_Fab(obj)
 	elseif _E_AType.Sprite == _tp then
 		self:OnCF_Sprite(obj);

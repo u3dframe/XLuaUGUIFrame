@@ -5,7 +5,7 @@
 	-- Desc : 减少自身内部引用
 ]]
 
-local _c_trsf,_c_comp,_c_ele,_lasset,_lfab = nil
+local _c_trsf,_c_comp,_c_cmr,_c_ele,_lasset,_lfab = nil
 local _uevt,_utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
 local _cl_scl,_cl_lst = nil
 
@@ -31,6 +31,17 @@ end
 
 function M:NewCompBy(gobj,compName)
     return self:_ClsComp().New( gobj,compName )
+end
+
+function M:_ClsCmr()
+    if not _c_cmr then
+        _c_cmr = LUCamera
+    end
+    return _c_cmr
+end
+
+function M:NewCmrBy(gobj,compName)
+    return self:_ClsCmr().New( gobj,compName )
 end
 
 function M:_ClsEle()

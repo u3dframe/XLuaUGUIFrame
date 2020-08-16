@@ -18,10 +18,20 @@ end
 
 function M:SetObjType(objType)
 	self.objType = objType or LES_Object.Object
+	return self
+end
+
+function M:GetObjType()
+	return self.objType
 end
 
 function M:SetCursor(nCursor)
 	self.nCursor = nCursor
+	return self
+end
+
+function M:GetCursor()
+	return self.nCursor
 end
 
 return M

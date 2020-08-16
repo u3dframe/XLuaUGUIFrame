@@ -9,7 +9,7 @@ local tb_remove = table.remove
 local tb_insert = table.insert
 local tb_contain = table.contains
 
-local super,_cmr = UIBase,LUCamera
+local super = UIBase
 local M = class( "ui_root",super )
 
 local __single = nil
@@ -51,9 +51,8 @@ function M:OnInit()
 			end
 		end
 	end
-	_it = self:GetElementComponent("UICamera","Camera");
-	self.lbCamera = _cmr.New(_it,_it)
-	self.uiCamera = _it
+	self.lbCamera = self:NewCmr("UICamera")
+	self.uiCamera = self.lbCamera.comp
 end
 
 function M:SetUILayer( lbUIEntity )

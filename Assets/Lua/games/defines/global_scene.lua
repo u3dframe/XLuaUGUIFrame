@@ -1,22 +1,33 @@
+local _k_increase = 0
+local function _add(rVal)
+	if rVal then
+		_k_increase = rVal
+	else
+		_k_increase = _k_increase + 1
+	end
+	return _k_increase
+end
+
 -- 场景 - 对象类型
 LES_Object = {
-	Object         = 1,
-	Creature       = 2, -- 生物
-	Monster        = 3, -- 怪兽
-	Partner        = 4, -- 伙伴
-	Hero           = 5, -- 英雄
+	Object         = _add(0),
+	MapObj         = _add(), -- 地图对象
+	Creature       = _add(), -- 生物
+	Monster        = _add(), -- 怪兽
+	Partner        = _add(), -- 伙伴
+	Hero           = _add(), -- 英雄
 }
 
 -- 场景 - 状态
 LES_State = {
-    None = 0,
-	Wait_Vw_Loading = 1,
-	Clear_Pre_Map_Objs = 2,
-	Clear_Pre_Map_Scene = 3,
-	Load_Scene = 4,
-	Wait_Loading_Scene = 5,
-	Load_Map_Scene = 6,
-	Load_Map_Objs = 7,
-	Complete = 8,
-	FinshedEnd = 9,
+    None                 = _add(0),
+	Wait_Vw_Loading      = _add(),
+	Clear_Pre_Map_Objs   = _add(),
+	Clear_Pre_Map_Scene  = _add(),
+	Load_Scene           = _add(),
+	Wait_Loading_Scene   = _add(),
+	Load_Map_Scene       = _add(),
+	Load_Map_Objs        = _add(),
+	Complete             = _add(),
+	FinshedEnd           = _add(),
 }

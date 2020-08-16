@@ -106,7 +106,7 @@ function M:OnCF_Fab( obj )
 	if self:IsInitGobj() then
 		self:_JudgeLoad()
 	else
-		local _isBl,_abName,_assetName,_ltp = self:CfgAssetInfo()
+		local _isBl,_abName,_assetName,_ltp = self:_CfgAssetInfo()
 		error("=== asset not exit = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
 	end
 end

@@ -70,7 +70,6 @@ function M.LoadMap(mapid)
 	this.isUpingLoadMap = false
 	this:ReEvent4Self(false)
 
-	this.abname = this:ReSBegEnd( _cfgRes.rsaddress,"prefabs/",".fab" )
 	this.preMapid = this.mapid
 	this.mapid = mapid
 	this.cfgMap = _cfgMap
@@ -133,7 +132,7 @@ function M._ST_CurMap()
 		return 
 	end
 	this._Up_Progress()
-	this.lbScene = SceneFactory.Create(LES_Object.Object,{
+	this.lbScene = SceneFactory.Create(LES_Object.MapObj,{
 		abName = this.cfgRes.rsaddress,
 	})
 	this.isUpingLoadMap = true
@@ -168,7 +167,7 @@ function M._ST_Complete()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
 
-	-- local _arrs = MgrRes.GetDependences(this.abname)
+	-- local _arrs = MgrRes.GetDependences(this.lbScene:GetAbName())
 	-- cs_foreach_arrs(_arrs,function(v,k) 
 	-- 	printInfo("k == [%s] , v = [%s]",k,v)
 	-- end)

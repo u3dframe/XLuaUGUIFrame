@@ -8,6 +8,11 @@
 local super,super2 = LuaFab,UIPubs
 local M = class( "scene_base",super,super2 )
 
+function M:ctor(assetCfg)
+	super.ctor( self,assetCfg )
+	super2.ctor( self )
+end
+
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.assetLType = LE_AsType.Fab

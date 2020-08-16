@@ -17,7 +17,8 @@ Evt_MapLoaded = "Evt_MapLoaded"; -- 地图加载完成
 
 Evt_SendRay4ScreenPoint = "Evt_SendRay4ScreenPoint"; -- 发射线 (v2,lfCall[ray,hit,layer],distance,isMust,nameLayers = ... )
 
-Evt_View_MainCamera = "Evt_View_MainCamera"; -- 显示主摄像机
+Evt_View_MainCamera = "Evt_View_MainCamera"; -- 显示主摄像机 (true/false)
+Evt_Vw_MainCamera = "Evt_Vw_MainCamera"; -- 显示主摄像机 (true/false,otherCamera)
 Evt_Loading_Show = "Evt_Loading_Show"; -- 显示 Loading 加载界面
 Evt_Loading_UpPlg = "Evt_Loading_UpPlg"; -- 更新 Loading 加载界面 的进度条
 Evt_Loading_Hide = "Evt_Loading_Hide"; -- 隐藏 Loading 加载界面

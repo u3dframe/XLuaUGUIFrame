@@ -18,8 +18,6 @@ function M:ToLoginView()
 end
 
 function M:TestView()
-	LTimer.ReLocTime()
-
 	local ui = UIBase.New({
 		abName = "login/uilogin",
 		isStay = true,

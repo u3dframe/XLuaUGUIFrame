@@ -5,16 +5,16 @@
 	-- Desc : 
 ]]
 
-local super,_evt,_base,_cmr = MgrBase,Event,SceneBase,LUCamera
+local super,_evt,_base = MgrBase,Event,SceneBase
 local M = class( "mgr_camera",super )
 
 function M:Init()
-	self._lfVwCamera = handler(self,self.GetLuaCamera)
-	_evt.AddListener(Evt_View_MainCamera,self._lfVwCamera);
+	self:_InitFab()
+	_evt.AddListener(Evt_View_MainCamera,self.ViewMainCamera,self);
+	_evt.AddListener(Evt_Vw_MainCamera,self.VwMainCamera,self);
 end
 
-function M:GetLuaCamera()
-	if self.lbCamera then return self.lbCamera end
+function M:_InitFab()
 	self.lbCamera = _base.New({
 		abName = "m_camera",
 		strComp = "MainCameraManager",
@@ -22,17 +22,29 @@ function M:GetLuaCamera()
 	})
 	self.lbCamera.OnInit = function(_s)
 		local _c = _s.comp.m_camera
-		_s.mainCamera = _cmr.New(_c,_c)
+		_s.mainCamera = UIPubs:NewCmrBy(_c,_c)
 		_s:SetParent(nil,true)
 		_s:DonotDestory()
 		_s:SetEulerAngles(0,0,0)
 	end
-	self.lbCamera:View(true)
+end
+
+function M:ViewMainCamera(isShow)
+	self.lbCamera:View(isShow == true)
+end
+
+function M:VwMainCamera(isShow,mainCamera)
+	self:ViewMainCamera( isShow )
+	self.otherCamera = mainCamera
+end
+
+function M:GetLuaCamera()
 	return self.lbCamera
 end
 
 function M:GetMainCamera()
-	return self:GetLuaCamera().mainCamera
+	if self.otherCamera then return self.otherCamera end
+	return self.lbCamera.mainCamera
 end
 
 return M
