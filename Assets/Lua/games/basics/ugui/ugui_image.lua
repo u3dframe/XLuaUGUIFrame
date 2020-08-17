@@ -6,7 +6,7 @@
 ]]
 
 local _LTP = LE_AsType
-
+local str_split = string.split
 local super = LuBase
 local M = class( "ugui_image",super )
 
@@ -31,6 +31,8 @@ function M:ReBg( sVal )
 end
 
 function M:RePng( sVal )
+	local _arrs = str_split( sVal,"/" )
+	sVal = _arrs[#_arrs]
 	return self:ReSEnd( sVal,".png" )
 end
 

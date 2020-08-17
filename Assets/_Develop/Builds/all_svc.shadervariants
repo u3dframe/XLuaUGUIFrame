@@ -8,7 +8,7 @@ ShaderVariantCollection:
   m_PrefabAsset: {fileID: 0}
   m_Name: all_svc
   m_Shaders:
-  - first: {fileID: 4800000, guid: bbf5d60d81ec5b84aa8f66b6df214ac9, type: 3}
+  - first: {fileID: 4800000, guid: e42d8a6b644f98446ba7a14b2c9c53ca, type: 3}
     second:
       variants:
       - keywords: 
