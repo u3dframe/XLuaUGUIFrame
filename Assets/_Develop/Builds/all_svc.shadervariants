@@ -8,8 +8,32 @@ ShaderVariantCollection:
   m_PrefabAsset: {fileID: 0}
   m_Name: all_svc
   m_Shaders:
-  - first: {fileID: 4800000, guid: c77ddb2f269c775409d3cc9f473f3162, type: 3}
+  - first: {fileID: 4800000, guid: bbf5d60d81ec5b84aa8f66b6df214ac9, type: 3}
     second:
       variants:
       - keywords: 
+        passType: 0
+      - keywords: UI_CLIP_OFF UI_GRAY_OFF UI_MASK_OFF
+        passType: 0
+      - keywords: UI_CLIP_OFF UI_GRAY_OFF UI_MASK_ON
+        passType: 0
+      - keywords: UI_CLIP_OFF UI_GRAY_OFF UI_MASK_OUT
+        passType: 0
+      - keywords: UI_CLIP_ON UI_GRAY_OFF UI_MASK_OFF
+        passType: 0
+      - keywords: UI_CLIP_ON UI_GRAY_OFF UI_MASK_ON
+        passType: 0
+      - keywords: UI_CLIP_ON UI_GRAY_OFF UI_MASK_OUT
+        passType: 0
+      - keywords: UI_CLIP_OFF UI_GRAY_ON UI_MASK_OFF
+        passType: 0
+      - keywords: UI_CLIP_OFF UI_GRAY_ON UI_MASK_ON
+        passType: 0
+      - keywords: UI_CLIP_OFF UI_GRAY_ON UI_MASK_OUT
+        passType: 0
+      - keywords: UI_CLIP_ON UI_GRAY_ON UI_MASK_OFF
+        passType: 0
+      - keywords: UI_CLIP_ON UI_GRAY_ON UI_MASK_ON
+        passType: 0
+      - keywords: UI_CLIP_ON UI_GRAY_ON UI_MASK_OUT
         passType: 0

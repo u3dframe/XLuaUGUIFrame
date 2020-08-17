@@ -25,6 +25,7 @@ CPElement = CS.PrefabElement
 CHelper = CS.LuaHelper
 CLocliz = CS.Localization
 CTxt = CS.UGUILocalize
+CGray = CS.UGUIGray
 CBtn = CS.UGUIButton
 CEvtListener = CS.UGUIEventListener
 CLoadSceneMgr = CS.MgrLoadScene

@@ -6,7 +6,7 @@
 ]]
 
 local _c_trsf,_c_comp,_c_cmr,_c_ele,_lasset,_lfab = nil
-local _uevt,_utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
+local _uevt,_ugray,_utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
 local _cl_scl,_cl_lst = nil
 
 local M = class("lua_pubs")
@@ -78,6 +78,17 @@ end
 
 function M:NewUEvtBy(gobj)
     return self:_ClsUEvt().New( gobj,true )
+end
+
+function M:_ClsUGray()
+    if not _ugray then
+        _ugray = LuGray
+    end
+    return _ugray
+end
+
+function M:NewUGrayBy(gobj)
+    return self:_ClsUGray().New( gobj )
 end
 
 function M:_ClsUTxt()

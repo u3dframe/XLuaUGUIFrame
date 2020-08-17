@@ -42,6 +42,7 @@ _LuaFpBasic = {
 	{"MgrRes","mgr_res",2}, -- 控制 资源加载了
 	{"LuBase","ugui_base",4}, -- 组件 - 基础类
 	{"LuEvtListener","ugui_event_listener",4}, -- 组件 - 消息监听事件
+	{"LuGray","ugui_gray",4}, -- 组件 - 置灰
 	{"LuText","ugui_text",4}, -- 组件 - 文本
 	{"LuBtn","ugui_button",4}, -- 组件 - 按钮
 	{"LuTog","ugui_toggle",4}, -- 组件 - toggle

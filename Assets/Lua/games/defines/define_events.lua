@@ -12,7 +12,7 @@ Evt_ToChangeScene = "Evt_ToChangeScene"; -- 执行 - 切换场景
 Evt_SceneLoaded = "Evt_SceneLoaded"; -- 场景加载完成 (level)
 Evt_SceneChanged = "Evt_SceneChanged"; -- 场景切换完成 [ 晚于 Evt_SceneLoaded ]
 
-Evt_MapLoad = "Evt_MapLoad"; -- 执行加载地图
+Evt_MapLoad = "Evt_MapLoad"; -- 执行加载地图 (mapid)
 Evt_MapLoaded = "Evt_MapLoaded"; -- 地图加载完成
 
 Evt_SendRay4ScreenPoint = "Evt_SendRay4ScreenPoint"; -- 发射线 (v2,lfCall[ray,hit,layer],distance,isMust,nameLayers = ... )

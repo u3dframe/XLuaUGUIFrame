@@ -142,22 +142,29 @@ end
 
 function M._ST_OnUp_LoadMap(dt)
 	if not this.isUpingLoadMap then return end
-	this._cd1 = this._cd1 or 0.5
-	this._cd1 = this._cd1 - dt
-	if this._cd1 <= 0 then
-		this._cd1 = this._cd1 + 0.5
-		this.csAbInfo = this.lbScene:GetAbInfo()
-		if this.csAbInfo then
-			local _n1 = this.csAbInfo.m_depNeedLoaded
-			local _n2 = this.csAbInfo.m_depNeedCount
-			local _v = mmax(_n2 + 1,1)
-			_v = this:TF2(this.progress + (_n1 * this.eveRegion / _v))
-			_evt.Brocast(Evt_Loading_UpPlg,_v)
+	
+	this._cd1 = this._cd1 or 0.1
+
+	if this._cd1 and this._cd1 > 0 then
+		this._cd1 = this._cd1 - dt
+		if this._cd1 > 0 then
+			return 
 		end
+		this._cd1 = this._cd1 + 0.1
+	end
+	
+	this.csAbInfo = this.csAbInfo or this.lbScene:GetAbInfo()
+	if this.csAbInfo then
+		local _n1 = this.csAbInfo.m_depNeedLoaded
+		local _n2 = this.csAbInfo.m_depNeedCount
+		local _v = mmax(_n2 + 1,1)
+		_v = this:TF2(this.progress + (_n1 * this.eveRegion / _v))
+		_evt.Brocast(Evt_Loading_UpPlg,_v)
 	end
 end
 
 function M._ST_CurObjs()
+	this._cd1,this.csAbInfo = nil
 	this._Up_Progress()
 	this.state = LES_State.Complete
 end
@@ -166,6 +173,7 @@ function M._ST_Complete()
 	this._Up_Progress()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
+	_evt.Brocast(Evt_MapLoaded)
 
 	-- local _arrs = MgrRes.GetDependences(this.lbScene:GetAbName())
 	-- cs_foreach_arrs(_arrs,function(v,k) 
