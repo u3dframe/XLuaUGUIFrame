@@ -12,9 +12,6 @@ Evt_ToChangeScene = "Evt_ToChangeScene"; -- 执行 - 切换场景
 Evt_SceneLoaded = "Evt_SceneLoaded"; -- 场景加载完成 (level)
 Evt_SceneChanged = "Evt_SceneChanged"; -- 场景切换完成 [ 晚于 Evt_SceneLoaded ]
 
-Evt_MapLoad = "Evt_MapLoad"; -- 执行加载地图 (mapid)
-Evt_MapLoaded = "Evt_MapLoaded"; -- 地图加载完成
-
 Evt_SendRay4ScreenPoint = "Evt_SendRay4ScreenPoint"; -- 发射线 (v2,lfCall[ray,hit,layer],distance,isMust,nameLayers = ... )
 
 Evt_View_MainCamera = "Evt_View_MainCamera"; -- 显示主摄像机 (true/false)
@@ -27,6 +24,12 @@ Evt_ToView_UpRes = "Evt_ToView_UpRes"; -- 更新界面
 -------- 资源更新完毕后 - 所用事件
 Evt_LoadAllShaders = "Evt_LoadAllShaders"; -- 加载所有的shaders
 Evt_GameEntryAfterUpRes = "Evt_GameEntryAfterUpRes"; -- 处理更新完毕后的入口
+
+-------- 地图场景 - 所用事件
+Evt_Map_Load = "Evt_Map_Load"; -- 执行加载地图 (mapid)
+Evt_Map_Loaded = "Evt_Map_Loaded"; -- 地图加载完成
+Evt_Map_AddObj = "Evt_Map_AddObj"; -- 添加 map 场景里面的 对象 (objType,resid,lfunc,lbObject)
+Evt_Map_GetObj = "Evt_Map_GetObj"; -- 取 map 场景里面的 对象 (uniqueID,lfunc,lbObject)
 
 -------- 界面所用事件
 Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示

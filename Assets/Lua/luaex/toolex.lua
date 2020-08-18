@@ -37,6 +37,15 @@ function setPErrorFunc( pErrorFunc )
 	_printError = pErrorFunc
 end
 
+function executeCallFunc(lfunc,lbObject,...)
+	if not lfunc then return end
+	if lbObject then
+		lfunc( lbObject,... )
+	else
+		lfunc( ... )
+	end
+end
+
 function do_pcall( isLog,method,obj,... )
 	local _ok,_err
 	if obj then

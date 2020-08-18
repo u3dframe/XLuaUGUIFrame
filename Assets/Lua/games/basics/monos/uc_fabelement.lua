@@ -52,6 +52,11 @@ function M:GetElementComponent( elName,strComp )
 	return self[_k]
 end
 
+function M:ForeachElement( callFunc )
+	if (not self.isEleComp) or (not callFunc) then return end
+	self.comp:ForeachElement( callFunc )
+end
+
 function M:SetChildActive( elName,isActive )
 	if not self.isEleComp then return end
 	self.comp:SetActive(elName,isActive == true)

@@ -380,7 +380,8 @@ public class InputMgr : GobjLifeListener {
 		}
 	}
 
-	public void SendRaycast4ScreenPoint(float x,float y,float distance,LayerMask masks,DF_InpRayHit cfCall,bool isImmediate){
+	public void SendRaycast4ScreenPoint(float x,float y,float distance,int layerMask,DF_InpRayHit cfCall,bool isImmediate){
+		LayerMask masks = layerMask;
 		RayScreenPointInfo rayInfo = ReRayScreenPointInfo(x,y,distance,masks,cfCall);
 		SendRaycast4ScreenPointBy(rayInfo,isImmediate);
 	}

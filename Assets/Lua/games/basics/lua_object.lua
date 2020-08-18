@@ -5,6 +5,7 @@
 	-- Desc : 
 ]]
 
+local _exc_call = executeCallFunc
 local _str_beg = string.starts
 local _str_end = string.ends
 local _str_fmt = string.format
@@ -19,6 +20,10 @@ local type = type
 
 local super = LuaBasic
 local M = class( "lua_object",super )
+
+function M.DoCallFunc(lfunc,lbObject,...)
+	_exc_call( lfunc,lbObject,... )
+end
 
 function M:pre_clean()
 	super.pre_clean( self )

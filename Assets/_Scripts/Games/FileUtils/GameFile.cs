@@ -45,8 +45,17 @@ namespace Core
 			#endif
 		}
 		
+		static private bool IsTextInCT(string fn){
+			return fn.EndsWith(".csv") || fn.EndsWith(".minfo") || fn.IndexOf("protos/") != -1;
+		}
+		
 		// 取得路径
 		static public string GetFilePath(string fn){
+#if UNITY_EDITOR
+			if(IsTextInCT(fn)){
+				return string.Format("{0}CsvTxts/{1}",m_appAssetPath,fn);
+			}
+#endif
 			return string.Concat (m_dirRes, fn);
 		}
 
@@ -72,18 +81,9 @@ namespace Core
 			DeleteFile (fn, false);
 		}
 
-		static private bool IsTextInCT(string fn){
-			return fn.EndsWith(".csv") || fn.IndexOf("protos/") != -1;
-		}
-
 		// 取得文本内容
 		static public string GetText(string fn){
 			string _fp = GetPath (fn);
-#if UNITY_EDITOR
-		if(IsTextInCT(fn)){
-			_fp = string.Format("{0}CsvTxts/{1}",m_appAssetPath,fn);
-		}
-#endif
 			if (File.Exists (_fp)) {
 				return File.ReadAllText (_fp);
 			}

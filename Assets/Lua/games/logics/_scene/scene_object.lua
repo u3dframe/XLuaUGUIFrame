@@ -10,10 +10,17 @@ local LES_Object = LES_Object
 local super = SceneBase
 local M = class( "scene_object",super )
 
-function M:ctor(objType,nCursor,assetCfg,...)
-	super.ctor( self,assetCfg )
+function M:ctor(objType,nCursor,resCfg,...)
+	self.cfgRes = resCfg; 
+	super.ctor( self )
 	self:SetObjType( objType )
 	self:SetCursor( nCursor )
+end
+
+function M:onAssetConfig( _cfg )
+	_cfg = super.onAssetConfig( self,_cfg )
+	_cfg.abName = self.cfgRes.rsaddress
+	return _cfg;
 end
 
 function M:SetObjType(objType)

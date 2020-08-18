@@ -24,7 +24,9 @@ function M.Init()
 	this.mapObjs = {} -- [mapid] = {obj1,obj2}
 
 	this:ReEvent4OnUpdate(true)
-	_evt.AddListener(Evt_MapLoad,this.LoadMap)
+	_evt.AddListener(Evt_Map_Load,this.LoadMap)
+	_evt.AddListener(Evt_Map_AddObj,this.AddMapObj)
+	_evt.AddListener(Evt_Map_GetObj,this.GetMapObj)
 end
 
 function M:ReEvent4Self(isBind)
@@ -43,7 +45,7 @@ function M:OnUpdate(dt)
 		this._ST_LoadScene()
 	elseif this.state == LES_State.Wait_Loading_Scene then
 	elseif this.state == LES_State.Load_Map_Scene then
-		if this.lbScene then
+		if this.lbMap then
 			this._ST_OnUp_LoadMap(dt)
 		else
 			this._ST_CurMap()
@@ -65,6 +67,7 @@ function M.LoadMap(mapid)
 	local _cfgMap = MgrData:GetCfgMap(mapid)
 	if not _cfgMap then return end
 	local _cfgRes = MgrData:GetCfgRes(_cfgMap.resid)
+	if not _cfgRes then return end
 	
 	this.isUping = false
 	this.isUpingLoadMap = false
@@ -73,7 +76,6 @@ function M.LoadMap(mapid)
 	this.preMapid = this.mapid
 	this.mapid = mapid
 	this.cfgMap = _cfgMap
-	this.cfgRes = _cfgRes
 	this.progress = 0
 
 	-- 显示Loading
@@ -99,13 +101,13 @@ end
 
 function M._ST_PreMap()
 	this._Up_Progress()
-	if not this.lbScene then
+	if not this.lbMap then
 		this.state = LES_State.Load_Scene
 		return 
 	end
-	this.lbScene.lfAssetLoaded = nil
-	this.lbScene:OnUnLoad()
-	this.lbScene = nil
+	this.lbMap.lfAssetLoaded = nil
+	this.lbMap:OnUnLoad()
+	this.lbMap = nil
 	this._cd1,this.csAbInfo = nil
 	this.state = LES_State.Load_Scene
 end
@@ -128,16 +130,14 @@ local function _LF_LoadedScene(isNoObj,Obj)
 end
 
 function M._ST_CurMap()
-	if this.lbScene then
+	if this.lbMap then
 		return 
 	end
 	this._Up_Progress()
-	this.lbScene = SceneFactory.Create(LES_Object.MapObj,{
-		abName = this.cfgRes.rsaddress,
-	})
+	this.lbMap = SceneFactory.Create(LES_Object.MapObj,this.cfgMap.resid)
 	this.isUpingLoadMap = true
-	this.lbScene.lfAssetLoaded = _LF_LoadedScene
-	this.lbScene:View(true)
+	this.lbMap.lfAssetLoaded = _LF_LoadedScene
+	this.lbMap:View(true)
 end
 
 function M._ST_OnUp_LoadMap(dt)
@@ -153,7 +153,7 @@ function M._ST_OnUp_LoadMap(dt)
 		this._cd1 = this._cd1 + 0.1
 	end
 	
-	this.csAbInfo = this.csAbInfo or this.lbScene:GetAbInfo()
+	this.csAbInfo = this.csAbInfo or this.lbMap:GetAbInfo()
 	if this.csAbInfo then
 		local _n1 = this.csAbInfo.m_depNeedLoaded
 		local _n2 = this.csAbInfo.m_depNeedCount
@@ -173,13 +173,32 @@ function M._ST_Complete()
 	this._Up_Progress()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
-	_evt.Brocast(Evt_MapLoaded)
+	_evt.Brocast(Evt_Map_Loaded)
 
-	-- local _arrs = MgrRes.GetDependences(this.lbScene:GetAbName())
+	-- local _arrs = MgrRes.GetDependences(this.lbMap:GetAbName())
 	-- cs_foreach_arrs(_arrs,function(v,k) 
 	-- 	printInfo("k == [%s] , v = [%s]",k,v)
 	-- end)
 	printTable("已经结束了")
+end
+
+function M.AddMapObj(objType,resid,lfunc,lbObject)
+	local _ret = SceneFactory.Create(objType or LES_Object.Object,resid)
+	this.DoCallFunc( lfunc,lbObject,_ret )
+	return _ret
+end
+
+function M.GetMapObj(uniqueID,lfunc,lbObject)
+	local _ret = nil
+	if uniqueID == "mapobj" then
+		_ret = this.lbMap
+	elseif uniqueID == "map.gbox" then
+		if this.lbMap then
+			_ret = this.lbMap.lbGBox
+		end
+	end
+	this.DoCallFunc( lfunc,lbObject,_ret )
+	return _ret
 end
 
 return M

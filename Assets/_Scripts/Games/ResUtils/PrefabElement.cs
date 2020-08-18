@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+public delegate void DF_ElementForeach(int index,GameObject gobj);
+
 /// <summary>
 /// 类名 : Prefab 单元对象
 /// 作者 : Canyon / 龚阳辉
@@ -180,6 +182,17 @@ public class PrefabElement : PrefabBasic {
 	{
 		GameObject gobj = GetGobjElement(elName);
 		return !!gobj;
+	}
+	
+	public void ForeachElement(DF_ElementForeach cfCall)
+	{
+		GameObject _gobj = null;
+		for (int i = 0;i < m_gobjs.Length;++i)
+		{
+			_gobj = m_gobjs [i];
+			if(IsNull(_gobj)) continue;
+			if(cfCall != null) cfCall(i,_gobj);
+		}
 	}
 	
 	[ContextMenu("Re-Pars")]

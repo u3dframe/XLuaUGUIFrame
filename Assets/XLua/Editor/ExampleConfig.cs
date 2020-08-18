@@ -155,6 +155,8 @@ public static class ExampleConfig
                 typeof(DF_InpScale),
                 typeof(DF_InpVec2),
                 typeof(DF_InpRayHit),
+
+                typeof(DF_ElementForeach),
             };
 
     //黑名单

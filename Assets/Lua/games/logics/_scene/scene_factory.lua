@@ -33,17 +33,23 @@ function M.GetCursor()
 	return this.cursor
 end
 
-function M.Create(objType,cfgAsset)
+function M.Create(objType,resid)
+	local _cfgRes = MgrData:GetCfgRes(resid)
+	if not _cfgRes then
+		error("=== no res in resource config , resid = [%s]",resid)
+		return
+	end
+
 	if objType == LES_Object.Object then
-		return SceneObject.New(objType,this.AddCursor(),cfgAsset)
+		return SceneObject.New(objType,this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.MapObj then
-		return SceneMap.New(this.AddCursor(),cfgAsset)
+		return SceneMap.New(this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.Creature then
-		return SceneCreature.New(objType,this.AddCursor(),cfgAsset)
+		return SceneCreature.New(objType,this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.Monster then
-		return SceneMonster.New(objType,this.AddCursor(),cfgAsset)
+		return SceneMonster.New(objType,this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.Partner or objType == LES_Object.Hero then
-		return SceneHero.New(objType,this.AddCursor(),cfgAsset)
+		return SceneHero.New(objType,this.AddCursor(),_cfgRes)
 	end
 end
 

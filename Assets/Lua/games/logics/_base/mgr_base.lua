@@ -7,6 +7,7 @@
 
 local super,_mNet = LuaObject,MgrNet
 local M = class( "mgr_base",super )
+local this = M
 
 function M:SendRequest(cmd,data,callback)
 	_mNet.SendRequest( cmd,data,callback )
@@ -18,6 +19,10 @@ end
 
 function M:RemovePCall(cmd,callback)
 	_mNet.RmPushCall( cmd,callback )
+end
+
+function M:ExcCallFunc(lfunc,lbObject,...)
+	this.DoCallFunc( lfunc,lbObject,... )
 end
 
 function M:GetCfgData(cfgKey,idKey)
