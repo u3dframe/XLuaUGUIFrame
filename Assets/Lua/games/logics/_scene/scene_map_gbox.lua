@@ -12,7 +12,7 @@ local M = class( "scene_map_gbox",super )
 
 function M:OnInit()
 	self.comp:ForeachElement(function(index,gobj)
-		self["n_" .. index] = self:NewTrsfBy(gobj)
+		self["n_" .. (index + 1)] = self:NewTrsfBy(gobj)
 	end)	
 end
 
@@ -25,6 +25,13 @@ function M:SetUnitActive(nIndex,isActive)
 	local _unit = self:GetUnit(nIndex)
 	if _unit then
 		_unit:SetActive( isActive == true )
+	end
+end
+
+function M:SetParentInUnit(nIndex,lbScene)
+	local _unit = self:GetUnit(nIndex)
+	if _unit then
+		lbScene:SetParent( _unit.trsf,true )
 	end
 end
 

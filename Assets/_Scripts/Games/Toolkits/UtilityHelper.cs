@@ -362,6 +362,87 @@ public class UtilityHelper {
         int objLayerMask = 1 << gobj.layer;
         return (layerMask.value & objLayerMask) > 0;
     }
+
+	static public void SetLayer(GameObject gobj,int layer){
+		if(IsNull(gobj)) return;
+		gobj.layer = layer;
+	}
+
+	static public void SetLayer(Transform trsf,int layer){
+		if(IsNull(trsf)) return;
+		SetLayer(trsf.gameObject,layer);
+	}
+
+	static public void SetLayer(GameObject gobj,string nmLayer){
+		if(IsNull(gobj)) return;
+		int layer = LayerMask.NameToLayer(nmLayer);
+		gobj.layer = layer;
+	}
+
+	static public void SetLayer(Transform trsf,string nmLayer){
+		if(IsNull(trsf)) return;
+		SetLayer(trsf.gameObject,nmLayer);
+	}
+
+	static public void SetLayerAll(Transform trsf,int layer){
+		if(IsNull(trsf)) return;
+		SetLayer(trsf,layer);
+
+		int lens = trsf.childCount;
+		for (int i = 0; i < lens; i++)
+		{
+			SetLayerAll(trsf.GetChild(i),layer);
+		}
+	}
+
+	static public void SetLayerAll(GameObject gobj,int layer){
+		if(IsNull(gobj)) return;
+		SetLayer(gobj.transform,layer);
+	}
+
+	static public void SetLayerAll(Transform trsf,string nmLayer){
+		if(IsNull(trsf)) return;
+		int layer = LayerMask.NameToLayer(nmLayer);
+		SetLayerAll(trsf,layer);
+	}
+
+	static public void SetLayerAll(GameObject gobj,string nmLayer){
+		if(IsNull(gobj)) return;
+		int layer = LayerMask.NameToLayer(nmLayer);
+		SetLayerAll(gobj,layer);
+	}
+
+	static public void SetLayerBy(GameObject gobj,string nmLayer,bool isAll){
+		if(isAll){
+			SetLayerAll(gobj,nmLayer);
+		}else{
+			SetLayer(gobj,nmLayer);
+		}
+	}
+
+	static public void SetLayerBy(Transform trsf,string nmLayer,bool isAll){
+		if(isAll){
+			SetLayerAll(trsf,nmLayer);
+		}else{
+			SetLayer(trsf,nmLayer);
+		}
+	}
+
+	static public void SetLayerBy(GameObject gobj,int layer,bool isAll){
+		if(isAll){
+			SetLayerAll(gobj,layer);
+		}else{
+			SetLayer(gobj,layer);
+		}
+	}
+
+	static public void SetLayerBy(Transform trsf,int layer,bool isAll){
+		if(isAll){
+			SetLayerAll(trsf,layer);
+		}else{
+			SetLayer(trsf,layer);
+		}
+	}
 	
 	/// <summary>
 	/// 网络可用

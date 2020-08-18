@@ -10,10 +10,10 @@ local LES_Object = LES_Object
 local super = SceneBase
 local M = class( "scene_object",super )
 
-function M:ctor(objType,nCursor,resCfg,...)
+function M:ctor(sobjType,nCursor,resCfg,...)
 	self.cfgRes = resCfg; 
 	super.ctor( self )
-	self:SetObjType( objType )
+	self:SetSObjType( sobjType )
 	self:SetCursor( nCursor )
 end
 
@@ -23,13 +23,19 @@ function M:onAssetConfig( _cfg )
 	return _cfg;
 end
 
-function M:SetObjType(objType)
-	self.objType = objType or LES_Object.Object
+function M:OnViewBeforeOnInit()
+	local _ot = self:GetSObjType()
+	self:SetLayer(LES_Layer[_ot],true)
+end
+
+
+function M:SetSObjType(sobjType)
+	self.sobjType = sobjType or LES_Object.Object
 	return self
 end
 
-function M:GetObjType()
-	return self.objType
+function M:GetSObjType()
+	return self.sobjType
 end
 
 function M:SetCursor(nCursor)

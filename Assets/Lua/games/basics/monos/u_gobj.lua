@@ -47,6 +47,8 @@ function M:ctor( obj )
 	self.gobj = obj.gameObject or obj.gobj
 	self.g_name = self.gobj.name
 	self.isActive = self.gobj.activeSelf
+
+	self:_ExecuteAsync_Gobj()
 end
 
 function M:IsInitGobj()
@@ -67,9 +69,24 @@ end
 
 function M:SetActive( isActive )
 	isActive = isActive == true
-	if self.isActive == nil or isActive ~= self.isActive then
-		self.isActive = isActive
-		self.gobj:SetActive( self.isActive )
+	self._async_active = nil
+	if self:IsInitGobj() then
+		if self.isActive == nil or isActive ~= self.isActive then
+			self.isActive = isActive
+			self.gobj:SetActive( self.isActive )
+		end
+	else
+		self._async_active = isActive
+	end
+end
+
+function M:SetLayer( layer,isAll )
+	isAll = isAll == true
+	self._async_layer,self._async_layer_all = nil
+	if self:IsInitGobj() then
+		CHelper.SetLayerBy( self.gobj,layer,isAll )
+	else
+		self._async_layer,self._async_layer_all = layer,isAll
 	end
 end
 
@@ -95,6 +112,16 @@ end
 
 function M:DonotDestory( )
 	this.CsDontDestroyOnLoad(self.gobj)
+end
+
+function M:_ExecuteAsync_Gobj()
+	if self._async_layer ~= nil then
+		self:SetLayer( self._async_layer,self._async_layer_all )
+	end
+
+	if self._async_active ~= nil then
+		self:SetActive( self._async_active )
+	end
 end
 
 return M

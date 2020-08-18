@@ -8,6 +8,12 @@ local function _add(rVal)
 	return _k_increase
 end
 
+L_SObj = LayerMask.NameToLayer("SceneObj")
+L_SGround = LayerMask.NameToLayer("Ground")
+L_SMonster = LayerMask.NameToLayer("Monster")
+L_SPartner = LayerMask.NameToLayer("Partner")
+L_SHero = LayerMask.NameToLayer("Hero")
+
 -- 场景 - 对象类型
 LES_Object = {
 	Object         = _add(0),
@@ -16,6 +22,15 @@ LES_Object = {
 	Monster        = _add(), -- 怪兽
 	Partner        = _add(), -- 伙伴
 	Hero           = _add(), -- 英雄
+}
+
+LES_Layer = {
+	[0]         =    L_SObj,
+	[1]         =    L_SObj,
+	[2]         =    L_SMonster,
+	[3]         =    L_SMonster,
+	[4]         =    L_SPartner,
+	[5]         =    L_SHero,
 }
 
 -- 场景 - 状态
@@ -31,3 +46,4 @@ LES_State = {
 	Complete             = _add(),
 	FinshedEnd           = _add(),
 }
+
