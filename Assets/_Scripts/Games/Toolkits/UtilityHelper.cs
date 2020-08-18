@@ -85,6 +85,16 @@ public class UtilityHelper {
 		return obj is Camera;
 	}
 
+	static public bool IsTransform(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is Transform;
+	}
+
+	static public bool IsGameObject(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is GameObject;
+	}
+
 	static public T Get<T>(GameObject go) where T : Component {
 		if(IsNull(go)) return null;
 		return go.GetComponent<T>();

@@ -182,10 +182,10 @@ function M._ST_Complete()
 	printTable("已经结束了")
 end
 
-function M.AddMapObj(objType,resid,lfunc,lbObject)
+function M.AddMapObj(objType,resid,lfunc,lbObject,...)
 	local _ret = SceneFactory.Create(objType or LES_Object.Object,resid)
-	this.DoCallFunc( lfunc,lbObject,_ret )
-	return _ret
+	this.DoCallFunc( lfunc,lbObject,_ret,... )
+	return _ret,...
 end
 
 function M.GetMapObj(uniqueID,lfunc,lbObject)

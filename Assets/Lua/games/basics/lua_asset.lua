@@ -151,23 +151,13 @@ function M:GetAbInfo()
 end
 
 function M:_OnUnLoad()
-	local _isBl,_abName,_assetName,_ltp = self:_CfgAssetInfo();
-	if _isBl then
-		self.stateLoad = _E_SLoad.UnLoad;
-		local _isPool = self:IsInitGobj() and (_ltp == _E_AType.Fab)
-		if _isPool then
-			m_res().ReturnObj(_abName,_assetName,self.gobj)
-		else
-			m_res().UnLoad(_abName,_assetName,_ltp);
-		end
-	else
-		printError("=== _OnUnLoad asset = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
-	end
+	self:OnUnLoad();
 end
 
 function M:OnUnLoad()
 	local _isBl,_abName,_assetName,_ltp = self:_CfgAssetInfo();
 	if _isBl then
+		self.stateLoad = _E_SLoad.UnLoad;
 		m_res().UnLoad(_abName,_assetName,_ltp);
 	else
 		printError("=== OnUnLoad asset = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
