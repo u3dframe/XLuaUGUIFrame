@@ -82,7 +82,7 @@ end
 function M.LoadAsset(abName,assetName,assetLType,callLoad,parent)
 	local _func = this.lbLoads[assetLType];
 	if (assetLType == LE_AsType.UI) or (assetLType == LE_AsType.Fab) then
-		if CHelper.IsTransform(parent) then
+		if parent and CHelper.IsTransform(parent) then
 			_func = this._LoadFab
 		end
 	end
