@@ -12,7 +12,9 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class LightMapEx : MonoBehaviour
 {
-	static readonly LightmapData[] ltEmpty = new LightmapData[0];
+	static readonly LightmapData[] ULMD_Empty = new LightmapData[0];
+	static readonly SceneLightMapData[] SLMD_Empty = new SceneLightMapData[0];
+
 	static public LightMapEx Get(GameObject gobj,bool isAdd){
 		return UtilityHelper.Get<LightMapEx>(gobj,isAdd);
 	}
@@ -22,49 +24,25 @@ public class LightMapEx : MonoBehaviour
 	}
 	
 	// 光照图列表
-	public Texture2D[] lightmapFar,lightmapNear,lightMask;
+	public SceneLightMapData[] m_slmData;
 	public LightmapsMode mode; //  = LightmapsMode.NonDirectional;
 
-	
-	System.Type _tpExPsr = typeof(ParticleSystemRenderer);
-
-	[SerializeField]
-	int m_nRender = 0;
+	[SerializeField] int m_nRLMD = 0;
 
 	public string m_nameMInfo = "map_";
 
-	int NMax(params int[] vals){
-		if(vals == null || vals.Length <= 0) return 0;
-		int max = vals[0];
-		for (int i = 1; i < vals.Length; i++)
-		{
-			if(max < vals[i]){
-				max = vals[i];
-			}
-		}
-		return max;
-	}
-	
 	// 光照图数据
 	LightmapData[] _datas = null;
 	public LightmapData[] lightmapDatas {
 		get {
-			int l1 = (lightmapFar == null) ? 0 : lightmapFar.Length;
-			int l2 = (lightmapNear == null) ? 0 : lightmapNear.Length;
-			int l3 = (lightMask == null) ? 0 : lightMask.Length;
-			int lens = NMax(l1,l2,l3);
+			int lens = (m_slmData == null) ? 0 : m_slmData.Length;
 			if (lens <= 0) {
-				return null;
+				return ULMD_Empty;
 			}
 			if (_datas == null) {
 				_datas = new LightmapData[lens];
-				LightmapData _ld;
 				for (int i = 0; i < lens; i++) {
-					_ld = new LightmapData ();
-					if(i < l1) _ld.lightmapColor = lightmapFar [i];
-					if(i < l2) _ld.lightmapDir = lightmapNear [i];
-					if(i < l3) _ld.shadowMask = lightMask [i];
-					_datas [i] = _ld;
+					_datas [i] = m_slmData[i].ToLightmapData();
 				}
 			}
 			return _datas;
@@ -73,64 +51,70 @@ public class LightMapEx : MonoBehaviour
 	
 	void Awake () {
         if(Application.isPlaying){
-            LoadSettings();
+            _LoadLightmap();
         }
     }
 
-	void OnDisable ()
-	{
-#if UNITY_EDITOR
-        UnityEditor.Lightmapping.bakeCompleted -= SaveSettings; // completed
-#else
-		ClearLightmapping ();
-#endif
-	}
+	void Start () {
+        if(Application.isPlaying){
+            _LoadRenders();
+        }
+    }
 
 	void OnDestroy(){
+		ClearLightmapping ();
 		_datas = null;
 	}
 
+	public int GetLen4RenderLMD(){
+		var _lightmaps = LightmapSettings.lightmaps;
+        if (_lightmaps != null) return _lightmaps.Length;
+		return -1;
+	}
+
 #if UNITY_EDITOR
-	void OnEnable()
-    {
-        UnityEditor.Lightmapping.bakeCompleted += SaveSettings;
-    }
+	// void OnDisable ()
+	// {
+    //     UnityEditor.Lightmapping.bakeCompleted -= SaveSettings; // completed
+	// }
 	
-	[ContextMenu("Save LMapSettings")]
+	// void OnEnable()
+    // {
+    //     UnityEditor.Lightmapping.bakeCompleted += SaveSettings;
+    // }
+
+	[ContextMenu("Save Settings")]
 	void SaveSettings()
     {
-        _SaveLightmap();
-		_SaveRenders();
+		_SaveLightmap();
+		_SaveMeshRenders();
 	}
 
 	[ContextMenu("Save Lightmap")]
     void _SaveLightmap()
     {
         mode = LightmapSettings.lightmapsMode;
-        lightmapFar = null;
-        lightmapNear = null;
+        m_slmData = SLMD_Empty;
 		var _lightmaps = LightmapSettings.lightmaps;
         if (_lightmaps != null && _lightmaps.Length > 0)
         {
-            int lens = _lightmaps.Length;
-            lightmapFar = new Texture2D[lens];
-            lightmapNear = new Texture2D[lens];
-			lightMask = new Texture2D[lens];
-            for (int i = 0; i < lens; i++)
+            int _nlen = _lightmaps.Length;
+            m_slmData = new SceneLightMapData[_nlen];
+            for (int i = 0; i < _nlen; i++)
             {
-                lightmapFar[i] = _lightmaps[i].lightmapColor;
-                lightmapNear[i] = _lightmaps[i].lightmapDir;
-				lightMask[i] = _lightmaps[i].shadowMask;
+                m_slmData[i] =  new SceneLightMapData(_lightmaps[i]);
             }
-        }		
+        }
 	}
 
-	[ContextMenu("Save LightmapInfo")]
-	void _SaveRenders(){
+	[ContextMenu("Save Mesh Renders Info")]
+	void _SaveMeshRenders(){
+		m_nRLMD = GetLen4RenderLMD();
+
 		if(string.IsNullOrEmpty(this.m_nameMInfo))
 			this.m_nameMInfo = this.name;
 		
-		m_nRender = 0;
+		int m_nRender = 0;
 		var _arrs = GetComponentsInChildren<Renderer>(true);
 		int nLen = _arrs.Length;
 		Renderer _render;
@@ -138,27 +122,28 @@ public class LightMapEx : MonoBehaviour
 		List<LightMapRender> _infos = new List<LightMapRender>();
 		for (int i = 0; i < nLen; i++) {
 			_render = _arrs[i];
-			if("gbox".Equals(_render.name) || "gbox".Equals(_render.transform.parent.name))
-				continue;
 			
-			if(_tpExPsr == _render.GetType())
-				continue;
-
-			m_nRender++;
-
-			_lmr = _RenderInfo(_infos,_render);
+			if(!LightMapRender.IsLightMapStatic(_render,m_nRLMD)) continue;
+			
+			_lmr = _GetLMRInfo(_infos,_render);
 			if(_lmr != null){
 				Debug.LogErrorFormat("========= has same name = [{0}]",_lmr.m_key);
 				continue;
 			}
-			_lmr = LightMapRender.Builder(_render);
+
+			_lmr = LightMapRender.Builder(_render,m_nRLMD);
+			if(_lmr == null) continue;
+
 			_infos.Add(_lmr);
+			m_nRender++;
 		}
 		LightMapRender.SaveInfos(this.m_nameMInfo,_infos);
+		UnityEditor.AssetDatabase.Refresh();
+		Debug.Log(m_nRender);
    	}
 #endif
 
-	[ContextMenu("Load LMapSettings")]
+	[ContextMenu("Load Settings")]
 	public void LoadSettings ()
 	{
 		_LoadLightmap();
@@ -168,26 +153,15 @@ public class LightMapEx : MonoBehaviour
 	void _LoadLightmap ()
 	{
 		LightmapSettings.lightmapsMode = mode;
-		LightmapData[] data = lightmapDatas;
-		if (data != null) {
-			LightmapSettings.lightmaps = data;
-		} else {
-			ClearLightmapping ();
-		}
+		LightmapSettings.lightmaps = lightmapDatas;
 	}
 
-	public void ClearLightmapping ()
+	public void ClearLightmapping()
 	{
-		LightmapSettings.lightmaps = ltEmpty;
+		LightmapSettings.lightmaps = ULMD_Empty;
 	}
 
-	void _BackToRender(List<LightMapRender> infos,Renderer render){
-		LightMapRender _it = _RenderInfo(infos,render);
-		if(_it == null) return;
-		_it.BackToRender(render);
-	}
-
-	LightMapRender _RenderInfo(List<LightMapRender> infos,Renderer render){
+	LightMapRender _GetLMRInfo(List<LightMapRender> infos,Renderer render){
 		if(render == null) return null;
 		int lens = infos.Count;
 		string _key = string.Format("[{0}]_[{1}]",render.name,render.GetType());
@@ -202,21 +176,25 @@ public class LightMapEx : MonoBehaviour
 		return null;
 	}
 
+	void _BackToRender(List<LightMapRender> infos,Renderer render){
+		LightMapRender _it = _GetLMRInfo(infos,render);
+		if(_it == null) return;
+		_it.BackToRender(render);
+	}
+
 	void _LoadRenders(){
 		List<LightMapRender> _infos = LightMapRender.GetInfos(this.m_nameMInfo);
 		if(_infos == null) return;
+
+		m_nRLMD = GetLen4RenderLMD();
 
 		var _arrs = GetComponentsInChildren<Renderer>(true);
 		int nLen = _arrs.Length;
 		Renderer _render;
 		for (int i = 0; i < nLen; i++) {
 			_render = _arrs[i];
-			if("gbox".Equals(_render.name) || "gbox".Equals(_render.transform.parent.name))
-				continue;
-			
-			if(_tpExPsr == _render.GetType())
-				continue;
-			
+			if(LightMapRender.IsEmptyRMap(_render,m_nRLMD)) continue;
+			if("gbox".Equals(_render.name) || "gbox".Equals(_render.transform.parent.name))	continue;
 			_BackToRender(_infos,_render);
 		}
    	}

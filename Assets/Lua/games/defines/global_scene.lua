@@ -17,7 +17,7 @@ L_SHero = LayerMask.NameToLayer("Hero")
 -- 场景 - 对象类型
 LES_Object = {
 	Object         = _add(0),
-	MapObj         = _add(), -- 地图对象
+	MapObj         = _add(), -- 地图
 	Creature       = _add(), -- 生物
 	Monster        = _add(), -- 怪兽
 	Partner        = _add(), -- 伙伴

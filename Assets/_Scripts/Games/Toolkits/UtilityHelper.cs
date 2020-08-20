@@ -473,4 +473,46 @@ public class UtilityHelper {
 	static public void LogError(string str) {
 		Debug.LogError(str);
 	}
+
+	static public int NMaxMore(params int[] vals){
+		if(vals == null || vals.Length <= 0) return 0;
+		int max = vals[0];
+		for (int i = 1; i < vals.Length; i++)
+		{
+			if(max < vals[i]){
+				max = vals[i];
+			}
+		}
+		return max;
+	}
+	static public int NMax(int v1,int v2,int v3){
+		return NMaxMore(v1,v2,v3);
+	}
+
+	static public int NMax(int v1,int v2,int v3,int v4){
+		return NMaxMore(v1,v2,v3,v4);
+	}
+
+	static public double ToDecimal(double org,int acc,bool isRound)
+    {
+        double pow = 1;
+        for (int i = 0; i < acc; i++) {
+            pow *= 10;
+        }
+
+		double temp = org * pow;
+		if(isRound){
+			temp += 0.5;
+		}
+
+        return ((int)temp) / pow;
+    }
+
+	static public float Round(double org, int acc) {
+        return (float) ToDecimal(org,acc,true);
+    }
+
+	static public float Round(float org, int acc) {
+        return (float) ToDecimal(org,acc,true);
+    }
 }
