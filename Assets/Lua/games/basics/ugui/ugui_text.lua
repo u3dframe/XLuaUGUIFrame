@@ -4,7 +4,7 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local super = LuBase
+local super,LUtils = LuBase,LUtils
 local M = class( "ugui_text", super )
 
 function M:ctor( obj,com )
@@ -15,6 +15,9 @@ function M:ctor( obj,com )
 		com = CTxt.Get(gobj)
 	end
 	super.ctor( self,gobj,com or "UGUILocalize" )
+	local _c = self.comp:GetColor()
+	self.defColor = _c
+	self.curColor = LUtils.RColor( nil,_c.r,_c.g,_c.b,_c.a )
 end
 
 function M:GetTextVal()
@@ -48,6 +51,15 @@ function M:SetUText( val )
 		return
 	end
 	self.comp:SetUText(val)
+end
+
+function M:SetColor( r,g,b,a )
+	local _c = LUtils.RColor( self.curColor,r,g,b,a )
+	self.comp:SetColor(_c)
+end
+
+function M:RebackColor( )
+	self:SetColor( self.defColor )
 end
 
 return M

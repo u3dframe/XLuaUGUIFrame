@@ -97,6 +97,7 @@ public static class ExampleConfig
                 typeof(WWWMgr),
                 typeof(GameLanguage),
 
+                typeof(GHelper),
                 typeof(UtilityHelper),
                 typeof(LuaHelper),
                 typeof(UGUICanvasAdaptive),

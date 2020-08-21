@@ -200,4 +200,13 @@ public class UGUILocalize : GobjLifeListener {
 	public void Format(int key,object obj1,object obj2,object obj3,object obj4,object obj5,object obj6){
 		FormatMore(key,obj1,obj2,obj3,obj4,obj5,obj6);
 	}
+
+	public Color GetColor(){
+		if(m_text) return m_text.color;
+		return Color.white;
+	}
+
+	public void SetColor(Color color){
+		if(m_text != null) m_text.color = color;
+	}
 }
