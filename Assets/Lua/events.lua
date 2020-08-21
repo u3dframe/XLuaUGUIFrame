@@ -37,6 +37,11 @@ function Event.AddListener(event,func,obj)
 end
 
 function Event.Brocast(event,...)
+	if not event then
+		error("Event.Brocast event is nil .")
+		return
+	end
+	
 	event = _tostr(event)
 	if events[event] then
 		events[event]:fire(...)

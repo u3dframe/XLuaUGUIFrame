@@ -7,8 +7,10 @@
 
 local LES_Object = LES_Object
 
-local super = SceneBase
+local super,_evt = SceneBase,Event
 local M = class( "scene_object",super )
+
+M.AddNoClearKeys( "sobjType","resid","cfgRes" )
 
 function M:ctor(sobjType,nCursor,resCfg,...)
 	self.cfgRes = resCfg; 
@@ -45,6 +47,18 @@ end
 
 function M:GetCursor()
 	return self.nCursor
+end
+
+function M:GetResid()
+	return self.resid
+end
+
+function M:Reback()
+	_evt.Brocast( Evt_Map_Reback_Obj,self )
+end
+
+function M:OnCF_OnDestroy()
+	self:Reback()
 end
 
 return M

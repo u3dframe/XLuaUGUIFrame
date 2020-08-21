@@ -14,6 +14,8 @@ end
 local super,super2,_evt = LuaFab,UIPubs,Event
 local M = class( "ui_base",super,super2 )
 
+M.AddNoClearKeys( "strABAsset" )
+
 function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
 	super2.ctor( self )
@@ -118,7 +120,5 @@ function M:OnExit(isInited)
 		end
 	end
 end
-
-M.AddNoClearKeys("strABAsset")
 
 return M

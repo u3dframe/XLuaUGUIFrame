@@ -5,10 +5,13 @@
 	-- Desc : 
 ]]
 local super = LUComonet
-local M = class( "lua_PrefabBasic",super )
+local M = class( "lua_GobjLifeListener",super )
 
 function M:ctor( obj,component )
-	super.ctor(self,obj,component or "PrefabBasic")
+	if true == component then
+		component = CGobjLife.Get(obj)
+	end
+	super.ctor(self,obj,component or "GobjLifeListener")
 end
 
 return M

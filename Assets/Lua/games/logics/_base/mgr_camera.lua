@@ -1,8 +1,8 @@
 --[[
-	-- 主摄像头
+	-- 摄像机 管理
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-07-13 09:25
-	-- Desc : 
+	-- Desc : ui的,默认的,场景的
 ]]
 
 local super,_evt,_base = MgrBase,Event,SceneBase
@@ -10,8 +10,8 @@ local M = class( "mgr_camera",super )
 
 function M:Init()
 	self:_InitFab()
-	_evt.AddListener(Evt_View_MainCamera,self.ViewMainCamera,self);
-	_evt.AddListener(Evt_Vw_MainCamera,self.VwMainCamera,self);
+	_evt.AddListener(Evt_Vw_Def3DCamera,self.ViewMainCamera,self);
+	_evt.AddListener(Evt_Brocast_UICamera,self.SetLBUICamera,self);
 end
 
 function M:_InitFab()
@@ -29,22 +29,30 @@ function M:_InitFab()
 	end
 end
 
-function M:ViewMainCamera(isShow)
+function M:SetLBUICamera(lbUICamera)
+	self.lbUICamera = lbUICamera
+end
+
+function M:ViewMainCamera(isShow,lb3DCamera)
 	self.lbCamera:View(isShow == true)
+	self.otherCamera = lb3DCamera
 end
 
-function M:VwMainCamera(isShow,mainCamera)
-	self:ViewMainCamera( isShow )
-	self.otherCamera = mainCamera
-end
-
-function M:GetLuaCamera()
+function M:GetLBCamera()
 	return self.lbCamera
 end
 
-function M:GetMainCamera()
+function M:GetCur3DLBCamera()
 	if self.otherCamera then return self.otherCamera end
 	return self.lbCamera.mainCamera
+end
+
+function M:GetMainCamera()
+	return self:GetCur3DLBCamera() -- .comp
+end
+
+function M:UIEvtPos2Cur3DPos(v2UIEvtPos)
+	return self:GetCur3DLBCamera():ToWorldPointByUIEventPos(self.lbUICamera,v2UIEvtPos);
 end
 
 return M

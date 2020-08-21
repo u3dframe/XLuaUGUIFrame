@@ -243,18 +243,19 @@ function M:GetRectSize( )
 end
 
 function M:SetParent( parent,isLocal )
-	local isWorld = not (isLocal == true)
-	self._async_parent,self._async_isWorld = nil
+	isLocal = (isLocal == true)
+	self._async_parent,self._async_isLocal = nil
 	if self:IsInitTrsf() then
-		self.trsf:SetParent(parent,isWorld);
+		-- self.trsf:SetParent( parent,isWorld )
+		CHelper.SetParent( self.trsf,parent,isLocal )
 	else
-		self._async_parent,self._async_isWorld = parent,isWorld
+		self._async_parent,self._async_isLocal = parent,isLocal
 	end
 end
 
 function M:_ExecuteAsync_Trsf()
-	if self._async_isWorld ~= nil then
-		self:SetParent( self._async_parent,self._async_isWorld )
+	if self._async_isLocal ~= nil then
+		self:SetParent( self._async_parent,self._async_isLocal )
 	end
 
 	if self._async_px ~= nil or self._async_py ~= nil or self._async_pz ~= nil then

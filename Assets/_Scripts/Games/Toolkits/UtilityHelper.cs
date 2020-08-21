@@ -296,6 +296,12 @@ public class UtilityHelper {
 	static public void SetParent(Transform trsf,Transform trsfParent,bool isLocalZero) {
 		if(IsNull(trsf)) return;
 		trsf.SetParent (trsfParent,!isLocalZero);
+		
+		if(isLocalZero){
+			trsf.localPosition = Vector3.zero;
+			trsf.localEulerAngles = Vector3.zero;
+			trsf.localScale = Vector3.one;
+		}
 	}
 
 	static public void SetParent(Transform trsf,Transform trsfParent) {
@@ -397,7 +403,7 @@ public class UtilityHelper {
 
 	static public void SetLayerAll(GameObject gobj,int layer){
 		if(IsNull(gobj)) return;
-		SetLayer(gobj.transform,layer);
+		SetLayerAll(gobj.transform,layer);
 	}
 
 	static public void SetLayerAll(Transform trsf,string nmLayer){

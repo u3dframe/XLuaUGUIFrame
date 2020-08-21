@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local super,CLocliz,tostring = LuBase,CLocliz,tostring
+local super,LUtils,tostring = LuBase,LUtils,tostring
 local M = class( "ugui_inputfield", super )
 
 function M:ctor( obj,callFunc,val )
@@ -26,7 +26,7 @@ end
 
 function M:SetText4Main(val,isLoc)
 	if self.comp then
-		val = (isLoc == true) and CLocliz.Get(val) or tostring(val)
+		val = (isLoc == true) and LUtils.GetOrFmtLoczStr(val) or tostring(val)
 		self.comp.text = val
 	end
 	return self
@@ -34,9 +34,8 @@ end
 
 function M:SetOrFmt4Main( val, ... )
 	if self.comp then
-		local _lens = self:Lens4Pars( ... )
-		_val = (_lens > 0) and CLocliz.Format( val,... ) or CLocliz.Get(val)
-		self.comp.text = _val
+		val = LUtils.GetOrFmtLoczStr( val, ... )
+		self.comp.text = val
 	end
 	return self
 end

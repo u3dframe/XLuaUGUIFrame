@@ -12,7 +12,7 @@ local M = class( "scene_creature",super )
 
 function M:ctor(objType,nCursor,...)
 	objType = objType or LES_Object.Creature
-	super.ctor( objType,nCursor,... )
+	super.ctor( self,objType,nCursor,... )
 end
 
 return M

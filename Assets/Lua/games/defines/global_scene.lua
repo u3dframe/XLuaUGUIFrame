@@ -13,6 +13,7 @@ L_SGround = LayerMask.NameToLayer("Ground")
 L_SMonster = LayerMask.NameToLayer("Monster")
 L_SPartner = LayerMask.NameToLayer("Partner")
 L_SHero = LayerMask.NameToLayer("Hero")
+L_UI = LayerMask.NameToLayer("UI")
 
 -- 场景 - 对象类型
 LES_Object = {
@@ -22,15 +23,17 @@ LES_Object = {
 	Monster        = _add(), -- 怪兽
 	Partner        = _add(), -- 伙伴
 	Hero           = _add(), -- 英雄
+	UIModel        = _add(), -- UI模型
 }
 
 LES_Layer = {
-	[0]         =    L_SObj,
-	[1]         =    L_SObj,
-	[2]         =    L_SMonster,
-	[3]         =    L_SMonster,
-	[4]         =    L_SPartner,
-	[5]         =    L_SHero,
+	[LES_Object.Object]         =    L_SObj,
+	[LES_Object.MapObj]         =    L_SObj,
+	[LES_Object.Creature]       =    L_SMonster,
+	[LES_Object.Monster]        =    L_SMonster,
+	[LES_Object.Partner]        =    L_SPartner,
+	[LES_Object.Hero]           =    L_SHero,
+	[LES_Object.UIModel]        =    L_UI,
 }
 
 -- 场景 - 状态

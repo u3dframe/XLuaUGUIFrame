@@ -2,8 +2,10 @@
 	-- 管理 - 场景
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-07-13 09:25
-	-- Desc : 
+	-- Desc : defenses,offenses
 ]]
+
+local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 
 local mmax = math.max
 local MgrData,MgrRes,SceneFactory = MgrData,MgrRes,SceneFactory
@@ -19,14 +21,13 @@ function M.Init()
 	this.progress = 0
 	this.eveRegion = this:TF((1 / (LES_State.Complete - LES_State.Wait_Vw_Loading)),4)
 
-	this.defenses = {}
-	this.offenses = {} -- 
-	this.mapObjs = {} -- [mapid] = {obj1,obj2}
+	this.pools = {}
 
 	this:ReEvent4OnUpdate(true)
 	_evt.AddListener(Evt_Map_Load,this.LoadMap)
-	_evt.AddListener(Evt_Map_AddObj,this.AddMapObj)
-	_evt.AddListener(Evt_Map_GetObj,this.GetMapObj)
+	_evt.AddListener(Evt_Map_AddObj,this.AddMap_SObj)
+	_evt.AddListener(Evt_Map_GetObj,this.GetMap_SObj)
+	_evt.AddListener(Evt_Map_Reback_Obj,this.RebackCurrMapObj)
 end
 
 function M:ReEvent4Self(isBind)
@@ -62,20 +63,13 @@ function M.GetState()
 end
 
 function M.LoadMap(mapid)
-	if not mapid then return end
 	if mapid == this.mapid then return end
-	local _cfgMap = MgrData:GetCfgMap(mapid)
-	if not _cfgMap then return end
-	local _cfgRes = MgrData:GetCfgRes(_cfgMap.resid)
-	if not _cfgRes then return end
-	
 	this.isUping = false
 	this.isUpingLoadMap = false
 	this:ReEvent4Self(false)
 
 	this.preMapid = this.mapid
 	this.mapid = mapid
-	this.cfgMap = _cfgMap
 	this.progress = 0
 
 	-- 显示Loading
@@ -130,13 +124,20 @@ local function _LF_LoadedScene(isNoObj,Obj)
 end
 
 function M._ST_CurMap()
+	if not this.mapid then
+		this.state = LES_State.Complete
+		return
+	end
+
 	if this.lbMap then
 		return 
 	end
 	this._Up_Progress()
-	this.lbMap = SceneFactory.Create(LES_Object.MapObj,this.cfgMap.resid)
-	this.isUpingLoadMap = true
+
+	local _cfgMap = MgrData:GetCfgMap(this.mapid)
+	this.lbMap = this.GetOrNew_SObj(LES_Object.MapObj,_cfgMap.resid)
 	this.lbMap.lfAssetLoaded = _LF_LoadedScene
+	this.isUpingLoadMap = true
 	this.lbMap:View(true)
 end
 
@@ -173,22 +174,80 @@ function M._ST_Complete()
 	this._Up_Progress()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
-	_evt.Brocast(Evt_Map_Loaded)
+	if this.mapid then
+		_evt.Brocast(Evt_Map_Loaded)
+	else
+		_evt.Brocast(Evt_ToView_Main)
+	end
 
 	-- local _arrs = MgrRes.GetDependences(this.lbMap:GetAbName())
 	-- cs_foreach_arrs(_arrs,function(v,k) 
 	-- 	printInfo("k == [%s] , v = [%s]",k,v)
 	-- end)
-	printTable("已经结束了")
 end
 
-function M.AddMapObj(objType,resid,lfunc,lbObject,...)
-	local _ret = SceneFactory.Create(objType or LES_Object.Object,resid)
+function M.AddCurrMapObj(lbSObj)
+	local _cursor = lbSObj:GetCursor()
+	local _lb = this[this.mapid] or {}
+	this[this.mapid] = _lb
+	
+	_lb[_cursor] = lbSObj
+	return _cursor
+end
+
+function M.GetCurrMapObj(cursor)
+	local _lb = this[this.mapid]
+	if not _lb then return end
+	return _lb[cursor]
+end
+
+function M.RebackCurrMapObj(lbSObj)
+	if not lbSObj then return end
+	this.RebackCurrMapObjBy( lbSObj:GetCursor() )
+end
+
+function M.RebackCurrMapObjBy(cursor)
+	local _lb = this[this.mapid]
+	if not _lb then return end
+	local _v = _lb[cursor]
+	_lb[cursor] = nil
+	if not _v then return end
+	this.ReBackToPool( _v )
+end
+
+function M._GetPool(objType,resid)
+	objType = objType or LES_Object.Object
+	local _k = this:SFmt( "%s_%s",objType,resid )
+	local _vpool = this.pools[_k] or {}
+	this.pools[_k] = _vpool
+	return _vpool
+end
+
+function M.ReBackToPool(lbSObj)
+	local _vpool = this._GetPool( lbSObj:GetSObjType(),lbSObj:GetResid() )
+	tb_insert(_vpool,lbSObj)
+	lbSObj:View(false)
+end
+
+function M.GetOrNew_SObj(objType,resid)
+	objType = objType or LES_Object.Object
+	local _vpool = this._GetPool( objType,resid )
+	local _v = tb_remove(_vpool,1)
+	if not _v then
+		return SceneFactory.Create(objType,resid)
+	end
+	_v:SetCursor(SceneFactory.AddCursor())
+	return _v
+end
+
+function M.AddMap_SObj(objType,resid,lfunc,lbObject,...)
+	local _ret = this.GetOrNew_SObj( objType,resid )
+	this.AddCurrMapObj(_ret)
 	this.DoCallFunc( lfunc,lbObject,_ret,... )
 	return _ret,...
 end
 
-function M.GetMapObj(uniqueID,lfunc,lbObject)
+function M.GetMap_SObj(uniqueID,lfunc,lbObject)
 	local _ret = nil
 	if uniqueID == "mapobj" then
 		_ret = this.lbMap
@@ -196,6 +255,8 @@ function M.GetMapObj(uniqueID,lfunc,lbObject)
 		if this.lbMap then
 			_ret = this.lbMap.lbGBox
 		end
+	else
+		_ret = this.GetCurrMapObj( uniqueID )
 	end
 	this.DoCallFunc( lfunc,lbObject,_ret )
 	return _ret

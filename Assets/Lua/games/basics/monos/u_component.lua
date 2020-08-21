@@ -25,8 +25,12 @@ function M:ctor( obj,component )
 	self:InitComp(component)
 end
 
-function M:IsInitComp( )
+function M:IsInitComp()
 	return self.comp ~= nil;
+end
+
+function M:IsInitGLife()
+	return self.compGLife ~= nil;
 end
 
 function M:InitComp( component )
@@ -41,11 +45,14 @@ function M:InitComp( component )
 		end
 		self.comp = com
 		self.strComp = tostring(component)
-		if com then
-			self:ReEvtDestroy(true)
+
+		local _islife = self:IsGLife()
+		if _islife then
+			self.compGLife = self.comp
 		else
-			printError( "=== can't find compnent by [%s] , gname = [%s]", component,self.g_name )
+			self.compGLife = CGobjLife.Get(self.gobj)
 		end
+		self:ReEvtDestroy(true)
 	end
 end
 
@@ -56,6 +63,10 @@ end
 
 function M:OnCF_Destroy()
 	self:clean()
+	self:OnCF_OnDestroy()
+end
+
+function M:OnCF_OnDestroy()
 end
 
 function M:ReEvtDestroy(isBind)
@@ -76,29 +87,29 @@ function M:IsGLife()
 end
 
 function M:_ReEvtDestroy(isBind)
-	if not self._cf_ondestroy or not self:IsGLife() then
+	if not self._cf_ondestroy or not self:IsInitGLife() then
 		return
 	end
-	self.comp:m_onDestroy("-",self._cf_ondestroy);
+	self.compGLife:m_onDestroy("-",self._cf_ondestroy);
 	if isBind == true then
-		self.comp:m_onDestroy("+",self._cf_ondestroy);
+		self.compGLife:m_onDestroy("+",self._cf_ondestroy);
 	end
 end
 
 function M:SetCF4OnShow( cfShow )
-	if not self:IsGLife() then
+	if not self:IsInitGLife() then
 		return
 	end
 	self.isSetCFOnShow = (cfShow ~= nil)
-	self.comp.m_callShow = cfShow;
+	self.compGLife.m_callShow = cfShow;
 end
 
 function M:SetCF4OnHide( cfHide )
-	if not self:IsGLife() then
+	if not self:IsInitGLife() then
 		return
 	end
 	self.isSetCFOnHide = (cfHide ~= nil)
-	self.comp.m_callHide = cfHide;
+	self.compGLife.m_callHide = cfHide;
 end
 
 function M:SetEnabled( isBl )

@@ -11,7 +11,7 @@ public delegate void DF_ElementForeach(int index,GameObject gobj);
 /// 日期 : 2017-08-04 00:10
 /// 功能 : 缓存需要操作的对象
 /// </summary>
-public class PrefabElement : PrefabBasic {
+public class PrefabElement : GobjLifeListener {
 	static public new PrefabElement Get(GameObject gobj,bool isAdd){
 		return UtilityHelper.Get<PrefabElement>(gobj,true);
 	}

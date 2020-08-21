@@ -9,7 +9,7 @@ local tb_remove = table.remove
 local tb_insert = table.insert
 local tb_contain = table.contains
 
-local super = UIBase
+local super,_evt = UIBase,Event
 local M = class( "ui_root",super )
 
 local __single = nil
@@ -53,6 +53,7 @@ function M:OnInit()
 	end
 	self.lbCamera = self:NewCmr("UICamera")
 	self.uiCamera = self.lbCamera.comp
+	_evt.Brocast(Evt_Brocast_UICamera,self.lbCamera)
 end
 
 function M:SetUILayer( lbUIEntity )
@@ -85,6 +86,17 @@ function M:_OnUpCheckLayer( dt )
 		tb_remove(self._lbLayer,1)
 	end
 	self._ti_layer = self._ti_layer - dt
+end
+
+function M:ReEvent4Self(isBind)
+	_evt.RemoveListener(Evt_Get_UICamera,self.GetUICamera,self); -- 移除事件
+	if isBind == true then
+		_evt.AddListener(Evt_Get_UICamera,self.GetUICamera,self); -- 添加事件
+	end
+end
+
+function M:GetUICamera(lfunc,obj)
+	M.DoCallFunc( lfunc,obj,self.lbCamera )
 end
 
 return M

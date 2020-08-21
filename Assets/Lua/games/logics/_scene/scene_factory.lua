@@ -12,7 +12,8 @@ SceneObject = _req (fdir .. "scene_object") -- 场景对象
 local SceneMap = _req (fdir .. "scene_map") -- 场景Map
 SceneCreature = _req (fdir .. "scene_creature") -- 生物
 SceneMonster = _req (fdir .. "scene_monster") -- 怪兽
-local SceneHero = _req (fdir .. "scene_hero") -- 英雄、伙伴
+SceneHero = _req (fdir .. "scene_hero") -- 英雄、伙伴
+UIModel = _req (fdir .. "ui_model") -- UI模型
     
 local LES_Object = LES_Object
 
@@ -29,28 +30,36 @@ function M.AddCursor()
 	return this.cursor
 end
 
-function M.GetCursor()
-	return this.cursor
-end
-
 function M.Create(objType,resid)
-	local _cfgRes = MgrData:GetCfgRes(resid)
+	local _cfgRes,_ret = MgrData:GetCfgRes(resid)
 	if not _cfgRes then
 		error("=== no res in resource config , resid = [%s]",resid)
 		return
 	end
-
 	if objType == LES_Object.Object then
-		return SceneObject.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneObject.New(objType,this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.MapObj then
-		return SceneMap.New(this.AddCursor(),_cfgRes)
+		_ret = SceneMap.New(this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.Creature then
-		return SceneCreature.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneCreature.New(objType,this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.Monster then
-		return SceneMonster.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneMonster.New(objType,this.AddCursor(),_cfgRes)
 	elseif objType == LES_Object.Partner or objType == LES_Object.Hero then
-		return SceneHero.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneHero.New(objType,this.AddCursor(),_cfgRes)
+	elseif objType == LES_Object.UIModel then
+		_ret = UIModel.New(this.AddCursor(),_cfgRes)
 	end
+
+	if _ret then _ret.resid = resid end
+
+	return _ret
+end
+
+
+function M.CreateAndShow(objType,resid)
+	local _obj = this.Create( objType,resid )
+	if _obj then _obj:View(true) end
+	return _obj
 end
 
 return M

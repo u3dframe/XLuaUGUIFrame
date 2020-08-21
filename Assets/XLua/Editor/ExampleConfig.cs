@@ -92,7 +92,6 @@ public static class ExampleConfig
                 typeof(TNet.ByteBuffer),
                 
                 typeof(GobjLifeListener),
-                typeof(PrefabBasic),
                 typeof(GameMgr),
                 typeof(NetworkManager),
                 typeof(WWWMgr),

@@ -12,7 +12,7 @@ local LES_Object = LES_Object
 local super,_evt = SceneObject,Event
 local M = class( "scene_map",super )
 
-function M:ctor(nCursor,resCfg,...)
+function M:ctor(nCursor,resCfg)
 	super.ctor( self,LES_Object.MapObj,nCursor,resCfg )
 end
 
@@ -24,11 +24,11 @@ function M:OnInit()
 	self.lbCamera = self:NewCmr("MainCamera")
 	self.lbGBox = _clsGBox.New(self:GetElement("gbox"))
 
-	_evt.Brocast(Evt_Vw_MainCamera,false,self.lbCamera.comp)
+	_evt.Brocast(Evt_Vw_Def3DCamera,false,self.lbCamera)
 end
 
 function M:OnDestroy()
-	_evt.Brocast(Evt_Vw_MainCamera,true)
+	_evt.Brocast(Evt_Vw_Def3DCamera,true)
 end
 
 function M:GetGBoxUnit(nIndex)
