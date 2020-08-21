@@ -207,6 +207,7 @@ function M.RebackCurrMapObj(lbSObj)
 end
 
 function M.RebackCurrMapObjBy(cursor)
+	if not cursor then return end
 	local _lb = this[this.mapid]
 	if not _lb then return end
 	local _v = _lb[cursor]
