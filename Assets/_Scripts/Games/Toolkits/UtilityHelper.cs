@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using System.Reflection;
-using System;
-using UObject = UnityEngine.Object;
+using UnityEngine.Playables;
 
 
 /// <summary>
@@ -40,16 +37,6 @@ public class UtilityHelper : GHelper {
 
 	static public void LogError(string str) {
 		Debug.LogError(str);
-	}
-
-	static public bool IsElement(object obj) {
-		if(IsNull(obj))	return false;
-		return obj is PrefabElement;
-	}
-
-	static public bool IsGLife(object obj) {
-		if(IsNull(obj))	return false;
-		return obj is GobjLifeListener;
 	}
 
 	static public int NMaxMore(params int[] vals){
@@ -93,4 +80,40 @@ public class UtilityHelper : GHelper {
 	static public float Round(float org, int acc) {
         return (float) ToDecimal(org,acc,true);
     }
+
+	static public bool IsGLife(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is GobjLifeListener;
+	}
+
+	static public bool IsElement(object obj) {
+		if(IsNull(obj))	return false;
+		return obj is PrefabElement;
+	}
+
+	static public Camera GetOrAddCamera(GameObject gobj){
+		return Get<Camera>(gobj,true);
+	}
+
+	static public Camera GetOrAddCamera(Transform trsf){
+		return Get<Camera>(trsf,true);
+	}
+
+	static public Animator GetOrAddAnimator(GameObject gobj){
+		return Get<Animator>(gobj,true);
+	}
+
+	static public Animator GetOrAddAnimator(Transform trsf){
+		return Get<Animator>(trsf,true);
+	}
+
+	static public PlayableDirector GetOrAddPlayableDirector(GameObject gobj)
+	{
+		return Get<PlayableDirector>(gobj, true);
+	}
+
+	static public PlayableDirector GetOrAddPlayableDirector(Transform trsf)
+	{
+		return Get<PlayableDirector>(trsf, true);
+	}
 }

@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
-using System.Reflection;
 using System;
-using UnityEngine.Playables;
 
 public sealed class LuaHelper : UtilityHelper {
 	/// <summary>
@@ -48,31 +45,4 @@ public sealed class LuaHelper : UtilityHelper {
 	static public bool CFuncLua(string funcName,object obj1,object obj2,object obj3,object obj4,object obj5,object obj6) {
 		return CFuncLuaMore(funcName,obj1,obj2,obj3,obj4,obj5,obj6);
 	}
-
-	static public Camera GetOrAddCamera(GameObject gobj){
-		return Get<Camera>(gobj,true);
-	}
-
-	static public Camera GetOrAddCamera(Transform trsf){
-		return Get<Camera>(trsf,true);
-	}
-
-	static public Animator GetOrAddAnimator(GameObject gobj){
-		return Get<Animator>(gobj,true);
-	}
-
-	static public Animator GetOrAddAnimator(Transform trsf){
-		return Get<Animator>(trsf,true);
-	}
-
-	static public PlayableDirector GetOrAddPlayableDirector(GameObject gobj)
-	{
-		return Get<PlayableDirector>(gobj, true);
-	}
-
-	static public PlayableDirector GetOrAddPlayableDirector(Transform trsf)
-	{
-		return Get<PlayableDirector>(trsf, true);
-	}
-
 }
