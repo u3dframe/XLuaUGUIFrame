@@ -38,25 +38,25 @@ public class UGUILocalize : GobjLifeListener {
 		}
 	}
 
-	protected override void OnCall4Awake()
+	override protected void OnCall4Awake()
 	{
 		Init();
 		this.csAlias = "U_TLOC";
 	}
 
-	protected override void OnCall4Hide()
+	override protected void OnCall4Hide()
 	{
 		Localization.onLocalize -= _OnLocalize;
 	}	
 
-	protected override void OnCall4Show()
+	override protected void OnCall4Show()
 	{
 		Init ();
 		OnLocalize();
 		Localization.onLocalize += _OnLocalize;
 	}
 
-	protected override void OnCall4Destroy()
+	override protected void OnCall4Destroy()
 	{
 		Localization.onLocalize -= _OnLocalize;
 	}

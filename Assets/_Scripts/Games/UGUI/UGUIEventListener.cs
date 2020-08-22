@@ -84,21 +84,21 @@ public class UGUIEventListener : EventTrigger {
     }
 
 	// 移入
-	public override void OnPointerEnter (PointerEventData eventData){
+	override public void OnPointerEnter (PointerEventData eventData){
 		if (onMouseEnter != null) {
 			onMouseEnter (gameObject,true,eventData.position);
 		}
 	}
 
 	// 移出
-	public override void OnPointerExit (PointerEventData eventData){
+	override public void OnPointerExit (PointerEventData eventData){
 		if (onMouseEnter != null) {
 			onMouseEnter (gameObject,false, eventData.position);
 		}
 	}
 
 	// 按下
-	public override void OnPointerDown (PointerEventData eventData){
+	override public void OnPointerDown (PointerEventData eventData){
 		_isPressed = true;
 		press_time = Time.realtimeSinceStartup;
 		v2Start = eventData.position;
@@ -111,7 +111,7 @@ public class UGUIEventListener : EventTrigger {
 	}
 
 	// 抬起
-	public override void OnPointerUp (PointerEventData eventData){
+	override public void OnPointerUp (PointerEventData eventData){
 		_isPressed = false;
 		if (press_time > 0) {
 			diff_time = Time.realtimeSinceStartup - press_time;
@@ -128,7 +128,7 @@ public class UGUIEventListener : EventTrigger {
 	}
 
 	// 单击
-	public override void OnPointerClick (PointerEventData eventData){
+	override public void OnPointerClick (PointerEventData eventData){
 		if (press_time > 0) {
 			diff_time = Time.realtimeSinceStartup - press_time;
 			press_time = 0;
@@ -149,7 +149,7 @@ public class UGUIEventListener : EventTrigger {
 	}
 	
     // 开始拖拽
-    public override void OnBeginDrag(PointerEventData eventData)
+    override public void OnBeginDrag(PointerEventData eventData)
     {
 		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnBeginDrag(eventData);
@@ -160,7 +160,7 @@ public class UGUIEventListener : EventTrigger {
     }
 	
 	// 推拽中
-	public override void OnDrag (PointerEventData eventData){
+	override public void OnDrag (PointerEventData eventData){
 		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnDrag(eventData);
 		}
@@ -170,7 +170,7 @@ public class UGUIEventListener : EventTrigger {
 	}
 	
 	// 结束拖拽
-    public override void OnEndDrag(PointerEventData eventData)
+    override public void OnEndDrag(PointerEventData eventData)
     {
 		if(m_isSyncScroll && _sclParent != null){
 			_sclParent.OnEndDrag(eventData);
@@ -181,7 +181,7 @@ public class UGUIEventListener : EventTrigger {
     }
 	
 	// 将元素拖拽到另外一个元素下面执行
-    public override void OnDrop(PointerEventData eventData)
+    override public void OnDrop(PointerEventData eventData)
     {
         if (onDrop != null) {
 			onDrop (gameObject,eventData.position);

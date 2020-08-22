@@ -44,7 +44,7 @@ public class LightMapRender : RenderLightMapData
 		return (val,mul);
 	}
 
-	protected override void OnInit(){
+	override protected void OnInit(){
 		this.m_em_lpu = (int) this.m_lightProbeUsage;
 
 		(this.m_sfX,this.m_sfX_1) = _ToIntAndMultiple(this.m_lightmapScaleOffset.x);

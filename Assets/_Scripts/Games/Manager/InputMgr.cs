@@ -113,12 +113,12 @@ public class InputMgr : GobjLifeListener {
 	Queue<RayScreenPointInfo> m_queue_sp_1 = new Queue<RayScreenPointInfo>();
 	Queue<RayScreenPointInfo> m_queue_sp_2 = new Queue<RayScreenPointInfo>();
 	
-	protected override void OnCall4Awake(){
+	override protected void OnCall4Awake(){
 		this.maxDistance = Screen.height > Screen.width ? Screen.height : Screen.width;
 		this.csAlias = "InpMgr";
 	}
 
-	protected override void OnClear() {
+	override protected void OnClear() {
 #if UNITY_EDITOR
 		if(m_diCalls != null) m_diCalls.Clear();
 #endif

@@ -71,7 +71,7 @@ public class GameMgr : GobjLifeListener {
 	/// <summary>
 	/// 销毁
 	/// </summary>
-	protected override void OnCall4Destroy() {
+	override protected void OnCall4Destroy() {
 		_mgrGobj = null;
 		onUpdate = null;
 		onLateUpdate = null;

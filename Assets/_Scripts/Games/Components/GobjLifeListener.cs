@@ -16,7 +16,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 
 	static protected GameObject GetGobj(string name)
 	{
-		return UtilityHelper.GetGobjNo(name);
+		return UtilityHelper.GetGobjNotDestroy(name);
 	}
 
 	static public GobjLifeListener Get(GameObject gobj,bool isAdd){
@@ -30,7 +30,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	// 接口函数
 	[HideInInspector] public bool m_isOnUpdate = true;
 	public bool IsOnUpdate(){ return this.m_isOnUpdate;} 
-	public virtual void OnUpdate(float dt,float unscaledDt) {}	
+	virtual public void OnUpdate(float dt,float unscaledDt) {}	
 
 	// 自身对象
 	Transform _m_trsf;
@@ -74,11 +74,12 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	/// <summary>
 	/// 继承对象可实现的函数 (比代理事件快)
 	/// </summary>
-	protected virtual void OnCall4Awake(){}
-	protected virtual void OnCall4Start(){}
-	protected virtual void OnCall4Show(){}
-	protected virtual void OnCall4Hide(){}
-	protected virtual void OnCall4Destroy(){}
+	virtual protected void OnCall4Awake(){}
+	virtual protected void OnCall4Start(){}
+	virtual protected void OnCall4Show(){}
+	virtual protected void OnCall4Hide(){}
+	virtual protected void OnCall4Destroy(){}
+	virtual protected void OnClear(){}
 
 	
 	public Action m_callAwake;
@@ -139,9 +140,6 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		this._m_trsf = null;
 
 		OnClear();
-	}
-
-	protected virtual void OnClear(){
 	}
 
 	void _ExcDestoryCall(){

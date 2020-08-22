@@ -36,7 +36,7 @@ public class RenderLightMapData
 		return Init(renderer.lightmapIndex,renderer.lightmapScaleOffset,renderer.lightProbeUsage,renderer.realtimeLightmapIndex,renderer.realtimeLightmapScaleOffset);
 	}
 
-	protected virtual void OnInit(){}
+	virtual protected void OnInit(){}
 	
 	public void BackToRender(Renderer renderer){
 		if(renderer == null) return;
@@ -67,7 +67,7 @@ public class RenderLightMapData
 		Debug.LogError(_str);
 	}
 
-	public override string ToString ()
+	override public string ToString ()
 	{
 		string fmt = "lightmapIndex = [{0}],lightmapScaleOffset = [{1}],lightProbeUsage = [{2}],realtimeLightmapIndex = [{3}],realtimeLightmapScaleOffset = [{4}]";
 		return string.Format (

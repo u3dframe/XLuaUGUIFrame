@@ -33,7 +33,7 @@ public class PrefabElement : GobjLifeListener {
 	Dictionary<string,GameObject> m_dicName2Gobj = new Dictionary<string,GameObject>();
 	
 	bool isInit = false;
-	protected override void OnCall4Start(){
+	override protected void OnCall4Start(){
 		this.Init();
 	}
 	

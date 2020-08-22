@@ -301,7 +301,7 @@ public class GHelper {
 		return GetGobj(name,true);
 	}
 
-	static public GameObject GetGobjNo(string name) {
+	static public GameObject GetGobjNotDestroy(string name) {
 		return GetGobj(name,true,true);
 	}
 

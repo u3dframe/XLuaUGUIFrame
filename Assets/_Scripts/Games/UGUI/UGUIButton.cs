@@ -48,7 +48,7 @@ public class UGUIButton : GobjLifeListener {
 	[HideInInspector] public DF_UGUIV2Bool m_onPress;
 	[HideInInspector] public DF_UGUIPos m_onClick;
 
-	protected override void OnCall4Awake()
+	override protected void OnCall4Awake()
     {
 		this._selfID = m_gobj.GetInstanceID ();
         this.v3Scale = m_trsf.localScale;
@@ -59,17 +59,17 @@ public class UGUIButton : GobjLifeListener {
 		this.csAlias = "U_BTN";
     }
 
-	protected override void OnCall4Hide()
+	override protected void OnCall4Hide()
     {
         this.m_evt.enabled = false;
     }
 
-    protected override void OnCall4Show()
+    override protected void OnCall4Show()
     {
         this.m_evt.enabled = true;
     }
 
-	protected override void OnCall4Destroy(){
+	override protected void OnCall4Destroy(){
 		this.m_onPress = null;
 		this.m_onClick = null;
 		this.m_evt = null;

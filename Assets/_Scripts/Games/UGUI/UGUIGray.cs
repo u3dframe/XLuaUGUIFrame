@@ -33,27 +33,27 @@ public class UGUIGray : GobjLifeListener {
 		}
 	}
 
-	protected override void OnCall4Awake()
+	override protected void OnCall4Awake()
     {
 		this.csAlias = "U_Gray";
 		_matGray = matGray;
     }
 	
-	protected override void OnCall4Start(){
+	override protected void OnCall4Start(){
 		Init ();
 	}
 
-    protected override void OnCall4Show()
+    override protected void OnCall4Show()
     {
 		m_isGray = _m_isGray_2; // 避免没显示(没走生命周期的对象)调用了错误
     }
 
-	protected override void OnCall4Destroy(){
+	override protected void OnCall4Destroy(){
 		if (m_isNew && _m_matGrap)
 			Destroy (_m_matGrap);
 	}
 	
-	protected override void OnClear(){
+	override protected void OnClear(){
 		isInit = false;
 		m_lExcludeNames.Clear();
 		m_imgs = null;

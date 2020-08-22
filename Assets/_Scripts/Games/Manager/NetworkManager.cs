@@ -27,7 +27,7 @@ public class NetworkManager : GobjLifeListener {
 	/// <summary>
 	///  初始化
 	/// </summary>
-	protected override void OnCall4Awake(){
+	override protected void OnCall4Awake(){
 		InitSocket();
 		this.csAlias = "NetMgr";
 		m_isOnUpdate = true;
@@ -37,7 +37,7 @@ public class NetworkManager : GobjLifeListener {
 	/// <summary>
 	///  更新 - 接受到数据
 	/// </summary>
-	public override void OnUpdate(float dt,float unscaledDt) {
+	override public void OnUpdate(float dt,float unscaledDt) {
 		if (mEvents.Count > 0) {
 			while (mEvents.Count > 0) {
 				KeyValuePair<int, ByteBuffer> _event = mEvents.Dequeue();
@@ -52,12 +52,12 @@ public class NetworkManager : GobjLifeListener {
 	/// <summary>
 	/// 销毁
 	/// </summary>
-	protected override void OnCall4Destroy() {
+	override protected void OnCall4Destroy() {
 		GameMgr.DiscardUpdate(this);
 		socket.OnRemove();
 	}
 
-	protected override void OnClear(){
+	override protected void OnClear(){
 		mEvents.Clear();
 		socket = null;
 	}

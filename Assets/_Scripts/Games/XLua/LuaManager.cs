@@ -37,14 +37,14 @@ public class LuaManager : GobjLifeListener
 	/// <summary>
 	///  初始化
 	/// </summary>
-	protected override void OnCall4Awake(){
+	override protected void OnCall4Awake(){
 		this.csAlias = "LuaMgr";
 		luaEnv.AddLoader(new LuaFileLoader());
 		InitSelfLibs();
 		m_isOnUpdate = true;
 	}
 
-	protected override void OnCall4Start(){
+	override protected void OnCall4Start(){
 		var _luaG = luaEnv.Global;
 		_Init_Global(_luaG);
 
@@ -225,7 +225,7 @@ public class LuaManager : GobjLifeListener
 		return false;
 	}
 
-	protected override void OnClear(){
+	override protected void OnClear(){
 		luaUpdate = null;
 		luaFixedUpdate = null;
 		luaLateUpdate = null;
@@ -235,7 +235,7 @@ public class LuaManager : GobjLifeListener
 		StopAllCoroutines();
 	}
 
-	protected override void OnCall4Destroy(){
+	override protected void OnCall4Destroy(){
 		luaEnv.Dispose();
 	}
 }
