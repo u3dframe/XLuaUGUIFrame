@@ -12,7 +12,7 @@ public class ClipStateMachineAlpha : ClipStateMachine
     /// <summary>
     /// 时间(0~1)曲线 - 控制alpha值(0~1)
     /// </summary>
-    public AnimationCurve m_ac_alpha;
+    public AnimationCurve m_ac_alpha = AnimationCurve.Linear(0,1,1,1); // ts,ts_val,te,te_val
 
     private Material m_mat;
     private Color m_mat_color = Color.white;
