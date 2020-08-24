@@ -10,6 +10,7 @@ public delegate void DF_ASM_SubLife(Animator animator, int stateMachinePathHash)
 /// 日期 : 2020-08-22 22:17
 /// 功能 : 
 /// </summary>
+[ExecuteInEditMode]
 public class AnimatorEx : PrefabElement
 {
 	static public new AnimatorEx Get(GameObject gobj,bool isAdd){
@@ -21,6 +22,11 @@ public class AnimatorEx : PrefabElement
 	}
 
 	public Animator m_animator;
+	public string m_kActionState = "ation_state";
+	public int m_actionState = 0;
+	private int _pre_aState = -1;
+	[Range(0f,5f)] public float m_actionSpeed = 1;
+	private float _pre_aSpeed = -1;
 
 	public event DF_ASM_MotionLife m_evt_smEnter;
 	public event DF_ASM_MotionLife m_evt_smUpdate;
@@ -61,6 +67,18 @@ public class AnimatorEx : PrefabElement
 
 		Messenger.RemoveListener<Animator,int>(MsgConst.Msg_OnSubSMEnter,_CF_Sub_Enter);
 		Messenger.RemoveListener<Animator,int>(MsgConst.Msg_OnSubSMExit,_CF_Sub_Exit);
+	}
+
+	virtual protected void Update (){
+		if(this.m_animator){
+			if(this.m_actionState != this._pre_aState){
+				SetAction(this.m_actionState);
+			}
+
+			if(this.m_actionSpeed != this._pre_aSpeed){
+				SetSpeed(this.m_actionSpeed);
+			}
+		}
 	}
 
 	void _Exc_SM_Call(DF_ASM_MotionLife cfunc,Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
@@ -106,5 +124,41 @@ public class AnimatorEx : PrefabElement
 	void _CF_Sub_Exit(Animator animator, int stateMachinePathHash){
 		if(animator != m_animator) return;
 		_Exc_Sub_Call(m_evt_subExit,animator,stateMachinePathHash);
+	}
+
+	public void SetSpeed(float value){
+		if(this._pre_aSpeed == this.m_actionSpeed) return;
+		this._pre_aSpeed = this.m_actionSpeed;
+		this.m_actionSpeed = value;
+
+		if(this.m_animator == null) return;
+		this.m_animator.speed = this.m_actionSpeed;
+	}
+
+	public void SetParameter4Int(string key,int value){
+		if(this.m_animator == null) return;
+		this.m_animator.SetInteger(key,value);
+	}
+
+	public void SetAction(int value){
+		if(this._pre_aState == this.m_actionState) return;
+		this._pre_aState = this.m_actionState;
+		this.m_actionState = value;
+
+		SetParameter4Int(this.m_kActionState,this.m_actionState);
+	}
+
+	public void PlayAction(int state){
+		this.m_actionState = state;
+	}
+
+	public void PlayAction(string stateName,int layer,float normalizedTime){
+		if(this.m_animator == null) return;
+		this.m_animator.Play(stateName,layer,normalizedTime);
+	}
+
+	public void PlayAction(string stateName){
+		if(this.m_animator == null) return;
+		this.m_animator.Play(stateName,0,0);
 	}
 }

@@ -14,22 +14,26 @@ UCamera = CS.UnityEngine.Camera
 UAnimator =  CS.UnityEngine.Animator
 UTime = CS.UnityEngine.Time
 
+CGobjLife = CS.GobjLifeListener
+CPElement = CS.PrefabElement
+CFollower = CS.SmoothFollower
+CAnimator = CS.AnimatorEx
+CCCtrler = CS.CharacterControllerEx
+
+CTxt = CS.UGUILocalize
+CGray = CS.UGUIGray
+CBtn = CS.UGUIButton
+CEvtListener = CS.UGUIEventListener
+
 CWWWMgr = CS.Core.Kernel.WWWMgr
 CBtBuffer = CS.TNet.ByteBuffer
 CNetMgr = CS.NetworkManager
 CResMgr = CS.Core.ResourceManager
 CLuaMgr = CS.LuaManager
 CGameFile = CS.Core.GameFile
-CGobjLife = CS.GobjLifeListener
-CPElement = CS.PrefabElement
 CHelper = CS.LuaHelper
 CLocliz = CS.Localization
-CTxt = CS.UGUILocalize
-CGray = CS.UGUIGray
-CBtn = CS.UGUIButton
-CEvtListener = CS.UGUIEventListener
 CLoadSceneMgr = CS.MgrLoadScene
-CFollower = CS.SmoothFollower
 CMCaneraMgr = CS.MainCameraManager
 CInpMgr = CS.InputMgr
 

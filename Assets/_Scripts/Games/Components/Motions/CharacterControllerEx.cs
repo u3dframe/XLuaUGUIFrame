@@ -7,8 +7,9 @@ using Core.Kernel;
 /// 日期 : 2020-08-23 19:17
 /// 功能 : 
 /// </summary>
+[ExecuteInEditMode]
 [RequireComponent(typeof(CharacterController))]
-public class CharacterControllerEx : GobjLifeListener
+public class CharacterControllerEx : AnimatorEx
 {
 	static public new CharacterControllerEx Get(GameObject gobj,bool isAdd){
 		return UtilityHelper.Get<CharacterControllerEx>(gobj,isAdd);
@@ -19,6 +20,10 @@ public class CharacterControllerEx : GobjLifeListener
 	}
 
 	public CharacterController m_c_ctrler;
+
+	override protected void Update (){
+		base.Update();
+	}
 
 	void OnControllerColliderHit(ControllerColliderHit hit) {
         // Rigidbody body = hit.collider.attachedRigidbody;
@@ -33,13 +38,15 @@ public class CharacterControllerEx : GobjLifeListener
     }
 
 	override protected void OnCall4Awake(){
+		base.OnCall4Awake();
 		this.csAlias = "CCtrler_Ex";
 		if(this.m_c_ctrler == null){
 			this.m_c_ctrler = this.m_gobj.GetComponentInChildren<CharacterController>(true);
-		}
+		}		
 	}
 
 	override protected void OnClear(){
+		base.OnClear();
 		this.m_c_ctrler = null;
 	}
 
@@ -49,5 +56,10 @@ public class CharacterControllerEx : GobjLifeListener
 		this.m_c_ctrler.height = height;
 		float yCenter =  (height <=  2 * radius) ? radius : height / 2;
 		this.m_c_ctrler.center = new Vector3(0,yCenter,0);
+	}
+
+	[ContextMenu("Re Def Radius Height")]
+	public void ReRHeightDef(){
+		SetRadiusAndHeight(0.5f,2f);
 	}
 }

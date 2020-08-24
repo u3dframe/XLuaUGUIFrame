@@ -119,6 +119,8 @@ public static class ExampleConfig
                 typeof(MainCameraManager),
                 typeof(RayScreenPointInfo),
                 typeof(InputMgr),
+                typeof(AnimatorEx),
+                typeof(CharacterControllerEx),
                 //---------------------------------------------------------------  
             };
 
@@ -157,6 +159,9 @@ public static class ExampleConfig
                 typeof(DF_InpRayHit),
 
                 typeof(DF_ElementForeach),
+
+                typeof(DF_ASM_MotionLife),
+                typeof(DF_ASM_SubLife),
             };
 
     //黑名单

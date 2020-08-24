@@ -50,3 +50,41 @@ LES_State = {
 	FinshedEnd           = _add(),
 }
 
+
+-- 人性角色 - 状态
+LES_C_State = {
+	None           = _add(0),     -- 无
+	Idle           = _add(),      -- 待机
+	Die            = _add(),      -- 死亡
+	Run            = _add(),      -- 跑
+	Attack         = _add(),      -- 攻击
+	Stone          = _add(),      -- 石化，僵直
+}
+
+-- 人性角色 - 动作枚举
+LES_C_Animator_State = {
+	None           = -1,
+	Idle           = 0,      -- 待机
+	Die            = 1,      -- 死亡
+	Run            = 2,      -- 跑
+	
+	Attack_1       = 11,     -- 普攻 1
+	Attack_2       = 12,     -- 普攻 2
+	Attack_3       = 13,     -- 普攻 3
+	
+	Skill_Power    = 20,     -- 技能 大招
+	Skill_1        = 21,     -- 技能 1
+	
+	Show_1         = 31,     -- 展示 1
+	Show_2         = 32,     -- 展示 2
+	
+	Grab           = 51,     -- 被拧起
+	Lose           = 52,     -- 失败
+	Win            = 53,     -- 胜利
+	Dizzy          = 54,     -- 眩晕
+	Hit_Fly_1      = 55,     -- 击飞
+	Hit_Back_2     = 56,     -- 击退
+	Hit_Down_3     = 57,     -- 击倒
+	Fear           = 58,     -- 恐惧
+	Sleep          = 59,     -- 睡眠
+}
