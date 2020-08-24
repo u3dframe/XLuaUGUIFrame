@@ -62,8 +62,12 @@ function M:DestroyObj()
 end
 
 function M:OnCF_Destroy()
+	self:OnCF_BegOnDestroy()
 	self:clean()
 	self:OnCF_OnDestroy()
+end
+
+function M:OnCF_BegOnDestroy()
 end
 
 function M:OnCF_OnDestroy()

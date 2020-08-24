@@ -17,7 +17,7 @@ function M:EntryAfterUpRes()
 	LTimer.ReLocTime()
 	_mgrUI.URoot()
 	_evt.Brocast(Evt_ToChangeScene)
-	_evt.Brocast(Evt_View_MainCamera,true)
+	_evt.Brocast(Evt_Vw_Def3DCamera,true)
 	_evt.Brocast(Evt_ToView_Login)
 end
 

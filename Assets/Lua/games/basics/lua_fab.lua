@@ -250,6 +250,14 @@ end
 function M:OnExit(isInited)
 end
 
+function M:OnCF_BegOnDestroy()
+	self:OnDestroy()
+end
+
+function M:OnCF_OnDestroy()
+	self:OnExit(true)
+end
+
 function M:Set4NotClear(kk,vv)
 	self.cfgNotClear = self.cfgNotClear or {}
 	self.cfgNotClear[kk] = vv
