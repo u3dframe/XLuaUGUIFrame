@@ -10,10 +10,12 @@ using Core.Kernel;
 public class SubStateMachine : BasicStateMachine
 {
     override public void OnStateMachineEnter(Animator animator, int stateMachinePathHash){
-        Messenger.Brocast<Animator,int>(MsgConst.Msg_OnSubSMEnter,animator,stateMachinePathHash);
+        string _key = this.m_isUseGID4MsgKey ? string.Format("[{0}]_[{1}]",MsgConst.Msg_OnSubSMEnter,animator.gameObject.GetInstanceID()) : MsgConst.Msg_OnSubSMEnter;
+        Messenger.Brocast<Animator,int>(_key,animator,stateMachinePathHash);
     }
 
     override public void OnStateMachineExit(Animator animator, int stateMachinePathHash){
-        Messenger.Brocast<Animator,int>(MsgConst.Msg_OnSubSMExit,animator,stateMachinePathHash);
+        string _key = this.m_isUseGID4MsgKey ? string.Format("[{0}]_[{1}]",MsgConst.Msg_OnSubSMExit,animator.gameObject.GetInstanceID()) : MsgConst.Msg_OnSubSMExit;
+        Messenger.Brocast<Animator,int>(_key,animator,stateMachinePathHash);
     }
 }

@@ -20,21 +20,54 @@ function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.strComp = "CharacterControllerEx"
 	_cfg.isUpdate = true
+	_cfg.isStay = true
 	return _cfg;
 end
 
-function M:OnUpdateLoaded(dt)
-	if self.state == LC_State.Idle then
-		self:PlayAction( LC_AniState.Idle,true )
-	elseif self.state == LC_State.Die then
-		self:PlayAction( LC_AniState.Die,true )
-	elseif self.state == LC_State.Run then
-		self:PlayAction( LC_AniState.Run,true )
-	end
+function M:OnInit()
+	self._lf_On_Up = handler_pcall(self,self.OnUpdate_Creature)
+	self._lf_On_A_Enter = handler_pcall(self,self.OnUpdate_A_Enter)
+	self._lf_On_A_Up = handler_pcall(self,self.OnUpdate_A_Up)
+	self._lf_On_A_Exit = handler_pcall(self,self.OnUpdate_A_Exit)
+
+	self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit);
+	self:OnInitCreatureUnit()
+end
+
+function M:OnInitCreatureUnit()
+end
+
+function M:OnUpdate_Creature(dt,undt)
+	if not self:IsLoadedAndShow() then return end
 
 	if self._async_a_n_state ~= nil then
 		self:PlayAction( self._async_a_n_state,self._async_a_n_immed )
 	end
+
+	if self.state == LC_State.Idle then
+		self:SetState( LC_AniState.Idle_Exed )
+		self:PlayAction( LC_AniState.Idle,true )
+	elseif self.state == LC_State.Die then
+		self:SetState( LC_AniState.Die_Exed )
+		self:PlayAction( LC_AniState.Die,true )
+	elseif self.state == LC_State.Run then
+		self:SetState( LC_AniState.Run_Exed )
+		self:PlayAction( LC_AniState.Run,true )
+	end
+
+	self:OnUpdateCreatureUnit( dt )
+end
+
+function M:OnUpdateCreatureUnit(dt)
+end
+
+function M:OnUpdate_A_Enter(_,info,_)
+end
+
+function M:OnUpdate_A_Up(_,info,_)
+end
+
+function M:OnUpdate_A_Exit(_,info,_)
 end
 
 function M:PlayAction(a_n_state,isImmediate)

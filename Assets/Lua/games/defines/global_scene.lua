@@ -51,16 +51,6 @@ LES_State = {
 }
 
 
--- 人性角色 - 状态
-LES_C_State = {
-	None           = _add(0),     -- 无
-	Idle           = _add(),      -- 待机
-	Die            = _add(),      -- 死亡
-	Run            = _add(),      -- 跑
-	Attack         = _add(),      -- 攻击
-	Stone          = _add(),      -- 石化，僵直
-}
-
 -- 人性角色 - 动作枚举
 LES_C_Animator_State = {
 	None           = -1,
@@ -68,15 +58,15 @@ LES_C_Animator_State = {
 	Die            = 1,      -- 死亡
 	Run            = 2,      -- 跑
 	
-	Attack_1       = 11,     -- 普攻 1
-	Attack_2       = 12,     -- 普攻 2
-	Attack_3       = 13,     -- 普攻 3
+	Attack_1       = 11,     -- 普攻_1
+	Attack_2       = 12,     -- 普攻_2
+	Attack_3       = 13,     -- 普攻_3
 	
-	Skill_Power    = 20,     -- 技能 大招
-	Skill_1        = 21,     -- 技能 1
+	Skill_Power    = 20,     -- 技能_大招
+	Skill_1        = 21,     -- 技能_1
 	
-	Show_1         = 31,     -- 展示 1
-	Show_2         = 32,     -- 展示 2
+	Show_1         = 31,     -- 展示_1
+	Show_2         = 32,     -- 展示_2
 	
 	Grab           = 51,     -- 被拧起
 	Lose           = 52,     -- 失败
@@ -87,4 +77,19 @@ LES_C_Animator_State = {
 	Hit_Down_3     = 57,     -- 击倒
 	Fear           = 58,     -- 恐惧
 	Sleep          = 59,     -- 睡眠
+}
+
+-- 人性角色 - 状态
+LES_C_State = {
+	None                 = _add(0),     -- 无
+	Idle                 = _add(),      -- 待机
+	Idle_Exed            = _add(),      -- 待机_已执行
+	Die                  = _add(),      -- 死亡
+	Die_Exed             = _add(),      -- 死亡_已执行
+	Run                  = _add(),      -- 跑
+	Run_Exed             = _add(),      -- 跑_已执行
+	Attack_1             = _add(),      -- 普攻_1
+	Attack_1_Exed        = _add(),      -- 普攻_1_已执行
+	Grab                 = _add(),      -- 被拧起
+	Grab_Exed            = _add(),      -- 被拧起_已执行
 }

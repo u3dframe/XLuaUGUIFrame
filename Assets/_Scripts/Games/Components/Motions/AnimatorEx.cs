@@ -21,12 +21,18 @@ public class AnimatorEx : PrefabElement
 		return Get(gobj,true);
 	}
 
+	public bool m_isUseGID4MsgKey = true;
+	private bool _pre_IsUseGID = false;
+
 	public Animator m_animator;
+	private int m_aniGID = 0;
 	public string m_kActionState = "ation_state";
 	public int m_actionState = 0;
 	private int _pre_aState = -1;
 	[Range(0f,5f)] public float m_actionSpeed = 1;
 	private float _pre_aSpeed = -1;
+
+	private BasicStateMachine[] _s_behaviours;
 
 	public event DF_ASM_MotionLife m_evt_smEnter;
 	public event DF_ASM_MotionLife m_evt_smUpdate;
@@ -37,46 +43,140 @@ public class AnimatorEx : PrefabElement
 	public event DF_ASM_SubLife m_evt_subEnter;
 	public event DF_ASM_SubLife m_evt_subExit;
 
+	private bool m_exc_on_hide = false;
+
 	override protected void OnCall4Awake(){
 		this.csAlias = "ANI_Ex";
 		if(this.m_animator == null){
 			this.m_animator = this.m_gobj.GetComponentInChildren<Animator>(true);
 		}
-		if(this.m_animator == null){
+
+		if(this.m_animator != null){
+			this.m_aniGID = this.m_animator.gameObject.GetInstanceID();
+			this._s_behaviours = this.m_animator.GetBehaviours<BasicStateMachine>();
+		}else{
 			Debug.LogErrorFormat("=== this animator is null, gobj name = [{0}]",this.m_gobj.name);
 		}
+		_ReAniEvents(false,true);
+	}
 
-		Messenger.AddListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMEnter,_CF_SM_Enter);
-		Messenger.AddListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMUpdate,_CF_SM_Update);
-		Messenger.AddListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMExit,_CF_SM_Exit);
-		Messenger.AddListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMMove,_CF_SM_Move);
-		Messenger.AddListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSM_IK,_CF_SM_IK);
+	override protected void OnCall4Show(){
+		base.OnCall4Show();
+		if(m_exc_on_hide){
+			SetAction(this._pre_aState);
+			SetSpeed(this._pre_aSpeed);
+		}
+		m_exc_on_hide = false;
+	}
 
-		Messenger.AddListener<Animator,int>(MsgConst.Msg_OnSubSMEnter,_CF_Sub_Enter);
-		Messenger.AddListener<Animator,int>(MsgConst.Msg_OnSubSMExit,_CF_Sub_Exit);
+	override protected void OnCall4Hide(){
+		base.OnCall4Hide();
+		m_exc_on_hide = true;
+		_SetSpeedVal(0);
+		_SetSpeedVal(1);
 	}
 
 	override protected void OnClear(){
-		m_animator = null;
+		_ReAniEvents(false);
 
-		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMEnter,_CF_SM_Enter);
-		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMUpdate,_CF_SM_Update);
-		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMExit,_CF_SM_Exit);
-		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSMMove,_CF_SM_Move);
-		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(MsgConst.Msg_OnSM_IK,_CF_SM_IK);
-
-		Messenger.RemoveListener<Animator,int>(MsgConst.Msg_OnSubSMEnter,_CF_Sub_Enter);
-		Messenger.RemoveListener<Animator,int>(MsgConst.Msg_OnSubSMExit,_CF_Sub_Exit);
+		m_exc_on_hide = false;
+		this.m_animator = null;
+		this._s_behaviours = null;
+		this.m_evt_smEnter = null;
+		this.m_evt_smUpdate = null;
+		this.m_evt_smExit = null;
+		this.m_evt_smMove = null;
+		this.m_evt_smIK = null;
+		this.m_evt_subEnter = null;
+		this.m_evt_subExit = null;
 	}
 
 	virtual protected void Update (){
 		if(this.m_animator){
+			if(this.m_isUseGID4MsgKey != this._pre_IsUseGID){
+				_ReAniEvents(true);
+			}
+
 			if(this.m_actionState != this._pre_aState){
 				SetAction(this.m_actionState);
 			}
 
 			if(this.m_actionSpeed != this._pre_aSpeed){
 				SetSpeed(this.m_actionSpeed);
+			}
+		}
+	}
+
+	private string _ReAniPreEvtKey(string key){
+		return this._pre_IsUseGID ? string.Format("[{0}]_[{1}]",key,this.m_aniGID) : key;
+	}
+
+	private string _ReAniEvtKey(string key){
+		return this.m_isUseGID4MsgKey ? string.Format("[{0}]_[{1}]",key,this.m_aniGID) : key;
+	}
+
+	private void _ReAniEvents(bool isBinde,bool isMust = false){
+		if(this.m_animator == null) return;
+
+		if(!isMust){
+			if(this._pre_IsUseGID == this.m_isUseGID4MsgKey) return;
+		}
+
+		this._pre_IsUseGID = this.m_isUseGID4MsgKey;
+
+		string _key;
+		_key = _ReAniPreEvtKey(MsgConst.Msg_OnSMEnter);
+		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Enter);
+
+		_key = _ReAniPreEvtKey(MsgConst.Msg_OnSMUpdate);
+		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Update);
+
+		_key = _ReAniPreEvtKey(MsgConst.Msg_OnSMExit);
+		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Exit);
+
+		_key = _ReAniPreEvtKey(MsgConst.Msg_OnSMMove);
+		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Move);
+
+		_key = _ReAniPreEvtKey(MsgConst.Msg_OnSM_IK);
+		Messenger.RemoveListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_IK);
+
+
+		_key = _ReAniPreEvtKey(MsgConst.Msg_OnSubSMEnter);
+		Messenger.RemoveListener<Animator,int>(_key,_CF_Sub_Enter);
+
+		_key = _ReAniPreEvtKey(MsgConst.Msg_OnSubSMExit);
+		Messenger.RemoveListener<Animator,int>(_key,_CF_Sub_Exit);
+
+		if(isBinde){
+			_key = _ReAniEvtKey(MsgConst.Msg_OnSMEnter);
+			Messenger.AddListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Enter);
+
+			_key = _ReAniEvtKey(MsgConst.Msg_OnSMUpdate);
+			Messenger.AddListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Update);
+
+			_key = _ReAniEvtKey(MsgConst.Msg_OnSMExit);
+			Messenger.AddListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Exit);
+
+			_key = _ReAniEvtKey(MsgConst.Msg_OnSMMove);
+			Messenger.AddListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_Move);
+
+			_key = _ReAniEvtKey(MsgConst.Msg_OnSM_IK);
+			Messenger.AddListener<Animator,AnimatorStateInfo,int>(_key,_CF_SM_IK);
+
+
+			_key = _ReAniEvtKey(MsgConst.Msg_OnSubSMEnter);
+			Messenger.AddListener<Animator,int>(_key,_CF_Sub_Enter);
+
+			_key = _ReAniEvtKey(MsgConst.Msg_OnSubSMExit);
+			Messenger.AddListener<Animator,int>(_key,_CF_Sub_Exit);
+
+			int _lens = 0;
+			if(_s_behaviours != null){
+				_lens = _s_behaviours.Length;
+			}
+			for (int i = 0; i < _lens; i++)
+			{
+				_s_behaviours[i].m_isUseGID4MsgKey = this.m_isUseGID4MsgKey;
 			}
 		}
 	}
@@ -92,44 +192,49 @@ public class AnimatorEx : PrefabElement
 	}
 
 	void _CF_SM_Enter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
-		if(animator != m_animator) return;
+		if(animator != this.m_animator) return;
 		_Exc_SM_Call(m_evt_smEnter,animator,stateInfo,layerIndex);
 	}
 
 	void _CF_SM_Update(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
-		if(animator != m_animator) return;
+		if(animator != this.m_animator) return;
 		_Exc_SM_Call(m_evt_smUpdate,animator,stateInfo,layerIndex);
 	}
 
 	void _CF_SM_Exit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
-		if(animator != m_animator) return;
+		if(animator != this.m_animator) return;
 		_Exc_SM_Call(m_evt_smExit,animator,stateInfo,layerIndex);
 	}
 
 	void _CF_SM_Move(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
-		if(animator != m_animator) return;
+		if(animator != this.m_animator) return;
 		_Exc_SM_Call(m_evt_smMove,animator,stateInfo,layerIndex);
 	}
 
 	void _CF_SM_IK(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){
-		if(animator != m_animator) return;
+		if(animator != this.m_animator) return;
 		_Exc_SM_Call(m_evt_smIK,animator,stateInfo,layerIndex);
 	}
 
 	void _CF_Sub_Enter(Animator animator, int stateMachinePathHash){
-		if(animator != m_animator) return;
+		if(animator != this.m_animator) return;
 		_Exc_Sub_Call(m_evt_subEnter,animator,stateMachinePathHash);
 	}
 
 	void _CF_Sub_Exit(Animator animator, int stateMachinePathHash){
-		if(animator != m_animator) return;
+		if(animator != this.m_animator) return;
 		_Exc_Sub_Call(m_evt_subExit,animator,stateMachinePathHash);
 	}
 
-	public void SetSpeed(float value){
-		if(this._pre_aSpeed == this.m_actionSpeed) return;
+	private bool _SetSpeedVal(float value){
+		if(this._pre_aSpeed == this.m_actionSpeed) return false;
 		this._pre_aSpeed = this.m_actionSpeed;
 		this.m_actionSpeed = value;
+		return true;
+	}
+
+	public void SetSpeed(float value){
+		if(!_SetSpeedVal(value)) return;
 
 		if(this.m_animator == null) return;
 		this.m_animator.speed = this.m_actionSpeed;
@@ -140,10 +245,15 @@ public class AnimatorEx : PrefabElement
 		this.m_animator.SetInteger(key,value);
 	}
 
-	public void SetAction(int value){
-		if(this._pre_aState == this.m_actionState) return;
+	public bool _SetActionVal(int value){
+		if(this._pre_aState == this.m_actionState) return false;
 		this._pre_aState = this.m_actionState;
 		this.m_actionState = value;
+		return true;
+	}
+
+	public void SetAction(int value){
+		if(!_SetActionVal(value)) return;
 
 		SetParameter4Int(this.m_kActionState,this.m_actionState);
 	}

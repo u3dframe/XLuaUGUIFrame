@@ -30,7 +30,7 @@ public class EL_AssetRes
     int _nLensList = 0;
     float _calcListY = 0;
     
-    bool m_fd1 = false,m_fd2 = false,m_fd3 = true,m_fd4 = false;
+    bool m_fd1 = false,m_fd2 = false,m_fd3 = true,m_fd4 = false,m_fd5 = false;
 
     private void Init()
     {
@@ -162,25 +162,25 @@ public class EL_AssetRes
         EG_Helper.FEG_EndV();
         
         EG_Helper.FEG_BeginVArea();
-        EG_Helper.FEG_Toggle("UI，场景相关",ref m_fd3,styleYellow);
+        EG_Helper.FEG_Toggle("UI - 特效 Effects",ref m_fd3,styleYellow);
         if(m_fd3){
             {
-                EG_Helper.FEG_Head("打包UI，场景相关");
+                EG_Helper.FEG_Head("打包UI,特效 Effects");
                 EG_Helper.FEG_BeginH();
                 {
                     if (GUILayout.Button("打包 - UI,Texture"))
                     {
-                        _BuildUITexutre();
+                        _Build_UITexutre();
                     }
 
-                    if (GUILayout.Button("打包 - UI,Texture,UIEffect"))
+                    if (GUILayout.Button("打包 - UI,Texture,Effects"))
                     {
-                        _BuildUITexutreUIEffect();
+                        _Build_UITexutre_Effects();
                     }
 
-                    if (GUILayout.Button("打包 - 场景资源"))
+                    if (GUILayout.Button("打包 - Effects"))
                     {
-                        _BuildScene();
+                        _Build_Effects();
                     }
                 }
                 EG_Helper.FEG_EndH();
@@ -191,8 +191,32 @@ public class EL_AssetRes
         EG_Helper.FEG_EndV();
 
         EG_Helper.FEG_BeginVArea();
-        EG_Helper.FEG_Toggle("打包AssetBundle相关",ref m_fd4,styleYellow);
+        EG_Helper.FEG_Toggle("角色 - 场景 Scene",ref m_fd4,styleYellow);
         if(m_fd4){
+            {
+                EG_Helper.FEG_Head("打包角色,场景");
+                EG_Helper.FEG_BeginH();
+                {
+                    if (GUILayout.Button("打包 - 角色"))
+                    {
+                        _Build_Characters();
+                    }
+
+                    if (GUILayout.Button("打包 - 场景资源"))
+                    {
+                        _Build_Scene();
+                    }
+                }
+                EG_Helper.FEG_EndH();
+            }
+            _ret += EG_Helper.h26 * 2;
+        }
+        _ret += EG_Helper.h24;
+        EG_Helper.FEG_EndV();
+
+        EG_Helper.FEG_BeginVArea();
+        EG_Helper.FEG_Toggle("打包AssetBundle相关",ref m_fd5,styleYellow);
+        if(m_fd5){
             {
                 EG_Helper.FEG_Head("打包 AssetBundle");
                 EG_Helper.FEG_BeginH();
@@ -316,7 +340,25 @@ public class EL_AssetRes
         _DoMake();
     }
 
-    void _BuildUITexutre()
+
+    void _Build_Dirs(string[] dirs)
+    {
+        if(dirs == null) return;
+
+        UnityEngine.Object _one = null;
+        foreach (var item in dirs)
+        {
+            _one = BuildTools.Load4Develop(item);
+            if (_one != null)
+            {
+                this.m_list.Add(_one);
+            }
+        }
+        m_Object.Update();
+        _DoMake();
+    }
+
+    void _Build_UITexutre()
     {
         string[] _dirs = {
             "Assets/_Develop/Builds/prefabs/ui",
@@ -324,53 +366,40 @@ public class EL_AssetRes
             "Assets/_Develop/Builds/textures/ui_sngs",
             "Assets/_Develop/Builds/textures/ui_imgs",
         };
-        UnityEngine.Object _one = null;
-        foreach (var item in _dirs)
-        {
-            _one = BuildTools.Load4Develop(item);
-            if (_one != null)
-            {
-                this.m_list.Add(_one);
-            }
-        }
-        m_Object.Update();
-        _DoMake();
+        _Build_Dirs(_dirs);
     }
 
-    void _BuildUITexutreUIEffect()
+    void _Build_UITexutre_Effects()
     {
         string[] _dirs = {
             "Assets/_Develop/Builds/prefabs",
             "Assets/_Develop/Builds/textures",
+            "Assets/_Develop/Effects/Builds/prefabs",
         };
-        UnityEngine.Object _one = null;
-        foreach (var item in _dirs)
-        {
-            _one = BuildTools.Load4Develop(item);
-            if (_one != null)
-            {
-                this.m_list.Add(_one);
-            }
-        }
-        m_Object.Update();
-        _DoMake();
+        _Build_Dirs(_dirs);
     }
 
-    void _BuildScene()
+    void _Build_Effects()
+    {
+        string[] _dirs = {
+            "Assets/_Develop/Effects/Builds/prefabs",
+        };
+        _Build_Dirs(_dirs);
+    }
+
+    void _Build_Characters()
+    {
+        string[] _dirs = {
+            "Assets/_Develop/Characters/Builds/prefabs",
+        };
+        _Build_Dirs(_dirs);
+    }
+
+    void _Build_Scene()
     {
         string[] _dirs = {
             "Assets/_Develop/Scene/Builds",
         };
-        UnityEngine.Object _one = null;
-        foreach (var item in _dirs)
-        {
-            _one = BuildTools.Load4Develop(item);
-            if (_one != null)
-            {
-                this.m_list.Add(_one);
-            }
-        }
-        m_Object.Update();
-        _DoMake();
+       _Build_Dirs(_dirs);
     }
 }

@@ -254,7 +254,7 @@ function M:OnCF_BegOnDestroy()
 	self:OnDestroy()
 end
 
-function M:OnCF_OnDestroy()
+function M:OnCF_EndOnDestroy()
 	self:OnExit(true)
 end
 
