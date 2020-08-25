@@ -33,4 +33,24 @@ public static class StaticEx {
             break;
         }
     }
+
+    static public void SetProperty(this Material material,string name,Color value)
+    {
+        SetProperty(material,0,name,value);
+    }
+
+    static public void SetProperty(this Material material,string name,Vector4 value)
+    {
+        SetProperty(material,1,name,value);
+    }
+
+    static public void SetProperty(this Material material,string name,float value)
+    {
+        SetProperty(material,2,name,value);
+    }
+
+    static public void SetProperty(this Material material,string name,Texture value)
+    {
+        SetProperty(material,4,name,value);
+    }
 }

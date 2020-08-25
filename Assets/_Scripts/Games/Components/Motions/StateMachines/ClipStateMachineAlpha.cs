@@ -15,6 +15,8 @@ public class ClipStateMachineAlpha : ClipStateMachine
     public AnimationCurve m_ac_alpha = AnimationCurve.Linear(0,1,1,1); // ts,ts_val,te,te_val
 
     private Material m_mat;
+    private bool m_is_mat_color = false;
+    private bool m_is_mat_alpha = false;
     private Color m_mat_color = Color.white;
     
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -25,7 +27,11 @@ public class ClipStateMachineAlpha : ClipStateMachine
         if(_rder != null){
             m_mat = _rder.materials[0];
             if(m_mat != null){
-                m_mat_color = m_mat.color;
+                m_is_mat_alpha = m_mat.HasProperty("_Alpha") || m_mat.HasProperty("Alpha");
+                if(m_is_mat_alpha) return;
+
+                m_is_mat_color = m_mat.HasProperty("_Color") || m_mat.HasProperty("Color");
+                if(m_is_mat_color) m_mat_color = m_mat.color;
             }
         }
     }
@@ -34,11 +40,18 @@ public class ClipStateMachineAlpha : ClipStateMachine
     {
         base.OnStateUpdate(animator,stateInfo,layerIndex);
 
+        if (!m_is_mat_alpha && !m_is_mat_color) return;
+
         if (stateInfo.normalizedTime < 0 || stateInfo.normalizedTime > 1 || m_mat == null) return;
 
         float _alpha = m_ac_alpha.Evaluate(stateInfo.normalizedTime);
-        m_mat_color.a = _alpha;
-        m_mat.color = m_mat_color;
+        if(m_is_mat_alpha){
+            m_mat.SetProperty("_Alpha",_alpha);
+        }else if(m_is_mat_color){
+            m_mat_color.a = _alpha;
+            m_mat.color = m_mat_color;
+        }
+        
     }
 
 }
