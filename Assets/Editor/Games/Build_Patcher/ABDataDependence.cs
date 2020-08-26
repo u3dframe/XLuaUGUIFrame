@@ -95,7 +95,7 @@ namespace Core.Kernel
             this.m_abSuffix = abSuffix == null ? "" : abSuffix;
         }
 
-        public override string ToString()
+        override public string ToString()
         {
             StringBuilder _builder = new StringBuilder();
             _builder.AppendFormat("m_res = [{0}]", m_res);
