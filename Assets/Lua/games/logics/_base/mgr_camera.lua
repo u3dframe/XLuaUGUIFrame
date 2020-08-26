@@ -51,8 +51,12 @@ function M:GetMainCamera()
 	return self:GetCur3DLBCamera() -- .comp
 end
 
-function M:UIEvtPos2Cur3DPos(v2UIEvtPos)
-	return self:GetCur3DLBCamera():ToWorldPointByUIEventPos(self.lbUICamera,v2UIEvtPos);
+function M:UIEvtPos2Cur3DPos(gobjParent,evt_x,evt_y)
+	return self:GetCur3DLBCamera():ToWorldPointByUIEventPos( self.lbUICamera,gobjParent,evt_x,evt_y );
+end
+
+function M:UIEvtPos2UILocalPos(gobjParent,evt_x,evt_y)
+	return self.lbUICamera:ToUILocalPointByEventPos( gobjParent,evt_x,evt_y );
 end
 
 return M

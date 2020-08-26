@@ -27,7 +27,7 @@ public class AnimatorEx : PrefabElement
 	public Animator m_animator;
 	private int m_aniGID = 0;
 	public string m_kActionState = "ation_state";
-	public int m_actionState = 0;
+	public int m_actionState = -1;
 	private int _pre_aState = -1;
 	[Range(0f,5f)] public float m_actionSpeed = 1;
 	private float _pre_aSpeed = -1;
@@ -42,8 +42,6 @@ public class AnimatorEx : PrefabElement
 
 	public event DF_ASM_SubLife m_evt_subEnter;
 	public event DF_ASM_SubLife m_evt_subExit;
-
-	private bool m_exc_on_hide = false;
 
 	override protected void OnCall4Awake(){
 		this.csAlias = "ANI_Ex";
@@ -60,26 +58,15 @@ public class AnimatorEx : PrefabElement
 		_ReAniEvents(false,true);
 	}
 
-	override protected void OnCall4Show(){
-		base.OnCall4Show();
-		if(m_exc_on_hide){
-			SetAction(this._pre_aState);
-			SetSpeed(this._pre_aSpeed);
-		}
-		m_exc_on_hide = false;
-	}
-
 	override protected void OnCall4Hide(){
+		SetActionState(0);
+		SetSpeedState(1);
 		base.OnCall4Hide();
-		m_exc_on_hide = true;
-		_SetSpeedVal(0);
-		_SetSpeedVal(1);
 	}
 
 	override protected void OnClear(){
 		_ReAniEvents(false);
 
-		m_exc_on_hide = false;
 		this.m_animator = null;
 		this._s_behaviours = null;
 		this.m_evt_smEnter = null;
@@ -226,17 +213,19 @@ public class AnimatorEx : PrefabElement
 		_Exc_Sub_Call(m_evt_subExit,animator,stateMachinePathHash);
 	}
 
-	private bool _SetSpeedVal(float value){
-		if(this._pre_aSpeed == this.m_actionSpeed) return false;
+	public void SetSpeedState(float value){
 		this._pre_aSpeed = this.m_actionSpeed;
 		this.m_actionSpeed = value;
-		return true;
 	}
 
 	public void SetSpeed(float value){
-		if(!_SetSpeedVal(value)) return;
+		if(this.m_animator == null){
+			this.m_actionSpeed = value;
+			return;	
+		}
 
-		if(this.m_animator == null) return;
+		SetSpeedState(value);
+
 		this.m_animator.speed = this.m_actionSpeed;
 	}
 
@@ -245,21 +234,20 @@ public class AnimatorEx : PrefabElement
 		this.m_animator.SetInteger(key,value);
 	}
 
-	public bool _SetActionVal(int value){
-		if(this._pre_aState == this.m_actionState) return false;
+	public void SetActionState(int value){
 		this._pre_aState = this.m_actionState;
 		this.m_actionState = value;
-		return true;
 	}
 
 	public void SetAction(int value){
-		if(!_SetActionVal(value)) return;
+		if(this.m_animator == null){
+			this.m_actionState = value;
+			return;	
+		}
 
+		SetActionState(value);
+		
 		SetParameter4Int(this.m_kActionState,this.m_actionState);
-	}
-
-	public void PlayAction(int state){
-		this.m_actionState = state;
 	}
 
 	public void PlayAction(string stateName,int layer,float normalizedTime){

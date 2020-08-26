@@ -40,7 +40,7 @@ local function OnKeyUp(key)
 	elseif key =='F9'  then
 
 	elseif key =='F10'  then
-
+		MgrBattle:BattleTest()
 	elseif key == "F11" then
 		printTable(MgrScene.GetState())
 	elseif key =='F12'  then

@@ -5,7 +5,8 @@
 	-- Desc : 
 ]]
 
-local _vec3 = Vector3
+local _vec3,_vec2,type = Vector3,Vector2,type
+local CHelper = CHelper
 
 local super = LUComonet
 local M = class( "u_camera",super )
@@ -29,7 +30,7 @@ function M:_Init_Cmr()
 end
 
 function M:_Init_Cmr_Vecs()
-	self.v3S2P = _vec3.zero
+	self.v2ScreenPoint = _vec2.zero
 end
 
 function M:GetCamera()
@@ -69,20 +70,26 @@ function M:ViewportToWorldPoint(vV3)
 	return self.comp:ViewportToWorldPoint(vV3)
 end
 
-function M:UIEventPosToWorld(uiEvtPos)
-	self.v3S2P.x = uiEvtPos.x
-	self.v3S2P.y = self.pixelHeight - uiEvtPos.y
-	self.v3S2P.z = self.nearClipPlane
-	return self:ScreenToWorldPoint(self.v3S2P)
-end
-
 function M:ToWorldPoint(cameraFm,v3Pos)
 	local _pos = cameraFm:WorldToViewportPoint(v3Pos)
 	return self:ViewportToWorldPoint(_pos)
 end
 
-function M:ToWorldPointByUIEventPos(lbUICamera,uiEvtPos)
-	local _pos = lbUICamera:UIEventPosToWorld(uiEvtPos)
+function M:ToUIWorldPointByEventPos(gobjParent,x,y)
+	self:ReVec_XYZ(self.v2ScreenPoint,x,y)
+	local _z
+	x,y,_z = CHelper.ScreenPointToWorldPointInRectangle(gobjParent,self.comp,self.v2ScreenPoint.x,self.v2ScreenPoint.y,0)
+	return _vec3.New( x,y,_z ) 
+end
+
+function M:ToUILocalPointByEventPos(gobjParent,x,y)
+	self:ReVec_XYZ(self.v2ScreenPoint,x,y)
+	x,y = CHelper.ScreenPointToLocalPointInRectangle(gobjParent,self.comp,self.v2ScreenPoint.x,self.v2ScreenPoint.y)
+	return _vec2.New( x,y )
+end
+
+function M:ToWorldPointByUIEventPos(lbUICamera,gobjParent,x,y)
+	local _pos = lbUICamera:ToUIWorldPointByEventPos(gobjParent,x,y)
 	return self:ToWorldPoint(lbUICamera,_pos)
 end
 

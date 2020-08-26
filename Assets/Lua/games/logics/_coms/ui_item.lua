@@ -19,14 +19,16 @@ LE_ItVShowType = {
 
 local tb_lens = table.lens
 local m_max = math.max
+local _c_red,_c_green = Color.red,Color.green
 
 local super,_evt = UICell,Event
 local M = class( "ui_item",super )
 
 -- 用[_]占位，兼容row传递参数
-function M:OnSetData(_,valType,isVwEmpty)
+function M:OnSetData(valType,isVwEmpty,isNoChgColor)
 	self.valType = valType or LE_ItVShowType.NeedOrEmpty
 	self.isVwEmpty = isVwEmpty == true
+	self.isNoChgColor = isNoChgColor == true
 end
 
 function M:OnInit()
@@ -40,26 +42,39 @@ function M:OnInit()
 	self.lbImgQuality = self:NewImg("quality","Image",true) -- 品质
 	
 	self.lbTrsfEmpty = self:NewTrsf("empty",true) -- 空
-	
+	self.lbStars = {}
 	local _tmp = self:GetElement("wrapStars") -- 星星
 	if _tmp then
 		_tmp = _tmp.transform;
-		self.lbStars = {_tmp:GetChild(0).gameObject}
+		-- self.lbStars = {_tmp:GetChild(0).gameObject}
+		for i = 0  ,_tmp.childCount - 1 do
+			local temp = nil
+			temp = _tmp:GetChild(i).gameObject
+			table.insert( self.lbStars,temp )
+		end
 	end
 
 	self:VwEmptyObj(false)
 end
 
 function M:OnView()
+	local _data = self.data -- type,id,num
+	local _cfg = nil; -- 本地数据
+	-- self.cfgData = _cfg
+
+	-- local _svData =  -- 取背包的服务器数据
+	-- self.svData = _svData
+
 	local _name,_desc,_ord = nil
 	local _star = 0
 	local _icon,_qua = nil
 	local _nNum,_cNum = 0,1
 
-	_val = self:_ReVal(_nNum,_cNum)
+	_val = self:_ReVal(_nNum,_cNum,_showNum)
 
 	self:VwName(_name)
 	self:VwValue(_val)
+	self:VwValueColor()
 	self:VwDesc(_desc)
 	self:VwOrder(_ord)
 	self:VwStars(_star)
@@ -69,7 +84,7 @@ function M:OnView()
 end
 
 function M:OnVwEmpty()
-	self.data = nil
+	self.data,self.cfgData,self.svData = nil
 	self:VwName("")
 	self:VwValue("")
 	self:VwDesc("")
@@ -85,7 +100,7 @@ function M:VwName(v)
 	self.lbTxtName:SetText(v)
 end
 
-function M:_ReVal( nNum ,curNum  )
+function M:_ReVal( nNum ,curNum,showNum )
 	local _v = nil
 	if LE_ItVShowType.Need == self.valType then
 		_v = nNum
@@ -104,6 +119,7 @@ function M:_ReVal( nNum ,curNum  )
 			_v = nNum
 		end
 	end
+	
 	self.isEnough = curNum >= nNum
 	return _v
 end
@@ -111,6 +127,12 @@ end
 function M:VwValue(v)
 	if not self.lbTxtValue then return end
 	self.lbTxtValue:SetUText(v)
+end
+
+function M:VwValueColor()
+	if self.isNoChgColor or not self.lbTxtValue then return end
+	local _c = self.isEnough and _c_green or _c_red
+	self.lbTxtValue:SetColor( _c )
 end
 
 function M:VwOrder(v)

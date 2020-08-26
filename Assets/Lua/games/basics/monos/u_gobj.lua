@@ -75,9 +75,13 @@ function M:SetActive( isActive )
 			self.isActive = isActive
 			self.gobj:SetActive( self.isActive )
 		end
+		self:OnActive(self.isActive)
 	else
 		self._async_active = isActive
 	end
+end
+
+function M:OnActive(isActive)
 end
 
 function M:SetLayer( layer,isAll )

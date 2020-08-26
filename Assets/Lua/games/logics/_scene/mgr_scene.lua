@@ -8,9 +8,8 @@
 local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 
 local mmax = math.max
-local MgrData,MgrRes,SceneFactory = MgrData,MgrRes,SceneFactory
-local LES_State = LES_State
-local _mgrInput,_mgrCamera,_csMgr = MgrInput,MgrCamera
+local MgrData,SceneFactory = MgrData,SceneFactory
+local LES_State,LES_Object = LES_State,LES_Object
 
 local super,_evt = MgrBase,Event
 local M = class( "mgr_scene",super )
@@ -19,21 +18,23 @@ local this = M
 function M.Init()	
 	this.state = LES_State.None
 	this.progress = 0
+	this.mapWorld_Y  = 0
 	this.eveRegion = this:TF((1 / (LES_State.Complete - LES_State.Wait_Vw_Loading)),4)
 
 	this.pools = {}
 
 	this:ReEvent4OnUpdate(true)
-	_evt.AddListener(Evt_Map_Load,this.LoadMap)
-	_evt.AddListener(Evt_Map_AddObj,this.AddMap_SObj)
-	_evt.AddListener(Evt_Map_GetObj,this.GetMap_SObj)
-	_evt.AddListener(Evt_Map_Reback_Obj,this.RebackCurrMapObj)
+
+	_evt.AddListener(Evt_Map_Load,this.OnLoadMap)
+	_evt.AddListener(Evt_Map_AddObj,this.OnAdd_Map_Obj)
+	_evt.AddListener(Evt_Map_GetObj,this.OnGet_Map_Obj)
+	_evt.AddListener(Evt_Map_Reback_Obj,this.OnReback_Map_Obj)
 end
 
 function M:ReEvent4Self(isBind)
-	_evt.RemoveListener(Evt_SceneChanged,this._ST_LoadedScene)
+	_evt.RemoveListener(Evt_SceneChanged,this._On_LoadedScene)
 	if isBind == true then
-		_evt.AddListener(Evt_SceneChanged,this._ST_LoadedScene)
+		_evt.AddListener(Evt_SceneChanged,this._On_LoadedScene)
 	end
 end
 
@@ -62,7 +63,7 @@ function M.GetState()
 	return this.state
 end
 
-function M.LoadMap(mapid)
+function M.OnLoadMap(mapid)
 	if mapid == this.mapid then return end
 	this.isUping = false
 	this.isUpingLoadMap = false
@@ -113,7 +114,7 @@ function M._ST_LoadScene()
 	_evt.Brocast(Evt_ToChangeScene)
 end
 
-function M._ST_LoadedScene()
+function M._On_LoadedScene()
 	this._Up_Progress()
 	this.state = LES_State.Load_Map_Scene
 end
@@ -121,6 +122,8 @@ end
 local function _LF_LoadedScene(isNoObj,Obj)
 	if not this.isUpingLoadMap then return end
 	this.state = LES_State.Load_Map_Objs
+
+	-- this.mapWorld_Y  = 0 -- 发一个射线去高度
 end
 
 function M._ST_CurMap()
@@ -135,6 +138,7 @@ function M._ST_CurMap()
 	this._Up_Progress()
 
 	local _cfgMap = MgrData:GetCfgMap(this.mapid)
+	this.mapWorld_Y  = 0 -- 配置表里面给个高度值
 	this.lbMap = this.GetOrNew_SObj(LES_Object.MapObj,_cfgMap.resid)
 	this.lbMap.lfAssetLoaded = _LF_LoadedScene
 	this.isUpingLoadMap = true
@@ -171,6 +175,8 @@ function M._ST_CurObjs()
 end
 
 function M._ST_Complete()
+	this.isUping = false
+	
 	this._Up_Progress()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
@@ -196,23 +202,17 @@ function M.AddCurrMapObj(lbSObj)
 end
 
 function M.GetCurrMapObj(cursor)
+	if not cursor then return end
 	local _lb = this[this.mapid]
 	if not _lb then return end
 	return _lb[cursor]
 end
 
-function M.RebackCurrMapObj(lbSObj)
-	if not lbSObj then return end
-	this.RebackCurrMapObjBy( lbSObj:GetCursor() )
-end
-
-function M.RebackCurrMapObjBy(cursor)
+function M.Reback_MapObj(cursor)
 	if not cursor then return end
-	local _lb = this[this.mapid]
-	if not _lb then return end
-	local _v = _lb[cursor]
-	_lb[cursor] = nil
+	local _v = this.GetCurrMapObj(cursor)
 	if not _v then return end
+	this[this.mapid][cursor] = nil
 	this.ReBackToPool( _v )
 end
 
@@ -230,25 +230,38 @@ function M.ReBackToPool(lbSObj)
 	lbSObj:View(false)
 end
 
-function M.GetOrNew_SObj(objType,resid)
+function M.GetOrNew_SObj(objType,resid,uuid)
 	objType = objType or LES_Object.Object
 	local _vpool = this._GetPool( objType,resid )
 	local _v = tb_remove(_vpool,1)
-	if not _v then
-		return SceneFactory.Create(objType,resid)
+	
+	local _vv = this.GetCurrMapObj( uuid )
+	if _vv ~= nil then
+		uuid = nil
 	end
-	_v:SetCursor(SceneFactory.AddCursor())
+
+	if not _v then
+		return SceneFactory.Create(objType,resid,uuid)
+	end
+	
+	_v:SetCursor(uuid or SceneFactory.AddCursor())
 	return _v
 end
 
-function M.AddMap_SObj(objType,resid,lfunc,lbObject,...)
-	local _ret = this.GetOrNew_SObj( objType,resid )
+function M.Add_SObj(objType,resid,uuid)
+	local _ret = this.GetOrNew_SObj( objType,resid,uuid )
 	this.AddCurrMapObj(_ret)
+	_ret.worldY = this.mapWorld_Y
+	return _ret
+end
+
+function M.OnAdd_Map_Obj(objType,resid,lfunc,lbObject,...)
+	local _ret = this.Add_SObj( objType,resid )
 	this.DoCallFunc( lfunc,lbObject,_ret,... )
 	return _ret,...
 end
 
-function M.GetMap_SObj(uniqueID,lfunc,lbObject)
+function M.OnGet_Map_Obj(uniqueID,lfunc,lbObject)
 	local _ret = nil
 	if uniqueID == "mapobj" then
 		_ret = this.lbMap
@@ -261,6 +274,11 @@ function M.GetMap_SObj(uniqueID,lfunc,lbObject)
 	end
 	this.DoCallFunc( lfunc,lbObject,_ret )
 	return _ret
+end
+
+function M.OnReback_Map_Obj(lbSObj)
+	if not lbSObj then return end
+	this.Reback_MapObj( lbSObj:GetCursor() )
 end
 
 return M

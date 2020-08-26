@@ -63,6 +63,7 @@ public static class ExampleConfig
                 typeof(PlayerPrefs),
                 typeof(Animation),
                 typeof(Animator),
+                typeof(AnimatorStateInfo),
                 typeof(Camera),
                 typeof(RenderSettings),
                 typeof(LightmapSettings),
@@ -120,6 +121,7 @@ public static class ExampleConfig
                 typeof(RayScreenPointInfo),
                 typeof(InputMgr),
                 typeof(AnimatorEx),
+                typeof(CharacterController),
                 typeof(CharacterControllerEx),
                 //---------------------------------------------------------------  
             };

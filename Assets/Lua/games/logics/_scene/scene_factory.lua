@@ -30,36 +30,29 @@ function M.AddCursor()
 	return this.cursor
 end
 
-function M.Create(objType,resid)
+function M.Create(objType,resid,uuid)
 	local _cfgRes,_ret = MgrData:GetCfgRes(resid)
 	if not _cfgRes then
 		error("=== no res in resource config , resid = [%s]",resid)
 		return
 	end
 	if objType == LES_Object.Object then
-		_ret = SceneObject.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneObject.New(objType,(uuid or this.AddCursor()),_cfgRes)
 	elseif objType == LES_Object.MapObj then
-		_ret = SceneMap.New(this.AddCursor(),_cfgRes)
+		_ret = SceneMap.New((uuid or this.AddCursor()),_cfgRes)
 	elseif objType == LES_Object.Creature then
-		_ret = SceneCreature.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneCreature.New(objType,(uuid or this.AddCursor()),_cfgRes)
 	elseif objType == LES_Object.Monster then
-		_ret = SceneMonster.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneMonster.New(objType,(uuid or this.AddCursor()),_cfgRes)
 	elseif objType == LES_Object.Partner or objType == LES_Object.Hero then
-		_ret = SceneHero.New(objType,this.AddCursor(),_cfgRes)
+		_ret = SceneHero.New(objType,(uuid or this.AddCursor()),_cfgRes)
 	elseif objType == LES_Object.UIModel then
-		_ret = UIModel.New(this.AddCursor(),_cfgRes)
+		_ret = UIModel.New((uuid or this.AddCursor()),_cfgRes)
 	end
 
 	if _ret then _ret.resid = resid end
 
 	return _ret
-end
-
-
-function M.CreateAndShow(objType,resid)
-	local _obj = this.Create( objType,resid )
-	if _obj then _obj:View(true) end
-	return _obj
 end
 
 return M

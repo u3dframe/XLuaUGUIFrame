@@ -49,7 +49,7 @@ function M._InitUI()
 	end
 
 	ui.Refresh = function(_s,progress)
-		printTable(progress)
+		-- printTable(progress)
 	end
 end
 

@@ -464,19 +464,34 @@ public class GHelper {
 		GetRectSize(gobj.transform,ref w,ref h);
 	}
 
-	static public Vector2 ScreenPointToLocalPointInRectangle(GameObject locParent,Camera uiCamera,Vector2 screenPoint) {
+	static public Vector2 ScreenPointToLocalPointInRectangleBy(GameObject parent,Camera uiCamera,Vector2 screenPoint) {
 		Vector2 _v2 = Vector2.zero;
-		if(IsNull(locParent)) return _v2;
-		RectTransform _rect = ToRectTransform(locParent);
+		if(IsNull(parent)) return _v2;
+		RectTransform _rect = ToRectTransform(parent);
 		RectTransformUtility.ScreenPointToLocalPointInRectangle(_rect,screenPoint,uiCamera,out _v2);
 		return _v2;
 	}
 
-	static public Vector3 ScreenPointToWorldPointInRectangle(GameObject locParent,Camera uiCamera,Vector2 screenPoint) {
+	static public void ScreenPointToLocalPointInRectangle(GameObject parent,Camera uiCamera,ref float pX,ref float pY) {
+		Vector2 _screenPoint = new Vector2(pX,pY);
+		Vector2 _v2 = ScreenPointToLocalPointInRectangleBy(parent,uiCamera,_screenPoint);
+		pX = _v2.x;
+		pY = _v2.y;
+	}
+
+	static public Vector3 ScreenPointToWorldPointInRectangleBy(GameObject parent,Camera uiCamera,Vector2 screenPoint) {
 		Vector3 _v3 = Vector3.zero;
-		if(IsNull(locParent)) return _v3;
-		RectTransform _rect = ToRectTransform(locParent);
+		if(IsNull(parent)) return _v3;
+		RectTransform _rect = ToRectTransform(parent);
 		RectTransformUtility.ScreenPointToWorldPointInRectangle(_rect,screenPoint,uiCamera,out _v3);
 		return _v3;
+	}
+
+	static public void ScreenPointToWorldPointInRectangle(GameObject parent,Camera uiCamera,ref float pX,ref float pY,ref float pZ) {
+		Vector2 _screenPoint = new Vector2(pX,pX);
+		Vector3 _v3 = ScreenPointToWorldPointInRectangleBy(parent,uiCamera,_screenPoint);
+		pX = _v3.x;
+		pY = _v3.y;
+		pZ = _v3.z;
 	}
 }

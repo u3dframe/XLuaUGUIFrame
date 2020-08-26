@@ -18,6 +18,12 @@ function M:ctor( obj )
 	super.ctor(self,obj)
 	self.trsf = self.gobj.transform
 	self.rectTrsf = CHelper.ToRectTransform(self.trsf)
+
+	self.parent = self.trsf.parent
+	if self.parent then
+		self.parentGobj = self.parent.gameObject
+	end
+
 	self:_CreateVecs()
 	self:_InitVecs()
 
@@ -31,6 +37,7 @@ function M:_CreateVecs()
 	self.v3Pos = _vec3.zero
 	self.v3Forward = _vec3.zero
 	self.v3Angles = _vec3.zero
+	self.v3LookAt = _vec3.zero
 	
 	if not self.rectTrsf then return end
 	
@@ -86,22 +93,8 @@ function M:IsInitTrsf()
 	return self.trsf ~= nil;
 end
 
-function M:ReXYZ( x,y,z )
-	if type(x) == "table" then
-		y = x.y;
-		z = x.z;
-		x = x.x;
-	end
-
-	x = self:TF2( x,0,true )
-	y = self:TF2( y,0,true )
-	z = self:TF2( z,0,true )
-	return x,y,z
-end
-
 function M:_ReXYZ( vec,x,y,z )
-	x,y,z = self:ReXYZ( x,y,z )
-	vec:Set( x,y,z )
+	self:ReVec_XYZ( vec,x,y,z )
 end
 
 function M:GetChildCount( )
@@ -253,6 +246,16 @@ function M:SetParent( parent,isLocal )
 	end
 end
 
+function M:LookAt( x,y,z )
+	self._async_look_x,self._async_look_y,self._async_look_z = nil
+	if self:IsInitTrsf() then
+		self:_ReXYZ( self.v3LookAt,x,y,z )
+		self.trsf:LookAt( self.v3LookAt )
+	else
+		self._async_look_x,self._async_look_y,self._async_look_z = x,y,z
+	end
+end
+
 function M:_ExecuteAsync_Trsf()
 	if self._async_isLocal ~= nil then
 		self:SetParent( self._async_parent,self._async_isLocal )
@@ -304,6 +307,10 @@ function M:_ExecuteAsync_Trsf()
 
 	if self._async_sdx ~= nil or self._async_sdy ~= nil then
 		self:SetSizeDelta( self._async_sdx,self._async_sdy )
+	end
+
+	if self._async_look_x ~= nil or self._async_look_y ~= nil or self._async_look_z ~= nil then
+		self:LookAt( self._async_look_x,self._async_look_y,self._async_look_z )
 	end
 end
 

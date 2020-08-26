@@ -164,4 +164,22 @@ function M:TInt( num,def )
 	return __ti( num,def )
 end
 
+function M:ReXYZ( x,y,z )
+	if type(x) == "table" then
+		y = x.y;
+		z = x.z;
+		x = x.x;
+	end
+
+	x = self:TF2( x,0,true )
+	y = self:TF2( y,0,true )
+	z = self:TF2( z,0,true )
+	return x,y,z
+end
+
+function M:ReVec_XYZ( vec,x,y,z )
+	x,y,z = self:ReXYZ( x,y,z )
+	vec:Set( x,y,z )
+end
+
 return M
