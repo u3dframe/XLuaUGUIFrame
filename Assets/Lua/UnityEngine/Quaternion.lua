@@ -34,10 +34,11 @@ Quaternion.__index = function(t, k)
 	
 	if var == nil then							
 		var = rawget(get, k)
-
-		if var == nil then							
-			var = rawget(t, k)
+		if var then
+			return var(t)
 		end
+
+		var = rawget(t, k)
 	end
 
 	return var

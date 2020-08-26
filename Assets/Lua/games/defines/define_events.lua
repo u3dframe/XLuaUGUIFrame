@@ -36,6 +36,17 @@ Evt_Map_AddObj = "Evt_Map_AddObj"; -- 添加 map 场景里面的 对象 (objType
 Evt_Map_GetObj = "Evt_Map_GetObj"; -- 取 map 场景里面的 对象 (uniqueID,lfunc,lbObject)
 Evt_Map_Reback_Obj = "Evt_Map_Reback_Obj"; -- 归还对象 (lbSObj)
 
+Evt_State_Battle_Start = "Evt_State_Battle_Start"; -- 战斗状态开始
+Evt_Map_SV_AddObj = "Evt_Map_SV_AddObj"; -- 服务器消息 - 添加对象 (objType,svData)
+Evt_Map_SV_RmvObj = "Evt_Map_SV_RmvObj"; -- 服务器消息 - 删除对象 (svData.id)
+Evt_Map_SV_MoveObj = "Evt_Map_SV_MoveObj"; -- 服务器消息 - 移动对象 (svData,isEndPos)
+Evt_Map_SV_BreakSkill = "Evt_Map_SV_BreakSkill"; -- 服务器消息 - 打断 对象 技能 (svData)
+Evt_Map_SV_Skill = "Evt_Map_SV_Skill"; -- 服务器消息 - 技能播放
+Evt_Map_SV_Skill_Effect = "Evt_Map_SV_Skill_Effect"; -- 服务器消息 - 技能效果(伤害数值和表现)
+Evt_Map_SV_Skill_Pause = "Evt_Map_SV_Skill_Pause"; -- 服务器消息 - 技能停止
+Evt_Map_SV_Skill_GoOn = "Evt_Map_SV_Skill_GoOn"; -- 服务器消息 - 技能继续
+Evt_State_Battle_End = "Evt_State_Battle_End"; -- 战斗状态结束
+
 -------- 界面所用事件
 Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示
 Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示

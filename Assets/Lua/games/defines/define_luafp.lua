@@ -82,7 +82,7 @@ _LuaFpEnd = {
 	
 	{"MgrLoadScene","mgr_loadscene",10}, -- 加载场景管理
 	{"SceneFactory","scene_factory",10}, -- 场景工厂
-	{"MgrScene","mgr_scene",10}, -- 场景管理
+	{"MgrSceneBattle","mgr_scene_battle",10}, -- 战斗管理
 	
 	{"MgrLogin","login/mgr_login",6}, 	-- 登录管理
 	

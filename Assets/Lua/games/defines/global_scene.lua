@@ -38,16 +38,37 @@ LES_Layer = {
 
 -- 场景 - 状态
 LES_State = {
-    None                 = _add(0),
-	Wait_Vw_Loading      = _add(),
-	Clear_Pre_Map_Objs   = _add(),
-	Clear_Pre_Map_Scene  = _add(),
-	Load_Scene           = _add(),
-	Wait_Loading_Scene   = _add(),
-	Load_Map_Scene       = _add(),
-	Load_Map_Objs        = _add(),
-	Complete             = _add(),
-	FinshedEnd           = _add(),
+    None                     = _add(0),
+	Wait_Vw_Loading          = _add(),
+	Clear_Pre_Map_Objs       = _add(),
+	Clear_Pre_Map_Scene      = _add(),
+	Load_Scene               = _add(),
+	Wait_Loading_Scene       = _add(),
+	Load_Map_Scene           = _add(),
+	Load_Map_Objs            = _add(),
+	Complete                 = _add(),
+	FinshedEnd               = _add(),
+}
+
+-- 场景 - 战斗 - 状态
+LES_Battle_State = {
+	None                     = _add(100),
+	Start                    = _add(),
+
+	Create_Objs              = _add(),
+	Create_Objs_End          = _add(),
+
+	Entry_CG                 = _add(),
+	Entry_CG_Ing             = _add(),
+	Entry_CG_End             = _add(),
+	
+	Play_BG                  = _add(),
+	Ready                    = _add(),
+	GO                       = _add(),
+	Battle_Ing               = _add(),
+	Battle_End               = _add(),
+	Battle_Error             = _add(),
+	End                      = _add(),
 }
 
 
@@ -81,15 +102,17 @@ LES_C_Animator_State = {
 
 -- 人性角色 - 状态
 LES_C_State = {
-	None                 = _add(0),     -- 无
+	None                 = _add(1000),     -- 无
 	Idle                 = _add(),      -- 待机
 	Idle_Exed            = _add(),      -- 待机_已执行
 	Die                  = _add(),      -- 死亡
 	Die_Exed             = _add(),      -- 死亡_已执行
 	Run                  = _add(),      -- 跑
-	Run_Exed             = _add(),      -- 跑_已执行
+	Run_Ing              = _add(),      -- 跑ing
 	Attack_1             = _add(),      -- 普攻_1
 	Attack_1_Exed        = _add(),      -- 普攻_1_已执行
 	Grab                 = _add(),      -- 被拧起
 	Grab_Exed            = _add(),      -- 被拧起_已执行
+	Show_1               = _add(),      -- 展示1
+	Show_1_Exed          = _add(),      -- 展示1_已执行
 }

@@ -18,7 +18,7 @@ Vector2.__index = function(t,k)
 	if var == nil then							
 		var = rawget(get, k)
 		if var then
-			return var()
+			return var(t)
 		end
 
 		var = rawget(t, k)

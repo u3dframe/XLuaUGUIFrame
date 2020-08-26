@@ -103,9 +103,10 @@ end
 function M.OnSv_Move_Map_Obj(svMsg,isStop)
 	local _obj = MgrScene.GetCurrMapObj( svMsg.id )
 	if not _obj then return end
-	_obj:SetPos( svMsg.x,svMsg.y )
-	if not isStop then
-		_obj:MoveTo( svMsg.dx,svMsg.dy )
+	if isStop then
+		_obj:MoveEnd( svMsg.dx,svMsg.dy )
+	else
+		_obj:MoveTo( svMsg.dx,svMsg.dy,svMsg.x,svMsg.y )
 	end
 end
 
