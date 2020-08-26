@@ -251,7 +251,7 @@ end
 function M.Add_SObj(objType,resid,uuid)
 	local _ret = this.GetOrNew_SObj( objType,resid,uuid )
 	this.AddCurrMapObj(_ret)
-	_ret.worldY = this.mapWorld_Y
+	_ret:SetWorldY( this.mapWorld_Y )
 	return _ret
 end
 

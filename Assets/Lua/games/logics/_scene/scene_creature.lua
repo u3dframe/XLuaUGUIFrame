@@ -1,9 +1,11 @@
 --[[
-	-- 场景对象 - 生物
+	-- 场景对象 - 生物体
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-08-14 09:25
 	-- Desc : 
 ]]
+
+local SceneCUnit = require ("games/logics/_scene/scene_c_unit") -- 生物 - 单元
 
 local _vec3,_vec2,type = Vector3,Vector2,type
 
@@ -12,13 +14,14 @@ local _v3_zero = _vec3.zero
 local LES_Object = LES_Object
 local LC_State,LC_AniState = LES_C_State,LES_C_Animator_State
 
-local super = SceneObject
+local super = SceneCUnit
 local M = class( "scene_creature",super )
 
 function M:ctor(objType,nCursor,...)
 	objType = objType or LES_Object.Creature
 	super.ctor( self,objType,nCursor,... )
-	self.worldY = 0 -- map里面给一个值
+
+	self:InitCUnit( 0,1 )
 end
 
 function M:onAssetConfig( _cfg )
@@ -29,18 +32,10 @@ function M:onAssetConfig( _cfg )
 	return _cfg
 end
 
-function M:OnInit()
-	self:_Init_SC_Vecs()
-
-	self._lf_On_Up = handler_pcall(self,self.OnUpdate_Creature)
-	self._lf_On_A_Enter = handler_pcall(self,self.OnUpdate_A_Enter)
-	self._lf_On_A_Up = handler_pcall(self,self.OnUpdate_A_Up)
-	self._lf_On_A_Exit = handler_pcall(self,self.OnUpdate_A_Exit)
-
-	self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit)
-	self:OnInitCreatureUnit()
-
-	-- self.worldY = 0 -- 发一个射线去高度
+function M:OnInit_Unit()
+	-- local worldY = 0 -- 发一个射线去高度
+	-- self:SetWorldY( worldY )
+	self:OnInitCreature()
 end
 
 function M:OnActive(isActive)
@@ -49,15 +44,10 @@ function M:OnActive(isActive)
 	end
 end
 
-function M:_Init_SC_Vecs()
-	self.v3MoveTo = _vec3.zero
-	self.v3Move = _vec3.zero
+function M:OnInitCreature()
 end
 
-function M:OnInitCreatureUnit()
-end
-
-function M:OnUpdate_Creature(dt,undt)
+function M:OnUpdate_CUnit(dt,undt)
 	if not self:IsLoadedAndShow() then return end
 
 	if self._async_a_n_state ~= nil then
@@ -87,45 +77,10 @@ function M:OnUpdate_Creature(dt,undt)
 		self:PlayAction( LC_AniState.Show_1 )
 	end
 
-	self:OnUpdateCreatureUnit( dt )
+	self:OnUpdate_Creature( dt )
 end
 
-function M:OnUpdateCreatureUnit(dt)
-end
-
-function M:OnUpdate4Moving( dt )
-	--注意，这里需要修改movement的y轴
-	local movement = self.movement
-	
-	if _v3_zero:Equals(movement) then return end
-
-	local speed = self.speed
-	-- 瞬移速度
-	if self.speedShift and self.speedShift ~= 0 then
-		speed = self.speedShift
-	end
-	
-	speed = speed * dt
-	
-	self.v3Move.x = movement.x * speed
-	self.v3Move.y = movement.y
-	self.v3Move.z = movement.z * speed
-
-	if _v3_zero:Equals(self.v3Move) then return end
-
-	self.comp:Move(self.v3Move.x,self.v3Move.y,self.v3Move.z)
-end
-
-function M:OnUpdate_A_Enter()
-end
-
-function M:OnUpdate_A_Up(_,info,_)
-end
-
-function M:OnUpdate_A_Exit()
-	if self.state == LC_State.Show_1_Exed then
-		self:SetState( LC_State.Idle )
-	end
+function M:OnUpdate_Creature(dt)
 end
 
 function M:PlayAction(a_n_state)
@@ -142,17 +97,6 @@ function M:PlayAction(a_n_state)
 	end
 end
 
-function M:SetState(state,isReplace)
-	isReplace = (isReplace == true) or (self.state == nil)  or (state ~= self.state)
-	if not isReplace then return end
-	self.preState = self.state
-	self.state = state
-end
-
-function M:SetPos(x,y)
-	self:SetPosition ( x,self.worldY,y )
-end
-
 function M:MoveTo(to_x,to_y,cur_x,cur_y)
 	if cur_x and cur_y then
 		self:SetPos( cur_x,cur_y )
@@ -166,11 +110,6 @@ function M:MoveTo(to_x,to_y,cur_x,cur_y)
 	else
 		self._async_m_x,self._async_m_y = to_x,to_y
 	end
-end
-
-function M:MoveEnd(x,y)
-	self:SetState( LC_State.Idle )
-	self:SetPos( x,y )
 end
 
 return M
