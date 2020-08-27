@@ -75,8 +75,6 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 			if cfg then
 				local _obj = MgrScene.Add_SObj( objType,cfg.resource,svMsg.id )
 				if _obj then
-					_obj:SetMoveSpeed( svMsg.moveSpeed or 2 )
-					_obj:SetParent(nil,true)
 					_obj:View(true,_cfg,svMsg)
 				end
 			end

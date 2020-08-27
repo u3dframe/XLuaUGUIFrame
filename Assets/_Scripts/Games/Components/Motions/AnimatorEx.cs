@@ -55,7 +55,7 @@ public class AnimatorEx : PrefabElement
 		}else{
 			Debug.LogErrorFormat("=== this animator is null, gobj name = [{0}]",this.m_gobj.name);
 		}
-		_ReAniEvents(false,true);
+		_ReAniEvents(true,true);
 	}
 
 	override protected void OnCall4Hide(){

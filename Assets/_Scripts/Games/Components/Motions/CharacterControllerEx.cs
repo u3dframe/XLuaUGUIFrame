@@ -24,7 +24,7 @@ public class CharacterControllerEx : AnimatorEx
 	public event DF_OnUpdate m_cf_OnUpdate;
 	private Vector3 m_v3Scale = Vector3.one;
 	private Vector3 m_v3Move = Vector3.zero;
-	private Vector3  m_v3LookAt = Vector3.zero;
+	private Vector3 m_v3LookAt = Vector3.zero;
 
 	override protected void Update (){
 		base.Update();
@@ -107,15 +107,20 @@ public class CharacterControllerEx : AnimatorEx
 		this.m_trsf.LookAt(this.m_v3LookAt);
 	}
 
-	private void LookAtMoveDest(float x,float y,float z){
-		LookAt(x,y,z);
+	public void LookAtDirction(float x,float y,float z){
+		Vector3 _pos = this.m_trsf.position;
+		LookAt(_pos.x + x,_pos.y + y,_pos.z + z);
+	}
+
+	private void LookAtMove(float x,float y,float z){
 		this.m_v3Move.x = x;
 		this.m_v3Move.y = y;
 		this.m_v3Move.z = z;
+		LookAtDirction( x,y,z );
 	}
 
 	public void Move(float x,float y,float z){
-		this.LookAtMoveDest(x,y,z);
+		this.LookAtMove(x,y,z);
 		if(this.m_c_ctrler == null) return;
 	
 		this.m_c_ctrler.Move(this.m_v3Move);
@@ -123,7 +128,7 @@ public class CharacterControllerEx : AnimatorEx
 
 	public void SimpleMove(float x,float y,float z){
 		if(this.m_c_ctrler == null) return;
-		this.LookAtMoveDest(x,y,z);
+		this.LookAtMove(x,y,z);
 		this.m_c_ctrler.SimpleMove(this.m_v3Move);
 	}
 }

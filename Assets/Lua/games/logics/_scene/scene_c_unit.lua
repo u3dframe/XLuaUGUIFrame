@@ -43,6 +43,20 @@ function M:OnUpdate4Moving( dt )
 
 	--注意，这里需要修改movement的y轴
 	local movement = self.movement
+
+	self.groundPosY =  self.groundPosY or 0
+	self.gravityPosY = self.gravityPosY or 0
+
+	local _posY = self.trsf.position.y
+	if self.comp.isGrounded then
+		self.groundPosY = _posY
+		self.gravityPosY = 0
+	else
+		if _posY > self.groundPosY then
+			self.gravityPosY = self.gravity * _evtime
+			movement.y =  movement.y - self.gravityPosY
+		end
+	end
 	
 	if _v3_zero:Equals(movement) then return end
 
@@ -72,8 +86,11 @@ end
 function M:OnUpdate_A_Up(_,info,_)
 end
 
-function M:OnUpdate_A_Exit()
-	self:SetState( LC_State.Idle )
+function M:OnUpdate_A_Exit(_,info,_)
+	-- if info.loop then return end
+	if self.state == LC_State.Show_1_Exed then
+		self:SetState( LC_State.Idle )
+	end
 end
 
 function M:SetState(state,isReplace)
@@ -103,6 +120,23 @@ end
 function M:MoveEnd(x,y)
 	self:SetState( LC_State.Idle )
 	self:SetPos( x,y )
+end
+
+-- 暂停
+function M:Pause()
+	if self.isPause then
+		return false
+	end
+	self.isPause = true
+	return true
+end
+
+-- 恢复
+function M:Regain()
+	if not self.isPause then
+		return
+	end
+	self.isPause = nil
 end
 
 return M

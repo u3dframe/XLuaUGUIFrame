@@ -44,6 +44,15 @@ function M:OnActive(isActive)
 	end
 end
 
+function M:OnSetData(svData)
+	self:SetParent(nil,true)
+
+	self.svData = svData
+	if svData then
+		self:SetMoveSpeed( svData.attrs.speed or 0.5 )
+	end
+end
+
 function M:OnInitCreature()
 end
 
