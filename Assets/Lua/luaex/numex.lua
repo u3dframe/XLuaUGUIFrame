@@ -32,6 +32,7 @@ if bit then
 	bit_bor = bit.bor; -- 一个或多个无符号整数 '或 |' 运算 得到值
 	bit_shl = bit.shl; -- 两个无符号整数,第一个参数是被移位的数，第二个参数是向左移动的位数
 	bit_shr = bit.shr; -- 两个无符号整数,第一个参数是被移位的数，第二个参数是向右移动的位数
+	bit_bnot = bit.bnot; -- 取反
 end
 
 function isNum(val)
@@ -200,6 +201,15 @@ function M.bitRight(org,pos)
 		return bit_shr(org,pos);
 	else
 		return org >> pos;
+	end
+end
+
+-- 取反
+function M.bitNot(org)
+	if bit_bnot then
+		return bit_bnot(org);
+	else
+		return (~ org);
 	end
 end
 

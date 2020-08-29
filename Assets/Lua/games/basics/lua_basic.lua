@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _nPars,type = lensPars,type
+local _nPars,type,tostring = lensPars,type,tostring
 local tb_has,tb_insert = table.contains,table.insert
 local _lbKeys = { "__cname","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
 
@@ -120,6 +120,44 @@ function M:clean()
 	self:on_clean()
 	self:_clean()
 	self:clean_end()
+end
+
+function M:AddFunc(cmd,func,obj)
+	if not cmd then return end
+	if type(func) == "function" then return end
+	local _lb = self[cmd] or {}
+	self[cmd] = _lb
+
+	local _lbTmp = _lb.funcs or {}
+	_lb.funcs = _lbTmp
+	tb_insert( _lbTmp,func )
+
+	_lbTmp = _lb.objs or {}
+	_lb.objs = _lbTmp
+	tb_insert( _lbTmp,obj or "" )
+end
+
+function M:ExcFunc(cmd,...)
+	if not cmd then return end
+	local _lb = self[cmd]
+	if not _lb then return end
+	if not _lb.funcs then return end
+
+	for k, v in ipairs(_lb.funcs) do
+		if v then
+			_it = _lb.objs[k]
+			if _it == "" then
+				v( ... ) 
+			else
+				v( _it,...) 
+			end
+		end
+	end
+end
+
+function M:RmvFunc(cmd)
+	if not cmd then return end
+	self[cmd] = nil
 end
 
 return M

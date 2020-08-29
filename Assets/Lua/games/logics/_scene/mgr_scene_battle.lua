@@ -25,6 +25,8 @@ function M.Init()
 	_evt.AddListener(Evt_Map_SV_AddObj,this.OnSv_Add_Map_Obj)
 	_evt.AddListener(Evt_Map_SV_RmvObj,this.OnSv_Rmv_Map_Obj)
 	_evt.AddListener(Evt_Map_SV_MoveObj,this.OnSv_Move_Map_Obj)
+	_evt.AddListener(Evt_Map_SV_Skill,this.OnSv_Map_Obj_Skill)
+	_evt.AddListener(Evt_Map_SV_Skill_Effect,this.OnSv_Map_Obj_Skill_Effect)
 	
 	_evt.AddListener(Evt_State_Battle_Start,this.Start)
 	_evt.AddListener(Evt_State_Battle_End,this._On_ST_End_Battle)
@@ -59,10 +61,64 @@ function M:OnUpdate(dt)
 	end
 end
 
+function M.GetSObj(uniqueID)
+	return MgrScene.OnGet_Map_Obj( uniqueID )
+end
+
+function M._IsCanStart()
+	if this.state == LES_B_State.None or this.state == LES_B_State.End then
+		return true
+	end
+	return true
+end
+
+function M.Start()
+	if this._IsCanStart() then
+		this.state = LES_B_State.Start
+	end
+	this.isUping = true
+end
+
+function M._ST_Create_Obj()
+	if not this.sv_queue_add then return end
+	if #this.sv_queue_add <= 0 then
+		this.state = LES_B_State.Create_Objs_End
+		return
+	end
+	local _lf = this.sv_queue_add[1]
+	tb_remove( this.sv_queue_add,1 )
+	_lf()
+end
+
+function M._ST_PlayBG()
+	this.state = LES_B_State.Ready
+end
+
+function M._ST_Ready()
+	MgrBattle:FormalStartBattle(this._On_ST_Start_Battle)
+end
+
+function M._On_ST_Start_Battle(msg)
+	if msg.e == 0 then
+		this.state = LES_B_State.GO
+	else
+		this.state = LES_B_State.Battle_Error
+	end
+end
+
+function M._ST_Go()
+	this.state = LES_B_State.Battle_Ing
+end
+
+function M._On_ST_End_Battle()
+	this.state = LES_B_State.Battle_End
+end
+
+
 function M.OnSv_Add_Map_Obj(objType,svMsg)
 	local _lb_dic = this.sv_dic_add or {}
 	this.sv_dic_add = _lb_dic
-
+-- printTable(svMsg,objType)
 	local _func = _lb_dic[svMsg.id]
 	if _func then
 		printError("=== add sv obj is repeat  id = [%s]",svMsg.id)
@@ -103,61 +159,22 @@ function M.OnSv_Move_Map_Obj(svMsg,isStop)
 	local _obj = MgrScene.GetCurrMapObj( svMsg.id )
 	if not _obj then return end
 	if isStop then
-		_obj:MoveEnd( svMsg.dx,svMsg.dy )
+		_obj:MoveEnd_SvPos( svMsg.dx,svMsg.dy )
 	else
-		_obj:MoveTo( svMsg.dx,svMsg.dy,svMsg.x,svMsg.y )
+		_obj:MoveTo_SvPos( svMsg.dx,svMsg.dy,svMsg.x,svMsg.y )
 	end
 end
 
-
-function M._IsCanStart()
-	if this.state == LES_B_State.None or this.state == LES_B_State.End then
-		return true
-	end
-	return true
+function M.OnSv_Map_Obj_Skill(svMsg)
+	local _obj = MgrScene.GetCurrMapObj( svMsg.caster )
+	if not _obj then return end
+	_obj:CastAttack( svMsg )
 end
 
-function M.Start()
-	if this._IsCanStart() then
-		this.state = LES_B_State.Start
-	end
-	this.isUping = true
-end
+function M.OnSv_Map_Obj_Skill_Effect(svMsg)
+	local _obj = MgrScene.GetCurrMapObj( svMsg.caster )
+	if not _obj then return end
 
-function M._ST_Create_Obj()
-	if not this.sv_queue_add then return end
-	if #this.sv_queue_add <= 0 then
-		this.state = LES_B_State.Create_Objs_End
-		return
-	end
-	local _lf = this.sv_queue_add[1]
-	tb_remove( this.sv_queue_add,1 )
-	_lf()
-end
-
-function M._ST_PlayBG()
-	this.state = LES_B_State.Ready
-end
-
-function M._ST_Ready()
-	printError("========== start sv battle")
-	MgrBattle:FormalStartBattle(this._On_ST_Start_Battle)
-end
-
-function M._On_ST_Start_Battle(msg)
-	if msg.e == 0 then
-		this.state = LES_B_State.GO
-	else
-		this.state = LES_B_State.Battle_Error
-	end
-end
-
-function M._ST_Go()
-	this.state = LES_B_State.Battle_Ing
-end
-
-function M._On_ST_End_Battle()
-	this.state = LES_B_State.Battle_End
 end
 
 return M

@@ -30,7 +30,6 @@ function M:OnViewBeforeOnInit()
 	self:SetLayer(LES_Layer[_ot],true)
 end
 
-
 function M:SetSObjType(sobjType)
 	self.sobjType = sobjType or LES_Object.Object
 	return self
@@ -59,6 +58,10 @@ end
 
 function M:OnCF_OnDestroy()
 	self:Reback()
+end
+
+function M:GetSObjBy(uniqueid)
+	return MgrScene.OnGet_Map_Obj( uniqueid )
 end
 
 return M

@@ -114,4 +114,13 @@ function M:GetCfgMap(idKey)
 	return self:GetOneData( "scenemap",idKey )
 end
 
+function M:GetCfgSkill(idKey)
+	return self:GetOneData( "skill",idKey )
+end
+
+function M:GetCfgSkillEffect(idKey)
+	return self:GetOneData( "skill_skilleffect",idKey )
+end
+
+
 return M

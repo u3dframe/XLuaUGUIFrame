@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using Core.Kernel;
 
-public delegate void DF_ASM_MotionLife(Animator animator, AnimatorStateInfo stateInfo, int layerIndex);
-public delegate void DF_ASM_SubLife(Animator animator, int stateMachinePathHash);
+public delegate void DF_ASM_MotionLife(Animator animator, AnimatorStateInfo stateInfo, int layerIndex,int action_state);
+public delegate void DF_ASM_SubLife(Animator animator, int stateMachinePathHash,int action_state);
 
 /// <summary>
 /// 类名 : Amimator 扩展脚本
@@ -170,12 +170,12 @@ public class AnimatorEx : PrefabElement
 
 	void _Exc_SM_Call(DF_ASM_MotionLife cfunc,Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
 		if(cfunc != null)
-			cfunc(animator,stateInfo,layerIndex);
+			cfunc(animator,stateInfo,layerIndex,this.m_actionState);
 	}
 
 	void _Exc_Sub_Call(DF_ASM_SubLife cfunc,Animator animator , int stateMachinePathHash) {
 		if(cfunc != null)
-			cfunc(animator,stateMachinePathHash);
+			cfunc(animator,stateMachinePathHash,this.m_actionState);
 	}
 
 	void _CF_SM_Enter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex){

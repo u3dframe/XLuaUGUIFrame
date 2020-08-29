@@ -7,15 +7,24 @@
 
 local SceneCUnit = require ("games/logics/_scene/scene_c_unit") -- 生物 - 单元
 
-local _vec3,_vec2,type = Vector3,Vector2,type
-
-local _v3_zero = _vec3.zero
+local tb_insert,tb_sort = table.insert,table.sort
 
 local LES_Object = LES_Object
-local LC_State,LC_AniState = LES_C_State,LES_C_Animator_State
+local E_State = LES_C_State
+local MgrData = MgrData
 
 local super = SceneCUnit
 local M = class( "scene_creature",super )
+local this = M
+
+function M.InsertTimeLineData(lb,time,cfgData)
+	if lb[time] then
+		local _tmp0 = lb[time].datas
+		tb_insert(_tmp0, cfgData )
+	else
+	    lb[time] = {time = time, datas = { cfgData }}
+	end
+end
 
 function M:ctor(objType,nCursor,...)
 	objType = objType or LES_Object.Creature
@@ -33,91 +42,151 @@ function M:onAssetConfig( _cfg )
 end
 
 function M:OnInit_Unit()
-	-- local worldY = 0 -- 发一个射线去高度
-	-- self:SetWorldY( worldY )
-	self:OnInitCreature()
+	self:OnInit_Creature()
 end
 
 function M:OnActive(isActive)
+	super.OnActive( self,isActive )
 	if not isActive then
-		self.preState,self.state,self.a_n_state = nil
+		self:SetParent(nil,true)
+		self.preState,self.state,self.n_action = nil
 	end
 end
 
 function M:OnSetData(svData)
-	self:SetParent(nil,true)
-
 	self.svData = svData
 	if svData then
+		self:SetPos_SvPos( svData.x,svData.y )
 		self:SetMoveSpeed( svData.attrs.speed or 0.5 )
 	end
 end
 
-function M:OnInitCreature()
+function M:OnInit_Creature()
 end
 
 function M:OnUpdate_CUnit(dt,undt)
-	if not self:IsLoadedAndShow() then return end
-
-	if self._async_a_n_state ~= nil then
-		self:PlayAction( self._async_a_n_state,self._async_a_n_immed )
-	end
-
-	if self.state == LC_State.Idle then
-		self:SetState( LC_State.Idle_Exed )
-		self:PlayAction( LC_AniState.Idle )
-	elseif self.state == LC_State.Die then
-		self:SetState( LC_State.Die_Exed )
-		self:PlayAction( LC_AniState.Die )
-	elseif self.state == LC_State.Run then
-		if self._async_m_x ~= nil or self._async_m_y ~= nil then
-			self:MoveTo( self._async_m_x,self._async_m_y )
-			return
-		end
-		self:PlayAction( LC_AniState.Run )
-		self:SetState( LC_State.Run_Ing )
-	elseif self.state == LC_State.Run_Ing then
-		self:OnUpdate4Moving( dt )
-	elseif self.state == LC_State.Grab then
-		self:SetState( LC_State.Grab_Exed )
-		self:PlayAction( LC_AniState.Grab )
-	elseif self.state == LC_State.Show_1 then
-		self:SetState( LC_State.Show_1_Exed )
-		self:PlayAction( LC_AniState.Show_1 )
-	end
-
+	super.OnUpdate_CUnit( self,dt,undt )
 	self:OnUpdate_Creature( dt )
 end
 
 function M:OnUpdate_Creature(dt)
 end
 
-function M:PlayAction(a_n_state)
-	a_n_state = a_n_state or 0
-	if a_n_state == self.a_n_state then
+function M:PlayAction(n_action)
+	n_action = n_action or 0
+	if n_action == self.n_action then
 		return
 	end
-	self._async_a_n_state = nil
+	self._async_n_action = nil
 	if self.comp then
-		self.a_n_state = a_n_state
-		self.comp:SetAction(self.a_n_state)
+		self.n_action = n_action
+		self.comp:SetAction(self.n_action)
 	else
-		self._async_a_n_state = a_n_state
+		self._async_n_action = n_action
 	end
 end
 
-function M:MoveTo(to_x,to_y,cur_x,cur_y)
-	if cur_x and cur_y then
-		self:SetPos( cur_x,cur_y )
-	end
-	self._async_m_x,self._async_m_y = nil
-	if self.comp then
-		self:SetState( LC_State.Run )
-		to_x,to_y = self:ReXYZ( to_x,to_y )
-		self.v3MoveTo:Set(to_x,self.worldY,to_y)
-		self.movement = self.v3MoveTo.normalized
+function M:GetActionState()
+	local _a_state
+	if self.state == E_State.Attack then
+		_a_state = self.cfgSkill_Action.action_state
 	else
-		self._async_m_x,self._async_m_y = to_x,to_y
+		_a_state = super.GetActionState( self )
+	end
+	return _a_state
+end
+
+function M:SetPos_SvPos(x,y)
+	x,y = self:SvPos2MapPos( x,y )
+	self:SetPos ( x,y )
+end
+
+function M:MoveTo_SvPos(to_x,to_y,cur_x,cur_y)
+	to_x,to_y = self:SvPos2MapPos( to_x,to_y )
+	cur_x,cur_y = self:SvPos2MapPos( cur_x,cur_y )
+	self:MoveTo( to_x,to_y,cur_x,cur_y )
+end
+
+function M:MoveEnd_SvPos(x,y)
+	x,y = self:SvPos2MapPos( x,y )
+	self:MoveEnd( x,y )
+end
+
+function M:CastAttack(svMsg)
+	if not svMsg then return false end
+	local _isOkey,_cfg,_cfgAction = self:JugdeCastAttack( svMsg.skillid )
+	if not _isOkey then return false end
+	self:_DoAttack( svMsg,_cfg,_cfgAction )
+end
+
+function M:JugdeCastAttack(skillid)
+	if not skillid then return false end
+	local _cfg_skill = MgrData:GetCfgSkill(skillid)
+	if not _cfg_skill then return false end
+	local _cfg_s_effect = MgrData:GetCfgSkillEffect(_cfg_skill.cast_effect)
+	if not _cfg_s_effect then return false end
+	return true,_cfg_skill,_cfg_s_effect
+end
+
+function M:_DoAttack(svMsg,cfgSkill,cfgAction)
+	local _obj = self:GetSObjBy( svMsg.target )
+	local _tx,_ty = self:SvPos2MapPos( svMsg.targetx,svMsg.targety )
+	self.svDataCast = svMsg
+	self.cfgSkill = cfgSkill
+	self.cfgSkill_Action = cfgAction
+	self.tmEfts = {}
+	local _temp = {}
+	self:_InitAttackEffets( _temp,cfgSkill.cast_effect )
+	-- this.InsertTimeLineData( _temp,_ef.nexttime,_ef_next )
+	for _,v in pairs(_temp) do
+		tb_insert(self.tmEfts,v)
+	end
+
+	self:LookPos( _tx,_ty )
+	self:SetState( E_State.Attack )
+end
+
+function M:_InitAttackEffets(lb,e_id )
+	if not e_id then return end
+	local _ef = MgrData:GetCfgSkillEffect( e_id )
+	if (not _ef) or (not _ef.nextid) then return end
+
+	local _ef_next = MgrData:GetCfgSkillEffect( _ef.nextid )
+	if (not _ef_next) then return end
+	this.InsertTimeLineData( lb,_ef.nexttime,_ef_next )
+	if _ef_next.nextid then
+		self:_InitAttackEffets( lb,_ef.nextid )
+	end
+end
+
+local function _sort_time_line(a, b) return a.time < b.time end
+
+function M:GetAttackEffets()
+	if self.tmEfts then
+		tb_sort( self.tmEfts,_sort_time_line )
+	end
+	return self.tmEfts
+end
+
+function M:ExcuteEffectData( cfgEft )
+	if not cfgEft or not self.svDataCast then return end
+
+	if cfgEft.type == 1 then
+		-- 执行大招
+		return
+	end
+	
+	if cfgEft.action_state then
+		self:PlayAction( cfgEft.action_state )
+	end
+	local _elNm = LES_Ani_Eft_Point[cfgEft.point]
+	if not _elNm then return end
+
+	local _elNms = string.split(_elNm,";")
+
+	local _gobj = self:GetElement("")
+	if 1 == cfgEft.type or 7 == cfgEft.type then
+		
 	end
 end
 

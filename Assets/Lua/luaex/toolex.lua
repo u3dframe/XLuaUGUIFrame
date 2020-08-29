@@ -22,7 +22,7 @@ local str_gsub = string.gsub
 local str_rep = string.rep
 local str_byte = string.byte
 
-local package,type = package,type
+local package,type,rawget = package,type,rawget
 local _pcall,_xpcall,_deTrk = pcall,xpcall,debug.traceback
 local _print,_printError = print
 

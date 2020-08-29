@@ -36,4 +36,9 @@ function M:GetGBoxUnit(nIndex)
 	return self.lbGBox:GetUnit(nIndex)
 end
 
+function M:GetWorldY()
+	if (not self.lbGBox) then return 0 end
+	return self.lbGBox.posY or 0
+end
+
 return M

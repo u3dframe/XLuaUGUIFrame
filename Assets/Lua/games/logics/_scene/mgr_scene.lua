@@ -121,9 +121,9 @@ end
 
 local function _LF_LoadedScene(isNoObj,Obj)
 	if not this.isUpingLoadMap then return end
+	this.mapWorld_Y  = this.lbMap:GetWorldY()
 	this.state = LES_State.Load_Map_Objs
 
-	-- this.mapWorld_Y  = 0 -- 发一个射线去高度
 end
 
 function M._ST_CurMap()
@@ -138,7 +138,6 @@ function M._ST_CurMap()
 	this._Up_Progress()
 
 	local _cfgMap = MgrData:GetCfgMap(this.mapid)
-	this.mapWorld_Y  = 0 -- 配置表里面给个高度值
 	this.lbMap = this.GetOrNew_SObj(LES_Object.MapObj,_cfgMap.resid)
 	this.lbMap.lfAssetLoaded = _LF_LoadedScene
 	this.isUpingLoadMap = true
