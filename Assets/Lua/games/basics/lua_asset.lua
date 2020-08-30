@@ -36,12 +36,16 @@ function M:InitBase(assetCfg)
 		layer = nil,
 		hideType = nil,
 	}	
-	assetCfg = self:onAssetConfig(assetCfg)
-	self:onMergeConfig(assetCfg)
-	self:ReCheckCfgAsset()
+	self:InitAsset(assetCfg)
 	self._lfLoadAsset = handler(self,self._OnCFLoadAsset);
 	self.stateLoad = _E_SLoad.None;
 	return self
+end
+
+function M:InitAsset(assetCfg)
+	assetCfg = self:onAssetConfig(assetCfg)
+	self:onMergeConfig(assetCfg)
+	self:ReCheckCfgAsset()
 end
 
 function M:onAssetConfig( assetCfg )
