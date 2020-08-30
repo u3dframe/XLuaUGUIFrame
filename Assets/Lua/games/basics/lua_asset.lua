@@ -16,7 +16,13 @@ end
 local super = LCFabElement
 local M = class( "lua_asset",super )
 
+M.AddNoClearKeys( "cfgAsset","strABAsset" )
+
 function M:ctor(assetCfg)
+	self:InitBase( assetCfg )
+end
+
+function M:InitBase(assetCfg)
 	self.cfgAsset = {
 		abName = nil,
 		assetName = nil,
@@ -35,6 +41,7 @@ function M:ctor(assetCfg)
 	self:ReCheckCfgAsset()
 	self._lfLoadAsset = handler(self,self._OnCFLoadAsset);
 	self.stateLoad = _E_SLoad.None;
+	return self
 end
 
 function M:onAssetConfig( assetCfg )
@@ -61,6 +68,9 @@ function M:ReCheckCfgAsset()
 	end
 	self.cfgAsset.assetName = _assetName
 	self.cfgAsset.assetLType = _ltp
+
+	self.strABAsset = self:SFmt("%s_%s",_abName,_assetName)
+
 	return self.cfgAsset,self
 end
 

@@ -9,10 +9,13 @@ local _func_time = nil
 local super = LuaAsset
 local M = class( "lua_fab",super )
 
-function M:ctor(assetCfg)
-	super.ctor( self,assetCfg )
+M.AddNoClearKeys("cfgNotClear")
+
+function M:InitBase(assetCfg)
+	super.InitBase( self,assetCfg )
 	self.stateView = LE_StateView.None
 	self:ReEvent4OnUpdate(true)
+	return self
 end
 
 function M:IsLoadedAndShow()
@@ -69,6 +72,13 @@ function M:View(isShow,data,...)
 	isShow = isShow == true
 	if isShow then
 		self:SetData( data,... )
+	end
+	self:ShowView( isShow )
+end
+
+function M:ShowView(isShow)
+	isShow = isShow == true
+	if isShow then
 		self:ReShow()
 	else
 		local _isStay = self.cfgAsset.isStay == true
@@ -282,7 +292,5 @@ end
 function M:ClearAll4NotClear()
 	self.cfgNotClear = {}
 end
-
-M.AddNoClearKeys("cfgAsset","cfgNotClear")
 
 return M

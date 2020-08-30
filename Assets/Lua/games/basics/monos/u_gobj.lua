@@ -16,6 +16,19 @@ function M.CsDestroy(gobj)
 	end
 end
 
+function M.CsFindGobj(name)
+	if name ~= nil then
+		return UGameObject.Find( name );
+	end
+end
+
+function M.CsNewGobj(name)
+	if name ~= nil then
+		return UGameObject.New( name );
+	end
+	return UGameObject.New();
+end
+
 function M.CsDontDestroyOnLoad(gobj)
 	if gobj ~= nil then
 		UGameObject.DontDestroyOnLoad(gobj);

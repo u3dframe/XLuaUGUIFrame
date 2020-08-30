@@ -14,18 +14,20 @@ end
 local super,super2,_evt = LuaFab,UIPubs,Event
 local M = class( "ui_base",super,super2 )
 
-M.AddNoClearKeys( "strABAsset" )
-
 function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
 	super2.ctor( self )
+end
 
-	self.strABAsset = self:SFmt("%s_%s",self:GetAbName(),self:GetAssetName())
+function M:InitBase(assetCfg)
+	super.InitBase( self,assetCfg )
 	if self:GetLayer() == _E_Layer.Normal then
 		local hideType = self:GetMutexType()
 		hideType = hideType or _E_HType.MainAndSelf
 		self.cfgAsset.hideType = hideType
 	end
+
+	return self
 end
 
 function M:onAssetConfig( _cfg )
