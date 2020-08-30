@@ -68,11 +68,11 @@ local _L_Midle = {
 	{"MgrWww","mgr_www",5}, -- 网络层Http
 	{"MgrNet","mgr_net",5}, -- 网络层
 	{"UIPubs","ui_pubs",7}, -- UI的Pubs
+	{"FabBase","fab_base",7}, -- 资源 prefab 的 基础类
 	{"UIBase","ui_base",7}, -- UI的基础类
 	{"UICell","uicell_base",7}, -- UICell的基础类
 	{"UIRoot","ui_root",7}, -- 加载 UI的根uiroot
 	{"MgrUI","mgr_ui",7}, -- UI的管理脚本
-	{"SceneBase","scene_base",7}, --场景对象基础类
 	{"MgrBase","mgr_base",7}, -- 管理基础类
 	{"MgrInput","mgr_input",7}, -- 管理 - 场景单击
 	{"MgrCamera","mgr_camera",7}, -- 管理 - 场景摄像头

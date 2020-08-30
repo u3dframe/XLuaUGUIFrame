@@ -11,12 +11,11 @@ local function _mgr()
 	return __mgr
 end
 
-local super,super2,_evt = LuaFab,UIPubs,Event
-local M = class( "ui_base",super,super2 )
+local super,_evt = FabBase,Event
+local M = class( "ui_base",super )
 
 function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
-	super2.ctor( self )
 end
 
 function M:InitBase(assetCfg)
@@ -32,7 +31,7 @@ end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
-	_cfg.assetLType = _cfg.assetLType or _E_AType.UI
+	_cfg.assetLType = _E_AType.UI
 	_cfg.layer = _cfg.layer or _E_Layer.Normal
 	return _cfg;
 end

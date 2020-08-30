@@ -7,7 +7,7 @@
 
 local LES_Object = LES_Object
 
-local super,_evt = SceneBase,Event
+local super,_evt = FabBase,Event
 local M = class( "scene_object",super )
 
 M.AddNoClearKeys( "sobjType","resid","cfgRes" )
