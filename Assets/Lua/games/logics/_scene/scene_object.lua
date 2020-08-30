@@ -12,16 +12,24 @@ local M = class( "scene_object",super )
 
 M.AddNoClearKeys( "sobjType","resid","cfgRes" )
 
-function M:ctor(sobjType,nCursor,resCfg,...)
-	self.cfgRes = resCfg; 
+function M:ctor(sobjType,nCursor,resCfg)
 	super.ctor( self )
+	self:InitBase(sobjType,nCursor,resCfg)
+end
+
+function M:InitBase(sobjType,nCursor,resCfg)
+	self.cfgRes = resCfg; 
 	self:SetSObjType( sobjType )
 	self:SetCursor( nCursor )
+
+	return super.InitBase( self,self.cfgAsset )
 end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
-	_cfg.abName = self.cfgRes.rsaddress
+	if self.cfgRes then
+		_cfg.abName = self.cfgRes.rsaddress
+	end
 	return _cfg;
 end
 

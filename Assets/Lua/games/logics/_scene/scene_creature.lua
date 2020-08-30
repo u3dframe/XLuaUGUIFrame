@@ -26,11 +26,9 @@ function M.InsertTimeLineData(lb,time,cfgData)
 	end
 end
 
-function M:ctor(objType,nCursor,...)
-	objType = objType or LES_Object.Creature
-	super.ctor( self,objType,nCursor,... )
-
+function M:InitBase(sobjType,nCursor,resCfg)
 	self:InitCUnit( 0,1 )
+	return super.InitBase( self,(sobjType or LES_Object.Creature),nCursor,resCfg )
 end
 
 function M:onAssetConfig( _cfg )
@@ -179,14 +177,20 @@ function M:ExcuteEffectData( cfgEft )
 	if cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )
 	end
+	
+	if not cfgEft.point then return end
+
 	local _elNm = LES_Ani_Eft_Point[cfgEft.point]
 	if not _elNm then return end
 
-	local _elNms = string.split(_elNm,";")
-
-	local _gobj = self:GetElement("")
+	local _elNms,_gobj = string.split(_elNm,";")
 	if 1 == cfgEft.type or 7 == cfgEft.type then
-		
+		for _, v in ipairs(_elNms) do
+			_gobj = self:GetElement(v)
+			if _gobj then
+				
+			end
+		end
 	end
 end
 

@@ -10,9 +10,8 @@ local LES_Object = LES_Object
 local super = SceneMonster
 local M = class( "scene_hero",super )
 
-function M:ctor(objType,nCursor,...)
-	objType = objType or LES_Object.Partner
-	super.ctor( self,objType,nCursor,... )
+function M:InitBase(sobjType,nCursor,resCfg)
+	return super.InitBase( self,(sobjType or LES_Object.Partner),nCursor,resCfg )
 end
 
 return M

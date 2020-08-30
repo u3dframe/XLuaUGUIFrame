@@ -15,7 +15,7 @@ local _v3_zero = _vec3.zero
 local E_State,E_Flag,E_State2Action = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State
 
 local super = SceneObject
-local M = class( "scene_creature",super )
+local M = class( "scene_c_unit",super )
 
 function M:InitCUnit(worldY,mvSpeed)
 	self:SetWorldY( worldY or 0 )
@@ -67,7 +67,7 @@ function M:OnUpdate4Moving( dt )
 		self.gravityPosY = 0
 	else
 		if _posY > self.groundPosY then
-			self.gravityPosY = self.gravity * _evtime
+			self.gravityPosY = self.gravity * dt
 			movement.y =  movement.y - self.gravityPosY
 		end
 	end
