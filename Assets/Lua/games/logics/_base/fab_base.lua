@@ -5,6 +5,8 @@
 	-- Desc : 
 ]]
 
+local _E_AType = LE_AsType
+
 local super,super2 = LuaFab,UIPubs
 local M = class( "fab_base",super,super2 )
 
@@ -15,7 +17,7 @@ end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
-	_cfg.assetLType = LE_AsType.Fab
+	_cfg.assetLType = _cfg.assetLType or _E_AType.Fab
 
 	if self.cfgRes then
 		_cfg.abName = self.cfgRes.rsaddress
@@ -25,8 +27,9 @@ end
 
 function M:onMergeConfig( _cfg )
 	_cfg = super.onMergeConfig( self,_cfg )
-	if self:IsEnd(_cfg.abName,".ui") then return end
-	_cfg.abName = self:ReSBegEnd( _cfg.abName,"prefabs/",".fab" )
+	if _cfg.assetLType == _E_AType.Fab then
+		_cfg.abName = self:ReSBegEnd( _cfg.abName,"prefabs/",".fab" )
+	end
 	return _cfg;
 end
 

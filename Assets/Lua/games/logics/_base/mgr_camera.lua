@@ -5,7 +5,7 @@
 	-- Desc : ui的,默认的,场景的
 ]]
 
-local super,_evt,_base = MgrBase,Event,SceneBase
+local super,_evt,_base = MgrBase,Event,FabBase
 local M = class( "mgr_camera",super )
 
 function M:Init()
