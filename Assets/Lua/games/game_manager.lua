@@ -16,12 +16,13 @@ function M.Init()
 	_req "games/defines/define_luafp"
 
 	local _MG = _G;
-	for _,v in ipairs(_LuaFpNoKey) do
+	for _,v in ipairs(_L_NoKey) do
 		_req(v)
 	end
-	this.RequireByTab(_LuaFpBasic);
-	this.RequireByTab(_LuaFpMidle);
-	this.RequireByTab(_LuaFpEnd);
+	local _arrs = GetLuaFp4Globals()
+	for _, v in ipairs(_arrs) do
+		this.RequireByTab( v );
+	end
 end
 
 
