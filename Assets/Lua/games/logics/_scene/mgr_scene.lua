@@ -180,7 +180,7 @@ function M._ST_Complete()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
 	if this.mapid then
-		_evt.Brocast(Evt_Map_Loaded)
+		_evt.Brocast(Evt_Map_Loaded, this.mapid);
 	else
 		_evt.Brocast(Evt_ToView_Main)
 	end

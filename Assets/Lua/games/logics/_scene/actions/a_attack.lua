@@ -24,28 +24,41 @@ end
 
 function M:_On_AEnter()
 	local _isBl = true
-	if self.lbOwner.cfgSkill_Eft.type == 1 then
+	if self.lbOwner:IsBigSkill() then
 		_isBl = false
+		self:SetState( E_Action.Update )
 	end
 	if _isBl then
 		self.start_sec = Time.time
 		self.up_sec = 0
 		self.n_cursor = 0
-		self.lbOwner:Add_AUpFunc( self.action_state,self._On_Ani_Update,self )
+		-- self.lbOwner:Add_AUpFunc( self.action_state,self._On_Ani_Update,self )
 	end
 	return _isBl
 end
 
-function M:_On_Ani_Update(ani,info,layer)
+-- function M:_On_Ani_Update(ani,info,layer)
+-- 	self:_Excute_Effect()
+-- end
+
+function M:_On_AUpdate(dt)
+	self.up_sec = self.up_sec + dt
+	self:_Excute_Effect()
+end
+
+function M:_On_AExit()
+	super._On_AExit( self )
+	self.lbOwner:SetState( E_State.Idle )
+end
+
+function M:_Excute_Effect()
 	local _ti = Time.time
 	local _t1 = _ti - self.start_sec
 	local _t2 = self.up_sec
-
-	printInfo("=====[%s] = [%s]",_t1,_t2)
-	self:exceAniEvent(self.n_cursor,_t1)
+	self:_Exc_AniEvent( self.n_cursor,_t2 * 1000 )
 end
 
-function M:exceAniEvent(index,exc_time)
+function M:_Exc_AniEvent(index,exc_time_ms)
 	local lb = self.lbOwner:GetAttackEffets()
 	if type(lb) ~= "table" then
 		return
@@ -53,20 +66,15 @@ function M:exceAniEvent(index,exc_time)
 
 	if index < #lb then
 		local tickData = lb[index + 1]
-
-		if tickData.time <= exc_time then
+		if tickData.time <= exc_time_ms then
 			--开始调用回调!
 			self.n_cursor = index + 1
-			local _datas = tickData.datas
-			for _,v in ipairs(_datas) do
-				self.lbOwner:ExcuteEffectData( v )
+			local _ids = tickData.ids
+			for _,v in ipairs(_ids) do
+				self.lbOwner:ExcuteEffectByEid( v )
 			end
 		end
 	end
-end
-
-function M:_On_AUpdate(dt)
-	self.up_sec = self.up_sec + dt
 end
 
 return M

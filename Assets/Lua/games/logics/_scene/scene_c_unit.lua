@@ -11,10 +11,11 @@ local _vec3,NumEx,type,tostring = Vector3,NumEx,type,tostring
 
 local tb_insert = table.insert
 local _v3_zero = _vec3.zero
+local _speed_offset = 0.01
 
 local E_State,E_Flag,E_State2Action = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State
 
-local super = SceneObject
+local super,_evt = SceneObject,Event
 local M = class( "scene_c_unit",super )
 
 function M:InitCUnit(worldY,mvSpeed)
@@ -47,6 +48,7 @@ function M:OnInit_Unit()
 end
 
 function M:_Init_CU_Vecs()
+	self.v3M_Temp = _vec3.zero
 	self.v3MoveTo = _vec3.zero
 	self.v3Move = _vec3.zero
 end
@@ -80,7 +82,7 @@ function M:OnUpdate4Moving( dt )
 		speed = self.speedShift
 	end
 	
-	speed = speed * dt * 0.01
+	speed = speed * dt * _speed_offset
 	
 	self.v3Move.x = movement.x * speed
 	self.v3Move.y = movement.y
@@ -129,6 +131,13 @@ function M:OnUpdate_A_Exit(_,info,_,a_state)
 	self:RmvFunc("_a_up_" .. tostring(self.enter_a_state))
 end
 
+function M:ReEvent4Self(isbind)
+	_evt.RemoveListener(Evt_State_Battle_End, self.EndBattle, self)
+	if (isbind)then
+		_evt.AddListener(Evt_State_Battle_End, self.EndBattle, self)
+	end
+end
+
 function M:Add_AUpFunc( a_state,func,obj )
 	self:AddFunc( "_a_up_" .. tostring(a_state),func,obj )
 end
@@ -153,6 +162,18 @@ end
 
 function M:LookPos(x,y)
 	self:LookAt ( x,self.worldY,y )
+end
+
+function M:LookTarget(target_id,svX,svY)
+	local _target = self:GetSObjBy( target_id )
+	local _x,_z = 0,0
+	if _target then
+		local _pos = _target:GetPosition()
+		_x,_z = _pos.x,_pos.z
+	else
+		_x,_z = self:SvPos2MapPos( svX,svY )
+	end
+	self:LookPos( _x,_z )
 end
 
 function M:SetWorldY(w_y)
@@ -181,18 +202,23 @@ function M:SetMoveSpeedShift(speed)
 end
 
 function M:MoveTo(to_x,to_y,cur_x,cur_y)
-	if cur_x and cur_y then
-		self:SetPos( cur_x,cur_y )
-	end
-	self._async_m_x,self._async_m_y = nil
+	self._async_m_x,self._async_m_y,self._async_c_x,self._async_c_y = nil
 	if self.comp then
 		self:SetState( E_State.Run )
+		local _pos,_diff = self:GetPosition()
+		self.v3M_Temp:Set(cur_x,self.worldY,cur_y)
+		_diff = self.v3M_Temp - _pos
+		if _diff.sqrMagnitude > 0.1 then
+			-- printTable({dx =_diff.x,dy =_diff.y,dz = _diff.z},"big 1")
+			self:SetPos( cur_x,cur_y )
+		end
+
 		to_x,to_y = self:ReXYZ( to_x,to_y )
 		self.v3MoveTo:Set(to_x,self.worldY,to_y)
-		local _diff = self.v3MoveTo - self.v3Pos
+		_diff = self.v3MoveTo - _pos
 		self:SetMoveDir( _diff )
 	else
-		self._async_m_x,self._async_m_y = to_x,to_y
+		self._async_m_x,self._async_m_y,self._async_c_x,self._async_c_y = to_x,to_y,cur_x,cur_y
 	end
 end
 
@@ -275,9 +301,15 @@ function M:SetMachine()
 end
 
 function M:EndAction()
-	if self.machine.isDoned then
-		self.machine = nil
+	local _machine = self.machine
+	self.machine = nil
+	if _machine and _machine.isDoned then
+		_machine:Exit()
 	end
+end
+
+function M:EndBattle()
+	self:EndAction()
 end
 
 return M

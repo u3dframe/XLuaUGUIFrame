@@ -22,7 +22,7 @@ function M:_IsAEnter()
 	local _isBl = self.lbOwner:CheckRun()
 	if _isBl then
 		if self.lbOwner._async_m_x ~= nil or self.lbOwner._async_m_y ~= nil then
-			self.lbOwner:MoveTo( self.lbOwner._async_m_x,self.lbOwner._async_m_y )
+			self.lbOwner:MoveTo( self.lbOwner._async_m_x,self.lbOwner._async_m_y,self.lbOwner._async_c_x,self.lbOwner._async_c_y )
 			return false
 		end
 	end

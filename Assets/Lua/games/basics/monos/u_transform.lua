@@ -31,62 +31,19 @@ function M:ctor( obj )
 end
 
 function M:_CreateVecs()
-	self.v3locPos = _vec3.zero
-	self.v3locScale = _vec3.zero
-	self.v3locAngles = _vec3.zero
 	self.v3Pos = _vec3.zero
-	self.v3Forward = _vec3.zero
-	self.v3Angles = _vec3.zero
-	self.v3LookAt = _vec3.zero
-	
+	self.v3Temp = _vec3.zero
+
 	if not self.rectTrsf then return end
-	
-	self.v3AncPos = _vec3.zero
+
 	self.v2AncPos = _vec2.zero
-	self.v2AncMin = _vec2.zero
-	self.v2AncMax = _vec2.zero
-	self.v2Pivot = _vec2.zero
-	self.v2SizeDelta = _vec2.zero
+	self.v2Temp = _vec2.zero
 end
 
 function M:_InitVecs()
-	local _tmp = self.trsf.localPosition
-	self.v3locPos:Set(_tmp.x,_tmp.y,_tmp.z)
-
-	_tmp = self.trsf.localScale
-	self.v3locScale:Set(_tmp.x,_tmp.y,_tmp.z)
-
-	_tmp = self.trsf.localEulerAngles
-	self.v3locAngles:Set(_tmp.x,_tmp.y,_tmp.z)
-
-	_tmp = self.trsf.position
-	self.v3Pos:Set(_tmp.x,_tmp.y,_tmp.z)
-
-	_tmp = self.trsf.forward
-	self.v3Forward:Set(_tmp.x,_tmp.y,_tmp.z)
-
-	_tmp = self.trsf.eulerAngles
-	self.v3Angles:Set(_tmp.x,_tmp.y,_tmp.z)
-
+	self:GetPosition()
 	if not self.rectTrsf then return end
-
-	_tmp = self.rectTrsf.anchoredPosition3D
-	self.v3AncPos:Set(_tmp.x,_tmp.y,_tmp.z)
-
-	_tmp = self.rectTrsf.anchoredPosition
-	self.v2AncPos:Set(_tmp.x,_tmp.y)
-
-	_tmp = self.rectTrsf.anchorMin
-	self.v2AncMin:Set(_tmp.x,_tmp.y)
-
-	_tmp = self.rectTrsf.anchorMax
-	self.v2AncMax:Set(_tmp.x,_tmp.y)
-
-	_tmp = self.rectTrsf.pivot
-	self.v2Pivot:Set(_tmp.x,_tmp.y)
-
-	_tmp = self.rectTrsf.sizeDelta
-	self.v2SizeDelta:Set(_tmp.x,_tmp.y)
+	self:GetAnchoredPosition()
 end
 
 function M:IsInitTrsf()
@@ -109,6 +66,14 @@ function M:GetChild( nIndex )
 	end
 end
 
+function M:GetPosition()
+	if self:IsInitTrsf() then
+		local _tmp = self.trsf.position
+		self.v3Pos:Set(_tmp.x,_tmp.y,_tmp.z)
+	end
+	return self.v3Pos
+end
+
 function M:SetPosition( x,y,z )
 	self._async_px,self._async_py,self._async_pz = nil
 	if self:IsInitTrsf() then
@@ -122,8 +87,8 @@ end
 function M:SetLocalPosition( x,y,z )
 	self._async_lpx,self._async_lpy,self._async_lpz = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3locPos,x,y,z)
-		self.trsf.localPosition = self.v3locPos
+		self:_ReXYZ(self.v3Temp,x,y,z)
+		self.trsf.localPosition = self.v3Temp
 	else
 		self._async_lpx,self._async_lpy,self._async_lpz = x,y,z
 	end
@@ -132,8 +97,10 @@ end
 function M:SetLocalScale( x,y,z )
 	self._async_lsx,self._async_lsy,self._async_lsz = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3locScale,x,y,z)
-		self.trsf.localScale = self.v3locScale
+		y = y or x
+		z = z or x
+		self:_ReXYZ(self.v3Temp,x,y,z)
+		self.trsf.localScale = self.v3Temp
 	else
 		self._async_lsx,self._async_lsy,self._async_lsz = x,y,z
 	end
@@ -142,8 +109,8 @@ end
 function M:SetEulerAngles( x,y,z )
 	self._async_ax,self._async_ay,self._async_az = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3Angles,x,y,z)
-		self.trsf.eulerAngles = self.v3Angles
+		self:_ReXYZ(self.v3Temp,x,y,z)
+		self.trsf.eulerAngles = self.v3Temp
 	else
 		self._async_ax,self._async_ay,self._async_az = x,y,z
 	end
@@ -152,8 +119,8 @@ end
 function M:SetLocalEulerAngles( x,y,z )
 	self._async_lax,self._async_lay,self._async_laz = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3locAngles,x,y,z)
-		self.trsf.localEulerAngles = self.v3locAngles
+		self:_ReXYZ(self.v3Temp,x,y,z)
+		self.trsf.localEulerAngles = self.v3Temp
 	else
 		self._async_lax,self._async_lay,self._async_laz = x,y,z
 	end
@@ -162,8 +129,8 @@ end
 function M:SetForward( x,y,z )
 	self._async_fx,self._async_fy,self._async_fz = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3Forward,x,y,z)
-		self.trsf.forward = self.v3Forward
+		self:_ReXYZ(self.v3Temp,x,y,z)
+		self.trsf.forward = self.v3Temp
 	else
 		self._async_fx,self._async_fy,self._async_fz = x,y,z
 	end
@@ -172,11 +139,17 @@ end
 function M:SetAnchoredPosition3D( x,y,z )
 	self._async_ap3x,self._async_ap3y,self._async_ap3z = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3AncPos,x,y,z)
-		self.rectTrsf.anchoredPosition3D = self.v3AncPos
+		self:_ReXYZ(self.v3Temp,x,y,z)
+		self.rectTrsf.anchoredPosition3D = self.v3Temp
 	else
 		self._async_ap3x,self._async_ap3y,self._async_ap3z = x,y,z
 	end
+end
+
+function M:GetAnchoredPosition()
+	local _tmp = self.rectTrsf.anchoredPosition
+	self.v2AncPos:Set(_tmp.x,_tmp.y)
+	return self.v2AncPos
 end
 
 function M:SetAnchoredPosition( x,y )
@@ -192,8 +165,8 @@ end
 function M:SetAnchorMin( x,y )
 	self._async_aminx,self._async_aminy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2AncMin,x,y)
-		self.rectTrsf.anchorMin = self.v2AncMin
+		self:_ReXYZ(self.v2Temp,x,y)
+		self.rectTrsf.anchorMin = self.v2Temp
 	else
 		self._async_aminx,self._async_aminy = x,y
 	end
@@ -202,8 +175,8 @@ end
 function M:SetAnchorMax( x,y )
 	self._async_amaxx,self._async_amaxy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2AncMax,x,y)
-		self.rectTrsf.anchorMax = self.v2AncMax
+		self:_ReXYZ(self.v2Temp,x,y)
+		self.rectTrsf.anchorMax = self.v2Temp
 	else
 		self._async_amaxx,self._async_amaxy = x,y
 	end
@@ -212,8 +185,8 @@ end
 function M:SetPivot( x,y )
 	self._async_pix,self._async_piy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2Pivot,x,y)
-		self.rectTrsf.pivot = self.v2Pivot
+		self:_ReXYZ(self.v2Temp,x,y)
+		self.rectTrsf.pivot = self.v2Temp
 	else
 		self._async_pix,self._async_piy = x,y
 	end
@@ -222,8 +195,8 @@ end
 function M:SetSizeDelta( x,y )
 	self._async_sdx,self._async_sdy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2SizeDelta,x,y)
-		self.rectTrsf.sizeDelta = self.v2SizeDelta
+		self:_ReXYZ(self.v2Temp,x,y)
+		self.rectTrsf.sizeDelta = self.v2Temp
 	else
 		self._async_sdx,self._async_sdy = x,y
 	end
@@ -249,8 +222,8 @@ end
 function M:LookAt( x,y,z )
 	self._async_look_x,self._async_look_y,self._async_look_z = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ( self.v3LookAt,x,y,z )
-		self.trsf:LookAt( self.v3LookAt )
+		self:_ReXYZ( self.v3Temp,x,y,z )
+		self.trsf:LookAt( self.v3Temp )
 	else
 		self._async_look_x,self._async_look_y,self._async_look_z = x,y,z
 	end

@@ -60,8 +60,4 @@ function M:OnCF_OnDestroy()
 	self:Reback()
 end
 
-function M:GetSObjBy(uniqueid)
-	return MgrScene.OnGet_Map_Obj( uniqueid )
-end
-
 return M

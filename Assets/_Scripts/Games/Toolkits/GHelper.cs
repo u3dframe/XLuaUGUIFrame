@@ -311,6 +311,7 @@ public class GHelper {
 	static public void SetParent(Transform trsf,Transform trsfParent,bool isLocalZero) {
 		if(IsNull(trsf)) return;
 		trsf.SetParent (trsfParent,!isLocalZero);
+		// trsf.parent = trsfParent;
 		
 		if(isLocalZero){
 			trsf.localPosition = Vector3.zero;

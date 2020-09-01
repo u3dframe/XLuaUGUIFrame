@@ -33,18 +33,25 @@ function M:onMergeConfig( _cfg )
 	return _cfg;
 end
 
-function M:InitAsset4Resid( resid )
+function M:GetResCfg(resid,isNoAsset)
 	local _cfgRes = MgrData:GetCfgRes(resid)
-	if not _cfgRes then
-		error("=== fab_base = no res in resource config, resid = [%s]",resid)
-		return self
+	if not isNoAsset then
+		assert(_cfgRes,"=== fab_base = no res in resource config, resid = [" .. tostring(resid) .. "]")
 	end
+	return _cfgRes
+end
+
+function M:InitAsset4Resid(resid)
+	local _cfgRes = self:GetResCfg( resid )
 	self.resid = resid
 	self.cfgRes = _cfgRes
-
+	
 	self:InitAsset( self.cfgAsset )
-
 	return self
+end
+
+function M:GetSObjBy(uniqueid)
+	return MgrScene.OnGet_Map_Obj( uniqueid )
 end
 
 return M

@@ -52,7 +52,7 @@ function M._LoadFabNo(abName,assetName,callLoad)
 end
 
 function M._LoadUI(abName,assetName,callLoad)
-	_csRes.LoadFabDeParent(abName,assetName,callLoad)
+	_csRes.LoadUIParent(abName,assetName,callLoad,1)
 end
 
 function M._LoadSprite(abName,assetName,callLoad)

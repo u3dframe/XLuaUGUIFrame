@@ -27,7 +27,8 @@ public class UGUIGray : GobjLifeListener {
             {
 				Shader shader = Shader.Find("Custom/ui_default_multifunctional");
 				_matGray = new Material(shader);
-                _matGray.EnableKeyword("UI_GRAY_ON");
+				_matGray.SetInt("_IsGray",1);
+                // _matGray.EnableKeyword("UI_GRAY_ON");
 			}
 			return _matGray;
 		}
@@ -96,14 +97,16 @@ public class UGUIGray : GobjLifeListener {
 			if (_m_matGrap == null) {
 				if (m_isNew) {
 					_m_matGrap = new Material (matGray.shader);
-					_m_matGrap.EnableKeyword("UI_GRAY_ON");
+					_m_matGrap.SetInt("_IsGray",1);
+					// _m_matGrap.EnableKeyword("UI_GRAY_ON");
 				} else {
 					_m_matGrap = matGray;
 				}
 			} else{
 				if (m_isNew && _m_matGrap == matGray) {
 					_m_matGrap = new Material (matGray.shader);
-					_m_matGrap.EnableKeyword("UI_GRAY_ON");
+					_m_matGrap.SetInt("_IsGray",1);
+					// _m_matGrap.EnableKeyword("UI_GRAY_ON");
 				}
 			}
 			return _m_matGrap;

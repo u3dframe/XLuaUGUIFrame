@@ -124,9 +124,12 @@ end
 
 function M:AddFunc(cmd,func,obj)
 	if not cmd then return end
-	if type(func) == "function" then return end
-	local _lb = self[cmd] or {}
-	self[cmd] = _lb
+	if type(func) ~= "function" then return end
+	local _lfRoot = self._lfuncs or {}
+	self._lfuncs = _lfRoot
+	
+	local _lb = _lfRoot[cmd] or {}
+	_lfRoot[cmd] = _lb
 
 	local _lbTmp = _lb.funcs or {}
 	_lb.funcs = _lbTmp
@@ -138,10 +141,9 @@ function M:AddFunc(cmd,func,obj)
 end
 
 function M:ExcFunc(cmd,...)
-	if not cmd then return end
-	local _lb = self[cmd]
-	if not _lb then return end
-	if not _lb.funcs then return end
+	if not cmd or not self._lfuncs then return end
+	local _lb = self._lfuncs[cmd]
+	if not _lb or not _lb.funcs then return end
 
 	for k, v in ipairs(_lb.funcs) do
 		if v then
@@ -156,8 +158,8 @@ function M:ExcFunc(cmd,...)
 end
 
 function M:RmvFunc(cmd)
-	if not cmd then return end
-	self[cmd] = nil
+	if not cmd or not self._lfuncs then return end
+	self._lfuncs[cmd] = nil
 end
 
 return M

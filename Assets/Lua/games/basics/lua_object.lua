@@ -104,7 +104,7 @@ function M:SFmt( s_fmt,... )
 end
 
 function M:ReSBegEnd( sSrc,sBeg,sEnd )
-	if not sSrc then return "" end
+	if (not sSrc) or ("" == sSrc) then return "" end
 	if sBeg and not _str_beg(sSrc,sBeg) then
 		sSrc = _str_fmt("%s%s",sBeg,sSrc)
 	end
@@ -138,11 +138,11 @@ function M:NPage( num,column )
 	return _m_ceill( num / column )
 end
 
--- 保留m位小数
-function M:TF( num,m,def,isRound )
+-- 保留 acc 位小数
+function M:TF( num,acc,def,isRound )
 	def = def or 0
 	if (not num) then return def end
-	return __tf( num,m,def,isRound )
+	return __tf( num,acc,def,isRound )
 end
 
 -- 保留两位小数
@@ -164,21 +164,23 @@ function M:TInt( num,def )
 	return __ti( num,def )
 end
 
-function M:ReXYZ( x,y,z )
+function M:ReXYZ( x,y,z,acc )
 	if type(x) == "table" then
 		y = x.y;
 		z = x.z;
 		x = x.x;
 	end
 
-	x = self:TF2( x,0,true )
-	y = self:TF2( y,0,true )
-	z = self:TF2( z,0,true )
+	local _isRound = (acc ~= nil)
+
+	x = self:TF( x,acc,0,_isRound )
+	y = self:TF( y,acc,0,_isRound )
+	z = self:TF( z,acc,0,_isRound )
 	return x,y,z
 end
 
-function M:ReVec_XYZ( vec,x,y,z )
-	x,y,z = self:ReXYZ( x,y,z )
+function M:ReVec_XYZ( vec,x,y,z,acc )
+	x,y,z = self:ReXYZ( x,y,z,acc )
 	vec:Set( x,y,z )
 end
 

@@ -90,10 +90,8 @@ function M:ShowView(isShow)
 	end
 end
 
-function M:Showing()
-	if self.PreShow then
-		self:PreShow()
-	end
+function M:Showing()	
+	self:OnPreShow()
 
 	if self:IsVwCircle4Load() then
 		-- 显示转圈
@@ -103,6 +101,9 @@ function M:Showing()
 	self.enabled = true
 	self:_PreLoadUI()
 	self:_JudgeLoad()
+end
+
+function M:OnPreShow()
 end
 
 function M:_PreLoadUI()

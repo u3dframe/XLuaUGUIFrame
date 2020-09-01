@@ -159,7 +159,7 @@ function M.OnSv_Move_Map_Obj(svMsg,isStop)
 	local _obj = MgrScene.GetCurrMapObj( svMsg.id )
 	if not _obj then return end
 	if isStop then
-		_obj:MoveEnd_SvPos( svMsg.dx,svMsg.dy )
+		_obj:MoveEnd_SvPos( svMsg.x,svMsg.y )
 	else
 		_obj:MoveTo_SvPos( svMsg.dx,svMsg.dy,svMsg.x,svMsg.y )
 	end
@@ -174,7 +174,7 @@ end
 function M.OnSv_Map_Obj_Skill_Effect(svMsg)
 	local _obj = MgrScene.GetCurrMapObj( svMsg.caster )
 	if not _obj then return end
-
+	_obj:CastInjured( svMsg )
 end
 
 return M
