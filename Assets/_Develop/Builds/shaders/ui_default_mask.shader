@@ -17,6 +17,9 @@ Shader "Custom/ui_default_multifunctional"
         _ColorMask ("Color Mask", Float) = 15
 		
 		[Toggle(UI_CLIP_ON)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
+		
+		_MaskType ("Mask Type",Range(0,2)) = 0
+		[Toggle]_IsGray ("Is Gray",Range(0.0,1.0)) = 0
     }  
   
     SubShader  
@@ -54,9 +57,7 @@ Shader "Custom/ui_default_multifunctional"
             #pragma vertex vert  
             #pragma fragment frag 
 			// ------ add by canyon -----
-			#pragma multi_compile UI_MASK_OFF UI_MASK_ON UI_MASK_OUT
 			#pragma multi_compile UI_CLIP_OFF UI_CLIP_ON
-			#pragma multi_compile UI_GRAY_OFF UI_GRAY_ON
 			// ------ add -----
             #include "UnityCG.cginc"  
               
@@ -77,7 +78,9 @@ Shader "Custom/ui_default_multifunctional"
 				// ------ add -----
             };  
               
-            fixed4 _Color;  
+            fixed4 _Color;
+			bool _IsGray;
+			fixed _MaskType;
 			fixed4 _UIMask;
   
             v2f vert(appdata_t IN)  
@@ -107,24 +110,22 @@ Shader "Custom/ui_default_multifunctional"
 				
 				// ------ add by canyon -----
 				float _aa = 1;
-				#if defined(UI_MASK_ON) || defined(UI_MASK_OUT)
-				_aa *= (IN.vpos.x >= _UIMask.x);
-				_aa *= (IN.vpos.y >= _UIMask.y);
-				_aa *= (IN.vpos.x <= _UIMask.z);
-				_aa *= (IN.vpos.y <= _UIMask.w);
-				#endif
-				
-				// #ifdef #elif #else #endif
-				#ifdef UI_MASK_OUT
-				_aa = step(_aa,0.9);
-				#endif
+				if(_MaskType > 0){
+					_aa *= (IN.vpos.x >= _UIMask.x);
+					_aa *= (IN.vpos.y >= _UIMask.y);
+					_aa *= (IN.vpos.x <= _UIMask.z);
+					_aa *= (IN.vpos.y <= _UIMask.w);
+				}
+				if(_MaskType > 1){
+					_aa = step(_aa,0.9);
+				}
 				_col.a *= _aa;
 				
-				#ifdef UI_GRAY_ON
-				float cc = 0.299*_col.r + 0.587*_col.g + 0.184*_col.b;
-				half4 finalColor = half4(cc, cc, cc, _col.a);
-				_col = finalColor;
-				#endif
+				if(_IsGray){
+					float cc = 0.299*_col.r + 0.587*_col.g + 0.184*_col.b;
+					half4 finalColor = half4(cc, cc, cc, _col.a);
+					_col = finalColor;
+				}
 				
 				#ifdef UI_CLIP_ON
                 clip (_col.a - 0.001);
