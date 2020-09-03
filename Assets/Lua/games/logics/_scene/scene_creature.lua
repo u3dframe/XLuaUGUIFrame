@@ -6,10 +6,10 @@
 ]]
 
 local SceneCUnit = require ("games/logics/_scene/scene_c_unit") -- 生物 - 单元
-local ClsEffect = require ("games/logics/_effects/effect_object") -- 特效
+local ClsEffect = ClsEffect -- 特效
 
 local tb_insert,tb_sort,tb_lens = table.insert,table.sort,table.lens
-local tostring = tostring
+local tostring,NumEx = tostring,NumEx
 local str_split = string.split
 
 local E_Object,E_State,E_AE_Point = LES_Object,LES_C_State,LES_Ani_Eft_Point
@@ -138,11 +138,20 @@ end
 
 function M:JugdeCastAttack(skillid)
 	if not skillid then return false end
-	local _cfg_skill = MgrData:GetCfgSkill(skillid)
-	if not _cfg_skill then return false end
-	local _cfg_s_effect = MgrData:GetCfgSkillEffect(_cfg_skill.cast_effect)
-	if not _cfg_s_effect then return false end
-	return true,_cfg_skill,_cfg_s_effect
+	local _cfg = MgrData:GetCfgSkill(skillid)
+	if not _cfg then return false end
+	local _cfg_s_eft
+	if _cfg.cast_effect then
+		_cfg_s_eft = MgrData:GetCfgSkillEffect( _cfg.cast_effect )
+	end
+	if (not _cfg_s_eft) and (tb_lens(_cfg.cast_effects) > 0) then
+		local _k = NumEx.nextWeightList( _cfg.cast_effects,2 )
+		if _k and _k > 0 then
+			_cfg_s_eft = _cfg.cast_effects[_k][1]
+		end
+	end
+	if not _cfg_s_eft then return false end
+	return true,_cfg,_cfg_s_eft
 end
 
 function M:_DoAttack(svMsg,cfgSkill,cfgAction)
@@ -192,10 +201,7 @@ function M:ExcuteEffectByEid( e_id,isHurt )
 	if not e_id or not self.svDataCurr then return end
 	local cfgEft = MgrData:GetCfgSkillEffect( e_id )
 	if not cfgEft then return end
-	if cfgEft.type == 1 then
-		-- 执行大招
-		return
-	end
+	if cfgEft.type == 1 then return end
 	
 	if cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )
@@ -277,10 +283,34 @@ function M:DoHurts(svList)
 	end
 end
 
+-- 判断是否可以执行伤害效果(判断闪避等)
+function M:_IsHurtEffect(svOne)
+	return (svOne ~= nil) and (svOne.effectid ~= nil)
+end
+
 -- 受伤 效果
 function M:DoHurtEffect(svOne)
-	self.svDataCurr = svOne
-	self:ExcuteEffectByEid( svOne.effectid,true )
+	if self:_IsHurtEffect(svOne) then
+		local _cfg = MgrData:GetCfgHurtEffect( svOne.effectid )
+		if _cfg.hit_effect then
+			self.svDataCurr = svOne
+			self:ExcuteEffectByEid( _cfg.hit_effect,true )
+		end
+
+		if svOne.dead == true then
+			local _die
+			if self.data and self.data.die then
+				self.svDataCurr = svOne
+				_die = self.data.die
+			end
+			self:ExcuteEffectByEid( _die )
+		end
+	end
+	self:DoHurtNumData( svOne )
+end
+
+-- 受伤 效果 - 数值表现
+function M:DoHurtNumData(svOne)
 	Event.Brocast(Evt_BattlePlayHarmTip, svOne)
 end
 

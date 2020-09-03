@@ -208,12 +208,15 @@ function M:GetRectSize( )
 	return w,h;
 end
 
-function M:SetParent( parent,isLocal )
+function M:SetParent( parent,isLocal,isSyncLayer )
 	isLocal = (isLocal == true)
 	self._async_parent,self._async_isLocal = nil
 	if self:IsInitTrsf() then
-		-- self.trsf:SetParent( parent,isWorld )
-		CHelper.SetParent( self.trsf,parent,isLocal )
+		if isSyncLayer == true then
+			CHelper.SetParentSyncLayer( self.trsf,parent,isLocal )
+		else
+			CHelper.SetParent( self.trsf,parent,isLocal )
+		end
 	else
 		self._async_parent,self._async_isLocal = parent,isLocal
 	end

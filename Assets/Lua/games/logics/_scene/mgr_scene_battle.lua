@@ -114,7 +114,6 @@ function M._On_ST_End_Battle()
 	this.state = LES_B_State.Battle_End
 end
 
-
 function M.OnSv_Add_Map_Obj(objType,svMsg)
 	local _lb_dic = this.sv_dic_add or {}
 	this.sv_dic_add = _lb_dic
@@ -131,7 +130,7 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 			if cfg then
 				local _obj = MgrScene.Add_SObj( objType,cfg.resource,svMsg.id )
 				if _obj then
-					_obj:View(true,_cfg,svMsg)
+					_obj:View(true,cfg,svMsg)
 				end
 			end
 		end

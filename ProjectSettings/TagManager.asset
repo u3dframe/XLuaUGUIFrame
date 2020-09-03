@@ -13,12 +13,12 @@ TagManager:
   - UI
   - 
   - 
-  - Ground
   - SceneObj
+  - Ground
   - Monster
-  - Partner
   - Hero
-  - 
+  - Partner
+  - M_Partner
   - 
   - 
   - 

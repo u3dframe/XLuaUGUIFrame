@@ -153,6 +153,34 @@ function M.nextBool()
 	return _r == 1;
 end
 
+-- 随机 - 权重的index
+function M.nextWeightList( list,jugdeKey )
+	local _sum = 0
+	for k,v in ipairs(list) do
+		if (not jugdeKey) or (jugdeKey == k) then
+			_sum = _sum + v
+		end
+	end
+	if _sum > 0 then
+		local _r = this.nextInt(_sum)
+		local _sum2 = 0
+		for k, v in ipairs(list) do
+			if (not jugdeKey) or (jugdeKey == k) then
+				_sum2 = _sum2 + v
+				if _sum2 >= _r then
+					return k,_r,_sum
+				end
+			end
+		end
+	end
+	return 0
+end
+
+function M.nextWeight( ... )
+	local _args = { ... }
+	return this.nextWeightList( _args )
+end
+
 -- [0-9]随机数连接的字符串长度nlen
 function M.nextStr(nlen,isSeek )
 	if isSeek == true then

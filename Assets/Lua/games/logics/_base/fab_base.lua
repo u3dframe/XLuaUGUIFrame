@@ -5,14 +5,17 @@
 	-- Desc : 
 ]]
 
+local ClsOobjBasic = require("games/logics/_base/_objs/obj_basic")
+
 local _E_AType = LE_AsType
 
 local super,super2 = LuaFab,UIPubs
-local M = class( "fab_base",super,super2 )
+local M = class( "fab_base",super,super2,ClsOobjBasic )
 
 function M:ctor(assetCfg)
 	super.ctor( self,assetCfg )
 	super2.ctor( self )
+	ClsOobjBasic.ctor( self )
 end
 
 function M:onAssetConfig( _cfg )

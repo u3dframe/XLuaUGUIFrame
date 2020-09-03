@@ -122,5 +122,8 @@ function M:GetCfgSkillEffect(idKey)
 	return self:GetOneData( "skill_skilleffect",idKey )
 end
 
+function M:GetCfgHurtEffect(idKey)
+	return self:GetOneData( "effect",idKey )
+end
 
 return M

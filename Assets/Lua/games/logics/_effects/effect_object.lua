@@ -8,12 +8,12 @@
 local super,_evt = FabBase,Event
 local M = class( "effect_object",super )
 local this = M
+this.nm_pool_cls = "p_cls_e"
 
 function M.Builder(idMarker,resid,idTarget,mount_point,timeout,isfollow)
-	local _cfg = this:GetResCfg( resid )
-	local _ret = this.New():InitAsset4Resid( resid )
-	_ret:SetData( idMarker,idTarget,mount_point,timeout,isfollow )
-	_ret:ShowView( true )
+	this:GetResCfg( resid )
+	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
+	_ret = self:BorrowSelf( idMarker,resid,idTarget,mount_point,timeout,isfollow )
 	return _ret
 end
 
@@ -22,10 +22,19 @@ function M:ctor()
 	self.isUping = false
 end
 
+function M:Reset(idMarker,resid,idTarget,mount_point,timeout,isfollow)
+	self.isUping = false
+	if resid ~= self.resid then
+		self:OnUnLoad()
+	end
+	self:InitAsset4Resid( resid )
+	self:SetData( idMarker,idTarget,mount_point,timeout,isfollow )
+end
+
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.isUpdate = true
-	-- _cfg.isStay = true
+	_cfg.isStay = true
 	return _cfg
 end
 
@@ -83,7 +92,7 @@ function M:OnUpdateLoaded(dt)
 	if self.timeOut  then
 		if self.timeOut <= self.currt_time then
 			self.isUping = false
-			self:Destroy()
+			self:ReturnSelf()
 		end
 	end
 end

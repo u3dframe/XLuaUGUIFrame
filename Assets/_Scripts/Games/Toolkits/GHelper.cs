@@ -339,6 +339,22 @@ public class GHelper {
 		SetParent(gobj,gobjParent,true); 
 	}
 
+	static public void SetParentSyncLayer(Transform trsf,Transform trsfParent,bool isLocalZero) {
+		SetParent(trsf,trsfParent,isLocalZero);
+		if(IsNoNull(trsf) && IsNoNull(trsfParent)){
+			int layer = trsfParent.gameObject.layer;
+			SetLayerBy(trsf.gameObject,layer,true);
+		}
+	}
+
+	static public void SetParentSyncLayer(GameObject gobj, GameObject gobjParent,bool isLocalZero) {
+		SetParent(gobj,gobjParent,isLocalZero);
+		if(IsNoNull(gobj) && IsNoNull(gobjParent)){
+			int layer = gobjParent.layer;
+			SetLayerBy(gobj,layer,true);
+		}
+	}
+
 	static public GameObject Clone(GameObject gobj,Transform parent) {
 		if(IsNull(gobj)) return null;
 		return GameObject.Instantiate (gobj,parent,false) as GameObject;
