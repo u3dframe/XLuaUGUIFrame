@@ -10,6 +10,7 @@ using TNet;
 public enum DisType {
     Exception,
     Disconnect,
+    ConnectFail,
 }
 
 public class SocketClient {
@@ -50,7 +51,7 @@ public class SocketClient {
         try {
             IPAddress[] address = Dns.GetHostAddresses(host);
             if (address.Length == 0) {
-                Debug.LogError("host invalid");
+                OnDisconnected(DisType.ConnectFail,"host invalid");
                 return;
             }
             if (address[0].AddressFamily == AddressFamily.InterNetworkV6) {
@@ -63,8 +64,8 @@ public class SocketClient {
             client.ReceiveTimeout = 1000;
             client.NoDelay = true;
             client.BeginConnect(host, port, new AsyncCallback(OnConnect), null);
-        } catch (Exception e) {
-            Close(); Debug.LogError(e.Message);
+        } catch (Exception ex) {
+            OnDisconnected(DisType.ConnectFail, ex.Message);
         }
     }
 
@@ -72,9 +73,13 @@ public class SocketClient {
     /// 连接上服务器
     /// </summary>
     void OnConnect(IAsyncResult asr) {
-        outStream = client.GetStream();
-        client.GetStream().BeginRead(_bts, 0, MAX_READ, new AsyncCallback(OnRead), null);
-        NetworkManager.AddEvent(Protocal.Connect, ByteBuffer.BuildWriter());
+        try{
+            outStream = client.GetStream();
+            client.GetStream().BeginRead(_bts, 0, MAX_READ, new AsyncCallback(OnRead), null);
+            NetworkManager.AddEvent(Protocal.Connect, null);
+        } catch (Exception ex) {
+            OnDisconnected(DisType.ConnectFail, ex.Message);
+        }
     }
 
     /// <summary>
@@ -126,11 +131,19 @@ public class SocketClient {
     /// </summary>
     void OnDisconnected(DisType dis, string msg) {
         Close();   //关掉客户端链接
-        int protocal = (dis == DisType.Exception) ? Protocal.Exception : Protocal.Disconnect;
+        int protocal = Protocal.Disconnect;
+        switch(dis){
+            case DisType.Exception:
+                protocal = Protocal.Exception;
+            break;
+            case DisType.ConnectFail:
+                protocal = Protocal.ConnectFail;
+            break;
+        }
         ByteBuffer buffer = ByteBuffer.BuildWriter();
         buffer.WriteString(msg);
-        NetworkManager.AddEvent(protocal, buffer);
-        Debug.LogError("Connection was closed by the server:>" + msg + " Distype:>" + dis);
+        NetworkManager.AddEvent(protocal, buffer.ToReader());
+        //Debug.LogError("Connection was closed by the server:>" + msg + " Distype:>" + dis);
     }
 
     /// <summary>
@@ -151,15 +164,23 @@ public class SocketClient {
     void OnWrite(IAsyncResult r) {
         try {
             outStream.EndWrite(r);
-        } catch (Exception ex) {
-            Debug.LogError("OnWrite--->>>" + ex.Message);
+            NetworkManager.AddEvent(Protocal.Write, null);
+        } catch (Exception) {
+            // 其他非UI主线程不能使用Debug
+            // Debug.LogError("OnWrite--->>>" + ex.Message);
         }
     }
 
     /// <summary>
     /// 接收到消息
     /// </summary>
-    void OnReceive(byte[] bytes, int length) {
+	void OnReceive(byte[] bytes, int length) {
+        ByteBuffer _bbf = ByteBuffer.BuildWriter();
+        _bbf.WriteBytes(bytes, length);
+        OnReceivedMessage(_bbf);
+    }
+	
+    void OnReceive2(byte[] bytes, int length) {
         memStream.Seek(0, SeekOrigin.End);
         memStream.Write(bytes, 0, length);
         //Reset to beginning
@@ -204,6 +225,10 @@ public class SocketClient {
     /// </summary>
     public bool IsConnected() {
         return (client != null && client.Connected);
+    }
+
+    public bool IsEmptyClient() {
+        return (client == null);
     }
 
     /// <summary>

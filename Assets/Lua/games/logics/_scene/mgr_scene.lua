@@ -21,8 +21,6 @@ function M.Init()
 	this.mapWorld_Y  = 0
 	this.eveRegion = this:TF((1 / (LES_State.Complete - LES_State.Wait_Vw_Loading)),4)
 
-	this.pools = {}
-
 	this:ReEvent4OnUpdate(true)
 
 	_evt.AddListener(Evt_Map_Load,this.OnLoadMap)
@@ -139,6 +137,11 @@ function M._ST_CurMap()
 
 	local _cfgMap = MgrData:GetCfgMap(this.mapid)
 	this.lbMap = this.GetOrNew_SObj(LES_Object.MapObj,_cfgMap.resid)
+	if this.lbMap == nil then
+		this.state = LES_State.None
+		printError("=========load map is null")
+		return
+	end
 	this.lbMap.lfAssetLoaded = _LF_LoadedScene
 	this.isUpingLoadMap = true
 	this.lbMap:View(true)
@@ -207,44 +210,15 @@ function M.GetCurrMapObj(cursor)
 	return _lb[cursor]
 end
 
-function M.Reback_MapObj(cursor)
+function M.RemoveCurrMapObj(cursor)
 	if not cursor then return end
 	local _v = this.GetCurrMapObj(cursor)
 	if not _v then return end
 	this[this.mapid][cursor] = nil
-	this.ReBackToPool( _v )
-end
-
-function M._GetPool(objType,resid)
-	objType = objType or LES_Object.Object
-	local _k = this:SFmt( "%s_%s",objType,resid )
-	local _vpool = this.pools[_k] or {}
-	this.pools[_k] = _vpool
-	return _vpool
-end
-
-function M.ReBackToPool(lbSObj)
-	local _vpool = this._GetPool( lbSObj:GetSObjType(),lbSObj:GetResid() )
-	tb_insert(_vpool,lbSObj)
-	lbSObj:View(false)
 end
 
 function M.GetOrNew_SObj(objType,resid,uuid)
-	objType = objType or LES_Object.Object
-	local _vpool = this._GetPool( objType,resid )
-	local _v = tb_remove(_vpool,1)
-	
-	local _vv = this.GetCurrMapObj( uuid )
-	if _vv ~= nil then
-		uuid = nil
-	end
-
-	if not _v then
-		return SceneFactory.Create(objType,resid,uuid)
-	end
-	
-	_v:SetCursor(uuid or SceneFactory.AddCursor())
-	return _v
+	return SceneFactory.Create(objType,resid,uuid)
 end
 
 function M.Add_SObj(objType,resid,uuid)
@@ -279,7 +253,7 @@ end
 
 function M.OnReback_Map_Obj(lbSObj)
 	if not lbSObj then return end
-	this.Reback_MapObj( lbSObj:GetCursor() )
+	this.RemoveCurrMapObj( lbSObj:GetCursor() )
 end
 
 return M

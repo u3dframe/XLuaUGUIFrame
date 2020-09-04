@@ -4,7 +4,7 @@
 -- Desc : base : 随机数值最大值 , isSeek 是否重置随机种子需要先引起(属于底层基础)
 -- math.random([n [, m]]) 无参调用,产生(0,1)之间的浮点随机数,只有参数n,产生1-n之间的整数.
 -- math.fmod(x,y) = 取x/y的余数?;math.modf(v) = 取整数,小数
-local os = os
+local os,tonumber,tostring = os,tonumber,tostring
 local str_format = string.format
 local tb_insert = table.insert
 local tb_concat = table.concat
@@ -154,19 +154,21 @@ function M.nextBool()
 end
 
 -- 随机 - 权重的index
-function M.nextWeightList( list,jugdeKey )
-	local _sum = 0
+function M.nextWeightList( list,wKey )
+	local _sum,_nv = 0
 	for k,v in ipairs(list) do
-		if (not jugdeKey) or (jugdeKey == k) then
-			_sum = _sum + v
+		if (not wKey) or (v[wKey]) then
+			_nv = tonumber(v) or v[wKey]
+			_sum = _sum + _nv
 		end
 	end
 	if _sum > 0 then
 		local _r = this.nextInt(_sum)
 		local _sum2 = 0
 		for k, v in ipairs(list) do
-			if (not jugdeKey) or (jugdeKey == k) then
-				_sum2 = _sum2 + v
+			if (not wKey) or (v[wKey]) then
+				_nv = tonumber(v) or v[wKey]
+				_sum2 = _sum2 + _nv
 				if _sum2 >= _r then
 					return k,_r,_sum
 				end

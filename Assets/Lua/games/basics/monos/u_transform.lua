@@ -10,10 +10,6 @@ local _vec3,_vec2,type = Vector3,Vector2,type
 local super = LUGobj
 local M = class( "lua_transform",super )
 
-function M:makeTrsf( gobj )
-	return M.New( gobj )
-end
-
 function M:ctor( obj )
 	super.ctor(self,obj)
 	self.trsf = self.gobj.transform

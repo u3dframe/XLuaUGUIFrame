@@ -95,6 +95,11 @@ namespace TNet {
             writer.Write(v);
         }
 
+        public void WriteBytes(byte[] v, int length) {
+            writer.Write(length);
+            writer.Write(v, 0, length);
+        }
+
         public void WriteString(string v) {
             byte[] bytes = Encoding.UTF8.GetBytes(v);
             WriteBytes(bytes);

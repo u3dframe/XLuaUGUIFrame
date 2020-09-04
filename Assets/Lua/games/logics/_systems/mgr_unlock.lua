@@ -17,10 +17,21 @@ function M.Init()
 	this.lfChecks = _lb
 	
 	_lb[1] = this.CheckLevel
+	this:AddPCall( "fnopen_list",this.On_SvOpenIds )
 end
 
 function M.GetData(id)
 	return this:GetCfgData("fnopen",id)
+end
+
+function M.On_SvOpenIds( msg )
+	this.svData = msg
+end
+
+function M.IsUnlock_Sv( id )
+	if this.svData then
+		return table.contains( this.svData.ids,id )
+	end
 end
 
 --解锁
@@ -40,6 +51,10 @@ function M.IsUnlock(id,isTips)
 			_evt.Brocast(_e_tip,"功能解锁表里无此功能ID,ID = [" .. id .. "]为空了")
 		end
 		return false 
+	end
+
+	if this.IsUnlock_Sv( id ) then
+		return true,_cfg
 	end
 
 	local _tmp,_lf = _cfg["unlock"]

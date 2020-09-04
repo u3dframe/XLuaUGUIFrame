@@ -158,13 +158,17 @@ public class InputMgr : GobjLifeListener {
 	
 	public void Init(){}
 
-	public InputMgr InitCall(LayerMask masks,DF_InpScale cfScale,DF_InpVec2 cfRotate,DF_InpVec2 cfSlide,DF_InpRayHit cfRayHit){
-		this.SetLayerMask(masks);
+	public InputMgr InitAll(int layerMask,DF_InpScale cfScale,DF_InpVec2 cfRotate,DF_InpVec2 cfSlide,DF_InpRayHit cfRayHit){
+		this.SetLayerMask(layerMask);
 		this.m_lfScale = cfScale;
 		this.m_lfRotate = cfRotate;
 		this.m_lfSlide = cfSlide;
 		this.m_lfRayHit = cfRayHit;
 		return this;
+	}
+
+	public InputMgr InitCall(DF_InpScale cfScale,DF_InpVec2 cfRotate,DF_InpVec2 cfSlide,DF_InpRayHit cfRayHit){
+		return InitAll(this._lay_mask,cfScale,cfRotate,cfSlide,cfRayHit);
 	}
 
 	void _ClearQueue(Queue<RayScreenPointInfo> queue){
@@ -220,7 +224,12 @@ public class InputMgr : GobjLifeListener {
 		queue.Enqueue(rayInfo);
 	}
 
-	public void SetLayerMask(LayerMask lmask){
+	void SetLayerMask(LayerMask lmask){
+		this._lay_mask = lmask;
+	}
+
+	public void SetLayerMask(int layerMask){
+		LayerMask lmask = layerMask;
 		this._lay_mask = lmask;
 	}
 

@@ -24,9 +24,9 @@ end
 
 function M.CsNewGobj(name)
 	if name ~= nil then
-		return UGameObject.New( name );
+		return UGameObject( name );
 	end
-	return UGameObject.New();
+	return UGameObject();
 end
 
 function M.CsDontDestroyOnLoad(gobj)
@@ -46,10 +46,6 @@ function M.CsCloneP2(gobj,parent)
 	if gobj ~= nil then
 		return CHelper.Clone(gobj,parent);
 	end
-end
-
-function M:makeGobj( gobj )
-	return M.New( gobj )
 end
 
 function M:ctor( obj )

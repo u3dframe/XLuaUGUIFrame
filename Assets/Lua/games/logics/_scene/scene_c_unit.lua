@@ -40,11 +40,18 @@ function M:OnInit()
 	self._lf_On_A_Exit = handler_pcall(self,self.OnUpdate_A_Exit)
 
 	self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit)
+	self.lbSkin = self:NewTrsf("skin",true)
 
 	self:OnInit_Unit()
 end
 
 function M:OnInit_Unit()
+end
+
+function M:CloneSkin(parent)
+	if self.lbSkin then
+		return self.lbSkin:Clone(parent)
+	end
 end
 
 function M:_Init_CU_Vecs()
@@ -69,6 +76,7 @@ function M:OnUpdate4Moving( dt )
 		self.gravityPosY = 0
 	else
 		if _posY > self.groundPosY then
+			self.gravity = self.gravity or 1
 			self.gravityPosY = self.gravity * dt
 			movement.y =  movement.y - self.gravityPosY
 		end
@@ -142,9 +150,9 @@ function M:Add_AUpFunc( a_state,func,obj )
 	self:AddFunc( "_a_up_" .. tostring(a_state),func,obj )
 end
 
-function M:SetState(state,isReplace)
-	isReplace = (isReplace == true) or (self.state == nil)  or (state ~= self.state)
-	if not isReplace then return end
+function M:SetState(state,force)
+	force = (force == true) or (self.state == nil)  or (state ~= self.state)
+	if not force then return end
 	self.preState = self.state
 	self.state = state
 	self:SetMachine()

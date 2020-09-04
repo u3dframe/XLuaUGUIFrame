@@ -16,6 +16,8 @@ local M = class( "action_attack",super )
 
 function M:_On_A_Init()
 	self.jugde_state = E_State.Attack
+	self.lbCursor = self.lbOwner:GetCursor()
+	self.tmData = self.lbOwner:GetAttackEffets()
 end
 
 function M:_IsAEnter()
@@ -48,6 +50,9 @@ end
 
 function M:_On_AExit()
 	super._On_AExit( self )
+	self.tmData,self.lbCursor = nil
+	self.up_sec = 0
+	self.n_cursor = 0
 	self.lbOwner:SetState( E_State.Idle )
 end
 
@@ -59,7 +64,7 @@ function M:_Excute_Effect()
 end
 
 function M:_Exc_AniEvent(index,exc_time_ms)
-	local lb = self.lbOwner:GetAttackEffets()
+	local lb = self.tmData
 	if type(lb) ~= "table" then
 		return
 	end

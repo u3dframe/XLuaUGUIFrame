@@ -24,10 +24,11 @@ local this = M
 function M.Init()
 	_csMgr = CNetMgr.instance
 	this._Init_Sproto()
-	Network.Init(this.OnDispatch_Msg,this.OnConnection,this.OnDisConnection)
+	Network.Init(this.OnDispatch_Msg,this.OnConnection, this.OnWriteFinish,this.OnDisConnection)
 end
 
 function M._Init_Sproto()
+	if host then return end
 	local sproto = require "games/net/sproto/sproto"
     local c2s_text = CGameFile.GetText("protos/proto.c2s.sproto")
     local s2c_text = CGameFile.GetText("protos/proto.s2c.sproto")
@@ -62,32 +63,83 @@ function M.OnDispatch_Msg(msg)
     end
 end
 
-function M.OnConnection()
-	if this._lfConnected then this._lfConnected() end
+function M.OnWriteFinish()
+end
+function M.OnConnection(isSucess,errStr)
+	-- printInfo("=======[%s] = [%s] = [%s] = [%s]",_lf_,this.isShutDown,isSucess,errStr)
+	local _lf_ = this._lfConnected
+	this._lfConnected = nil
+
+	if _lf_ and (not this.isShutDown) then
+		_lf_( isSucess,errStr )
+	end
+
+	-- if isSucess then
+	-- 	local _rnd = math.random(1,10)
+	-- 	LUtils.Wait(_rnd,this.ShutDown,_rnd > 8 ) -- TODO 随机断开连接 用于重连测试 --测试完毕记得后删除
+	-- end
 end
 
 function M.OnDisConnection(isError)
-	if isError then this:clean() end
+	-- printInfo("=== OnDisConnection = [%s]",isError)
+	if this.isShutDown then
+		this._ExitLogin()
+		return
+	end
 end
 
-function M:on_clean()
+function M.Clean()
 	_cursor,_cb_requs,_r_ques = 0,{},{}
 end
 
-function M.Shutdown()
+function M.ShutDown(isExit)
+	-- printInfo("=== ShutDown = [%s]",isExit)
+	this.isShutDown = (isExit == true)
     _csMgr:ShutDown()
 end
 
-function M.Connect(host,port,callback)
+function M._ExitLogin()
+	-- printInfo("=== _ExitLogin = ")
+	this.Clean()
+	this.isShutDown = nil
+	_evt.Brocast( Evt_Re_Login )
+end
+local function _Connect(addr,port,callback)
+	this._Init_Sproto()
+	assert(not this._lfConnected)
 	this._lfConnected = callback
-    _csMgr:Connect(host, port)
+	this.isShutDown = nil
+	_csMgr:Connect(addr,port,true)
 end
 
-function M.ReConnect(host,port,callback)
-	this.ShutDown()
-	LUtils.Wait(1,function(_h,_p,_cb)
-		this.Connect( _h,_p,_cb )	
-	end,host,port,callback)
+function M._ReConnect()
+	local info = assert(this._ConnectInfo)
+	local addr, port = info.addr, info.port
+	_Connect(addr,port, function(ok, err)
+		if not ok then
+			if stream_read then
+				stream_read.on_disconnect("Reconnect failure ".. tostring(err))
+			else
+				this._ExitLogin()
+			end
+		else
+			handshake_reuse()
+		end
+	end)
+end
+
+function M.Connect(addr,port,sid,callback)
+	this._ConnectInfo = {
+		addr = addr, -- TODO 后续应该支持多地址
+		port = port
+	}
+	_Connect(addr,port,function(ok, err)
+		if not ok then
+			callback(false, err) -- 通知逻辑连接失败
+		else
+			handshake_new(callback, string.format("game_%d",sid))
+		end
+	end)
 end
 
 function M.Response(response,result)

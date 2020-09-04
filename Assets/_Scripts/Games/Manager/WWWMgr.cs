@@ -44,6 +44,19 @@ namespace Core.Kernel
 			}
 		}
 
+		IEnumerator PostJson(string url, string body,DF_UWR callFunc,object pars = null){
+			if (string.IsNullOrEmpty(url)) {
+				yield break;
+			}
+			
+			using (var request = new UnityWebRequest(url,"POST")) {
+				request.uploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(body));
+				request.downloadHandler = new DownloadHandlerBuffer();
+				request.SetRequestHeader("content-type","application/json;charset=utf-8");
+				yield return UWRCoroutine(request,callFunc,pars);
+			}
+		}
+
 		private IEnumerator UWRCoroutine(UnityWebRequest request,DF_UWR callFunc,object pars = null){
 			//设置超时 链接超时返回 且isNetworkError为true
 			request.timeout = 59;
@@ -68,5 +81,9 @@ namespace Core.Kernel
 		public void StartUWRPost(string url,WWWForm form, DF_UWR callFunc, object extPars = null){
 			StartCoroutine(PostForm(url,form,callFunc,extPars));
 		}
+		
+		public void StartJsonUWR(string url,string dataJson, DF_UWR callFunc, object extPars = null){
+			StartCoroutine(PostJson(url,dataJson,callFunc,extPars));
+		}	
 	}
 }

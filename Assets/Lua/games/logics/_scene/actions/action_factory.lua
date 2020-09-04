@@ -11,13 +11,13 @@ local fdir = "games/logics/_scene/actions/"
 local _req = reimport or require
 
 ActionBasic            = _req (fdir .. "a_basic")  -- 动作 - 基础类
-local Action_Idle      = _req (fdir .. "a_idle")   -- 动作 - 待机
-local Action_Run       = _req (fdir .. "a_run")    -- 动作 - 移动
-local Action_Grab      = _req (fdir .. "a_grab")   -- 动作 - 被拧起
-local Action_Show1     = _req (fdir .. "a_show1")  -- 动作 - 展示1
-
-local Action_Attack    = _req (fdir .. "a_attack") -- 动作 - 攻击
-
+local _lbCls_ = {
+	[E_State.Idle]      = _req (fdir .. "a_idle"),     -- 动作 - 待机
+	[E_State.Run]       = _req (fdir .. "a_run"),      -- 动作 - 移动
+	[E_State.Grab]      = _req (fdir .. "a_grab"),     -- 动作 - 被拧起
+	[E_State.Show_1]    = _req (fdir .. "a_show1"),    -- 动作 - 展示1
+	[E_State.Attack]    = _req (fdir .. "a_attack"),   -- 动作 - 攻击
+}
 
 local super = LuaObject
 local M = class( "action_factory",super )
@@ -50,16 +50,9 @@ function M.MakeMachine(obj)
 	end
 
 	if _is_enter then
-		if _o_state == E_State.Idle then
-			_machine = Action_Idle.New( obj ):Enter()
-		elseif _o_state == E_State.Run then
-			_machine = Action_Run.New( obj ):Enter()
-		elseif _o_state == E_State.Grab then
-			_machine = Action_Grab.New( obj ):Enter()
-		elseif _o_state == E_State.Show_1 then
-			_machine = Action_Show1.New( obj ):Enter()
-		elseif _o_state == E_State.Attack then
-			_machine = Action_Attack.New( obj ):Enter()
+		local _cls = _lbCls_[_o_state]
+		if _cls then
+			_machine = _cls.New( obj ):Enter()
 		end
 	end
 	obj.machine = _machine

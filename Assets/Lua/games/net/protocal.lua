@@ -4,6 +4,8 @@ Protocal = {
 	Exception   = '1002';	--异常掉线
 	Disconnect  = '1003';	--正常断线   
 	Message		= '1004';	--接收消息
+	Write		= '1005';	--写完成
+	ConnectFail = '1006';	-- 链接失败
 }
 
 --协议类型--

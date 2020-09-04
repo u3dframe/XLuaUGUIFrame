@@ -7,6 +7,7 @@
 
 local _csMgr
 local type = type
+local json = require "cjson.safe"
 
 local super,_evt = LuaObject,Event
 local M = class( "mgr_net",super )
@@ -22,6 +23,22 @@ function M.SendWWW(url,callback,ext_1)
 			local _d = nil
 			if isState == true then
 				_d = uwr.downloadHandler.text
+			else
+				_d = uwr.error
+			end
+			callback(isState,_d,pars)
+		end
+	end,ext_1)
+end
+
+function M.PostJsonWWW(url,body,callback,ext_1)
+	_csMgr:StartJsonUWR( url,body,function(isState,uwr,pars)
+		if callback then
+			local _d
+			if isState == true then
+				_d = uwr.downloadHandler.text
+			else
+				_d = uwr.error
 			end
 			callback(isState,_d,pars)
 		end

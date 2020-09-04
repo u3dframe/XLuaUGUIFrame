@@ -19,6 +19,16 @@ local super = SceneCUnit
 local M = class( "scene_creature",super )
 local this = M
 
+this.nm_pool_cls = "p_cls_sobj_" .. tostring(E_Object.Creature)
+
+function M.Builder(nCursor,resid)
+	this:GetResCfg( resid )
+	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
+
+	_ret = this.BorrowSelf( _p_name,E_Object.Creature,nCursor,resid )
+	return _ret
+end
+
 function M.InsertTimeLineIds(lb,time,id)
 	if lb[time] then
 		local _tmp0 = lb[time].ids
@@ -28,9 +38,9 @@ function M.InsertTimeLineIds(lb,time,id)
 	end
 end
 
-function M:InitBase(sobjType,nCursor,resCfg)
+function M:Reset(sobjType,nCursor,resid)
+	super.Reset( self,(sobjType or E_Object.Creature),nCursor,resid )
 	self:InitCUnit( 0,1 )
-	return super.InitBase( self,(sobjType or E_Object.Creature),nCursor,resCfg )
 end
 
 function M:onAssetConfig( _cfg )
@@ -129,6 +139,7 @@ function M:CastAttack(svMsg)
 	if not svMsg then return false end
 	local _isOkey,_cfg,_cfgAction = self:JugdeCastAttack( svMsg.skillid )
 	if not _isOkey then return false end
+	self:SetState( E_State.Idle )
 	if (_cfgAction.type == 1)then
 		self:_DoComboAttack(svMsg,_cfg,_cfgAction)
 	else
@@ -140,6 +151,7 @@ function M:JugdeCastAttack(skillid)
 	if not skillid then return false end
 	local _cfg = MgrData:GetCfgSkill(skillid)
 	if not _cfg then return false end
+	if not self:CheckAttack() then return false end
 	local _cfg_s_eft
 	if _cfg.cast_effect then
 		_cfg_s_eft = MgrData:GetCfgSkillEffect( _cfg.cast_effect )
@@ -147,7 +159,8 @@ function M:JugdeCastAttack(skillid)
 	if (not _cfg_s_eft) and (tb_lens(_cfg.cast_effects) > 0) then
 		local _k = NumEx.nextWeightList( _cfg.cast_effects,2 )
 		if _k and _k > 0 then
-			_cfg_s_eft = _cfg.cast_effects[_k][1]
+			local _e_id = _cfg.cast_effects[_k][1]
+			_cfg_s_eft = MgrData:GetCfgSkillEffect( _e_id )
 		end
 	end
 	if not _cfg_s_eft then return false end
@@ -166,13 +179,13 @@ function M:_DoAttack(svMsg,cfgSkill,cfgAction)
 	for _,v in pairs(_temp) do
 		tb_insert(self.tmEfts,v)
 	end
-
+	
 	self:LookTarget( svMsg.target,svMsg.targetx,svMsg.targety )
 	self:SetState( E_State.Attack )
 end
 
 function M:_DoComboAttack(svMsg, cfgSkill, cfgAction)
-	MgrBattle:PlayComboSkill(svMsg, cfgSkill, cfgAction);
+	MgrCombo:PlayComboSkill(svMsg, cfgSkill, cfgAction);
 end
 
 function M:_InitAttackEffets(lb,e_id )

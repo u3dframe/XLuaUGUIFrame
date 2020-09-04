@@ -12,8 +12,8 @@ local M = class( "mgr_input",super )
 local this = M
 
 function M.Init()
-	local _masks = this.GetMask( "Default" )
-	_csMgr = CInpMgr.instance:InitCall(this.OnCall_Scale,this.OnCall_Rotate,this.OnCall_Slide,this.OnCall_RayHit)
+	local _masks = this.GetMask( "SceneObj","Ground","Monster","Hero" )
+	_csMgr = CInpMgr.instance:InitAll( _masks,this.OnCall_Scale,this.OnCall_Rotate,this.OnCall_Slide,this.OnCall_RayHit )
 	_evt.AddListener(Evt_SendRay4ScreenPoint,this.SendRaycast4V2)
 end
 

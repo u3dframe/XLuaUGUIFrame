@@ -15,10 +15,6 @@ function M.CsIsGLife(comp)
 	return false
 end
 
-function M:makeComp( gobj,component )
-	return M.New( gobj,component )
-end
-
 function M:ctor( obj,component )
 	super.ctor(self,obj)
 	self._cf_ondestroy = self._cf_ondestroy or handler(self,self.OnCF_Destroy)
@@ -63,8 +59,8 @@ end
 
 function M:OnCF_Destroy()
 	self:OnCF_BegOnDestroy()
-	self:clean()
 	self:OnCF_OnDestroy()
+	self:clean()
 	self:OnCF_EndOnDestroy()
 end
 

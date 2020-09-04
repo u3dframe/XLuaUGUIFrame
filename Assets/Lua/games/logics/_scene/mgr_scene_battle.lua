@@ -6,11 +6,11 @@
 ]]
 
 local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
-local tb_rm_val = table.removeValues
+local tb_rm_val,tb_keys,tb_concat = table.removeValues,table.keys,table.concat
+local E_B_State,E_Object = LES_Battle_State,LES_Object
+local _is_debug = false
 
 MgrScene = require( "games/logics/_scene/mgr_scene" )
-
-local LES_B_State,LES_Object = LES_Battle_State,LES_Object
 
 local super,_evt = MgrBase,Event
 local M = class( "mgr_scene_battle",super )
@@ -19,7 +19,7 @@ local this = M
 function M.Init()
 	MgrScene:Init()
 
-	this.state = LES_B_State.None
+	this.state = E_B_State.None
 	this:ReEvent4OnUpdate(true)
 
 	_evt.AddListener(Evt_Map_SV_AddObj,this.OnSv_Add_Map_Obj)
@@ -33,30 +33,30 @@ function M.Init()
 end
 
 function M:OnUpdate(dt)
-	if this.state == LES_B_State.Start then
-		this.state = LES_B_State.Create_Objs
-	elseif this.state == LES_B_State.Create_Objs then
+	if this.state == E_B_State.Start then
+		this.state = E_B_State.Create_Objs
+	elseif this.state == E_B_State.Create_Objs then
 		this._ST_Create_Obj()
-	elseif this.state == LES_B_State.Create_Objs_End then
-		this.state = LES_B_State.Entry_CG
-	elseif this.state == LES_B_State.Entry_CG then
-		this.state = LES_B_State.Entry_CG_Ing
-	elseif this.state == LES_B_State.Entry_CG_Ing then
-		this.state = LES_B_State.Entry_CG_End
-	elseif this.state == LES_B_State.Entry_CG_End then
-		this.state = LES_B_State.Play_BG
-	elseif this.state == LES_B_State.Play_BG then
+	elseif this.state == E_B_State.Create_Objs_End then
+		this.state = E_B_State.Entry_CG
+	elseif this.state == E_B_State.Entry_CG then
+		this.state = E_B_State.Entry_CG_Ing
+	elseif this.state == E_B_State.Entry_CG_Ing then
+		this.state = E_B_State.Entry_CG_End
+	elseif this.state == E_B_State.Entry_CG_End then
+		this.state = E_B_State.Play_BG
+	elseif this.state == E_B_State.Play_BG then
 		this._ST_PlayBG()
-	elseif this.state == LES_B_State.Ready then
+	elseif this.state == E_B_State.Ready then
 		this._ST_Ready()
-	elseif this.state == LES_B_State.GO then
+	elseif this.state == E_B_State.GO then
 		this._ST_Go()
-	elseif this.state == LES_B_State.Battle_Ing then
-	elseif this.state == LES_B_State.Battle_End then
-		this.state = LES_B_State.End
+	elseif this.state == E_B_State.Battle_Ing then
+	elseif this.state == E_B_State.Battle_End then
+		this.state = E_B_State.End
 		this.isUping = false
-	elseif this.state == LES_B_State.Battle_Error then
-		this.state = LES_B_State.End
+	elseif this.state == E_B_State.Battle_Error then
+		this.state = E_B_State.End
 		this.isUping = false
 	end
 end
@@ -66,7 +66,7 @@ function M.GetSObj(uniqueID)
 end
 
 function M._IsCanStart()
-	if this.state == LES_B_State.None or this.state == LES_B_State.End then
+	if this.state == E_B_State.None or this.state == E_B_State.End then
 		return true
 	end
 	return true
@@ -74,7 +74,7 @@ end
 
 function M.Start()
 	if this._IsCanStart() then
-		this.state = LES_B_State.Start
+		this.state = E_B_State.Start
 	end
 	this.isUping = true
 end
@@ -82,7 +82,7 @@ end
 function M._ST_Create_Obj()
 	if not this.sv_queue_add then return end
 	if #this.sv_queue_add <= 0 then
-		this.state = LES_B_State.Create_Objs_End
+		this.state = E_B_State.Create_Objs_End
 		return
 	end
 	local _lf = this.sv_queue_add[1]
@@ -91,7 +91,7 @@ function M._ST_Create_Obj()
 end
 
 function M._ST_PlayBG()
-	this.state = LES_B_State.Ready
+	this.state = E_B_State.Ready
 end
 
 function M._ST_Ready()
@@ -100,38 +100,42 @@ end
 
 function M._On_ST_Start_Battle(msg)
 	if msg.e == 0 then
-		this.state = LES_B_State.GO
+		this.state = E_B_State.GO
 	else
-		this.state = LES_B_State.Battle_Error
+		this.state = E_B_State.Battle_Error
 	end
 end
 
 function M._ST_Go()
-	this.state = LES_B_State.Battle_Ing
+	this.state = E_B_State.Battle_Ing
 end
 
 function M._On_ST_End_Battle()
-	this.state = LES_B_State.Battle_End
+	this.state = E_B_State.Battle_End
 end
 
 function M.OnSv_Add_Map_Obj(objType,svMsg)
 	local _lb_dic = this.sv_dic_add or {}
 	this.sv_dic_add = _lb_dic
--- printTable(svMsg,objType)
 	local _func = _lb_dic[svMsg.id]
+	if _is_debug then
+		local _tb = reTable( this.sv_dic_add )
+		printInfo("=== Add  = [%s] = [%s]",svMsg.id,tb_concat(_tb, ""))
+	end
 	if _func then
 		printError("=== add sv obj is repeat  id = [%s]",svMsg.id)
 		return
 	end
 
-	_func = function()	
-		if objType ==  LES_Object.Hero then
-			local cfg = this:GetCfgData("hero",svMsg.cfgid)
-			if cfg then
-				local _obj = MgrScene.Add_SObj( objType,cfg.resource,svMsg.id )
-				if _obj then
-					_obj:View(true,cfg,svMsg)
-				end
+	_func = function()
+		local _cfg_
+		if objType ==  E_Object.Hero or objType ==  E_Object.Monster then
+			_cfg_ = this:GetCfgData("hero",svMsg.cfgid)
+		end
+		if _cfg_ then
+			local _obj = MgrScene.Add_SObj( objType,_cfg_.resource,svMsg.id )
+			if _obj then
+				_obj:View(true,_cfg_,svMsg)
 			end
 		end
 	end
@@ -144,14 +148,7 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 end
 
 function M.OnSv_Rmv_Map_Obj(svMsg)
-	if this.sv_dic_add then
-		local _func = this.sv_dic_add[svMsg.id]
-		if _func then
-			tb_rm_val( this.sv_queue_add,_func )
-		end
-	end
-
-	MgrScene.Reback_MapObj( svMsg.id )
+	this.RemoveById( svMsg.id )
 end
 
 function M.OnSv_Move_Map_Obj(svMsg,isStop)
@@ -174,6 +171,34 @@ function M.OnSv_Map_Obj_Skill_Effect(svMsg)
 	local _obj = MgrScene.GetCurrMapObj( svMsg.caster )
 	if not _obj then return end
 	_obj:CastInjured( svMsg )
+end
+
+function M.RemoveCurr( id )
+	if (not id) or (not this.sv_dic_add) then return end
+
+	local _func = this.sv_dic_add[id]
+	this.sv_dic_add[id] = nil
+	if _func then
+		tb_rm_val( this.sv_queue_add,_func )
+	end
+end
+
+function M.RemoveById(id)
+	this.RemoveCurr( id )
+
+	local _obj = this.GetSObj( id )
+	if _obj then
+		_obj:ReturnSelf()
+	end
+	MgrScene.RemoveCurrMapObj( id )
+end
+
+function M.RemoveAll()
+	if (not this.sv_dic_add) then return end
+	local _keys = tb_keys( this.sv_dic_add )
+	for _, k in ipairs(_keys) do
+		this.RemoveById( k )
+	end
 end
 
 return M

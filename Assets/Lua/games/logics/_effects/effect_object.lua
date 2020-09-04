@@ -13,7 +13,8 @@ this.nm_pool_cls = "p_cls_e"
 function M.Builder(idMarker,resid,idTarget,mount_point,timeout,isfollow)
 	this:GetResCfg( resid )
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
-	_ret = self:BorrowSelf( idMarker,resid,idTarget,mount_point,timeout,isfollow )
+
+	_ret = this.BorrowSelf( _p_name,idMarker,resid,idTarget,mount_point,timeout,isfollow )
 	return _ret
 end
 
@@ -23,11 +24,11 @@ function M:ctor()
 end
 
 function M:Reset(idMarker,resid,idTarget,mount_point,timeout,isfollow)
-	self.isUping = false
-	if resid ~= self.resid then
+	if self.resid and resid and resid ~= self.resid then
 		self:OnUnLoad()
 	end
 	self:InitAsset4Resid( resid )
+	self.isUping = false
 	self:SetData( idMarker,idTarget,mount_point,timeout,isfollow )
 end
 
@@ -89,7 +90,7 @@ end
 
 function M:OnUpdateLoaded(dt)
 	self.currt_time = self.currt_time + dt
-	if self.timeOut  then
+	if self.timeOut and self.timeOut > 0  then
 		if self.timeOut <= self.currt_time then
 			self.isUping = false
 			self:ReturnSelf()

@@ -5,6 +5,8 @@
 	-- Desc : 创建场景对象用的
 ]]
 
+local E_Object = LES_Object
+
 local fdir = "games/logics/_scene/"
 local _req = reimport or require
 
@@ -15,11 +17,24 @@ local SceneMap = _req (fdir .. "scene_map") -- 场景Map
 SceneCreature = _req (fdir .. "scene_creature") -- 生物
 SceneMonster = _req (fdir .. "scene_monster") -- 怪兽
 SceneHero = _req (fdir .. "scene_hero") -- 英雄、伙伴
-UIModel = _req (fdir .. "ui_model") -- UI模型
+local UIModel = _req (fdir .. "ui_model") -- UI模型
 
 objsPool:AddClassBy( ClsEffect )
+objsPool:AddClassBy( SceneObject )
+objsPool:AddClassBy( SceneMap )
+objsPool:AddClassBy( SceneCreature )
+objsPool:AddClassBy( SceneMonster )
+objsPool:AddClassBy( SceneHero )
+objsPool:AddClassBy( UIModel )
 
-local LES_Object = LES_Object
+local _lbCls_ = {
+	[E_Object.Object]    = SceneObject,
+	[E_Object.MapObj]    = SceneMap,
+	[E_Object.Creature]  = SceneCreature,
+	[E_Object.Monster]   = SceneMonster,
+	[E_Object.Hero]      = SceneHero,
+	[E_Object.UIModel]   = UIModel,
+}
 
 local super,_evt = MgrBase,Event
 local M = class( "scene_factory",super )
@@ -35,27 +50,10 @@ function M.AddCursor()
 end
 
 function M.Create(objType,resid,uuid)
-	local _cfgRes,_ret = MgrData:GetCfgRes(resid)
-	if not _cfgRes then
-		error("=== no res in resource config , resid = [%s]",resid)
-		return
+	local _cls,_ret = _lbCls_[objType]
+	if _cls then
+		_ret = _cls.Builder((uuid or this.AddCursor()),resid)
 	end
-	if objType == LES_Object.Object then
-		_ret = SceneObject.New(objType,(uuid or this.AddCursor()),_cfgRes)
-	elseif objType == LES_Object.MapObj then
-		_ret = SceneMap.New((uuid or this.AddCursor()),_cfgRes)
-	elseif objType == LES_Object.Creature then
-		_ret = SceneCreature.New(objType,(uuid or this.AddCursor()),_cfgRes)
-	elseif objType == LES_Object.Monster or objType == LES_Object.MPartner then
-		_ret = SceneMonster.New(objType,(uuid or this.AddCursor()),_cfgRes)
-	elseif objType == LES_Object.Hero or objType == LES_Object.Partner then
-		_ret = SceneHero.New(objType,(uuid or this.AddCursor()),_cfgRes)
-	elseif objType == LES_Object.UIModel then
-		_ret = UIModel.New((uuid or this.AddCursor()),_cfgRes)
-	end
-
-	if _ret then _ret.resid = resid end
-
 	return _ret
 end
 

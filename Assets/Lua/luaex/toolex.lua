@@ -21,6 +21,7 @@ local str_format = string.format
 local str_gsub = string.gsub
 local str_rep = string.rep
 local str_byte = string.byte
+local tostring = tostring
 
 local package,type,rawget = package,type,rawget
 local _pcall,_xpcall,_deTrk = pcall,xpcall,debug.traceback
@@ -125,71 +126,78 @@ function setPTabFunc( pfunc )
 	_pfunc = pfunc;
 end
 
+local function stab( numTab )
+	return str_rep("    ", numTab);
+end
+
+local function _ToCatTable( dest,src,dic,tabNum,notSort )
+	tb_insert( dest, "{" )
+	tabNum = tabNum + 1
+
+	local keys = tb_keys( src );
+	if not notSort then tb_sort(keys,_sort_key); end
+
+	local v,vv,kk,ktp,vtp,_str_temp;
+	for _, k in pairs( keys ) do
+		v = src[ k ]
+		ktp = type(k)
+		vtp = type(v)
+		if ktp == "string" then
+			kk = "['" .. k .. "']"
+		else
+			kk = "[" .. tostring(k) .. "]"
+		end
+		_str_temp = tostring(v)
+
+		if (vtp == "table") and (not dic[_str_temp]) then
+			dic[_str_temp] = true;
+			tb_insert( dest, str_format('\n%s%s = ', stab(tabNum),kk))
+			_ToCatTable( dest,dic,v,tabNum,notSort )
+		else
+			if vtp == "string" then
+				vv = str_format("\"%s\"", v)
+			elseif vtp == "number" or vtp == "boolean" or vtp == "table" then
+				vv = _str_temp
+			else
+				vv = "[" .. vtp .. "]"
+			end
+
+			if ktp == "string" then
+				tb_insert( dest, str_format("\n%s%-18s = %s,", stab(tabNum), kk, str_gsub(vv, "%%", "?") ) )
+			else
+				tb_insert( dest, str_format("\n%s%-4s = %s,", stab(tabNum), kk, str_gsub(vv, "%%", "?") ) )
+			end
+		end
+	end
+	tabNum = tabNum - 1
+
+	if tabNum == 0 then
+		tb_insert( dest, '}' )
+	else
+		tb_insert( dest, '},' )
+	end
+end
+
+function reTable( tb,dest,dic,notSort )
+	dic = dic or {}
+	dest = dest or {};
+	_ToCatTable( dest,tb,dic,0,notSort )
+	return dest
+end
+
 function printTable( tb,title,rgb,notSort )
 	rgb = rgb or "09f68f";
 	if not tb or type(tb) ~= "table" then
 		title = str_format(_fmtColor,rgb,tb)
 	else
-		local tabNum = 0;
-		local function stab( numTab )
-			return str_rep("    ", numTab);
-		end
-		local str = {};
-		local _dic,_str_temp = {};
-
-		local function _printTable( t )
-			tb_insert( str, "{" )
-			tabNum = tabNum + 1
-
-			local keys = tb_keys(t);
-			if not notSort then tb_sort(keys,_sort_key); end
-
-			local v,kk,ktp,vtp;
-			for _, k in pairs( keys ) do
-				v = t[ k ]
-				ktp = type(k)
-				vtp = type(v)
-				if ktp == "string" then
-					kk = "['" .. k .. "']"
-				else
-					kk = "[" .. tostring(k) .. "]"
-				end
-				_str_temp = tostring(v)
-		
-				if (vtp == "table") and (not _dic[_str_temp]) then
-					_dic[_str_temp] = true;
-					tb_insert( str, str_format('\n%s%s = ', stab(tabNum),kk))
-					_printTable( v )
-				else
-					if vtp == "string" then
-						vv = str_format("\"%s\"", v)
-					elseif vtp == "number" or vtp == "boolean" or vtp == "table" then
-						vv = _str_temp
-					else
-						vv = "[" .. vtp .. "]"
-					end
-
-					if ktp == "string" then
-						tb_insert( str, str_format("\n%s%-18s = %s,", stab(tabNum), kk, str_gsub(vv, "%%", "?") ) )
-					else
-						tb_insert( str, str_format("\n%s%-4s = %s,", stab(tabNum), kk, str_gsub(vv, "%%", "?") ) )
-					end
-				end
-			end
-			tabNum = tabNum - 1
-
-			if tabNum == 0 then
-				tb_insert( str, '}' )
-			else
-				tb_insert( str, '},' )
-			end
-		end
-
+		local str,_dic,_str_temp = {},{};
 		title = str_format("%s = %s",(title or ""),tb);
 		tb_insert( str, str_format("\n=== beg [%s]--[%s]\n", title, os.date("%H:%M:%S") )  )
 		_str_temp = tostring(tb)
 		_dic[_str_temp] = true;
-		_printTable( tb )
+		
+		str = reTable( tb,str,_dic,notSort )
+
 		tb_insert( str, str_format("\n=== end [%s]--\n", title))
 
 		title = tb_concat(str, "")

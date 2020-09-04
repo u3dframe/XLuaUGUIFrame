@@ -5,33 +5,42 @@
 	-- Desc : 
 ]]
 
-local LES_Object = LES_Object
+local E_Object,E_Layer = LES_Object,LES_Layer
 
 local super,_evt = FabBase,Event
 local M = class( "scene_object",super )
+local this = M
 
-M.AddNoClearKeys( "sobjType","resid","cfgRes" )
+this.nm_pool_cls = "p_cls_sobj_" .. tostring(E_Object.Object)
 
-function M:ctor(sobjType,nCursor,resCfg)
-	super.ctor( self )
-	self:InitBase(sobjType,nCursor,resCfg)
+function M.Builder(nCursor,resid)
+	this:GetResCfg( resid )
+	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
+
+	_ret = this.BorrowSelf( _p_name,E_Object.Object,nCursor,resid )
+	return _ret
 end
 
-function M:InitBase(sobjType,nCursor,resCfg)
-	self.cfgRes = resCfg
+function M:ctor()
+	super.ctor( self )
+end
+
+function M:Reset(sobjType,nCursor,resid)
+	if self.resid and resid and resid ~= self.resid then
+		self:OnUnLoad()
+	end
+	self:InitAsset4Resid( resid )
 	self:SetSObjType( sobjType )
 	self:SetCursor( nCursor )
-
-	return super.InitBase( self,self.cfgAsset )
 end
 
 function M:OnViewBeforeOnInit()
 	local _ot = self:GetSObjType()
-	self:SetLayer(LES_Layer[_ot],true)
+	self:SetLayer(E_Layer[_ot],true)
 end
 
 function M:SetSObjType(sobjType)
-	self.sobjType = sobjType or LES_Object.Object
+	self.sobjType = sobjType or E_Object.Object
 	return self
 end
 
@@ -54,6 +63,7 @@ end
 
 function M:Reback()
 	_evt.Brocast( Evt_Map_Reback_Obj,self )
+	self:ReturnSelf()
 end
 
 function M:OnCF_OnDestroy()

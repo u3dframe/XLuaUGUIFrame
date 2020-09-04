@@ -357,7 +357,13 @@ public class GHelper {
 
 	static public GameObject Clone(GameObject gobj,Transform parent) {
 		if(IsNull(gobj)) return null;
-		return GameObject.Instantiate (gobj,parent,false) as GameObject;
+		GameObject ret = GameObject.Instantiate(gobj, parent, false) as GameObject;
+
+		if(IsNoNull(parent)){
+			SetParentSyncLayer(ret.transform,parent,true);
+		}
+		
+		return ret;
 	}
 
 	static public GameObject Clone(GameObject gobj,GameObject gobjParent) {

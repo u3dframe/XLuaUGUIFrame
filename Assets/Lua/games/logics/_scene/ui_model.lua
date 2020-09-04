@@ -5,13 +5,20 @@
 	-- Desc : 
 ]]
 
-local LES_Object = LES_Object
+local E_Object = LES_Object
 
 local super = SceneHero
 local M = class( "ui_model",super )
+local this = M
 
-function M:ctor(nCursor,resCfg)
-	super.ctor( self,LES_Object.UIModel,nCursor,resCfg )
+this.nm_pool_cls = "p_cls_ui_" .. tostring(E_Object.UIModel)
+
+function M.Builder(nCursor,resid)
+	this:GetResCfg( resid )
+	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
+
+	_ret = this.BorrowSelf( _p_name,E_Object.UIModel,nCursor,resid )
+	return _ret
 end
 
 return M

@@ -8,6 +8,7 @@
 local type,xpcall = type,xpcall
 local tb_remove,tb_insert = table.remove,table.insert
 local str_split = string.split
+local _is_debug = false
 
 local M = class( "obj_pools" )
 
@@ -45,28 +46,43 @@ function M:GetClassBy( name,sp )
 	return self:GetClass( name )
 end
 
-function M:GetPool( name )
+function M:GetPool( name,isNew )
 	if not name then return end
 	self.__pools = self.__pools or {}
-	local _pool = self.__pools[name] or {}
-	self.__pools[name] = _pool
+	local _pool = self.__pools[name]
+	if isNew == true then
+		_pool = _pool or {}
+		self.__pools[name] = _pool
+	end
 	return _pool
 end
 
 function M:BorrowObj(name, ... )
-	local _pool = self:GetPool(name)
+	if not name or "" == name then
+		if _is_debug then
+			printInfo("=== BorrowObj name is nil")
+		end
+		return 
+	end
+
+	local _pool = self:GetPool( name,true )
 	local obj = tb_remove(_pool,1)
 
 	if not obj then
 		local _cls = self:GetClassBy( name,"@@" )
 		if type(_cls.IsObjPool) == "function" then
 			obj = _cls.New()
-			obj:SetObjPoolName( name )
+			if _is_debug then
+				printInfo("=== BorrowObj == [%s] = [%s] = [%s]",name,obj,_cls:getCName())
+			end
 		end
 	end
 	
 	if obj then
+		obj:SetObjPoolName( name )
 		obj:ResetAndShow( ... )
+	elseif _is_debug then
+		printInfo( "=== BorrowObj is null obj ==[%s]",name )
 	end
 	
 	return obj
@@ -74,27 +90,35 @@ end
 
 function M:ReturnObj(obj)
 	if type(obj) ~= "table" or type(obj.IsObjPool) ~= "function" then return end
+	local _p_name = obj:GetObjPoolName()
+	if not _p_name then
+		if _is_debug then
+			printInfo("=== ReturnObj pool name is nil == [%s]",obj:getCName())
+		end
+		return 
+	end
+
 	local _func = function() obj:ResetAndHide() end
 	local _error = function()
-		-- print(debug.traceback())
+		if _is_debug then
+			printError(debug.traceback())
+		end
 		obj:Do_Clear()
 	end
 
 	local state = xpcall(_func,_error)
 	if state == true then
-		local _pool = self:GetPool( obj:GetObjPoolName() )
-		if _pool then
-			tb_insert( _pool,obj )
+		local _pool = self:GetPool( _p_name )
+		if _pool ~= nil then
+			if not table.contains( _pool,obj ) then
+				tb_insert( _pool,obj )
+			elseif _is_debug then
+				printInfo("=== ReturnObj many times ==[%s] = [%s]",_p_name,obj:getCName())
+			end
+		elseif _is_debug then
+			printInfo("=== ReturnObj not has pool ==[%s] = [%s]",_p_name,obj:getCName())
 		end
 	end
-end
-
-function M:GetGobjRootPool()
-	local _gobj = LUGobj.CsFindGobj("/_Pools")
-	if not _gobj then
-		_gobj = LUGobj.CsNewGobj("_Pools")
-	end
-	return _gobj
 end
 
 return M

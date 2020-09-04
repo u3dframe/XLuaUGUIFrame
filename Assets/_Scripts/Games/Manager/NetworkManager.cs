@@ -66,9 +66,6 @@ public class NetworkManager : GobjLifeListener {
 	/// 通知到lua那边
 	/// </summary>
 	void OnCF2Lua(int code, ByteBuffer data) {
-		if (data == null)
-			return;
-
 		bool isState = LuaHelper.CFuncLua(lua_func, code, data);
 		if (!isState)
 			Debug.LogErrorFormat("=== OnCF2Lua Fails,lua func = [{0}], code = [{1}]", lua_func, code);
@@ -107,25 +104,13 @@ public class NetworkManager : GobjLifeListener {
 		return true;
 	}
 
-	public void Connect(string host, int port) {
+	public void Connect(string host, int port,bool isReConnect) {
 		InitSocket();
-		
-		bool isReConnect = !string.Equals(this.m_host,host) || this.m_port != port;
-		bool isConnect = isReConnect || !this.socket.IsConnected();
-		if(!isConnect) return;
+		if(!isReConnect)
+			isReConnect = !string.Equals(this.m_host,host) || this.m_port != port || this.socket.IsEmptyClient();
 		if(isReConnect) ShutDown();
 		this.InitNet(host,port,this.lua_func);
-		SendConnect();
-	}
-
-	/// <summary>
-	/// 发送链接请求
-	/// </summary>
-	public void SendConnect() {
-		if (this.m_host == null || this.m_port <= 0) {
-			return;
-		}
-		socket.SendConnect(this.m_host, this.m_port);
+		this.socket.SendConnect(this.m_host, this.m_port);
 	}
 
 	/// <summary>

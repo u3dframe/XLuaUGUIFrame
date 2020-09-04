@@ -10,6 +10,10 @@ objsPool = require("games/logics/_base/_objs/obj_pools").GetInstance()
 
 local M = class( "obj_basic" )
 
+function M.BorrowSelf( pname,... )
+	return objsPool:BorrowObj( pname,... )
+end
+
 function M:IsObjPool()
 	return true
 end
@@ -19,7 +23,7 @@ function M:SetObjPoolName(objPoolName)
 end
 
 function M:GetObjPoolName()
-	return (self.objPoolName or self.cfgAsset.objName) or self.strABAsset
+	return self.objPoolName
 end
 
 -- 重置属性
@@ -32,9 +36,12 @@ function M:ResetAndShow( ... )
 	self:ShowView( true )
 end
 
+function M:GetRoot4Hide()
+end
+
 -- pool调用函数 - 隐藏
 function M:ResetAndHide()
-	local gobjParent = objsPool:GetGobjRootPool()
+	local gobjParent = self:GetRoot4Hide()
 	self:SetParent( gobjParent,true )
 	self:ShowView( false )
 end
@@ -50,10 +57,6 @@ end
 -- 外包调用函数
 function M:ReturnSelf()
 	objsPool:ReturnObj( self )
-end
-
-function M:BorrowSelf(...)
-	objsPool:BorrowObj( self:GetObjPoolName(),... )
 end
 
 return M

@@ -90,6 +90,20 @@ public static class StaticEx {
         {
             ReShader(_arrs[i]);
         }
+
+        ReShaderBox(gobj);
+    }
+
+    static public void ReShaderBox(this GameObject gobj)
+    {
+        if(null == gobj) return;
+        Skybox[] _arrs = gobj.GetComponentsInChildren<Skybox>(true);
+        if(null == _arrs) return;
+        int _lens = _arrs.Length;
+        for (int i = 0; i < _lens; i++)
+        {
+            ReShader(_arrs[i].material);
+        }
     }
 
     static public void ReUIShader(this UnityEngine.UI.Image img)

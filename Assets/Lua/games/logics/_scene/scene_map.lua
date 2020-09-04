@@ -7,13 +7,20 @@
 
 local _clsGBox = require( "games/logics/_scene/scene_map_gbox" )
 
-local LES_Object = LES_Object
+local E_Object = LES_Object
 
 local super,_evt = SceneObject,Event
 local M = class( "scene_map",super )
+local this = M
 
-function M:ctor(nCursor,resCfg)
-	super.ctor( self,LES_Object.MapObj,nCursor,resCfg )
+this.nm_pool_cls = "p_cls_sobj_" .. tostring(E_Object.MapObj)
+
+function M.Builder(nCursor,resid)
+	this:GetResCfg( resid )
+	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
+
+	_ret = this.BorrowSelf( _p_name,E_Object.MapObj,nCursor,resid )
+	return _ret
 end
 
 function M:OnViewBeforeOnInit()
