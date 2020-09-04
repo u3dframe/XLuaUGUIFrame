@@ -314,6 +314,17 @@ public class BuildTools : Core.EditorGameFile
     [MenuItem("Tools/Re - AB")]
     static public void DoBuild()
     {
+        DoBuild(true);
+    }
+    
+    static public void DoBuild(bool isCheckABSpace)
+    {
+        if(isCheckABSpace && IsHasSpace()){
+            EditorUtility.ClearProgressBar();
+            EditorUtility.DisplayDialog("提示", "[原始资源]名有空格，请查看输出打印!!!", "确定");
+            return;
+        }
+
         EditorUtility.DisplayProgressBar("DoBuild", "Start DoBuild ...", 0.0f);
         int _lensAb = _CheckABName();
         bool _isMakeAB = (_lensAb > 0);
@@ -452,5 +463,22 @@ public class BuildTools : Core.EditorGameFile
             meshRender.sharedMaterials = newMaterials;
         }
         EditorSceneManager.MarkAllScenesDirty();
+    }
+
+    [MenuItem("Tools/Check Has Space ABName")]
+    static public bool IsHasSpace(){
+        AssetDatabase.RemoveUnusedAssetBundleNames();
+        string[] arrs = AssetDatabase.GetAllAssetBundleNames();
+        int count = arrs.Length;
+        string strName = null;
+        bool _isRet = false;
+        for(int i = 0; i < count; i++){
+            strName = arrs[i];
+            if(strName.Contains(" ")){
+                _isRet = true;
+                Debug.LogErrorFormat("==== this has space,ab name = [{0}]",strName);
+            }
+        }
+        return _isRet;
     }
 }
