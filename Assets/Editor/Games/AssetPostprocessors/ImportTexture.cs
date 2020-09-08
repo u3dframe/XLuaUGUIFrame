@@ -67,14 +67,14 @@ public class ImportTexture : AssetPostprocessor
                 curFmt = importer.DoesSourceTextureHaveAlpha() ? fmtAlpha : fmtNotAlpha;
 #endif
                 settings.overridden = true;
-                settings.allowsAlphaSplitting = false;
+                // settings.allowsAlphaSplitting = false;
                 settings.maxTextureSize = 1024;
                 settings.format = curFmt;
                 importer.SetPlatformTextureSettings(settings);
                 
                 importer.sRGBTexture = true;
-                importer.mipmapEnabled = false;
-                importer.alphaIsTransparency = false;
+                // importer.mipmapEnabled = false;
+                // importer.alphaIsTransparency = false;
                 importer.textureCompression = TextureImporterCompression.Compressed;
                 importer.crunchedCompression = true;
                 importer.compressionQuality = 60;
@@ -132,7 +132,7 @@ public class ImportTexture : AssetPostprocessor
             if (isMust || !_isSpr)
             {
                 if(!_isSpr) importer.textureType = TextureImporterType.Sprite;
-                if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
+                // if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
                 BuildTools.ReBindAB4SngOrAtlas(importer);
             }
@@ -142,7 +142,7 @@ public class ImportTexture : AssetPostprocessor
             if (isMust || _isSpr)
             {
                 if(_isSpr) importer.textureType = TextureImporterType.Default;
-                if(importer.mipmapEnabled) importer.mipmapEnabled = false;
+                // if(importer.mipmapEnabled) importer.mipmapEnabled = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
                 BuildTools.ReBindAB4SngOrAtlas(importer);
             }

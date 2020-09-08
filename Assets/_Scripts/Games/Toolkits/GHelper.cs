@@ -12,6 +12,7 @@ using UObject = UnityEngine.Object;
 /// 功能 : 泛型是不能被Tolua导成函数的
 /// </summary>
 public class GHelper {
+	static public bool Is_App_Quit = false;
 	static public readonly DateTime DT_Start = new DateTime(1970, 1, 1, 0, 0, 0);
 
 	static public DateTime ToTZLoc{
@@ -55,11 +56,13 @@ public class GHelper {
 
 	static public bool IsNull(UObject uobj)
 	{
+		if(Is_App_Quit) return true;
 		return null == uobj;
 	}
 
 	static public bool IsNoNull(UObject uobj)
 	{
+		if(Is_App_Quit) return false;
 		return null != uobj;
 	}
 	

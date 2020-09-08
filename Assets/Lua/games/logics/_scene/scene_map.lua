@@ -30,6 +30,10 @@ end
 function M:OnInit()
 	self.lbCamera = self:NewCmr("MainCamera")
 	self.lbGBox = _clsGBox.New(self:GetElement("gbox"))
+	self.compPPLayer = self:GetElementComponent( "MainCamera","PostProcessLayer" )
+	if self.compPPLayer then
+		self.compPPLayer.enabled = (not GM_IsEditor)
+	end
 
 	_evt.Brocast(Evt_Vw_Def3DCamera,false,self.lbCamera)
 end

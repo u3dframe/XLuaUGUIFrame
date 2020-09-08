@@ -14,6 +14,7 @@ using Core;
 using Core.Kernel;
 #if UNITY_2019
 using UnityEngine.Networking;
+using UnityEngine.Rendering.PostProcessing;
 #endif
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -73,6 +74,7 @@ public static class ExampleConfig
                 typeof(AudioSource),
                 typeof(LayerMask),
                 typeof(RaycastHit),
+                typeof(PostProcessLayer),
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
                 typeof(UIBehaviour),

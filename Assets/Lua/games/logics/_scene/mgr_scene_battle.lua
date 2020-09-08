@@ -211,11 +211,7 @@ function M.EndBattle4Scene(isInterrupt)
 	_evt.Brocast(Evt_Battle_End)
 	this.RemoveAll()
 	this.state = E_B_State.Battle_End
-	if isInterrupt == true then
-		_evt.Brocast( Evt_Map_Load ) --退回主界面
-	else
-		MgrBattle:OpenBattleSettlement()
-	end
+	MgrBattle:OpenBattleSettlement(isInterrupt)
 end
 
 function M.SetDelayEndBattle( ms )

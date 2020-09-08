@@ -105,15 +105,15 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 
 	void OnEnable()
 	{
-		OnCall4Show ();
 		if(this.isAppQuit) return;
+		OnCall4Show ();
 		if (m_callShow != null) m_callShow ();
 	}
 
 	void OnDisable()
 	{
-		OnCall4Hide ();
 		if(this.isAppQuit) return;
+		OnCall4Hide ();
 		if (m_callHide != null) m_callHide ();
 	}
 
@@ -127,6 +127,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	}
 
 	protected void OnApplicationQuit(){
+		GHelper.Is_App_Quit = true;
 		this.isAppQuit = true;
 		_OnClear();
 	}
