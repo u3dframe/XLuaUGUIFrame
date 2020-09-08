@@ -44,6 +44,12 @@ namespace Core
 			Application.Quit ();
 			#endif
 		}
+
+		static public void AppPause(){
+			#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPaused = true;
+			#endif
+		}
 		
 		static private bool IsTextInCT(string fn){
 			return fn.EndsWith(".csv") || fn.EndsWith(".minfo") || fn.IndexOf("protos/") != -1;

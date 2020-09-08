@@ -90,9 +90,12 @@ LES_C_Action_State = {
 	
 	Skill_Power    = 20,     -- 技能_大招
 	Skill_1        = 21,     -- 技能_1
+	Skill_2        = 22,     -- 技能_2
+	Skill_3        = 23,     -- 技能_3
 	
 	Show_1         = 31,     -- 展示_1
 	Show_2         = 32,     -- 展示_2
+	Show_3         = 33,     -- 展示_3
 	
 	Grab           = 51,     -- 被拧起
 	Lose           = 52,     -- 失败
@@ -173,7 +176,8 @@ LES_C_Action = {
 	Create                     = _add(0), -- 创建
 	Enter                      = _add(),  -- 进入
 	Update                     = _add(),  -- 更新
-	Exit                       = _add(),  -- 结束
+	Exit                       = _add(),  -- 退出
+	End                        = _add(),  -- 结束
 }
 
 -- 动作特效 - 类型

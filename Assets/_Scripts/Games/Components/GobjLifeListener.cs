@@ -106,12 +106,14 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	void OnEnable()
 	{
 		OnCall4Show ();
+		if(this.isAppQuit) return;
 		if (m_callShow != null) m_callShow ();
 	}
 
 	void OnDisable()
 	{
 		OnCall4Hide ();
+		if(this.isAppQuit) return;
 		if (m_callHide != null) m_callHide ();
 	}
 

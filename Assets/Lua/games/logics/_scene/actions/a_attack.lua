@@ -5,10 +5,10 @@
 	-- Desc : 
 ]]
 
-local _mfloor = math.floor
+local type,tostring = type,tostring
+local tb_end = table.end_arr
 
 local E_Action = LES_C_Action
-local E_AniState = LES_C_Action_State
 local E_State = LES_C_State
 
 local super = ActionBasic
@@ -16,7 +16,6 @@ local M = class( "action_attack",super )
 
 function M:_On_A_Init()
 	self.jugde_state = E_State.Attack
-	self.lbCursor = self.lbOwner:GetCursor()
 	self.tmData = self.lbOwner:GetAttackEffets()
 end
 
@@ -31,34 +30,35 @@ function M:_On_AEnter()
 		self:SetState( E_Action.Update )
 	end
 	if _isBl then
-		self.start_sec = Time.time
-		self.up_sec = 0
 		self.n_cursor = 0
-		-- self.lbOwner:Add_AUpFunc( self.action_state,self._On_Ani_Update,self )
+		local _d = tb_end( self.tmData )
+		if _d then
+			self.time_out = (_d.time + _d.duration) / 1000
+		else
+			self.lbOwner:Add_AUpFunc( self.action_state,self._On_Ani_Update,self )
+		end
 	end
 	return _isBl
 end
 
--- function M:_On_Ani_Update(ani,info,layer)
--- 	self:_Excute_Effect()
--- end
+function M:_On_Ani_Update(ani,info,layer)
+	if info.normalizedTime >= 1.0 then
+		self.lbOwner:RmvFunc("_a_up_" .. tostring(self.action_state))
+		self:Exit()
+	end
+end
 
 function M:_On_AUpdate(dt)
-	self.up_sec = self.up_sec + dt
 	self:_Excute_Effect()
 end
 
 function M:_On_AExit()
-	super._On_AExit( self )
-	self.tmData,self.lbCursor = nil
-	self.up_sec = 0
-	self.n_cursor = 0
-	self.lbOwner:SetState( E_State.Idle )
+	self.tmData,self.n_cursor = nil
+	local _owner = super._On_AExit( self )
+	_owner:SetState( E_State.Idle )
 end
 
 function M:_Excute_Effect()
-	local _ti = Time.time
-	local _t1 = _ti - self.start_sec
 	local _t2 = self.up_sec
 	self:_Exc_AniEvent( self.n_cursor,_t2 * 1000 )
 end

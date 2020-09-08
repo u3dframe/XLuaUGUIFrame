@@ -5,8 +5,10 @@
 	-- Desc : defenses,offenses
 ]]
 
+local tonumber = tonumber
 local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 local tb_rm_val,tb_keys,tb_concat = table.removeValues,table.keys,table.concat
+local MgrData,LTimer = MgrData,LTimer
 local E_B_State,E_Object = LES_Battle_State,LES_Object
 local _is_debug = false
 
@@ -19,17 +21,19 @@ local this = M
 function M.Init()
 	MgrScene:Init()
 
+	this._ms_delay_end = 0
 	this.state = E_B_State.None
-	this:ReEvent4OnUpdate(true)
+	this:ReEvent4OnUpdate( true )
 
-	_evt.AddListener(Evt_Map_SV_AddObj,this.OnSv_Add_Map_Obj)
-	_evt.AddListener(Evt_Map_SV_RmvObj,this.OnSv_Rmv_Map_Obj)
-	_evt.AddListener(Evt_Map_SV_MoveObj,this.OnSv_Move_Map_Obj)
-	_evt.AddListener(Evt_Map_SV_Skill,this.OnSv_Map_Obj_Skill)
-	_evt.AddListener(Evt_Map_SV_Skill_Effect,this.OnSv_Map_Obj_Skill_Effect)
+	_evt.AddListener( Evt_Map_SV_AddObj,this.OnSv_Add_Map_Obj )
+	_evt.AddListener( Evt_Map_SV_RmvObj,this.OnSv_Rmv_Map_Obj )
+	_evt.AddListener( Evt_Map_SV_MoveObj,this.OnSv_Move_Map_Obj )
+	_evt.AddListener( Evt_Map_SV_Skill,this.OnSv_Map_Obj_Skill )
+	_evt.AddListener( Evt_Map_SV_Skill_Effect,this.OnSv_Map_Obj_Skill_Effect )
 	
-	_evt.AddListener(Evt_State_Battle_Start,this.Start)
-	_evt.AddListener(Evt_State_Battle_End,this._On_ST_End_Battle)
+	_evt.AddListener( Evt_State_Battle_Start,this.Start )
+	_evt.AddListener( Evt_Battle_Delay_End_MS,this.SetDelayEndBattle )
+	_evt.AddListener( Evt_Msg_Battle_End,this._OnMsgEndBattle )
 end
 
 function M:OnUpdate(dt)
@@ -76,6 +80,7 @@ function M.Start()
 	if this._IsCanStart() then
 		this.state = E_B_State.Start
 	end
+	this._ms_delay_end = 0
 	this.isUping = true
 end
 
@@ -108,10 +113,6 @@ end
 
 function M._ST_Go()
 	this.state = E_B_State.Battle_Ing
-end
-
-function M._On_ST_End_Battle()
-	this.state = E_B_State.Battle_End
 end
 
 function M.OnSv_Add_Map_Obj(objType,svMsg)
@@ -147,8 +148,8 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 	tb_insert(_lb,_func)
 end
 
-function M.OnSv_Rmv_Map_Obj(svMsg)
-	this.RemoveById( svMsg.id )
+function M.OnSv_Rmv_Map_Obj(s_id)
+	this.RemoveById( s_id )
 end
 
 function M.OnSv_Move_Map_Obj(svMsg,isStop)
@@ -177,10 +178,10 @@ function M.RemoveCurr( id )
 	if (not id) or (not this.sv_dic_add) then return end
 
 	local _func = this.sv_dic_add[id]
-	this.sv_dic_add[id] = nil
 	if _func then
 		tb_rm_val( this.sv_queue_add,_func )
 	end
+	this.sv_dic_add[id] = nil
 end
 
 function M.RemoveById(id)
@@ -198,6 +199,66 @@ function M.RemoveAll()
 	local _keys = tb_keys( this.sv_dic_add )
 	for _, k in ipairs(_keys) do
 		this.RemoveById( k )
+	end
+end
+
+function M.EndBattle4Scene()
+	printTable("=========EndBattle4Scene")
+	_evt.Brocast(Evt_Battle_End)
+	this.RemoveAll()
+	this.state = E_B_State.Battle_End
+	MgrBattle:OpenBattleSettlement()
+end
+
+function M.SetDelayEndBattle( ms )
+	ms = tonumber(ms) or 0
+	if this._ms_delay_end < ms then
+		this._ms_delay_end = ms
+	end
+end
+
+function M._OnMsgEndBattle( msg )
+	if (not this.sv_dic_add) then
+		this.EndBattle4Scene()
+		return 
+	end
+	local _isWin = (msg.win == true)
+	local _keys,_sobj = tb_keys( this.sv_dic_add )
+	local _max_ms,_e_id,_cfgEft = this._ms_delay_end
+	for _, k in ipairs(_keys) do
+		_sobj = this.GetSObj( k )
+		if _sobj and not _sobj:IsDeath() and _sobj.data then
+			if _sobj:IsEnemy() then
+				if _isWin then
+					_e_id = _sobj.data.lose
+				else
+					_e_id = _sobj.data.win
+				end
+			else
+				if _isWin then
+					_e_id = _sobj.data.win
+				else
+					_e_id = _sobj.data.lose
+				end
+			end
+			if _e_id then
+				_cfgEft = MgrData:GetCfgSkillEffect( _e_id )
+			end
+			
+			if _cfgEft then
+				if _cfgEft.effecttime and _max_ms < _cfgEft.effecttime then
+					_max_ms = _cfgEft.effecttime
+				end
+				_sobj:ExcuteEffectByEid( _e_id )
+			end
+		end
+	end
+
+	if _max_ms > 0 then
+		LTimer.RemoveDelayFunc( "battle_end" )
+		LTimer.AddDelayFunc1( "battle_end",((_max_ms + 100) / 1000),this.EndBattle4Scene )
+	else
+		this.EndBattle4Scene()
 	end
 end
 

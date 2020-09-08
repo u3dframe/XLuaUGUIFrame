@@ -15,7 +15,7 @@ local str_split = string.split
 local E_Object,E_State,E_AE_Point = LES_Object,LES_C_State,LES_Ani_Eft_Point
 local MgrData,LTimer = MgrData,LTimer
 
-local super = SceneCUnit
+local super,evt = SceneCUnit,Event
 local M = class( "scene_creature",super )
 local this = M
 
@@ -29,12 +29,15 @@ function M.Builder(nCursor,resid)
 	return _ret
 end
 
-function M.InsertTimeLineIds(lb,time,id)
-	if lb[time] then
-		local _tmp0 = lb[time].ids
-		tb_insert(_tmp0, id )
+function M.InsertTimeLineIds(lb,time,id,max_duration)
+	local _tmp_ = lb[time]
+	if _tmp_ then
+		if max_duration and _tmp_.duration < max_duration then
+			_tmp_.duration = max_duration
+		end
+		tb_insert(_tmp_.ids, id )
 	else
-	    lb[time] = {time = time, ids = { id }}
+	    lb[time] = {time = time,duration = (max_duration or 0), ids = { id }}
 	end
 end
 
@@ -135,6 +138,18 @@ function M:IsBigSkill()
 	return self.cfgSkill_Action.type == 1
 end
 
+function M:_AddECastData( e_id,e_svData )
+	local _lb = self.lbEInfo or {}
+	self.lbEInfo = _lb
+	_lb[e_id] = e_svData
+end
+
+function M:_GetECastData( e_id )
+	if self.lbEInfo and e_id then
+		return self.lbEInfo[e_id]
+	end
+end
+
 function M:CastAttack(svMsg)
 	if not svMsg then return false end
 	local _isOkey,_cfg,_cfgAction = self:JugdeCastAttack( svMsg.skillid )
@@ -168,13 +183,14 @@ function M:JugdeCastAttack(skillid)
 end
 
 function M:_DoAttack(svMsg,cfgSkill,cfgAction)
+	local _e_id = cfgSkill.cast_effect
 	self.svDataCast = svMsg
-	self.svDataCurr = svMsg
+	self:_AddECastData( _e_id,svMsg )
 	self.cfgSkill = cfgSkill
 	self.cfgSkill_Action = cfgAction
 	self.tmEfts = {}
 	local _temp = {}
-	self:_InitAttackEffets( _temp,cfgSkill.cast_effect )
+	self:_InitAttackEffets( _temp,_e_id )
 	-- this.InsertTimeLineIds( _temp,_ef.nexttime,_ef_next )
 	for _,v in pairs(_temp) do
 		tb_insert(self.tmEfts,v)
@@ -195,7 +211,7 @@ function M:_InitAttackEffets(lb,e_id )
 
 	local _ef_next = MgrData:GetCfgSkillEffect( _ef.nextid )
 	if (not _ef_next) then return end
-	this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid )
+	this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid,(_ef_next.effecttime or 0) )
 	if _ef_next.nextid then
 		self:_InitAttackEffets( lb,_ef.nextid )
 	end
@@ -210,8 +226,8 @@ function M:GetAttackEffets()
 	return self.tmEfts
 end
 
-function M:ExcuteEffectByEid( e_id,isHurt )
-	if not e_id or not self.svDataCurr then return end
+function M:ExcuteEffectByEid( e_id,isHurt )	
+	if not e_id then return end
 	local cfgEft = MgrData:GetCfgSkillEffect( e_id )
 	if not cfgEft then return end
 	if cfgEft.type == 1 then return end
@@ -220,10 +236,6 @@ function M:ExcuteEffectByEid( e_id,isHurt )
 		self:PlayAction( cfgEft.action_state )
 	end
 	
-	self:_Exc_EffectTime( cfgEft,isHurt )
-end
-
-function M:_Exc_EffectTime( cfgEft,isHurt )
 	if not cfgEft.point then return end
 	if not cfgEft.resid then return end
 	local _cfgRes = MgrData:GetCfgRes(cfgEft.resid)
@@ -235,9 +247,14 @@ function M:_Exc_EffectTime( cfgEft,isHurt )
 	self.lbEffects = _lbs
 
 	local _elNms,_gobj = str_split(_elNm,";")
-	local _id = (isHurt == true) and self.svDataCurr.caster or self:GetCursor()
-	local _idTarget = (1 == _cfgRes.type or 7 == _cfgRes.type) and id or self.svDataCurr.target
-	local _isFollow = (1 == cfgEft.type) or (3 == cfgEft.type) or (5 == cfgEft.type)
+	local _e_data,_id,_idTarget,_isFollow = self:_GetECastData( e_id ),self:GetCursor()
+	_idTarget = _id
+	if _e_data then
+		_id = (isHurt == true) and _e_data.caster or _id
+		_idTarget = (2 == _cfgRes.type or 7 == _cfgRes.type) and _id or _e_data.target
+	end
+
+	_isFollow = (2 == cfgEft.type) or (3 == cfgEft.type) or (5 == cfgEft.type)
 	for _, v in ipairs(_elNms) do
 		ClsEffect.Builder( _id,cfgEft.resid,_idTarget,v,cfgEft.effecttime,_isFollow )
 	end
@@ -247,6 +264,7 @@ end
 function M:CastInjured(svMsg)
 	local _list = svMsg.list
 	svMsg.list = nil
+	self:_HurtDataState( _list )
 	local _bl = self:DoInjured( svMsg )
 	if _bl then
 		local _lens = tb_lens( _list )
@@ -262,6 +280,19 @@ function M:CastInjured(svMsg)
 	end
 end
 
+function M:_HurtDataState(hurtList)
+	local _lens = tb_lens( hurtList )
+	if _lens <= 0 then return end
+	local _svOne,_obj
+	for i = 1, _lens do
+		_svOne = hurtList[i]
+		_obj = self:GetSObjBy( _svOne.target )
+		if _obj ~= nil then
+			_obj.isDied = (_svOne.dead == true)
+		end
+	end
+end
+
 -- 主动 效果
 function M:DoInjured(svMsg)
 	self.nOrder = self.nOrder or 0
@@ -270,9 +301,8 @@ function M:DoInjured(svMsg)
 	if (not _cfgSkill) or (not _cfgSkill.cast_order) then return end
 	local _data = _cfgSkill.cast_order[self.nOrder]
 	if not _data or _data <= 0 then return end
-
+	self:_AddECastData( _data,svMsg )
 	self:LookTarget( svMsg.target,svMsg.targetx,svMsg.targety )
-	self.svDataCurr = svMsg
 	self:ExcuteEffectByEid( _data )
 	return true
 end
@@ -304,19 +334,21 @@ end
 -- 受伤 效果
 function M:DoHurtEffect(svOne)
 	if self:_IsHurtEffect(svOne) then
-		local _cfg = MgrData:GetCfgHurtEffect( svOne.effectid )
-		if _cfg.hit_effect then
-			self.svDataCurr = svOne
-			self:ExcuteEffectByEid( _cfg.hit_effect,true )
+		local _temp = MgrData:GetCfgHurtEffect( svOne.effectid )
+		if _temp.hit_effect then
+			self:_AddECastData( _temp.hit_effect,svOne )
+			self:ExcuteEffectByEid( _temp.hit_effect,true )
 		end
 
 		if svOne.dead == true then
-			local _die
-			if self.data and self.data.die then
-				self.svDataCurr = svOne
-				_die = self.data.die
+			_temp = (self.data ~= nil) and (self.data.die ~= nil)
+			if _temp then
+				self:_AddECastData( self.data.die,svOne )
+				self:SetState( E_State.Die,true )
+			else
+				self:Reback()
+				printError("======= no die effect,hero id = [%s]",self.svData.cfgid)
 			end
-			self:ExcuteEffectByEid( _die )
 		end
 	end
 	self:DoHurtNumData( svOne )
@@ -324,7 +356,17 @@ end
 
 -- 受伤 效果 - 数值表现
 function M:DoHurtNumData(svOne)
-	Event.Brocast(Evt_BattlePlayHarmTip, svOne)
+	evt.Brocast(Evt_BattlePlayHarmTip, svOne)
+end
+
+function M:IsDeath()
+	return self.isDied == true or self.state == E_State.Die
+end
+
+function M:GetCfgEID4Die()
+	if self.data and self.data.die then
+		return self.data.die
+	end
 end
 
 return M

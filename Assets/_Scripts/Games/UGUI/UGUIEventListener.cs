@@ -44,6 +44,7 @@ public class UGUIEventListener : EventTrigger {
 
 	float press_time = 0,diff_time = 0,dis_curr = 0,
 	limit_time = 0.2f,limit_dis_min = 0.1f * 0.1f,limit_dis_max = 0;
+	bool _isAppQuit = false;
 
 	[HideInInspector] public bool m_isSyncScroll = true;
 	ScrollRect _sclParent = null;
@@ -69,6 +70,8 @@ public class UGUIEventListener : EventTrigger {
 
 	void OnDisable()
     {
+		if(this._isAppQuit) return;
+		
 		if (_isPressed && onPress != null) {
 			onPress (gameObject, false, transform.position);
 		}
@@ -77,11 +80,17 @@ public class UGUIEventListener : EventTrigger {
 
     void OnEnable()
     {
+		if(this._isAppQuit) return;
+
 		_isPressed = false;
 		press_time = 0;
 		diff_time = 0;
 		v2Start = Vector2.zero;
     }
+	
+	void OnApplicationQuit(){
+		this._isAppQuit = true;
+	}
 
 	// 移入
 	override public void OnPointerEnter (PointerEventData eventData){

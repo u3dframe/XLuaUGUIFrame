@@ -25,6 +25,14 @@ function M:ctor()
 	super.ctor( self )
 end
 
+
+function M:ReEvent4Self(isbind)
+	-- _evt.RemoveListener(Evt_Msg_Battle_End, self._EndBattle, self)
+	if (isbind)then
+		-- _evt.AddListener(Evt_Msg_Battle_End, self._EndBattle, self)
+	end
+end
+
 function M:Reset(sobjType,nCursor,resid)
 	if self.resid and resid and resid ~= self.resid then
 		self:OnUnLoad()
@@ -61,9 +69,19 @@ function M:GetResid()
 	return self.resid
 end
 
+-- 设置阵营
+function M:SetCamp( nCamp )
+	self.n_camp = nCamp
+	return self
+end
+
+function M:IsEnemy()
+	if self.n_camp then return (self.n_camp == 1) end
+	return true
+end
+
 function M:Reback()
-	_evt.Brocast( Evt_Map_Reback_Obj,self )
-	self:ReturnSelf()
+	_evt.Brocast( Evt_Map_SV_RmvObj,self:GetCursor() )
 end
 
 function M:OnCF_OnDestroy()

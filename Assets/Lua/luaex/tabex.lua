@@ -2,7 +2,7 @@
 -- Author : canyon / 龚阳辉
 -- Date : 2015-05-25 09:25
 -- Desc : 
-local table = table;
+local table,type,tostring = table,type,tostring;
 local tb_insert = table.insert
 local tb_remove = table.remove
 local tb_sort = table.sort
@@ -24,6 +24,15 @@ end
 
 function table.size(src)
     return table.lens(src);
+end
+
+function table.end_arr(src,nEnd)
+    if type(src) == "table" then
+        local _lens = #src
+        nEnd = (nEnd ~= nil) and (_lens + nEnd) or _lens
+        if nEnd >= _lens then nEnd = _lens end
+        return src[nEnd]
+    end
 end
 
 function table.contains(src,element)

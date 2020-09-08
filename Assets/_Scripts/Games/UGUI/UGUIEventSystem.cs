@@ -29,6 +29,7 @@ public class UGUIEventSystem : MonoBehaviour {
 	}
 
 	void OnApplicationQuit(){
+		this._isCheck = false;
 		this._isAppQuit = true;
 	}
 

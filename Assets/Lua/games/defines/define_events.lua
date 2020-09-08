@@ -34,7 +34,6 @@ Evt_Map_Load = "Evt_Map_Load"; -- 执行加载地图 (mapid)
 Evt_Map_Loaded = "Evt_Map_Loaded"; -- 地图加载完成
 Evt_Map_AddObj = "Evt_Map_AddObj"; -- 添加 map 场景里面的 对象 (objType,resid,lfunc,lbObject)
 Evt_Map_GetObj = "Evt_Map_GetObj"; -- 取 map 场景里面的 对象 (uniqueID,lfunc,lbObject)
-Evt_Map_Reback_Obj = "Evt_Map_Reback_Obj"; -- 归还对象 (lbSObj)
 
 Evt_State_Battle_Start = "Evt_State_Battle_Start"; -- 战斗状态开始
 Evt_Map_SV_AddObj = "Evt_Map_SV_AddObj"; -- 服务器消息 - 添加对象 (objType,svData)
@@ -45,7 +44,9 @@ Evt_Map_SV_Skill = "Evt_Map_SV_Skill"; -- 服务器消息 - 技能播放
 Evt_Map_SV_Skill_Effect = "Evt_Map_SV_Skill_Effect"; -- 服务器消息 - 技能效果(伤害数值和表现)
 Evt_Map_SV_Skill_Pause = "Evt_Map_SV_Skill_Pause"; -- 服务器消息 - 技能停止
 Evt_Map_SV_Skill_GoOn = "Evt_Map_SV_Skill_GoOn"; -- 服务器消息 - 技能继续
-Evt_State_Battle_End = "Evt_State_Battle_End"; -- 战斗状态结束
+Evt_Msg_Battle_End = "Evt_Msg_Battle_End"; -- 战斗消息结束(进入表现了)
+Evt_Battle_Delay_End_MS = "Evt_Battle_Delay_End_MS"; -- 设置延迟结束战斗
+Evt_Battle_End = "Evt_Battle_End"; -- 战斗 - 结束
 
 -------- 界面所用事件
 Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示

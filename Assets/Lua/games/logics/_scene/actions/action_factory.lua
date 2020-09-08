@@ -17,6 +17,8 @@ local _lbCls_ = {
 	[E_State.Grab]      = _req (fdir .. "a_grab"),     -- 动作 - 被拧起
 	[E_State.Show_1]    = _req (fdir .. "a_show1"),    -- 动作 - 展示1
 	[E_State.Attack]    = _req (fdir .. "a_attack"),   -- 动作 - 攻击
+	
+	[E_State.Die]       = _req (fdir .. "a_die"),      -- 动作 - 死亡
 }
 
 local super = LuaObject

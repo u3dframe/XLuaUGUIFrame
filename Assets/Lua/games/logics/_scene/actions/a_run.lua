@@ -30,8 +30,8 @@ function M:_IsAEnter()
 end
 
 function M:_On_AExit()
-	super._On_AExit( self )
-	self.lbOwner:Move_Over()
+	local _owner = super._On_AExit( self )
+	_owner:Move_Over()
 end
 
 return M

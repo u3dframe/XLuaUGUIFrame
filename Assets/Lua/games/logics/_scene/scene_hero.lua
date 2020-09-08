@@ -21,4 +21,8 @@ function M.Builder(nCursor,resid)
 	return _ret
 end
 
+function M:IsEnemy()
+	if self.n_camp then return (self.n_camp == 1) end
+end
+
 return M

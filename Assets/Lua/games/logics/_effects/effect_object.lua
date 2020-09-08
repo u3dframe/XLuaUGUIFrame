@@ -29,6 +29,7 @@ function M:Reset(idMarker,resid,idTarget,mount_point,timeout,isfollow)
 	end
 	self:InitAsset4Resid( resid )
 	self.isUping = false
+	self.isDisappear,self.timeOut = nil
 	self:SetData( idMarker,idTarget,mount_point,timeout,isfollow )
 end
 
@@ -76,10 +77,9 @@ function M:OnViewBeforeOnInit()
 		-- 立即销毁 ???
 		return 
 	end
-
+	
 	-- 跟随
 	self:SetParent(_lbT_Point.trsf,true)
-
 	if not self.isFollow then
 		self:SetParent()
 		self:SetLocalScale(1)
@@ -89,11 +89,16 @@ function M:OnViewBeforeOnInit()
 end
 
 function M:OnUpdateLoaded(dt)
+	if (self.isDisappear == true) then
+		self.isDisappear,self.timeOut = nil
+		self.isUping = false
+		self:ReturnSelf()
+	end
+
 	self.currt_time = self.currt_time + dt
 	if self.timeOut and self.timeOut > 0  then
 		if self.timeOut <= self.currt_time then
-			self.isUping = false
-			self:ReturnSelf()
+			self.isDisappear = true			
 		end
 	end
 end

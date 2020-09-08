@@ -21,25 +21,42 @@ public class RayScreenPointInfo{
 	}
 
 	void _ExcRaycastScreenPoint(){
-		Ray _ray = Camera.main.ScreenPointToRay(m_pos);
+		Camera _main = Camera.main;
+		if(!_main){
+			_ExcRayHit(null);
+			Clear();
+			return;
+		}
+
+		Ray _ray = _main.ScreenPointToRay(m_pos);
 		RaycastHit _hit;
 		RaycastHit[] _hits;
 
-		if(m_isAllHit){
-			_hits = Physics.RaycastAll(_ray,m_rayDisctance,m_layMask);
-			if(_hits != null && _hits.Length > 0){
+		if (m_isAllHit)
+		{
+			_hits = Physics.RaycastAll(_ray, m_rayDisctance, m_layMask);
+			if (_hits != null && _hits.Length > 0)
+			{
 				int _nlen = _hits.Length;
-				for (int i = 0; i < _nlen; i++) {
+				for (int i = 0; i < _nlen; i++)
+				{
 					_ExcRayHit(_hits[i].transform);
 				}
-			}else{
+			}
+			else
+			{
 				_ExcRayHit(null);
 			}
-		}else{
-			if(Physics.Raycast(_ray,out _hit,m_rayDisctance,m_layMask)){
+		}
+		else
+		{
+			if (Physics.Raycast(_ray, out _hit, m_rayDisctance, m_layMask))
+			{
 				// 返回第一个被碰撞到的对象
 				_ExcRayHit(_hit.transform);
-			}else{
+			}
+			else
+			{
 				_ExcRayHit(null);
 			}
 		}

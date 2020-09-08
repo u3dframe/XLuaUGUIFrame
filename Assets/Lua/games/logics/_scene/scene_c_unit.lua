@@ -139,13 +139,6 @@ function M:OnUpdate_A_Exit(_,info,_,a_state)
 	self:RmvFunc("_a_up_" .. tostring(self.enter_a_state))
 end
 
-function M:ReEvent4Self(isbind)
-	_evt.RemoveListener(Evt_State_Battle_End, self.EndBattle, self)
-	if (isbind)then
-		_evt.AddListener(Evt_State_Battle_End, self.EndBattle, self)
-	end
-end
-
 function M:Add_AUpFunc( a_state,func,obj )
 	self:AddFunc( "_a_up_" .. tostring(a_state),func,obj )
 end
@@ -314,10 +307,6 @@ function M:EndAction()
 	if _machine and _machine.isDoned then
 		_machine:Exit()
 	end
-end
-
-function M:EndBattle()
-	self:EndAction()
 end
 
 return M

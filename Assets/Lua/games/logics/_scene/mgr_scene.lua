@@ -26,7 +26,6 @@ function M.Init()
 	_evt.AddListener(Evt_Map_Load,this.OnLoadMap)
 	_evt.AddListener(Evt_Map_AddObj,this.OnAdd_Map_Obj)
 	_evt.AddListener(Evt_Map_GetObj,this.OnGet_Map_Obj)
-	_evt.AddListener(Evt_Map_Reback_Obj,this.OnReback_Map_Obj)
 end
 
 function M:ReEvent4Self(isBind)
@@ -249,11 +248,6 @@ function M.OnGet_Map_Obj(uniqueID,lfunc,lbObject)
 	end
 	this.DoCallFunc( lfunc,lbObject,_ret )
 	return _ret
-end
-
-function M.OnReback_Map_Obj(lbSObj)
-	if not lbSObj then return end
-	this.RemoveCurrMapObj( lbSObj:GetCursor() )
 end
 
 return M

@@ -130,16 +130,16 @@ local function stab( numTab )
 	return str_rep("    ", numTab);
 end
 
-local function _ToCatTable( dest,src,dic,tabNum,notSort )
+local function _ToCatTable( tb,dest,dic,tabNum,notSort )
 	tb_insert( dest, "{" )
 	tabNum = tabNum + 1
 
-	local keys = tb_keys( src );
+	local keys = tb_keys( tb );
 	if not notSort then tb_sort(keys,_sort_key); end
 
 	local v,vv,kk,ktp,vtp,_str_temp;
 	for _, k in pairs( keys ) do
-		v = src[ k ]
+		v = tb[ k ]
 		ktp = type(k)
 		vtp = type(v)
 		if ktp == "string" then
@@ -152,7 +152,7 @@ local function _ToCatTable( dest,src,dic,tabNum,notSort )
 		if (vtp == "table") and (not dic[_str_temp]) then
 			dic[_str_temp] = true;
 			tb_insert( dest, str_format('\n%s%s = ', stab(tabNum),kk))
-			_ToCatTable( dest,dic,v,tabNum,notSort )
+			_ToCatTable( v,dest,dic,tabNum,notSort )
 		else
 			if vtp == "string" then
 				vv = str_format("\"%s\"", v)
@@ -181,7 +181,7 @@ end
 function reTable( tb,dest,dic,notSort )
 	dic = dic or {}
 	dest = dest or {};
-	_ToCatTable( dest,tb,dic,0,notSort )
+	_ToCatTable( tb,dest,dic,0,notSort )
 	return dest
 end
 
