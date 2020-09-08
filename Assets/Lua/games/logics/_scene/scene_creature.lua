@@ -152,13 +152,13 @@ end
 
 function M:CastAttack(svMsg)
 	if not svMsg then return false end
-	local _isOkey,_cfg,_cfgAction = self:JugdeCastAttack( svMsg.skillid )
+	local _isOkey,_cfg,_cfgAction,_e_id = self:JugdeCastAttack( svMsg.skillid )
 	if not _isOkey then return false end
 	self:SetState( E_State.Idle )
 	if (_cfgAction.type == 1)then
 		self:_DoComboAttack(svMsg,_cfg,_cfgAction)
 	else
-		self:_DoAttack( svMsg,_cfg,_cfgAction )
+		self:_DoAttack( svMsg,_cfg,_cfgAction,_e_id )
 	end
 end
 
@@ -167,30 +167,29 @@ function M:JugdeCastAttack(skillid)
 	local _cfg = MgrData:GetCfgSkill(skillid)
 	if not _cfg then return false end
 	if not self:CheckAttack() then return false end
-	local _cfg_s_eft
-	if _cfg.cast_effect then
-		_cfg_s_eft = MgrData:GetCfgSkillEffect( _cfg.cast_effect )
+	local _e_id,_cfg_s_eft = _cfg.cast_effect
+	if _e_id then
+		_cfg_s_eft = MgrData:GetCfgSkillEffect( _e_id )
 	end
 	if (not _cfg_s_eft) and (tb_lens(_cfg.cast_effects) > 0) then
 		local _k = NumEx.nextWeightList( _cfg.cast_effects,2 )
 		if _k and _k > 0 then
-			local _e_id = _cfg.cast_effects[_k][1]
+			_e_id = _cfg.cast_effects[_k][1]
 			_cfg_s_eft = MgrData:GetCfgSkillEffect( _e_id )
 		end
 	end
 	if not _cfg_s_eft then return false end
-	return true,_cfg,_cfg_s_eft
+	return true,_cfg,_cfg_s_eft,_e_id
 end
 
-function M:_DoAttack(svMsg,cfgSkill,cfgAction)
-	local _e_id = cfgSkill.cast_effect
+function M:_DoAttack(svMsg,cfgSkill,cfgAction,e_id)
 	self.svDataCast = svMsg
-	self:_AddECastData( _e_id,svMsg )
+	self:_AddECastData( e_id,svMsg )
 	self.cfgSkill = cfgSkill
 	self.cfgSkill_Action = cfgAction
 	self.tmEfts = {}
 	local _temp = {}
-	self:_InitAttackEffets( _temp,_e_id )
+	self:_InitAttackEffets( _temp,e_id )
 	-- this.InsertTimeLineIds( _temp,_ef.nexttime,_ef_next )
 	for _,v in pairs(_temp) do
 		tb_insert(self.tmEfts,v)
@@ -243,8 +242,6 @@ function M:ExcuteEffectByEid( e_id,isHurt )
 
 	local _elNm = E_AE_Point[cfgEft.point]
 	if not _elNm then return end
-	local _lbs = self.lbEffects or {}
-	self.lbEffects = _lbs
 
 	local _elNms,_gobj = str_split(_elNm,";")
 	local _e_data,_id,_idTarget,_isFollow = self:_GetECastData( e_id ),self:GetCursor()
@@ -253,11 +250,14 @@ function M:ExcuteEffectByEid( e_id,isHurt )
 		_id = (isHurt == true) and _e_data.caster or _id
 		_idTarget = (2 == _cfgRes.type or 7 == _cfgRes.type) and _id or _e_data.target
 	end
-
 	_isFollow = (2 == cfgEft.type) or (3 == cfgEft.type) or (5 == cfgEft.type)
+
+	local _lb,_it = {}
 	for _, v in ipairs(_elNms) do
-		ClsEffect.Builder( _id,cfgEft.resid,_idTarget,v,cfgEft.effecttime,_isFollow )
+		_it = ClsEffect.Builder( _id,cfgEft.resid,_idTarget,v,cfgEft.effecttime,_isFollow )
+		tb_insert( _lb,_it )
 	end
+	return _lb
 end
 
 -- 处理效果
@@ -366,6 +366,46 @@ end
 function M:GetCfgEID4Die()
 	if self.data and self.data.die then
 		return self.data.die
+	end
+end
+
+function M:AddBuff( b_id,duration )
+	if not b_id then return end
+	local _cfg_buff = MgrData:GetCfgBuff( b_id )
+	if not _cfg_buff then return end
+	local _pool = self.buffs or {}
+	self.buffs = _pool
+
+	local _obj = _pool[b_id]
+	if not _obj then
+		local _v = self:ExcuteEffectByEid( _cfg_buff.cast_effect )
+		if _v then
+			_obj = _v[1]
+			_pool[b_id] = _obj
+		end
+	end
+
+	if _obj then
+		_obj:ResetTimeOut( duration or (_cfg_buff.duration / 1000) )
+	end
+end
+
+function M:RmvBuff( b_id )
+	if not b_id then return end
+	if not self.buffs then return end
+	local _obj = self.buffs[b_id]
+	if _obj then
+		_obj:ReturnSelf()
+	end
+	self.buffs[b_id] = nil
+end
+
+function M:RmvAllBuff()
+	local _pool = self.buffs
+	self.buffs = nil
+	if not _pool then return end
+	for _, v in pairs(_pool) do
+		v:ReturnSelf()
 	end
 end
 

@@ -34,6 +34,9 @@ function M.Init()
 	_evt.AddListener( Evt_State_Battle_Start,this.Start )
 	_evt.AddListener( Evt_Battle_Delay_End_MS,this.SetDelayEndBattle )
 	_evt.AddListener( Evt_Msg_Battle_End,this._OnMsgEndBattle )
+
+	_evt.AddListener( Evt_Msg_B_Buff_Add,this.OnMsg_Buff_Add )
+	_evt.AddListener( Evt_Msg_B_Buff_Rmv,this.OnMsg_Buff_Rmv )
 end
 
 function M:OnUpdate(dt)
@@ -153,7 +156,7 @@ function M.OnSv_Rmv_Map_Obj(s_id)
 end
 
 function M.OnSv_Move_Map_Obj(svMsg,isStop)
-	local _obj = MgrScene.GetCurrMapObj( svMsg.id )
+	local _obj = this.GetSObj( svMsg.id )
 	if not _obj then return end
 	if isStop then
 		_obj:MoveEnd_SvPos( svMsg.x,svMsg.y )
@@ -163,13 +166,13 @@ function M.OnSv_Move_Map_Obj(svMsg,isStop)
 end
 
 function M.OnSv_Map_Obj_Skill(svMsg)
-	local _obj = MgrScene.GetCurrMapObj( svMsg.caster )
+	local _obj = this.GetSObj( svMsg.caster )
 	if not _obj then return end
 	_obj:CastAttack( svMsg )
 end
 
 function M.OnSv_Map_Obj_Skill_Effect(svMsg)
-	local _obj = MgrScene.GetCurrMapObj( svMsg.caster )
+	local _obj = this.GetSObj( svMsg.caster )
 	if not _obj then return end
 	_obj:CastInjured( svMsg )
 end
@@ -202,12 +205,17 @@ function M.RemoveAll()
 	end
 end
 
-function M.EndBattle4Scene()
+function M.EndBattle4Scene(isInterrupt)
 	printTable("=========EndBattle4Scene")
+	LTimer.RemoveDelayFunc( "battle_end" )
 	_evt.Brocast(Evt_Battle_End)
 	this.RemoveAll()
 	this.state = E_B_State.Battle_End
-	MgrBattle:OpenBattleSettlement()
+	if isInterrupt == true then
+		_evt.Brocast( Evt_Map_Load ) --退回主界面
+	else
+		MgrBattle:OpenBattleSettlement()
+	end
 end
 
 function M.SetDelayEndBattle( ms )
@@ -218,8 +226,9 @@ function M.SetDelayEndBattle( ms )
 end
 
 function M._OnMsgEndBattle( msg )
-	if (not this.sv_dic_add) then
-		this.EndBattle4Scene()
+	local _isInterrupt = (msg.terminate == true)
+	if _isInterrupt or (not this.sv_dic_add) then
+		this.EndBattle4Scene( _isInterrupt )
 		return 
 	end
 	local _isWin = (msg.win == true)
@@ -249,6 +258,7 @@ function M._OnMsgEndBattle( msg )
 				if _cfgEft.effecttime and _max_ms < _cfgEft.effecttime then
 					_max_ms = _cfgEft.effecttime
 				end
+				-- _sobj:SetState( LES_C_State.Idle,true )
 				_sobj:ExcuteEffectByEid( _e_id )
 			end
 		end
@@ -260,6 +270,18 @@ function M._OnMsgEndBattle( msg )
 	else
 		this.EndBattle4Scene()
 	end
+end
+
+function M.OnMsg_Buff_Add(svMsg)
+	local _obj = this.GetSObj( svMsg.id )
+	if not _obj then return end
+	_obj:AddBuff( svMsg.buffid,(svMsg.duration or 0) * 0.01 )
+end
+
+function M.OnMsg_Buff_Rmv(svMsg)
+	local _obj = this.GetSObj( svMsg.id )
+	if not _obj then return end
+	_obj:RmvBuff( svMsg.buffid )
 end
 
 return M

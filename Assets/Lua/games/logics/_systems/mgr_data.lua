@@ -126,4 +126,8 @@ function M:GetCfgHurtEffect(idKey)
 	return self:GetOneData( "effect",idKey )
 end
 
+function M:GetCfgBuff(idKey)
+	return self:GetOneData( "buff",idKey )
+end
+
 return M

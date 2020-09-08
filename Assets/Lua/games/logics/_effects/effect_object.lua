@@ -103,4 +103,11 @@ function M:OnUpdateLoaded(dt)
 	end
 end
 
+function M:ResetTimeOut( time_out_sec )
+	self.timeOut = time_out_sec
+	if self.timeOut and self.timeOut > 0 then
+		self.currt_time = 0
+	end
+end
+
 return M
