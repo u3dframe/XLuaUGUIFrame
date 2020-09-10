@@ -77,6 +77,7 @@ public static class ExampleConfig
                 typeof(PostProcessLayer),
                 typeof(Application),
                 typeof(Screen),
+                typeof(CharacterController),
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
                 typeof(UIBehaviour),
@@ -84,6 +85,7 @@ public static class ExampleConfig
                 typeof(MaskableGraphic),
                 typeof(Text),
                 typeof(Image),
+                // typeof(Image.Type), // 枚举不用到wrap文件
                 typeof(Toggle),
                 typeof(RawImage),
                 typeof(InputField),
@@ -125,9 +127,9 @@ public static class ExampleConfig
                 typeof(MainCameraManager),
                 typeof(RayScreenPointInfo),
                 typeof(InputMgr),
-                typeof(AnimatorEx),
-                typeof(CharacterController),
+                typeof(AnimatorEx),                
                 typeof(CharacterControllerEx),
+                typeof(RendererSortOrder),
                 //---------------------------------------------------------------  
             };
 

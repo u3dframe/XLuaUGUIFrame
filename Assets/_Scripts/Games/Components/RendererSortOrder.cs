@@ -8,8 +8,16 @@ using UnityEngine;
 /// 日期 : 2020-09-10 19:33
 /// 功能 : 
 /// </summary>
-public class RendererSortOrder : MonoBehaviour
+public class RendererSortOrder : GobjLifeListener
 {
+    static public new RendererSortOrder Get(GameObject gobj,bool isAdd){
+		return UtilityHelper.Get<RendererSortOrder>(gobj,isAdd);
+	}
+
+	static public new RendererSortOrder Get(GameObject gobj){
+		return Get(gobj,true);
+	}
+
     public bool m_isUseSLayer = false;
     public string m_nmLayer = "Default";
     bool m_isNameInSLayer = true;
@@ -18,7 +26,7 @@ public class RendererSortOrder : MonoBehaviour
     public int m_value = 0;
 
     Renderer[] renderers;
-    void Start()
+    override protected void OnCall4Start()
     {
         renderers = this.GetComponentsInChildren<Renderer>(true);
         ReRenderSorting();
