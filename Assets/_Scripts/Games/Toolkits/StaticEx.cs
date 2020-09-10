@@ -4,7 +4,6 @@ using System.Reflection;
 using System;
 using UObject = UnityEngine.Object;
 
-
 /// <summary>
 /// 类名 : 静态类工具
 /// 作者 : Canyon / 龚阳辉
@@ -80,6 +79,55 @@ public static class StaticEx {
         }
     }
 
+    static public void ReSortingOrder(this Renderer render,int sortingOrder){
+        if(null == render) return;
+        render.sortingOrder = sortingOrder;
+    }
+
+    static public void AddSortingOrder(this Renderer render,int addValue){
+        if(null == render) return;
+        render.sortingOrder += addValue;
+    }
+
+    static public void ReRenderQueue(this Material material,int renderQueue)
+    {
+        if(null == material) return;
+        material.renderQueue = renderQueue;
+    }
+
+    static public void ReRenderQueue(this Renderer render,int renderQueue)
+    {
+        if(null == render) return;
+        ReRenderQueue(render.sharedMaterial,renderQueue);
+        if (render.sharedMaterials != null)
+        {
+            foreach (Material mat in render.sharedMaterials)
+            {
+                ReRenderQueue(mat,renderQueue);
+            }
+        }
+    }
+
+    static public void AddRenderQueue(this Material material,int addValue)
+    {
+        if(null == material) return;
+        material.renderQueue += addValue;
+    }
+    
+
+    static public void AddRenderQueue(this Renderer render,int addValue)
+    {
+        if(null == render) return;
+        AddRenderQueue(render.sharedMaterial,addValue);
+        if (render.sharedMaterials != null)
+        {
+            foreach (Material mat in render.sharedMaterials)
+            {
+                AddRenderQueue(mat,addValue);
+            }
+        }
+    }
+
     static public void ReShader(this GameObject gobj)
     {
         if(null == gobj) return;
@@ -113,7 +161,7 @@ public static class StaticEx {
         if(null == material) return;
         Shader shader = material.shader;
         if(null == shader) return;
-        if ("UI/Default".Equals(shader.name,StringComparison.OrdinalIgnoreCase)) {
+        if (!"UI/Default".Equals(shader.name,StringComparison.OrdinalIgnoreCase)) {
             material.shader = Shader.Find(shader.name);
         }
     }

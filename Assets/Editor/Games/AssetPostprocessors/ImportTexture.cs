@@ -32,42 +32,21 @@ public class ImportTexture : AssetPostprocessor
             {
                 m_nReset--;
 
-#if UNITY_2019
                 TextureImporterFormat curFmt;
-#else
-                TextureImporterFormat fmtAlpha, fmtNotAlpha, curFmt;
-#endif
+                curFmt = TextureImporterFormat.ASTC_6x6;
 
                 TextureImporterPlatformSettings settings;
                 settings = importer.GetPlatformTextureSettings("iPhone");
-#if UNITY_2019
-                curFmt = TextureImporterFormat.ASTC_6x6;
-#else
-                //2的整数次幂
-                // bool isPowerOfTwo = (width == height) && (width > 0) && ((width & (width - 1)) == 0);
-                bool isPowerOfTwo = IsPowerTwo(width) && IsPowerTwo(height);
-                fmtAlpha = isPowerOfTwo ? TextureImporterFormat.PVRTC_RGBA4 : TextureImporterFormat.ASTC_RGBA_4x4;
-                fmtNotAlpha = isPowerOfTwo ? TextureImporterFormat.PVRTC_RGB4 : TextureImporterFormat.ASTC_RGB_6x6;
-                curFmt = importer.DoesSourceTextureHaveAlpha() ? fmtAlpha : fmtNotAlpha;
-#endif
                 settings.overridden = true;
                 settings.maxTextureSize = 1024;
                 settings.format = curFmt;
                 importer.SetPlatformTextureSettings(settings);
 
                 settings = importer.GetPlatformTextureSettings("Android");
-#if UNITY_2019
                 curFmt = TextureImporterFormat.ETC2_RGBA8;
                 settings.androidETC2FallbackOverride = AndroidETC2FallbackOverride.Quality32Bit;
-#else
-                //被4整除
-                bool divisible4 = (width % 4 == 0 && height % 4 == 0);
-                fmtAlpha = divisible4 ? TextureImporterFormat.ETC2_RGBA8Crunched : TextureImporterFormat.ASTC_RGBA_4x4;
-                fmtNotAlpha = divisible4 ? TextureImporterFormat.ETC_RGB4Crunched : TextureImporterFormat.ASTC_RGB_6x6;
-                curFmt = importer.DoesSourceTextureHaveAlpha() ? fmtAlpha : fmtNotAlpha;
-#endif
                 settings.overridden = true;
-                // settings.allowsAlphaSplitting = false;
+                settings.allowsAlphaSplitting = false;
                 settings.maxTextureSize = 1024;
                 settings.format = curFmt;
                 importer.SetPlatformTextureSettings(settings);
@@ -79,7 +58,7 @@ public class ImportTexture : AssetPostprocessor
                 importer.crunchedCompression = true;
                 importer.compressionQuality = 60;
                 importer.npotScale = TextureImporterNPOTScale.None;
-                importer.wrapMode = TextureWrapMode.Clamp;
+                // importer.wrapMode = TextureWrapMode.Clamp;
                 
                 ReTextureInfo(importer);
                 importer.SaveAndReimport();
@@ -148,13 +127,6 @@ public class ImportTexture : AssetPostprocessor
             }
         }
         
-    }
-
-    // 2的整数次幂
-    private bool IsPowerTwo(int num)
-    {
-        if (num < 1) return false;
-        return (num & num - 1) == 0;
     }
 
     //贴图不存在、meta文件不存在、图片尺寸发生修改需要重新导入

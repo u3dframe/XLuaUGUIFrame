@@ -28,7 +28,7 @@ public class FBXImporter : AssetPostprocessor
 
     void OnPostprocessModel(GameObject gobj)
     {
-        ProcessMaterial(gobj);
+        // ProcessMaterial(gobj); // 导致很多问题
 
         GameObject box = FindRecursively(gobj, "bbox");
         BindT <BoxCollider>(box);

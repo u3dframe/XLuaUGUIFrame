@@ -75,6 +75,8 @@ public static class ExampleConfig
                 typeof(LayerMask),
                 typeof(RaycastHit),
                 typeof(PostProcessLayer),
+                typeof(Application),
+                typeof(Screen),
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
                 typeof(UIBehaviour),

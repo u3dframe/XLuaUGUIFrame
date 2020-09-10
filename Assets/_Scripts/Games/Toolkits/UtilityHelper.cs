@@ -81,6 +81,10 @@ public class UtilityHelper : GHelper {
         return (float) ToDecimal(org,acc,true);
     }
 
+	static public void SetMaxFrame(int maxFrame){
+		Application.targetFrameRate = maxFrame;
+	}
+
 	static public bool IsGLife(object obj) {
 		if(IsNull(obj))	return false;
 		return obj is GobjLifeListener;

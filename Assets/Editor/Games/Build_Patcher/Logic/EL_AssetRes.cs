@@ -293,6 +293,7 @@ public class EL_AssetRes
 
     void _ReAB()
     {
+        BuildTools.DelABFolders();
         BuildTools.DoBuild();
     }
 

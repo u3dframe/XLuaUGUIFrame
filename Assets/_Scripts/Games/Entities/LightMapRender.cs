@@ -61,7 +61,7 @@ public class LightMapRender : RenderLightMapData
 	public LightMapRender ReBack(){
 		this.m_lightProbeUsage = (LightProbeUsage)System.Enum.ToObject(TP_LPU,this.m_em_lpu);
 		
-		int acc = 2; // 保留几位小数
+		int acc = 12; // 保留几位小数
 		float _x,_y,_z,_w;
 
 		_x = UtilityHelper.Round(this.m_sfX / (double) this.m_sfX_1,acc);
@@ -74,7 +74,8 @@ public class LightMapRender : RenderLightMapData
 		this.m_lightmapScaleOffset.z = _z;
 		this.m_lightmapScaleOffset.w = _w;
 
-		// Debug.LogFormat("===[{0}] === [{1}] = [{2}] = [{3}] = [{4}] = [{5}]",this.m_lightmapScaleOffset,new Vector4(_x,_y,_z,_w),_x,_y,_z,_w);
+		// var v4 = this.m_lightmapScaleOffset;
+		// Debug.LogFormat("=== [{0}] === [{1}] = [{2}] = [{3}] = [{4}] = [{5}] = [{6}] = [{7}]",v4.x,v4.y,v4.z,v4.w,_x,_y,_z,_w);
 		
 		_x = UtilityHelper.Round(this.m_rsfX / (double) this.m_rsfX_1,acc);
 		_y = UtilityHelper.Round(this.m_rsfY / (double) this.m_rsfY_1,acc);

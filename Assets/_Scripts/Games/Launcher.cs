@@ -7,7 +7,14 @@ public class Launcher : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        GHelper.Is_App_Quit = false;
+        _Init();
         GameMgr.instance.Init();
+    }
+
+    void _Init(){
+        GHelper.Is_App_Quit = false;
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+        Application.targetFrameRate = 60;
+        Application.runInBackground = true;
     }
 }

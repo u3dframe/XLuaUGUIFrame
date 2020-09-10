@@ -475,6 +475,10 @@ public class GHelper {
 		}
 	}
 
+	static public Vector3 ToVec3(float x,float y,float z){
+		return new Vector3(x,y,z);
+	}
+
 	static public void GetRectSize(Transform trsf,ref float w,ref float h) {
 		w = 0;h = 0;
 		if(IsNull(trsf)) return;
