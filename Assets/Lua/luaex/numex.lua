@@ -4,7 +4,7 @@
 -- Desc : base : 随机数值最大值 , isSeek 是否重置随机种子需要先引起(属于底层基础)
 -- math.random([n [, m]]) 无参调用,产生(0,1)之间的浮点随机数,只有参数n,产生1-n之间的整数.
 -- math.fmod(x,y) = 取x/y的余数?;math.modf(v) = 取整数,小数
-local os,tonumber,tostring = os,tonumber,tostring
+local os,tonumber,tostring,type = os,tonumber,tostring,type
 local str_format = string.format
 local tb_insert = table.insert
 local tb_concat = table.concat
@@ -68,7 +68,9 @@ function todecimal(val,acc,def,isRound)
 
 	local _v = tonum(val,nil,def) * _pow
 	_v = (isRound == true) and m_round(_v) or _v
-	_v = m_floor(_v)
+	if _pow > 1 then
+		_v = m_floor(_v)
+	end
     return _v / _pow
 end
 

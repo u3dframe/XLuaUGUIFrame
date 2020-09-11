@@ -57,4 +57,8 @@ function M:GetSObjBy(uniqueid)
 	return MgrScene.OnGet_Map_Obj( uniqueid )
 end
 
+function M:GetSObjMapBox()
+	return self:GetSObjBy( "map.gbox" )
+end
+
 return M

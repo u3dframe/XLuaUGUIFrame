@@ -66,6 +66,13 @@ function M:SetBg( bg )
 	self:SetImage(bg,bg,2)
 end
 
+function M:SetFillAmount( val,max )	
+	if max and max > 0 then
+		val = val / max
+	end
+	self.comp.fillAmount = val
+end
+
 function M:_OnCF_Image( isNo,obj )
 	if isNo or (not self.comp) then return end
 	self.comp.sprite = obj

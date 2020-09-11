@@ -47,7 +47,7 @@ function M:IsInitTrsf()
 end
 
 function M:_ReXYZ( vec,x,y,z )
-	self:ReVec_XYZ( vec,x,y,z )
+	self:ReVec_XYZ( vec,x,y,z,9 )
 end
 
 function M:GetChildCount( )

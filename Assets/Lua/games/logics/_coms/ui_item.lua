@@ -25,18 +25,20 @@ local super,_evt = UICell,Event
 local M = class( "ui_item",super )
 
 -- 用[_]占位，兼容row传递参数
-function M:OnSetData(valType,isVwEmpty,isNoChgColor)
-	self.valType = valType or LE_ItVShowType.NeedOrEmpty
+function M:OnSetData(valType,isVwEmpty)
+	self.valType = valType or LE_ItVShowType.Have
 	self.isVwEmpty = isVwEmpty == true
 	self.isNoChgColor = isNoChgColor == true
 end
 
 function M:OnInit()
+	self.lbShadow = self:GetElement("shadow")
 	self.lbTxtName = self:NewTxt("name",true) -- 名字
 	self.lbTxtValue = self:NewTxt("value",true) -- 值
 	self.lbTxtDesc = self:NewTxt("desc",true) -- 描述
 	self.lbTxtOrder = self:NewTxt("order",true) -- 阶级
-	
+	self.lbTag = self:GetElement("bg_tag") -- 标签组件
+	self.lbTxtTag = self:NewTxt("tag",true) -- 标签
 
 	self.lbImgIcon = self:NewImg("icon","Image",true) -- 图标
 	self.lbImgQuality = self:NewImg("quality","Image",true) -- 品质

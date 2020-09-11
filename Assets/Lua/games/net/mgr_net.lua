@@ -53,7 +53,6 @@ function M.OnDispatch_Msg(msg)
 				printError(_m)
 			end
 		end
-		this._ExcSendQueue()
 	else
 		--服务器请求或者推送s2c
         local _s = this._ExcPushCall(name,args,resp)
@@ -64,7 +63,9 @@ function M.OnDispatch_Msg(msg)
 end
 
 function M.OnWriteFinish()
+	this._ExcSendQueue()
 end
+
 function M.OnConnection(isSucess,errStr)
 	-- printInfo("=======[%s] = [%s] = [%s] = [%s]",_lf_,this.isShutDown,isSucess,errStr)
 	local _lf_ = this._lfConnected

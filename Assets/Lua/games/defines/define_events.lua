@@ -56,3 +56,4 @@ Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示
 Evt_EnterGameBeforeMain = "Evt_EnterGameBeforeMain"; -- 进入主界面前
 Evt_ToView_Login = "Evt_ToView_Login"; -- 登录界面
 
+Evt_Re_Login = "Evt_Re_Login"; -- 返回登陆

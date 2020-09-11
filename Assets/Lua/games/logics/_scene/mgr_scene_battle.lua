@@ -22,6 +22,9 @@ function M.Init()
 	MgrScene:Init()
 
 	this._ms_delay_end = 0
+	this._need_load = 0
+	this._loaded = 0
+
 	this.state = E_B_State.None
 	this:ReEvent4OnUpdate( true )
 
@@ -90,7 +93,9 @@ end
 function M._ST_Create_Obj()
 	if not this.sv_queue_add then return end
 	if #this.sv_queue_add <= 0 then
-		this.state = E_B_State.Create_Objs_End
+		if (this._loaded >= this._need_load) then
+			this.state = E_B_State.Create_Objs_End
+		end
 		return
 	end
 	local _lf = this.sv_queue_add[1]
@@ -103,6 +108,7 @@ function M._ST_PlayBG()
 end
 
 function M._ST_Ready()
+	this.state = E_B_State.Ready_Ing
 	MgrBattle:FormalStartBattle(this._On_ST_Start_Battle)
 end
 
@@ -139,6 +145,9 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 		if _cfg_ then
 			local _obj = MgrScene.Add_SObj( objType,_cfg_.resource,svMsg.id )
 			if _obj then
+				_obj.lfOnShowOnce = function()
+					this._loaded = this._loaded + 1
+				end
 				_obj:View(true,_cfg_,svMsg)
 			end
 		end
@@ -149,6 +158,7 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 	local _lb = this.sv_queue_add or {}
 	this.sv_queue_add = _lb
 	tb_insert(_lb,_func)
+	this._need_load = this._need_load + 1
 end
 
 function M.OnSv_Rmv_Map_Obj(s_id)
@@ -206,11 +216,13 @@ function M.RemoveAll()
 end
 
 function M.EndBattle4Scene(isInterrupt)
-	printTable("=========EndBattle4Scene")
+	-- printTable("=========EndBattle4Scene")
 	LTimer.RemoveDelayFunc( "battle_end" )
 	_evt.Brocast(Evt_Battle_End)
 	this.RemoveAll()
 	this.state = E_B_State.Battle_End
+	this._need_load = 0
+	this._loaded = 0
 	MgrBattle:OpenBattleSettlement(isInterrupt)
 end
 
@@ -222,12 +234,13 @@ function M.SetDelayEndBattle( ms )
 end
 
 function M._OnMsgEndBattle( msg )
+	LTimer.RemoveDelayFunc( "battle_end" )
 	local _isInterrupt = (msg.terminate == true)
 	if _isInterrupt or (not this.sv_dic_add) then
 		this.EndBattle4Scene( _isInterrupt )
 		return 
 	end
-	local _isWin = (msg.win == true)
+	local _isWin = (msg.win == 1)
 	local _keys,_sobj = tb_keys( this.sv_dic_add )
 	local _max_ms,_e_id,_cfgEft = this._ms_delay_end
 	for _, k in ipairs(_keys) do
@@ -254,14 +267,13 @@ function M._OnMsgEndBattle( msg )
 				if _cfgEft.effecttime and _max_ms < _cfgEft.effecttime then
 					_max_ms = _cfgEft.effecttime
 				end
-				-- _sobj:SetState( LES_C_State.Idle,true )
+				_sobj:SetState( LES_C_State.Idle,true )
 				_sobj:ExcuteEffectByEid( _e_id )
 			end
 		end
 	end
 
 	if _max_ms > 0 then
-		LTimer.RemoveDelayFunc( "battle_end" )
 		LTimer.AddDelayFunc1( "battle_end",((_max_ms + 100) / 1000),this.EndBattle4Scene )
 	else
 		this.EndBattle4Scene()

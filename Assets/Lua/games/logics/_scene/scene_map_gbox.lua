@@ -20,17 +20,15 @@ function M:OnInit()
 	local _u1 = self:GetUnit(1)
 	local _u2 = self:GetUnit(2)
 
-	self.edge = 1
 	local _dv3 = _u2.v3Pos - _u1.v3Pos
 	local _edge = _dv3.magnitude / (Mathf.Sin(60 * Mathf.Deg2Rad) * 2)	
 	self.edge = _edge
+	self.edge_f1 = _edge * -1
+	self.edge_o1 = 1 / _edge
 
 	self.posY = _u1.v3Pos.y
 	self.posF_X = _u1.v3Pos.x
 	self.posF_Z = _u1.v3Pos.z
-
-	-- local _x,_z = self:MapPos2SvPos( -2.886701,1.398724 )
-	-- printInfo("==========[%s] = [%s]",_x,_z)
 end
 
 function M:GetUnit(nIndex)
@@ -52,9 +50,15 @@ function M:SetParentInUnit(nIndex,lbScene)
 	end
 end
 
+function M:GetCenterXYZ(selfIsEnemy)
+	local _index = (selfIsEnemy == true) and 155 or 35
+	local _pos = self:GetUnit(_index).v3Pos
+	return _pos.x,_pos.y,_pos.z
+end
+
 -- x,z,y
 function M:SvPos2MapPos(svX,svY)
-	local pX,pZ = (svX * self.edge),(svY * self.edge * -1)
+	local pX,pZ = (svX * self.edge),(svY * self.edge_f1)
 	-- 目前没考虑旋转，缩放的情况下
 	return (pX + self.posF_X),(pZ + self.posF_Z),self.posY
 end
@@ -62,7 +66,7 @@ end
 function M:MapPos2SvPos(x,z)
 	local _x,_y = (x - self.posF_X),(z - self.posF_Z)
 	-- 目前没考虑旋转，缩放的情况下
-	return (_x / self.edge),(_y * -1 / self.edge)
+	return (_x * self.edge_o1),(_y * -1 * self.edge_o1)
 end
 
 return M

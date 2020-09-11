@@ -70,6 +70,7 @@ LES_Battle_State = {
 	
 	Play_BG                  = _add(),
 	Ready                    = _add(),
+	Ready_Ing                = _add(),
 	GO                       = _add(),
 	Battle_Ing               = _add(),
 	Battle_End               = _add(),

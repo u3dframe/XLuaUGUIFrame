@@ -30,22 +30,16 @@ function M:_On_AEnter()
 		self:SetState( E_Action.Update )
 	end
 	if _isBl then
+		self.isAi_Up = false
 		self.n_cursor = 0
 		local _d = tb_end( self.tmData )
 		if _d then
 			self.time_out = (_d.time + _d.duration) / 1000
 		else
-			self.lbOwner:Add_AUpFunc( self.action_state,self._On_Ani_Update,self )
+			self.isAi_Up = true
 		end
 	end
 	return _isBl
-end
-
-function M:_On_Ani_Update(ani,info,layer)
-	if info.normalizedTime >= 1.0 then
-		self.lbOwner:RmvFunc("_a_up_" .. tostring(self.action_state))
-		self:Exit()
-	end
 end
 
 function M:_On_AUpdate(dt)

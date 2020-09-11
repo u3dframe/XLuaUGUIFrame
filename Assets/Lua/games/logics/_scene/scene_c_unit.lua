@@ -8,13 +8,9 @@
 local ActionFactory = require ("games/logics/_scene/actions/action_factory")
 
 local _vec3,NumEx,type,tostring = Vector3,NumEx,type,tostring
-
 local tb_insert = table.insert
-local _v3_zero = _vec3.zero
-local _speed_offset = 0.01
-
-local E_State,E_Flag,E_State2Action = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State
-
+local E_State,E_Flag,E_State2Action,E_AiState = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State,LES_C_Action_State
+local _dis_max_sync_pos = (0.8)^2
 local super,_evt = SceneObject,Event
 local M = class( "scene_c_unit",super )
 
@@ -57,47 +53,6 @@ end
 function M:_Init_CU_Vecs()
 	self.v3M_Temp = _vec3.zero
 	self.v3MoveTo = _vec3.zero
-	self.v3Move = _vec3.zero
-end
-
-function M:OnUpdate4Moving( dt )
-	if not self.comp then return end
-	if not self.movement then return end
-
-	--注意，这里需要修改movement的y轴
-	local movement = self.movement
-
-	self.groundPosY =  self.groundPosY or 0
-	self.gravityPosY = self.gravityPosY or 0
-
-	local _posY = self.trsf.position.y
-	if self.comp.isGrounded then
-		self.groundPosY = _posY
-		self.gravityPosY = 0
-	else
-		if _posY > self.groundPosY then
-			self.gravity = self.gravity or 1
-			self.gravityPosY = self.gravity * dt
-			movement.y =  movement.y - self.gravityPosY
-		end
-	end
-	
-	if _v3_zero:Equals(movement) then return end
-
-	local speed = self.move_speed
-	-- 瞬移速度
-	if self.speedShift and self.speedShift ~= 0 then
-		speed = self.speedShift
-	end
-	
-	speed = speed * dt * _speed_offset
-	
-	self.v3Move.x = movement.x * speed
-	self.v3Move.y = movement.y
-	self.v3Move.z = movement.z * speed
-
-	if _v3_zero:Equals(self.v3Move) then return end
-	self.comp:Move(self.v3Move.x,self.v3Move.y,self.v3Move.z)
 end
 
 function M:OnUpdate_CUnit(dt,undt)
@@ -106,8 +61,6 @@ function M:OnUpdate_CUnit(dt,undt)
 	if self._async_n_action ~= nil then
 		self:PlayAction( self._async_n_action )
 	end
-
-	self:OnUpdate4Moving( dt )
 	
 	local _machine = self.machine
 	if _machine then
@@ -125,13 +78,6 @@ end
 
 function M:OnUpdate_A_Up(ani,info,layer,a_state)
 	self:ExcFunc("_a_up_" .. tostring(a_state),ani,info,layer,a_state)
-	if not info.loop and info.normalizedTime > 1 then		
-		if self.enter_a_state == a_state then
-			if self.state == E_State.Show_1 then
-				self:SetState( E_State.Idle )
-			end
-		end
-	end 
 end
 
 function M:OnUpdate_A_Exit(_,info,_,a_state)
@@ -151,14 +97,27 @@ function M:SetState(state,force)
 	self:SetMachine()
 end
 
+function M:_LookAtOther()
+	local _lb = self:GetSObjMapBox()
+	if not _lb then return end
+
+	local _selfIsEnemy = self:IsEnemy()
+	local _x,_y,_z = _lb:GetCenterXYZ( _selfIsEnemy )
+	self:LookAt( _x,_y,_z )
+end
+
 function M:SvPos2MapPos( svX,svY )
-	local _lb = self:GetSObjBy( "map.gbox" )
+	local _lb = self:GetSObjMapBox()
 	if not _lb then return svX,svY end
 	return _lb:SvPos2MapPos( svX,svY )
 end
 
 function M:SetPos(x,y)
 	self:SetPosition ( x,self.worldY,y )
+end
+
+function M:SetCurrPos(x,y)
+	self.comp:SetCurrPos( x,self.worldY,y )
 end
 
 function M:LookPos(x,y)
@@ -186,15 +145,26 @@ function M:SetMoveSpeed(speed)
 end
 
 function M:SetMoveDir( dir )
+	self.movement = self.movement or _vec3.zero
 	if dir then
+		dir.y = 0
+		local mY = self.movement.y
+		self.movement.y = 0
 		local _dn = dir.normalized
-		local _isSet = (self.movement == nil) or (not _dn:Equals(self.movement))
-		if _isSet then
+		if not _dn:Equals(self.movement) then
 			self.movement = _dn
 		end
+		self.movement.y = mY
 	else
-		self.movement = nil
+		self.movement:Set( 0,0,0)
 	end
+end
+
+function M:SetUpMovement(yVal,isAddWY)
+	if isAddWY == true then
+		yVal = yVal + self.worldY
+	end
+	self.movement.y = yVal
 end
 
 -- 瞬移速度
@@ -207,11 +177,14 @@ function M:MoveTo(to_x,to_y,cur_x,cur_y)
 	if self.comp then
 		self:SetState( E_State.Run )
 		local _pos,_diff = self:GetPosition()
-		self.v3M_Temp:Set(cur_x,self.worldY,cur_y)
-		_diff = self.v3M_Temp - _pos
-		if _diff.sqrMagnitude > 0.1 then
-			-- printTable({dx =_diff.x,dy =_diff.y,dz = _diff.z},"big 1")
-			self:SetPos( cur_x,cur_y )
+		if cur_x and cur_y then
+			self.v3M_Temp:Set(cur_x,self.worldY,cur_y)
+			_diff = self.v3M_Temp - _pos
+			if _diff.sqrMagnitude > _dis_max_sync_pos then
+				-- printTable({dx =_diff.x,dy =_diff.y,dz = _diff.z},"big 1")
+				self:SetPos( cur_x,cur_y )
+				_pos = self.v3Pos
+			end
 		end
 
 		to_x,to_y = self:ReXYZ( to_x,to_y )
@@ -224,14 +197,19 @@ function M:MoveTo(to_x,to_y,cur_x,cur_y)
 end
 
 function M:MoveEnd(x,y)
-	self:SetPos( x,y )
 	self:Move_Over()
+	self:SetPos( x,y )
 end
 
 function M:Move_Over()
 	self._async_m_x,self._async_m_y = nil
-	self:SetMoveDir()
 	self:SetState( E_State.Idle )
+	self:SetMoveDir()
+end
+
+function M:Move_Info()
+	local _speed = ((self.speedShift ~= nil) and (self.speedShift ~= 0)) and self.speedShift or self.move_speed
+	return self.comp,self.movement,_speed,self.v3MoveTo
 end
 
 -- 暂停
@@ -304,8 +282,13 @@ end
 function M:EndAction()
 	local _machine = self.machine
 	self.machine = nil
-	if _machine and _machine.isDoned then
-		_machine:Exit()
+	if _machine then
+		if _machine.isDoned then
+			_machine:Exit()
+			if _machine.action_state ~= E_AiState.Idle then
+				self:SetState( E_State.Idle )
+			end
+		end
 	end
 end
 

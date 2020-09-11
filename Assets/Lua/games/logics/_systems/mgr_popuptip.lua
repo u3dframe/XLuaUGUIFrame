@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _yStart,_ySpeed,_yTime = 150 , 450 , 0.6
+local _yStart,_ySpeed,_yTime = 0 , 200 , 1
 
 local tb_insert,tb_rm = table.insert,table.remove
 
@@ -50,6 +50,7 @@ function M._InitUI()
 	end
 
 	ui.OnUpdateLoaded = function(_s,_dt)
+		this.ui.trsf:SetAsLastSibling()
 		_s.cdTime = _s.cdTime - _dt
 		_s.toY = _s.toY + _dt * _s.speed
 		_s:SetAnchoredPosition(0,_s.toY)

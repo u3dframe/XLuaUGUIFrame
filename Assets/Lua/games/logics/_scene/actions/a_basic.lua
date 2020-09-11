@@ -23,6 +23,7 @@ function M:ctor(lbObj)
 	-- self.jugde_state = 0
 	self.up_sec = 0
 	self.time_out = 0
+	self.isAi_Up = false
 
 	self:_On_A_Init()
 end
@@ -44,6 +45,7 @@ function M:_AEnter()
 
 		if self:_On_AEnter() then
 			self.start_sec = Time.time
+			self:_Enter_Ai_State()
 			self.lbOwner:PlayAction( self.action_state )
 			self:SetState( E_Action.Update )
 		end
@@ -56,6 +58,19 @@ end
 
 function M:_On_AEnter()
 	return true
+end
+
+function M:_Enter_Ai_State()
+	if self.isAi_Up == true then
+		self.lbOwner:Add_AUpFunc( self.action_state,self._On_Ani_Update,self )
+	end
+end
+
+function M:_On_Ani_Update(ani,info,layer)
+	if info.normalizedTime >= 1.0 then
+		self.lbOwner:RmvFunc("_a_up_" .. tostring(self.action_state))
+		self:Exit()
+	end
 end
 
 function M:_On_AUpdate(dt)
@@ -73,11 +88,15 @@ function M:_On_Up4Exit(dt)
 end
 
 function M:_On_AExit()
+	if self.a_state == E_Action.End then
+		return
+	end
 	self.a_state = E_Action.End
-	if not self.lbOwner then return end
 	local _lb = self.lbOwner
-	_lb:EndAction()
+	if not _lb then return end
 	self.lbOwner = nil
+	_lb:RmvFunc("_a_up_" .. tostring(self.action_state))
+	_lb:EndAction()
 	return _lb
 end
 

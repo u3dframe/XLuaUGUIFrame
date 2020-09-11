@@ -15,6 +15,7 @@ local M = class( "action_show1",super )
 function M:_On_A_Init()
 	self.jugde_state = E_State.Show_1
 	self.action_state = E_AniState.Show_1
+	self.isAi_Up = true
 end
 
 function M:_IsAEnter()

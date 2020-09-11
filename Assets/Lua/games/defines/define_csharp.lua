@@ -9,6 +9,7 @@ UWaitForSeconds = CS.UnityEngine.WaitForSeconds
 UWebRequest = CS.UnityEngine.Networking.UnityWebRequest
 UText = CS.UnityEngine.UI.Text
 UImage = CS.UnityEngine.UI.Image
+UImageType = CS.UnityEngine.UI.Image.Type
 URawImage = CS.UnityEngine.UI.RawImage
 UCamera = CS.UnityEngine.Camera
 UAnimator =  CS.UnityEngine.Animator
@@ -37,7 +38,14 @@ CLoadSceneMgr = CS.MgrLoadScene
 CMCaneraMgr = CS.MainCameraManager
 CInpMgr = CS.InputMgr
 
+
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])
 GM_IsEditor = CGameFile.isEditor
 CRC_DPath = CGameFile.crcDataPath
+
+UIT_Simple = UImageType.Simple
+UIT_Sliced = UImageType.Sliced
+UIT_Tiled  = UImageType.Tiled
+UIT_Filled = UImageType.Filled
+
 -- TP_UText = typeof(UText)

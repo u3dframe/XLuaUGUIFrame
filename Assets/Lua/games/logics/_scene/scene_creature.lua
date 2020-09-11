@@ -58,6 +58,11 @@ function M:OnInit_Unit()
 	self:OnInit_Creature()
 end
 
+function M:OnShow()
+	self:SetGName(self:GetCursor())
+	self:_LookAtOther()
+end
+
 function M:OnActive(isActive)
 	super.OnActive( self,isActive )
 	if not isActive then

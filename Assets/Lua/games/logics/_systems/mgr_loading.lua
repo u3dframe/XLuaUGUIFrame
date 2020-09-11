@@ -54,6 +54,7 @@ function M._InitUI()
 end
 
 function M.ShowLoading(progress,lfCallShow)
+	MgrUI.HideAll( nil,this.ui )
 	this.ui:View(true,(progress or 0),lfCallShow)
 end
 

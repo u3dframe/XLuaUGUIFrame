@@ -179,6 +179,11 @@ end
 function M:_OnShow()
 	self:OnShow()
 	self:ReEvent4Self(true)
+	local _lf = self.lfOnShowOnce
+	self.lfOnShowOnce = nil
+	if _lf then
+		_lf()
+	end
 end
 
 function M:OnShow()

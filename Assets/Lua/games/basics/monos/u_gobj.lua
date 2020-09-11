@@ -93,6 +93,14 @@ end
 function M:OnActive(isActive)
 end
 
+function M:SetGName(gname)
+	if (not gname) or ("" == gname) or (gname == self.g_name) then
+		return
+	end
+	self.g_name = gname
+	self.gobj.name = gname
+end
+
 function M:SetLayer( layer,isAll )
 	isAll = isAll == true
 	self._async_layer,self._async_layer_all = nil
