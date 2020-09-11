@@ -87,6 +87,7 @@ public static class ExampleConfig
                 typeof(Image),
                 // typeof(Image.Type), // 枚举不用到wrap文件
                 typeof(Toggle),
+                typeof(Slider),
                 typeof(RawImage),
                 typeof(InputField),
                 typeof(EventTrigger), // UGUIEventListener 的 父类

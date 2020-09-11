@@ -70,11 +70,13 @@ public static class StaticEx {
         if(null == render) return;
 
         ReShader(render.sharedMaterial);
-        if (render.sharedMaterials != null)
+        Material[] _mats_ = render.sharedMaterials;
+        if (_mats_ != null && _mats_.Length > 0)
         {
-            foreach (Material mat in render.sharedMaterials)
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
             {
-                ReShader(mat);
+                ReShader(_mats_[i]);
             }
         }
     }
@@ -99,11 +101,13 @@ public static class StaticEx {
     {
         if(null == render) return;
         ReRenderQueue(render.sharedMaterial,renderQueue);
-        if (render.sharedMaterials != null)
+        Material[] _mats_ = render.sharedMaterials;
+        if (_mats_ != null && _mats_.Length > 0)
         {
-            foreach (Material mat in render.sharedMaterials)
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
             {
-                ReRenderQueue(mat,renderQueue);
+                ReRenderQueue(_mats_[i],renderQueue);
             }
         }
     }
@@ -119,11 +123,13 @@ public static class StaticEx {
     {
         if(null == render) return;
         AddRenderQueue(render.sharedMaterial,addValue);
-        if (render.sharedMaterials != null)
+        Material[] _mats_ = render.sharedMaterials;
+        if (_mats_ != null && _mats_.Length > 0)
         {
-            foreach (Material mat in render.sharedMaterials)
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
             {
-                AddRenderQueue(mat,addValue);
+                AddRenderQueue(_mats_[i],addValue);
             }
         }
     }

@@ -225,6 +225,11 @@ public class LuaManager : GobjLifeListener
 		return false;
 	}
 
+	public T GetGlobal<T>(string name)
+    {
+		return luaEnv.Global.GetInPath<T>(name);
+	}
+
 	override protected void OnClear(){
 		luaUpdate = null;
 		luaFixedUpdate = null;
