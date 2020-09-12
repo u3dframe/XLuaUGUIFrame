@@ -33,6 +33,10 @@ function M:Reset(idMarker,resid,idTarget,mount_point,timeout,isfollow)
 	self:SetData( idMarker,idTarget,mount_point,timeout,isfollow )
 end
 
+function M:InitComp4OnLoad(gobj)
+	return CParticleEx.Get( gobj )
+end
+
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.isUpdate = true
@@ -45,6 +49,15 @@ function M:OnSetData(idTarget,mount_point,timeout,isfollow)
 	self.mount_point = mount_point
 	self.timeOut = (timeout or 1000) / 1000
 	self.isFollow = isfollow == true
+end
+
+function M:ReEvent4Self(isbind)
+	_evt.RemoveListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
+	_evt.RemoveListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
+	if (isbind)then
+		_evt.AddListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
+		_evt.AddListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
+	end
 end
 
 function M:OnViewBeforeOnInit()
@@ -88,7 +101,15 @@ function M:OnViewBeforeOnInit()
 	self.isUping = true
 end
 
+function M:OnShow()
+	self.comp.isPause = (self.isPause == true)
+end
+
 function M:OnUpdateLoaded(dt)
+	if self.isPause then
+		return
+	end
+	
 	if (self.isDisappear == true) then
 		self.isDisappear,self.timeOut = nil
 		self.isUping = false
@@ -100,6 +121,25 @@ function M:OnUpdateLoaded(dt)
 		if self.timeOut <= self.currt_time then
 			self.isDisappear = true			
 		end
+	end
+end
+
+-- 暂停
+function M:Pause()
+	if not super.Pause( self ) then
+		return
+	end
+	if self.comp then
+		self.comp.isPause = true
+	end
+	return true
+end
+
+-- 恢复
+function M:Regain()
+	super.Regain( self )
+	if self.comp then
+		self.comp.isPause = false
 	end
 end
 

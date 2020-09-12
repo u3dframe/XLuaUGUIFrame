@@ -8,14 +8,6 @@
 local super = LCFabBasic
 local M = class( "lua_PrefabElement",super )
 
-function M:makeElement( obj )
-	local _isEl,_el = CHelper.IsElement(obj)
-	if _isEl then
-		_el = obj
-	end
-	return M.New( obj,_el )
-end
-
 function M:ctor( obj,component )
 	assert(obj,"element is null")
 	if true == component then

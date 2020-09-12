@@ -25,14 +25,6 @@ function M:ctor()
 	super.ctor( self )
 end
 
-
-function M:ReEvent4Self(isbind)
-	-- _evt.RemoveListener(Evt_Msg_Battle_End, self._EndBattle, self)
-	if (isbind)then
-		-- _evt.AddListener(Evt_Msg_Battle_End, self._EndBattle, self)
-	end
-end
-
 function M:Reset(sobjType,nCursor,resid)
 	if self.resid and resid and resid ~= self.resid then
 		self:OnUnLoad()

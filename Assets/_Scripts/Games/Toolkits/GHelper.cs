@@ -209,7 +209,7 @@ public class GHelper {
 			for (int i = 0; i < ts.Length; i++) {
 				if (ts[i] != null) GameObject.Destroy(ts[i]);
 			}
-			return go.gameObject.AddComponent<T>();
+			return go.AddComponent<T>();
 		}
 		return null;
 	}

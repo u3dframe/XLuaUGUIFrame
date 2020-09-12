@@ -20,6 +20,7 @@ CPElement = CS.PrefabElement
 CFollower = CS.SmoothFollower
 CAnimator = CS.AnimatorEx
 CCCtrler = CS.CharacterControllerEx
+CParticleEx = CS.ParticleSystemEx
 
 CTxt = CS.UGUILocalize
 CGray = CS.UGUIGray

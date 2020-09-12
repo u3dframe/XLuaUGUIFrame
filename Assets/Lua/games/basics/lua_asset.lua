@@ -121,6 +121,9 @@ function M:LoadAsset()
 	return self
 end
 
+function M:InitComp4OnLoad(gobj)
+end
+
 function M:_OnCFLoadAsset( obj )
 	if self:IsNoStateLoad(_E_SLoad.Loading) then return end
 	self.stateLoad = _E_SLoad.Loaded;
@@ -132,7 +135,10 @@ function M:_OnCFLoadAsset( obj )
 	_tp = self.cfgAsset.assetLType
 	if _E_AType.Fab == _tp or _E_AType.UI == _tp then
 		if not _isNoObj then
-			local _comp = self.cfgAsset.strComp
+			local _comp = self:InitComp4OnLoad( obj )
+			if not _comp then
+				_comp = self.cfgAsset.strComp
+			end
 			super.ctor(self,obj,_comp)
 		end
 		self:OnCF_Fab(obj)

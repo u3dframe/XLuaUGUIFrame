@@ -55,8 +55,19 @@ function M:_Init_CU_Vecs()
 	self.v3MoveTo = _vec3.zero
 end
 
+function M:ReEvent4Self(isbind)
+	_evt.RemoveListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
+	_evt.RemoveListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
+	if (isbind)then
+		_evt.AddListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
+		_evt.AddListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
+	end
+end
+
 function M:OnUpdate_CUnit(dt,undt)
-	if not self:IsLoadedAndShow() then return end
+	if self.isPause or not self:IsLoadedAndShow() then
+		return
+	end
 
 	if self._async_n_action ~= nil then
 		self:PlayAction( self._async_n_action )
@@ -144,6 +155,23 @@ function M:SetMoveSpeed(speed)
 	self.move_speed = speed or 0
 end
 
+-- 瞬移速度
+function M:SetMoveSpeedShift(speed)
+	self.speedShift = speed
+end
+
+function M:GetCurrMoveSpeed()
+	return ((self.speedShift ~= nil) and (self.speedShift ~= 0)) and self.speedShift or (self.move_speed or 1)
+end
+
+function M:SetAniSpeed(speed)
+	self.ani_speed = speed or 0
+end
+
+function M:GetCurrAniSpeed()
+	return self.ani_speed or 1
+end
+
 function M:SetMoveDir( dir )
 	self.movement = self.movement or _vec3.zero
 	if dir then
@@ -167,10 +195,6 @@ function M:SetUpMovement(yVal,isAddWY)
 	self.movement.y = yVal
 end
 
--- 瞬移速度
-function M:SetMoveSpeedShift(speed)
-	self.speedShift = speed
-end
 
 function M:MoveTo(to_x,to_y,cur_x,cur_y)
 	self._async_m_x,self._async_m_y,self._async_c_x,self._async_c_y = nil
@@ -208,25 +232,34 @@ function M:Move_Over()
 end
 
 function M:Move_Info()
-	local _speed = ((self.speedShift ~= nil) and (self.speedShift ~= 0)) and self.speedShift or self.move_speed
+	local _speed = self:GetCurrMoveSpeed()
 	return self.comp,self.movement,_speed,self.v3MoveTo
 end
 
 -- 暂停
 function M:Pause()
-	if self.isPause then
-		return false
+	if not super.Pause( self ) then
+		return
 	end
-	self.isPause = true
+	self.comp:SetSpeed(0)
+	
+	local _machine = self.machine
+	if _machine then
+		_machine:Pause()
+	end
 	return true
 end
 
 -- 恢复
 function M:Regain()
-	if not self.isPause then
-		return
+	super.Regain( self )
+	local _ani_speed = self:GetCurrAniSpeed()
+	self.comp:SetSpeed( _ani_speed )
+
+	local _machine = self.machine
+	if _machine then
+		_machine:Regain()
 	end
-	self.isPause = nil
 end
 
 function M:HaveFlag(flagid)

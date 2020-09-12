@@ -81,6 +81,62 @@ public static class StaticEx {
         }
     }
 
+    static public void ReColor(this Material material,Color color)
+    {
+        if(null == material) return;
+        if (material.HasProperty("_Color")) {
+            material.SetColor("_Color", color);
+        } else if (material.HasProperty("_TintColor")) {
+            material.SetColor("_TintColor", color);
+        }
+    }
+
+    static public void ReColor(this Renderer render,Color color)
+    {
+        if(null == render) return;
+        ReColor(render.sharedMaterial,color);
+        Material[] _mats_ = render.sharedMaterials;
+        if (_mats_ != null && _mats_.Length > 0)
+        {
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
+            {
+                ReColor(_mats_[i],color);
+            }
+        }
+    }
+
+    static public void ReAlpha(this Material material,float alpha)
+    {
+        if(null == material) return;
+        if (material.HasProperty("_Color")) {
+            Color col = material.GetColor ("_Color");
+            col.a = alpha;
+            ReColor(material,col);
+        } else if (material.HasProperty("_TintColor")) {
+            Color col = material.GetColor ("_TintColor");
+            col.a = alpha;
+            ReColor(material,col);
+        } else if (material.HasProperty("_Alpha")) {
+            SetProperty(material,"_Alpha",alpha);
+        }
+    }
+
+    static public void ReAlpha(this Renderer render,float alpha)
+    {
+        if(null == render) return;
+        ReAlpha(render.sharedMaterial,alpha);
+        Material[] _mats_ = render.sharedMaterials;
+        if (_mats_ != null && _mats_.Length > 0)
+        {
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
+            {
+                ReAlpha(_mats_[i],alpha);
+            }
+        }
+    }
+
     static public void ReSortingOrder(this Renderer render,int sortingOrder){
         if(null == render) return;
         render.sortingOrder = sortingOrder;

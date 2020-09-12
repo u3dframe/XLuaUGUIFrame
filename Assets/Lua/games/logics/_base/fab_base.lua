@@ -53,6 +53,23 @@ function M:InitAsset4Resid(resid)
 	return self
 end
 
+-- 暂停
+function M:Pause()
+	if self.isPause then
+		return false
+	end
+	self.isPause = true
+	return true
+end
+
+-- 恢复
+function M:Regain()
+	if not self.isPause then
+		return
+	end
+	self.isPause = nil
+end
+
 function M:GetSObjBy(uniqueid)
 	return MgrScene.OnGet_Map_Obj( uniqueid )
 end

@@ -5,7 +5,7 @@
 	-- Desc : 设置 icon,backgroud,图集图片
 ]]
 
-local _LTP = LE_AsType
+local _LTP,tostring = LE_AsType,tostring
 local str_split = string.split
 local super = LuBase
 local M = class( "ugui_image",super )
@@ -36,7 +36,7 @@ function M:RePng( sVal )
 	return self:ReSEnd( sVal,".png" )
 end
 
-function M:SetImage( sAtals,sImg,nType )
+function M:SetImage( sAtals,sImg,nType,isNativeSize )
 	if nType == 1 then
 		sAtals = self:ReIcon(sAtals)
 	elseif nType == 2 then
@@ -48,6 +48,7 @@ function M:SetImage( sAtals,sImg,nType )
 	if sAtals == self._sAtals and sImg == self._sImg then return end
 	self._sAtals = sAtals
 	self._sImg = sImg
+	self[tostring(sAtals) .. "_" .. tostring(sImg)] = isNativeSize == true
 
 	if self._lbImg and self._lbImg:IsNoLoaded() then
 		self._lbImg:OnUnLoad()
@@ -58,12 +59,12 @@ function M:SetImage( sAtals,sImg,nType )
 	self._lbImg = self:NewAsset(sAtals,sImg,_LTP.Sprite,self.lfCFImage)
 end
 
-function M:SetIcon( icon )
-	self:SetImage(icon,icon,1)
+function M:SetIcon( icon,isNativeSize )
+	self:SetImage( icon,icon,1,isNativeSize )
 end
 
-function M:SetBg( bg )
-	self:SetImage(bg,bg,2)
+function M:SetBg( bg,isNativeSize )
+	self:SetImage( bg,bg,2,isNativeSize )
 end
 
 function M:SetFillAmount( val,max )	
@@ -76,6 +77,10 @@ end
 function M:_OnCF_Image( isNo,obj )
 	if isNo or (not self.comp) then return end
 	self.comp.sprite = obj
+	local _isNSize = self[tostring(self._sAtals) .. "_" .. tostring(self._sImg)]
+	if _isNSize == true then
+		self.comp:SetNativeSize()
+	end
 	self:_clear_pre()
 end
 

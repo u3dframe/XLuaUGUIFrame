@@ -131,6 +131,8 @@ public static class ExampleConfig
                 typeof(AnimatorEx),                
                 typeof(CharacterControllerEx),
                 typeof(RendererSortOrder),
+                typeof(ParticleEvent),
+                typeof(ParticleSystemEx),
                 //---------------------------------------------------------------  
             };
 
