@@ -24,53 +24,17 @@ public class ParticleSystemEx : GobjLifeListener {
 	Dictionary<int,List<float>> dicDefaultScale = new Dictionary<int,List<float>>();
 
 	int lens = 0;
-	float _curSize = -1;
-	float _curScale = 1;
-	float _curSpeedRate = 1;
-	bool _isPause = false;
-
 	// 该粒子的最长时间
 	float _maxTime = 1f;
 	public float maxTime{ get{ return _maxTime + 0.01f; } }
 
-	public float scale {
-		get{ return _curScale;} 
-		set{
-			if (_curScale != value) {
-				SetScale(value);
-			} 
-		}
-	}
+	bool tPause = false;
+	float tScale = 1f,tSpeed = 1f,tStartSize = -1f;
 
-	public bool m_isUseControlPause{get;set;}
-
-	public bool isPause {
-		get{ return _isPause;} 
-		set{
-			if (_isPause != value) {
-				ChangePauseState(value);
-			} 
-			this.m_isUseControlPause = value;
-		}
-	}
-
-	public float speedRate {
-		get{ return _curSpeedRate;} 
-		set{
-			if (_curSpeedRate != value) {
-				SetSpeedRate(value);
-			} 
-		}
-	}
-
-	public float startSize {
-		get{ return _curSize;} 
-		set{
-			if (_curSize != value) {
-				SetSize(value);
-			} 
-		}
-	}
+	public bool isUpdate = true;
+	public bool m_isUseControlPause = true;
+	public bool isPause = false;
+	public float scale = 1f,speedRate = 1f,startSize = -1f;
 
 	ParticleSystem.MainModule mainModule;
 	ParticleSystem.MinMaxCurve minMaxCurve;
@@ -84,18 +48,27 @@ public class ParticleSystemEx : GobjLifeListener {
 	Dictionary<string,float> m_dicAnmSpeed = new Dictionary<string,float>();
 
 	override protected void OnCall4Awake() {
-		this.tPause = this.isPause;
-		this.tScale = this.scale;
-		this.tSpeed = this.speedRate;
-		
 		InitParticleSystem ();
 		InitAnimator ();
 		InitAnimation ();
 	}
+
+	override protected void OnCall4Start() {
+		if(listAllRenders.Count > 0){
+			GameObject _gobj = listAllRenders[0].gameObject;
+			ParticleEvent.Get(_gobj);	
+		}
+	}
 	
-	bool tPause = false;
-	float tScale = 1f,tSpeed = 1f;
 	void Update(){
+		if (!isUpdate) {
+			return;
+		}
+		
+		if (tStartSize != startSize) {
+			SetSpeedRate(startSize);
+		}
+
 		if (tScale != scale) {
 			SetScale(scale);
 		}
@@ -114,8 +87,6 @@ public class ParticleSystemEx : GobjLifeListener {
 		ParticleSystem[] arr = transform.GetComponentsInChildren<ParticleSystem> (true);
 		Renderer[] arrRenders = transform.GetComponentsInChildren<Renderer> (true);
 		if (arrRenders != null && arrRenders.Length > 0) {
-			GameObject _gobj = arrRenders[0].gameObject;
-			ParticleEvent.Get(_gobj);
 			listAllRenders.AddRange (arrRenders);
 		}
 
@@ -227,10 +198,11 @@ public class ParticleSystemEx : GobjLifeListener {
 	}
 
 	public void SetSize(float size){
-		if (lens <= 0 || size < 0 || size == _curSize) {
+		if (lens <= 0 || size < 0) {
 			return;
 		}
-		_curSize = size;
+		this.tStartSize = size;
+		this.startSize = size;
 		ParticleSystem ps;
 		for (int i = 0; i < lens; i++) {
 			ps = listAll[i];
@@ -247,7 +219,7 @@ public class ParticleSystemEx : GobjLifeListener {
 		}
 		
 		this.tScale = _scale;
-		this._curScale = _scale;
+		this.scale = _scale;
 
 		ParticleSystem ps;
 		List<float> vList;
@@ -299,7 +271,7 @@ public class ParticleSystemEx : GobjLifeListener {
 
 	public void ChangePauseState(bool _isPause){
 		this.tPause = _isPause;
-		this._isPause = _isPause;
+		this.isPause = _isPause;
 
 		int _lens = lens;
 		ParticleSystem ps;
@@ -345,7 +317,7 @@ public class ParticleSystemEx : GobjLifeListener {
 		if (speedRate < 0) {
 			return;
 		}
-		this._curSpeedRate = speedRate;
+		this.speedRate = speedRate;
 		this.tSpeed = speedRate;
 
 		int _lens = lens;

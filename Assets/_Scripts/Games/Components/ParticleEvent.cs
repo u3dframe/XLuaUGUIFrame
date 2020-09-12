@@ -18,10 +18,10 @@ public class ParticleEvent : GobjLifeListener {
 	}
 
 	void OnBecameInvisible(){
-		SendMessageUpwards("ChangePauseStateByEvent",false,SendMessageOptions.DontRequireReceiver);
+		SendMessageUpwards("ChangePauseStateByEvent",true,SendMessageOptions.DontRequireReceiver);
 	}
 
 	void OnBecameVisible(){
-		SendMessageUpwards("ChangePauseStateByEvent",true,SendMessageOptions.DontRequireReceiver);
+		SendMessageUpwards("ChangePauseStateByEvent",false,SendMessageOptions.DontRequireReceiver);
 	}
 }
