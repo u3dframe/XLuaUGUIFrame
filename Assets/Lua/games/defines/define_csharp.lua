@@ -42,11 +42,14 @@ CInpMgr = CS.InputMgr
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])
 GM_IsEditor = CGameFile.isEditor
+Is_LoadOrg4Editor = CGameFile.isLoadOrg4Editor
 CRC_DPath = CGameFile.crcDataPath
 
 UIT_Simple = UImageType.Simple
 UIT_Sliced = UImageType.Sliced
 UIT_Tiled  = UImageType.Tiled
 UIT_Filled = UImageType.Filled
+
+Is_PPLayer_Enabled = (Is_LoadOrg4Editor) or (not GM_IsEditor) -- 设置 PostProcessLayer 的 enabled
 
 -- TP_UText = typeof(UText)

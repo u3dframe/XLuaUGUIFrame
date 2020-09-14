@@ -213,6 +213,7 @@ public static class ExampleConfig
                 new List<string>(){ "Core.Kernel.Resources", "Path2AssetsStart","System.String"},
                 new List<string>(){ "Core.Kernel.Resources", "GetPath","UnityEngine.Object"},
                 new List<string>(){ "Core.Kernel.Resources", "GetObject","System.String","System.String"},
+                new List<string>(){ "Core.Kernel.Resources", "LoadInEditor","System.String","System.String"},
             };
     
 #if UNITY_2018_1_OR_NEWER

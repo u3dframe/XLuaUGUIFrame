@@ -63,7 +63,7 @@ function printLog(tag, fmt, ...)
 
 	if _isEditor then
 		local _lens = str_len(str)
-		if _n_mix_lens < _lens then
+		if _n_mix_lens < _lens and string.contains(str,"=== beg ") then
 			local _fp = str_format("../%s_%s.txt",TimeEx.getYyyyMMdd(),NumEx.nextStr(5))
 			CGameFile.WriteText(_fp,str)
 			-- _fp = _fp .. _deTrk("", 3)

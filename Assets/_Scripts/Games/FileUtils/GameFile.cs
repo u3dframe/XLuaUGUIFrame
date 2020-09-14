@@ -37,6 +37,18 @@ namespace Core
 			}
 		}
 
+		// 编辑模式 -  加载原始资源 Original
+		static public bool bLoadOrg4Editor = true;
+		static public bool isLoadOrg4Editor{
+			get{
+#if UNITY_EDITOR
+				return bLoadOrg4Editor;
+#else
+				return false;
+#endif
+			}
+		}
+
 		static public void AppQuit(){
 			#if UNITY_EDITOR
 			UnityEditor.EditorApplication.isPlaying = false;

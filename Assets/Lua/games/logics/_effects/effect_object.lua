@@ -10,11 +10,17 @@ local M = class( "effect_object",super )
 local this = M
 this.nm_pool_cls = "p_cls_e"
 
-function M.Builder(idMarker,resid,idTarget,mount_point,timeout,isfollow)
+function M.Builder(resid,idMarker,idTarget,mount_point,timeout,isfollow)
 	this:GetResCfg( resid )
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
 
-	_ret = this.BorrowSelf( _p_name,idMarker,resid,idTarget,mount_point,timeout,isfollow )
+	_ret = this.BorrowSelf( _p_name,resid,idMarker,idTarget,mount_point,timeout,isfollow )
+	return _ret
+end
+
+function M.BuilderAndShow(resid,idMarker,idTarget,mount_point,timeout,isfollow)
+	local _ret = this.Builder( resid,idMarker,idTarget,mount_point,timeout,isfollow )
+	_ret:ShowView( true )
 	return _ret
 end
 
@@ -23,7 +29,7 @@ function M:ctor()
 	self.isUping = false
 end
 
-function M:Reset(idMarker,resid,idTarget,mount_point,timeout,isfollow)
+function M:Reset(resid,idMarker,idTarget,mount_point,timeout,isfollow)
 	if self.resid and resid and resid ~= self.resid then
 		self:OnUnLoad()
 	end

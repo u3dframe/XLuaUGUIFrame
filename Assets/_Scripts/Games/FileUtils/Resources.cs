@@ -27,6 +27,22 @@ namespace Core.Kernel
         static public readonly System.Type tpSVC = typeof(ShaderVariantCollection);
         static public readonly System.Type tpTimeline = typeof(UnityEngine.Timeline.TimelineAsset);
 
+        static public readonly string m_strFnt = ".ab_fnt";
+        static public readonly string m_strShader = ".ab_shader";
+        static public readonly string m_strUI = ".ui";
+        static public readonly string m_strFab = ".fab";
+        static public readonly string m_strAtlas = ".tex_atlas";
+        static public readonly string m_strTex2D = ".tex";
+        static public readonly string m_strCube = ".tex_cub";
+        static public readonly string m_strSVC = ".ab_svc";
+        static public readonly string m_strTLine = ".pa";
+        static public readonly string m_strFbx = ".ab_fbx";
+        static public readonly string m_strAdoClip = ".ado";
+        static public readonly string m_strMat = ".ab_mat";
+
+        static public readonly string m_suffix_png = ".png";
+        static public readonly string m_suffix_fab = ".prefab";
+
         /// <summary>
         /// 路径转为以 Assets/ 开头的
         /// </summary>
@@ -75,7 +91,72 @@ namespace Core.Kernel
             // 去掉第一个Assets文件夹路径
 			return GetObject<UObject>(assetPath,suffix);
         }
+
+        static public T LoadInEditor<T>(string abName,string assetName) where T : UObject{
+            if (string.IsNullOrEmpty (abName))
+                return null;
+            string _fp = m_appAssetPath;
+            if(abName.Contains("/c_")){
+                _fp  += "Characters/Builds/";
+            }else if(abName.Contains("timeline/")){
+                _fp  += "Characters/Builds/";
+            }else if(abName.Contains("/maps/")){
+                _fp  += "Scene/Builds/";
+            }else if(abName.Contains("/effects/") || abName.Contains("/ef_")){
+                _fp  += "Effects/Builds/";
+            }else{
+                _fp += "Builds/";
+            }
+            bool _isFab = abName.EndsWith(m_strUI) || abName.EndsWith(m_strFab);
+            _fp += GetPathNoSuffix(abName);
+            if(_isFab){
+                return Load4Develop<T>(_fp,m_suffix_fab);
+            }else if(abName.EndsWith(m_strAtlas)){
+                _fp += GetPathNoSuffix(assetName);
+                return Load4Develop<T>(_fp,m_suffix_png);
+            }else if(abName.EndsWith(m_strTex2D)){
+                return Load4Develop<T>(_fp,m_suffix_png);
+            }
+            return null;
+        }
 #endif
+
+        static public T Load4Develop<T>(string path, string suffix) where T : UObject
+        {
+            T _ret_ = null;
+            path = ReplaceSeparator(path);
+#if UNITY_EDITOR
+			int index = path.LastIndexOf (m_fnResources);
+			if(index < 0){
+				_ret_ = GetObject<T>(path,suffix);
+			}
+#endif
+
+            if (_ret_ == null)
+            {
+                _ret_ = LoadInResources<T>(path);
+            }
+            return _ret_;
+        }
+
+        static public T LoadInResources<T>(string path) where T : UObject
+        {
+            // 去掉最后一个Resources文件夹路径
+            int index = path.LastIndexOf(m_fnResources);
+            if (index >= 0)
+            {
+                path = path.Substring(index + m_nResources);
+            }
+
+            // 去掉后缀名
+            string suffix = Path.GetExtension(path);
+            if (!string.IsNullOrEmpty(suffix))
+            {
+                path = path.Replace(suffix, "");
+            }
+
+            return UResources.Load(path,typeof(T)) as T;
+        }
 
         /// <summary>
         /// Load the specified path.
@@ -88,7 +169,7 @@ namespace Core.Kernel
 #if UNITY_EDITOR
 			int index = path.LastIndexOf (m_fnResources);
 			if(index < 0){
-				ret = GetObject(path);
+				ret = GetObject(path,suffix);
 			}
 #endif
 
@@ -126,16 +207,6 @@ namespace Core.Kernel
             }
 
             return UResources.Load(path);
-        }
-
-        static public UObject Load4Png(string path)
-        {
-            return Load4Develop(path, ".png");
-        }
-
-        static public UObject Load4Prefab(string path)
-        {
-            return Load4Develop(path, ".prefab");
         }
 
         static public void UnLoadOne(UObject obj)

@@ -63,6 +63,13 @@ namespace Core.Kernel
             return Path.GetFileNameWithoutExtension(fn);
         }
 
+		static public string GetPathNoSuffix(string fn)
+        {
+			int nInd = fn.LastIndexOf(".");
+			if(nInd < 0) return fn;
+            return fn.Substring(0,nInd);
+        }
+
 		// 文件全路径
 		static public string GetFullPath (string fn)
 		{

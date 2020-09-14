@@ -43,7 +43,7 @@ end
 
 function M:Reset(sobjType,nCursor,resid)
 	super.Reset( self,(sobjType or E_Object.Creature),nCursor,resid )
-	self:InitCUnit( 0,1 )
+	self:InitCUnit()
 end
 
 function M:onAssetConfig( _cfg )
@@ -75,7 +75,7 @@ function M:OnSetData(svData)
 	self.svData = svData
 	if svData then
 		self:SetPos_SvPos( svData.x,svData.y )
-		self:SetMoveSpeed( svData.attrs.speed or 0.5 )
+		self:SetMoveSpeed( svData.attrs.speed )
 	end
 end
 
@@ -259,7 +259,7 @@ function M:ExcuteEffectByEid( e_id,isHurt )
 
 	local _lb,_it = {}
 	for _, v in ipairs(_elNms) do
-		_it = ClsEffect.Builder( _id,cfgEft.resid,_idTarget,v,cfgEft.effecttime,_isFollow )
+		_it = ClsEffect.BuilderAndShow( cfgEft.resid,_id,_idTarget,v,cfgEft.effecttime,_isFollow )
 		tb_insert( _lb,_it )
 	end
 	return _lb

@@ -26,6 +26,10 @@ function M:GetObjPoolName()
 	return self.objPoolName
 end
 
+-- 是否Brrow就显示对象
+function M:IsReShow()
+end
+
 -- 重置属性
 function M:Reset( ... )
 end
@@ -33,7 +37,9 @@ end
 -- pool调用函数 - 显示
 function M:ResetAndShow( ... )
 	self:Reset( ... )
-	self:ShowView( true )
+	if self:IsReShow() then
+		self:ShowView( true )
+	end
 end
 
 function M:GetRoot4Hide()

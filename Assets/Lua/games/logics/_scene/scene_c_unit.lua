@@ -160,8 +160,17 @@ function M:SetMoveSpeedShift(speed)
 	self.speedShift = speed
 end
 
-function M:GetCurrMoveSpeed()
+function M:GetMoveSpeed()
 	return ((self.speedShift ~= nil) and (self.speedShift ~= 0)) and self.speedShift or (self.move_speed or 1)
+end
+
+function M:GetCurrMoveSpeed()
+	local _speed_,_rate_ = self:GetMoveSpeed(),1
+	local _lb = self:GetSObjMapBox()
+	if _lb then
+		_rate_ = _lb.edge
+	end
+	return _speed_ * _rate_
 end
 
 function M:SetAniSpeed(speed)
