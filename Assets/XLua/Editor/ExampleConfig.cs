@@ -88,6 +88,9 @@ public static class ExampleConfig
                 // typeof(Image.Type), // 枚举不用到wrap文件
                 typeof(Toggle),
                 typeof(Slider),
+                //typeof(Slider.SliderEvent),
+                //typeof(UnityEngine.Events.UnityEvent<float>),
+                typeof(UnityEngine.Events.UnityEventBase),
                 typeof(RawImage),
                 typeof(InputField),
                 typeof(EventTrigger), // UGUIEventListener 的 父类

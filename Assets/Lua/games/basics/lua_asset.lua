@@ -130,7 +130,7 @@ function M:_OnCFLoadAsset( obj )
 	local _isNoObj,_tp = (not obj)
 	if _isNoObj then
 		local _isBl,_abName,_assetName,_ltp = self:_CfgAssetInfo();
-		printError("=== Not has asset init = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp);
+		printError("=== asset not exit = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp);
 	end
 	_tp = self.cfgAsset.assetLType
 	if _E_AType.Fab == _tp or _E_AType.UI == _tp then

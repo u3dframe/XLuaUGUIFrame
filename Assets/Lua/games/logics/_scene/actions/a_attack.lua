@@ -53,8 +53,7 @@ function M:_On_AExit()
 end
 
 function M:_Excute_Effect()
-	local _t2 = self.up_sec
-	self:_Exc_AniEvent( self.n_cursor,_t2 * 1000 )
+	self:_Exc_AniEvent( self.n_cursor,self.up_sec * 1000 )
 end
 
 function M:_Exc_AniEvent(index,exc_time_ms)

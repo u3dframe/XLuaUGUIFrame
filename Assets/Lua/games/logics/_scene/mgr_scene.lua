@@ -7,7 +7,7 @@
 
 local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 
-local mmax = math.max
+local mmax,type = math.max,type
 local MgrData,SceneFactory = MgrData,SceneFactory
 local LES_State,LES_Object = LES_State,LES_Object
 
@@ -15,17 +15,30 @@ local super,_evt = MgrBase,Event
 local M = class( "mgr_scene",super )
 local this = M
 
-function M.Init()	
-	this.state = LES_State.None
-	this.progress = 0
+function M.Init()
 	this.mapWorld_Y  = 0
 	this.eveRegion = this:TF((1 / (LES_State.Complete - LES_State.Wait_Vw_Loading)),4)
-
+	this.OnClearSome()
 	this:ReEvent4OnUpdate(true)
 
 	_evt.AddListener(Evt_Map_Load,this.OnLoadMap)
 	_evt.AddListener(Evt_Map_AddObj,this.OnAdd_Map_Obj)
 	_evt.AddListener(Evt_Map_GetObj,this.OnGet_Map_Obj)
+end
+
+function M.OnClearSome()
+	this.isUping = false
+	this.isUpingLoadMap = false
+	this.state = LES_State.None
+	this.progress = 0
+	this:ReEvent4Self(false)
+	this.mapid,this.m_instruct = nil
+end
+
+function M.OnClear()
+	this.OnClearSome()
+	this.lbMap = nil
+	_evt.Brocast(Evt_ToChangeScene)
 end
 
 function M:ReEvent4Self(isBind)
@@ -60,16 +73,19 @@ function M.GetState()
 	return this.state
 end
 
-function M.OnLoadMap(mapid)
-	if mapid == this.mapid then return end
+function M.OnLoadMap(pars1, param)
+	if pars1 and pars1 == this.mapid then return end
 	this.isUping = false
 	this.isUpingLoadMap = false
 	this:ReEvent4Self(false)
-
-	this.preMapid = this.mapid
-	this.mapid = mapid
+	this.mapid,this.m_instruct = nil
+	if type(pars1) == "number" then
+		this.mapid = pars1
+	else
+		this.m_instruct = pars1
+	end
 	this.progress = 0
-
+	this.param = param --透传参数，用于确定从场景从哪加载
 	-- 显示Loading
 	this.state = LES_State.Wait_Vw_Loading
 	_evt.Brocast(Evt_Loading_Show,this.progress,this._ST_Begin)
@@ -120,7 +136,6 @@ local function _LF_LoadedScene(isNoObj,Obj)
 	if not this.isUpingLoadMap then return end
 	this.mapWorld_Y  = this.lbMap:GetWorldY()
 	this.state = LES_State.Load_Map_Objs
-
 end
 
 function M._ST_CurMap()
@@ -182,8 +197,8 @@ function M._ST_Complete()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
 	if this.mapid then
-		_evt.Brocast(Evt_Map_Loaded, this.mapid);
-	else
+		_evt.Brocast(Evt_Map_Loaded, this.mapid,this.param);
+	elseif (not this.m_instruct) then
 		_evt.Brocast(Evt_ToView_Main)
 	end
 

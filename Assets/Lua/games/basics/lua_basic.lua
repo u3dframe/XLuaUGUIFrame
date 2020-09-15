@@ -37,10 +37,18 @@ end
 function M:_OnInit()
 	if self.isInited then return end
 	self.isInited = true
-	self:OnInit();	
+	self:OnInitBeg()
+	self:OnInit()
+	self:OnInitEnd()
+end
+
+function M:OnInitBeg()
 end
 
 function M:OnInit()
+end
+
+function M:OnInitEnd()
 end
 
 function M:ReEvent4OnUpdate(isBind)

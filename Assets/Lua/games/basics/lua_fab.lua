@@ -114,16 +114,13 @@ function M:_PreLoadUI()
 end
 
 function M:OnCF_Fab( obj )
-	if self:IsInitGobj() then
-		self:_JudgeLoad()
-	else
-		local _isBl,_abName,_assetName,_ltp = self:_CfgAssetInfo()
-		error("=== asset not exit = [%s] = [%s] = [%s] = [%s]",_isBl,_abName,_assetName,_ltp)
-	end
+	self:_JudgeLoad()
 end
 
 function M:_JudgeLoad()
-	if self:IsNoLoaded() then return end
+	if self:IsNoLoaded() or not self:IsInitGobj() then
+		return
+	end
 	if self:IsVwCircle4Load() then
 		-- 隐藏转圈
 		self:VwCircle(false)
@@ -177,7 +174,9 @@ function M:OnInit()
 end
 
 function M:_OnShow()
+	self:OnShowBeg()
 	self:OnShow()
+	self:OnShowEnd()
 	self:ReEvent4Self(true)
 	local _lf = self.lfOnShowOnce
 	self.lfOnShowOnce = nil
@@ -186,7 +185,13 @@ function M:_OnShow()
 	end
 end
 
+function M:OnShowBeg()
+end
+
 function M:OnShow()
+end
+
+function M:OnShowEnd()
 end
 
 function M:Hiding(isMus)

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using Core;
 using Core.Kernel;
 
@@ -98,6 +99,45 @@ public class CharacterControllerEx : AnimatorEx
 	[ContextMenu("Re Def Radius Height")]
 	public void ReRHeightDef(){
 		SetRadiusAndHeight(0.5f,2f);
+	}
+
+	[ContextMenu("Re Bind Nodes (重新绑定所需节点)")]
+	void ReBindNodes(){
+		List<GameObject> list = new List<GameObject> ();
+		GameObject _gobj = null;
+		int lens = m_gobjs.Length;
+		for (int i = 0;i < lens;++i)
+		{
+			_gobj = m_gobjs [i];
+			if(null == _gobj) continue;
+			if (!list.Contains (_gobj)) {
+				list.Add (_gobj);
+			}
+		}
+		
+		lens = this.m_trsf.childCount;
+		for(int i = 0;i < lens;i++) {
+			_gobj = this.m_trsf.GetChild(i).gameObject;
+			if (!list.Contains (_gobj)) {
+				list.Add (_gobj);
+			}
+		}
+
+		string[] _arrs = {
+			"f_head","f_l_hand","f_r_hand","f_mid",
+			"f_back","f_l_foot","f_r_foot"
+		};
+
+		lens = _arrs.Length;
+		for(int i = 0;i < lens;i++) {
+			_gobj = UtilityHelper.ChildRecursion(this.m_gobj,_arrs[i]);
+			if(null == _gobj) continue;
+			if (!list.Contains (_gobj)) {
+				list.Add (_gobj);
+			}
+		}
+		this.m_gobjs = list.ToArray ();
+		list.Clear ();
 	}
 
 	public CharacterControllerEx InitCCEx(DF_OnUpdate on_up,DF_ASM_MotionLife on_a_enter,DF_ASM_MotionLife on_a_up,DF_ASM_MotionLife on_a_exit){

@@ -90,8 +90,8 @@ public class SocketClient {
         using (ms = new MemoryStream()) {
             ms.Position = 0;
             BinaryWriter writer = new BinaryWriter(ms);
-            ushort msglen = (ushort)message.Length;
-            writer.Write(Converter.GetBigEndian(msglen));
+            // ushort msglen = (ushort)message.Length;
+            // writer.Write(Converter.GetBigEndian(msglen));
             writer.Write(message);
             writer.Flush();
             if (IsConnected()) {

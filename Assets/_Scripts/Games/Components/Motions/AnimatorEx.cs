@@ -250,12 +250,17 @@ public class AnimatorEx : PrefabElement
 		SetParameter4Int(this.m_kActionState,this.m_actionState);
 	}
 
+	public void SetActionAndASpeed(int aState,float aSpeed){
+		this.SetAction(aState);
+		this.SetSpeed(aSpeed);
+	}
+
 	public void PlayAction(string stateName,int layer,float normalizedTime){
 		if(this.m_animator == null) return;
 		this.m_animator.Play(stateName,layer,normalizedTime);
 	}
 
-	public void PlayAction(string stateName){
+	public void StartAction(string stateName){
 		if(this.m_animator == null) return;
 		this.m_animator.Play(stateName,0,0);
 	}

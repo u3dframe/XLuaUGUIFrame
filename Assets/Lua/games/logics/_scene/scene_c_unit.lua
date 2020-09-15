@@ -44,6 +44,11 @@ end
 function M:OnInit_Unit()
 end
 
+function M:OnShowBeg()
+	self:SetGName(self:GetCursor())
+	self:_LookAtOther()
+end
+
 function M:CloneSkin(parent)
 	if self.lbSkin then
 		return self.lbSkin:Clone(parent)
@@ -75,7 +80,21 @@ function M:OnUpdate_CUnit(dt,undt)
 	
 	local _machine = self.machine
 	if _machine then
-		_machine:On_Update(dt)
+		_machine:On_Update( dt * self:GetCurrAniSpeed() )
+	end
+end
+
+function M:PlayAction(n_action)
+	n_action = n_action or 0
+	if n_action == self.n_action then
+		return
+	end
+	self._async_n_action = nil
+	if self.comp then
+		self.n_action = n_action
+		self.comp:SetActionAndASpeed(self.n_action,self:GetCurrAniSpeed())
+	else
+		self._async_n_action = n_action
 	end
 end
 
@@ -166,6 +185,7 @@ end
 
 function M:GetCurrMoveSpeed()
 	local _speed_,_rate_ = self:GetMoveSpeed(),1
+	self.speedShift = nil
 	local _lb = self:GetSObjMapBox()
 	if _lb then
 		_rate_ = _lb.edge
@@ -173,12 +193,27 @@ function M:GetCurrMoveSpeed()
 	return _speed_ * _rate_
 end
 
+function M:SetAtkSpeed(speed)
+	self.atk_speed = speed
+end
+
 function M:SetAniSpeed(speed)
-	self.ani_speed = speed or 0
+	self.ani_speed = speed
 end
 
 function M:GetCurrAniSpeed()
+	if self.state == E_State.Attack then
+		return self.atk_speed or 1
+	end
 	return self.ani_speed or 1
+end
+
+function M:ReCsAniSpeed()
+	if not self.comp then
+		return
+	end
+	local _ani_speed = self:GetCurrAniSpeed()
+	self.comp:SetSpeed( _ani_speed )
 end
 
 function M:SetMoveDir( dir )
@@ -251,24 +286,13 @@ function M:Pause()
 		return
 	end
 	self.comp:SetSpeed(0)
-	
-	local _machine = self.machine
-	if _machine then
-		_machine:Pause()
-	end
 	return true
 end
 
 -- 恢复
 function M:Regain()
 	super.Regain( self )
-	local _ani_speed = self:GetCurrAniSpeed()
-	self.comp:SetSpeed( _ani_speed )
-
-	local _machine = self.machine
-	if _machine then
-		_machine:Regain()
-	end
+	self:ReCsAniSpeed()
 end
 
 function M:HaveFlag(flagid)

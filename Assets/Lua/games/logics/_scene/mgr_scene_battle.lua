@@ -40,6 +40,17 @@ function M.Init()
 
 	_evt.AddListener( Evt_Msg_B_Buff_Add,this.OnMsg_Buff_Add )
 	_evt.AddListener( Evt_Msg_B_Buff_Rmv,this.OnMsg_Buff_Rmv )
+	_evt.AddListener( Evt_Bat_OneAttrChg,this.OnMsg_OneAttrChg )
+	_evt.AddListener(Evt_Re_Login,this.OnClear)
+end
+
+function M.OnClear()
+	this.state = E_B_State.Battle_End
+	this._need_load = 0
+	this._loaded = 0
+	this.RemoveAll()
+
+	MgrScene.OnClear()
 end
 
 function M:OnUpdate(dt)
@@ -290,6 +301,18 @@ function M.OnMsg_Buff_Rmv(svMsg)
 	local _obj = this.GetSObj( svMsg.id )
 	if not _obj then return end
 	_obj:RmvBuff( svMsg.buffid )
+end
+
+function M.OnMsg_OneAttrChg(svMsg)
+	local _obj = this.GetSObj( svMsg.id )
+	if not _obj then return end
+	if svMsg.speed then
+		_obj:SetMoveSpeed( tonumber( svMsg.speed ) or 1 )
+	end
+
+	if svMsg.atkspeed then
+		_obj:SetAtkSpeed( tonumber( svMsg.atkspeed ) or 1 )
+	end
 end
 
 return M

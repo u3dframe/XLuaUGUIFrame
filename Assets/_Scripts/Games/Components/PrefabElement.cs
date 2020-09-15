@@ -24,7 +24,7 @@ public class PrefabElement : GobjLifeListener {
 	/// 操作的对象
 	/// </summary>
 	[SerializeField]
-	private GameObject[] m_gobjs;
+	protected GameObject[] m_gobjs;
 	
 	/// <summary>
 	/// key = name or Relative name (相对应自身对象);
@@ -190,19 +190,19 @@ public class PrefabElement : GobjLifeListener {
 		for (int i = 0;i < m_gobjs.Length;++i)
 		{
 			_gobj = m_gobjs [i];
-			if(IsNull(_gobj)) continue;
+			if(null == _gobj) continue;
 			if(cfCall != null) cfCall(i,_gobj);
 		}
 	}
 	
-	[ContextMenu("Re-Pars")]
+	[ContextMenu("Re-Rmv Empty")]
 	void ReSizeList(){
 		List<GameObject> list = new List<GameObject> ();
 		GameObject _gobj = null;
 		for (int i=0;i<m_gobjs.Length;++i)
 		{
 			_gobj = m_gobjs [i];
-			if(IsNull(_gobj)) continue;
+			if(null == _gobj) continue;
 			if (!list.Contains (_gobj)) {
 				list.Add (_gobj);
 			}
@@ -211,7 +211,7 @@ public class PrefabElement : GobjLifeListener {
 		list.Clear ();
 	}
 
-	[ContextMenu("Re-Pars this and childs")]
+	[ContextMenu("Re-Rmv Empty(This and Childs)")]
 	void ReSizeListAll(){
 		PrefabElement[] arrs = this.m_gobj.GetComponentsInChildren<PrefabElement> (true);
 		foreach (var item in arrs) {
@@ -219,7 +219,7 @@ public class PrefabElement : GobjLifeListener {
 		}
 	}
 	
-	[ContextMenu("Re-Bind Transform's First All Childs")]
+	[ContextMenu("Re-Bind Transform's First Childs")]
 	void ReBindAllFirstChilds(){
 		int lens = this.m_trsf.childCount;
 		m_gobjs = new GameObject[lens];

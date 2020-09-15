@@ -70,6 +70,7 @@ function M:OnViewBeforeOnInit()
 	self.start_time = Time.time
 	self.currt_time = 0
 	self.isDelayTime = true
+	self.speed = self:GetSpeed()
 	local idTarget = self.idTarget
 	if not idTarget then 
 		-- 立即销毁 ???
@@ -108,7 +109,18 @@ function M:OnViewBeforeOnInit()
 end
 
 function M:OnShow()
+	self.comp.speedRate = self.speed or 1
 	self.comp.isPause = (self.isPause == true)
+end
+
+function M:GetSpeed()
+	if self.data then
+		local _maker = self:GetSObjBy( self.data )
+		if _maker and _maker:GetCursor() and _maker.GetCurrAniSpeed then
+			return _maker:GetCurrAniSpeed()
+		end
+	end
+	return 1
 end
 
 function M:OnUpdateLoaded(dt)
@@ -122,7 +134,7 @@ function M:OnUpdateLoaded(dt)
 		self:ReturnSelf()
 	end
 
-	self.currt_time = self.currt_time + dt
+	self.currt_time = self.currt_time + dt * self.speed
 	if self.timeOut and self.timeOut > 0  then
 		if self.timeOut <= self.currt_time then
 			self.isDisappear = true			

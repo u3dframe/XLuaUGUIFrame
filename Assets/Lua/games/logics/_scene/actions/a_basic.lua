@@ -94,16 +94,13 @@ function M:_On_AExit()
 	self.a_state = E_Action.End
 	local _lb = self.lbOwner
 	if not _lb then return end
-	self.lbOwner,self.isPause = nil
+	self.lbOwner = nil
 	_lb:RmvFunc("_a_up_" .. tostring(self.action_state))
 	_lb:EndAction()
 	return _lb
 end
 
 function M:On_Update(dt)
-	if self.isPause then
-		return
-	end
 	if self.a_state == E_Action.Enter then
 		self:_AEnter()
 	elseif self.a_state == E_Action.Update then
@@ -115,22 +112,6 @@ function M:On_Update(dt)
 	elseif self.a_state == E_Action.Exit then
 		self:_On_AExit()
 	end
-end
-
--- 暂停
-function M:Pause()
-	if self.isPause then
-		return
-	end
-	self.isPause = true
-end
-
--- 恢复
-function M:Regain()
-	if not self.isPause then
-		return
-	end
-	self.isPause = nil
 end
 
 function M:SetState(state,force)

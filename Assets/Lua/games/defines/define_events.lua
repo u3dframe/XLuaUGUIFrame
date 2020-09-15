@@ -46,12 +46,14 @@ Evt_Map_SV_Skill_Pause = "Evt_Map_SV_Skill_Pause"; -- 服务器消息 - 技能�
 Evt_Map_SV_Skill_GoOn = "Evt_Map_SV_Skill_GoOn"; -- 服务器消息 - 技能继续
 Evt_Msg_B_Buff_Add = "Evt_Msg_B_Buff_Add"; -- buff add
 Evt_Msg_B_Buff_Rmv = "Evt_Msg_B_Buff_Rmv"; -- buff remove
+Evt_Bat_OneAttrChg = "Evt_Bat_OneAttrChg"; -- 战斗单体属性改变
 Evt_Msg_Battle_End = "Evt_Msg_Battle_End"; -- 战斗消息结束(进入表现了)
 Evt_Battle_Delay_End_MS = "Evt_Battle_Delay_End_MS"; -- 设置延迟结束战斗
 Evt_Battle_End = "Evt_Battle_End"; -- 战斗 - 结束
 
 -------- 界面所用事件
 Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示
+Evt_Desc_Tip = "Evt_Desc_Tip"; -- 弹出描述tip
 Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示
 Evt_EnterGameBeforeMain = "Evt_EnterGameBeforeMain"; -- 进入主界面前
 Evt_ToView_Login = "Evt_ToView_Login"; -- 登录界面

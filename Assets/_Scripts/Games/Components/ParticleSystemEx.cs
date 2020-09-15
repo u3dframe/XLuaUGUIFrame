@@ -66,7 +66,7 @@ public class ParticleSystemEx : GobjLifeListener {
 		}
 		
 		if (tStartSize != startSize) {
-			SetSpeedRate(startSize);
+			SetStartSize(startSize);
 		}
 
 		if (tScale != scale) {
@@ -197,7 +197,7 @@ public class ParticleSystemEx : GobjLifeListener {
 		}
 	}
 
-	public void SetSize(float size){
+	public void SetStartSize(float size){
 		if (lens <= 0 || size < 0) {
 			return;
 		}

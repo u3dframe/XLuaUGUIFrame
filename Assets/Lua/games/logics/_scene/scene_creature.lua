@@ -58,11 +58,6 @@ function M:OnInit_Unit()
 	self:OnInit_Creature()
 end
 
-function M:OnShow()
-	self:SetGName(self:GetCursor())
-	self:_LookAtOther()
-end
-
 function M:OnActive(isActive)
 	super.OnActive( self,isActive )
 	if not isActive then
@@ -75,7 +70,10 @@ function M:OnSetData(svData)
 	self.svData = svData
 	if svData then
 		self:SetPos_SvPos( svData.x,svData.y )
-		self:SetMoveSpeed( svData.attrs.speed )
+		local _attrs = svData.attrs
+		self:SetMoveSpeed( _attrs.speed )
+		self:SetAtkSpeed( _attrs.atkspeed )
+		self:SetAniSpeed( 1 )
 	end
 end
 
@@ -96,20 +94,6 @@ function M:OnUpdate_CUnit(dt,undt)
 end
 
 function M:OnUpdate_Creature(dt)
-end
-
-function M:PlayAction(n_action)
-	n_action = n_action or 0
-	if n_action == self.n_action then
-		return
-	end
-	self._async_n_action = nil
-	if self.comp then
-		self.n_action = n_action
-		self.comp:SetAction(self.n_action)
-	else
-		self._async_n_action = n_action
-	end
 end
 
 function M:GetActionState()
