@@ -76,6 +76,23 @@ end
 function M:OnUpdate(dt)
 end
 
+-- 暂停
+function M:Pause()
+	if self.isPause then
+		return
+	end
+	self.isPause = true
+	return true
+end
+
+-- 恢复
+function M:Regain()
+	if not self.isPause then
+		return
+	end
+	self.isPause = nil
+end
+
 function M:ReEvent4Self(isBind)
 end
 

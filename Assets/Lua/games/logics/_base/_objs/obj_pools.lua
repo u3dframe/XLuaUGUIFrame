@@ -111,6 +111,7 @@ function M:ReturnObj(obj)
 		local _pool = self:GetPool( _p_name )
 		if _pool ~= nil then
 			if not table.contains( _pool,obj ) then
+				obj:OnReback2Pool()
 				tb_insert( _pool,obj )
 			elseif _is_debug then
 				printInfo("=== ReturnObj many times ==[%s] = [%s]",_p_name,obj:getCName())

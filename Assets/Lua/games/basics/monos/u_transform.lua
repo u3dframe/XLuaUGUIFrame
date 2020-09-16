@@ -228,6 +228,11 @@ function M:LookAt( x,y,z )
 	end
 end
 
+function M:TranslateWorld( x,y,z )
+	x,y,z = self:ReXYZ( x,y,z,9 )
+	self.trsf:Translate( x,y,z,UES_World )
+end
+
 function M:_ExecuteAsync_Trsf()
 	if self._async_isLocal ~= nil then
 		self:SetParent( self._async_parent,self._async_isLocal )

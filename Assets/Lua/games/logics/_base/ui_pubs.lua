@@ -62,6 +62,14 @@ function M:NewBtn(elName, callFunc, val, isNoScale,isNoPrint)
     printError("=== NewBtn is Null, name = [%s]", elName)
 end
 
+function M:NewBtn4UEvt(elName, callFunc, val, isNoScale,isNoPrint)
+    local _ret = self:NewBtn(elName, callFunc, val, isNoScale,isNoPrint)
+    if _ret then
+        _ret:AddUEvent4Self()
+    end
+    return _ret
+end
+
 function M:NewTog(elName, uniqueID, callFunc, val, isNoCall4False,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then

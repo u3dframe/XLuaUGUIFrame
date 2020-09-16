@@ -21,12 +21,10 @@ local _lbCls_ = {
 	[E_State.Die]       = _req (fdir .. "a_die"),      -- 动作 - 死亡
 }
 
-local super = LuaObject
-local M = class( "action_factory",super )
+local M = {}
 local this = M
 
 function M.MakeMachine(obj)
-	
 	if obj:CheckDead() then return end
 	local _o_state = obj:GetState()
 	local _a_state = obj:GetActionState()

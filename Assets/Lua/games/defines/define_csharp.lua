@@ -9,7 +9,8 @@ UWaitForSeconds = CS.UnityEngine.WaitForSeconds
 UWebRequest = CS.UnityEngine.Networking.UnityWebRequest
 UText = CS.UnityEngine.UI.Text
 UImage = CS.UnityEngine.UI.Image
-UImageType = CS.UnityEngine.UI.Image.Type
+UEImgType = CS.UnityEngine.UI.Image.Type
+UESpace = CS.UnityEngine.Space
 URawImage = CS.UnityEngine.UI.RawImage
 UCamera = CS.UnityEngine.Camera
 UAnimator =  CS.UnityEngine.Animator
@@ -45,10 +46,11 @@ GM_IsEditor = CGameFile.isEditor
 Is_LoadOrg4Editor = CGameFile.isLoadOrg4Editor
 CRC_DPath = CGameFile.crcDataPath
 
-UIT_Simple = UImageType.Simple
-UIT_Sliced = UImageType.Sliced
-UIT_Tiled  = UImageType.Tiled
-UIT_Filled = UImageType.Filled
+UIT_Simple = UEImgType.Simple
+UIT_Sliced = UEImgType.Sliced
+UIT_Tiled  = UEImgType.Tiled
+UIT_Filled = UEImgType.Filled
+UES_World  = UESpace.World
 
 Is_PPLayer_Enabled = (Is_LoadOrg4Editor) or (not GM_IsEditor) -- 设置 PostProcessLayer 的 enabled
 

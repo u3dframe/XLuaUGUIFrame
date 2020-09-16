@@ -6,13 +6,14 @@
 ]]
 
 local SceneCUnit = require ("games/logics/_scene/scene_c_unit") -- 生物 - 单元
-local ClsEffect = ClsEffect -- 特效
+local EffectFactory = EffectFactory
 
 local tb_insert,tb_sort,tb_lens = table.insert,table.sort,table.lens
 local tostring,NumEx = tostring,NumEx
 local str_split = string.split
 
 local E_Object,E_State,E_AE_Point = LES_Object,LES_C_State,LES_Ani_Eft_Point
+local E_EType,E_CEType = LE_Effect_Type,LES_Ani_Eft_Type
 local MgrData,LTimer = MgrData,LTimer
 
 local super,evt = SceneCUnit,Event
@@ -198,7 +199,7 @@ function M:_InitAttackEffets(lb,e_id )
 	if (not _ef) or (not _ef.nextid) then return end
 
 	local _ef_next = MgrData:GetCfgSkillEffect( _ef.nextid )
-	if (not _ef_next) then return end
+	if (not _ef_next) or (not _ef.nexttime) then return end
 	this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid,(_ef_next.effecttime or 0) )
 	if _ef_next.nextid then
 		self:_InitAttackEffets( lb,_ef.nextid )
@@ -215,38 +216,26 @@ function M:GetAttackEffets()
 end
 
 function M:ExcuteEffectByEid( e_id,isHurt )	
-	if not e_id then return end
-	local cfgEft = MgrData:GetCfgSkillEffect( e_id )
-	if not cfgEft then return end
-	if cfgEft.type == 1 then return end
-	
+	local _isOkey,cfgEft = MgrData:CheckCfg4Effect( e_id )
+	if not _isOkey then return end
+
 	if cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )
 	end
 	
-	if not cfgEft.point then return end
-	if not cfgEft.resid then return end
-	local _cfgRes = MgrData:GetCfgRes(cfgEft.resid)
-	if not _cfgRes then return end
-
-	local _elNm = E_AE_Point[cfgEft.point]
-	if not _elNm then return end
-
-	local _elNms,_gobj = str_split(_elNm,";")
-	local _e_data,_id,_idTarget,_isFollow = self:_GetECastData( e_id ),self:GetCursor()
-	_idTarget = _id
+	local _e_data,_idCaster,_idTarget = self:_GetECastData( e_id ),self:GetCursor()
+	_idTarget = _idCaster
 	if _e_data then
-		_id = (isHurt == true) and _e_data.caster or _id
-		_idTarget = (2 == _cfgRes.type or 7 == _cfgRes.type) and _id or _e_data.target
+		_idCaster = (isHurt == true) and _e_data.caster or _idCaster
+		_idTarget = (2 == cfgEft.type or 7 == cfgEft.type) and _idCaster or _e_data.target
 	end
-	_isFollow = (2 == cfgEft.type) or (3 == cfgEft.type) or (5 == cfgEft.type)
-
-	local _lb,_it = {}
-	for _, v in ipairs(_elNms) do
-		_it = ClsEffect.BuilderAndShow( cfgEft.resid,_id,_idTarget,v,cfgEft.effecttime,_isFollow )
-		tb_insert( _lb,_it )
+	
+	if cfgEft.type == E_CEType.FlyTarget or cfgEft.type == E_CEType.FlyPosition then
+		EffectFactory.MakeEffect( E_EType.Bullet,_idCaster,_idTarget,e_id )
+	else
+		local _speed = 1
+		EffectFactory.MakeEffect( E_EType.Effect,_idCaster,_idTarget,e_id,_speed )
 	end
-	return _lb
 end
 
 -- 处理效果
@@ -359,24 +348,13 @@ function M:GetCfgEID4Die()
 end
 
 function M:AddBuff( b_id,duration )
-	if not b_id then return end
-	local _cfg_buff = MgrData:GetCfgBuff( b_id )
-	if not _cfg_buff then return end
+	local _idCaster = self:GetCursor()
+	local _buff = EffectFactory.MakeEffect( E_EType.Buff,_idCaster,_idCaster,b_id,duration )
+	if not _buff then return end
 	local _pool = self.buffs or {}
 	self.buffs = _pool
-
-	local _obj = _pool[b_id]
-	if not _obj then
-		local _v = self:ExcuteEffectByEid( _cfg_buff.cast_effect )
-		if _v then
-			_obj = _v[1]
-			_pool[b_id] = _obj
-		end
-	end
-
-	if _obj then
-		_obj:ResetTimeOut( duration or (_cfg_buff.duration / 1000) )
-	end
+	_pool[b_id] = _buff
+	_buff:Start()
 end
 
 function M:RmvBuff( b_id )
@@ -384,7 +362,7 @@ function M:RmvBuff( b_id )
 	if not self.buffs then return end
 	local _obj = self.buffs[b_id]
 	if _obj then
-		_obj:ReturnSelf()
+		_obj:Disappear()
 	end
 	self.buffs[b_id] = nil
 end
@@ -394,7 +372,7 @@ function M:RmvAllBuff()
 	self.buffs = nil
 	if not _pool then return end
 	for _, v in pairs(_pool) do
-		v:ReturnSelf()
+		v:Disappear()
 	end
 end
 

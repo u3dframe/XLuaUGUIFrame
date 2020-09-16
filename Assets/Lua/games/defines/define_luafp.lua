@@ -67,6 +67,7 @@ local _L_Basic_3 = {
 local _L_Midle = {
 	{"MgrWww","mgr_www",5}, -- 网络层Http
 	{"MgrNet","mgr_net",5}, -- 网络层
+	{"ClsObjBasic","_objs/obj_basic",7}, -- objpool管理的类
 	{"UIPubs","ui_pubs",7}, -- UI的Pubs
 	{"FabBase","fab_base",7}, -- 资源 prefab 的 基础类
 	{"UIBase","ui_base",7}, -- UI的基础类
@@ -100,6 +101,7 @@ local _L_End = {
 	{"MgrLoadScene","mgr_loadscene",10}, -- 加载场景管理
 	{"SceneFactory","scene_factory",10}, -- 场景工厂
 	{"MgrSceneBattle","mgr_scene_battle",10}, -- 战斗管理
+	{"EffectFactory","_effects/effect_factory",6}, -- 特效工厂
 }
 
 local _L_End_Mgr = {

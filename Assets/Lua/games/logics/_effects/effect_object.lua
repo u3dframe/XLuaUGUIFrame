@@ -8,19 +8,13 @@
 local super,_evt = FabBase,Event
 local M = class( "effect_object",super )
 local this = M
-this.nm_pool_cls = "p_cls_e"
+this.nm_pool_cls = "p_efct"
 
-function M.Builder(resid,idMarker,idTarget,mount_point,timeout,isfollow)
+function M.Builder(idMarker,idTarget,resid,mount_point,isfollow,timeout)
 	this:GetResCfg( resid )
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
 
-	_ret = this.BorrowSelf( _p_name,resid,idMarker,idTarget,mount_point,timeout,isfollow )
-	return _ret
-end
-
-function M.BuilderAndShow(resid,idMarker,idTarget,mount_point,timeout,isfollow)
-	local _ret = this.Builder( resid,idMarker,idTarget,mount_point,timeout,isfollow )
-	_ret:ShowView( true )
+	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,resid,mount_point,isfollow,timeout )
 	return _ret
 end
 
@@ -29,14 +23,13 @@ function M:ctor()
 	self.isUping = false
 end
 
-function M:Reset(resid,idMarker,idTarget,mount_point,timeout,isfollow)
+function M:Reset(idMarker,idTarget,resid,mount_point,isfollow,timeout)
+	self.isUping,self.isDisappear,self.timeOut = nil
 	if self.resid and resid and resid ~= self.resid then
 		self:OnUnLoad()
 	end
 	self:InitAsset4Resid( resid )
-	self.isUping = false
-	self.isDisappear,self.timeOut = nil
-	self:SetData( idMarker,idTarget,mount_point,timeout,isfollow )
+	self:SetData( idMarker,idTarget,mount_point,isfollow,timeout )
 end
 
 function M:InitComp4OnLoad(gobj)
@@ -50,11 +43,11 @@ function M:onAssetConfig( _cfg )
 	return _cfg
 end
 
-function M:OnSetData(idTarget,mount_point,timeout,isfollow)
+function M:OnSetData(idTarget,mount_point,isfollow,timeout)
 	self.idTarget = idTarget
 	self.mount_point = mount_point
-	self.timeOut = (timeout or 1000) / 1000
 	self.isFollow = isfollow == true
+	self.timeOut = (timeout or 1000) / 1000
 end
 
 function M:ReEvent4Self(isbind)
@@ -70,7 +63,7 @@ function M:OnViewBeforeOnInit()
 	self.start_time = Time.time
 	self.currt_time = 0
 	self.isDelayTime = true
-	self.speed = self:GetSpeed()
+	self.speed = 1 -- self:GetSpeed()
 	local idTarget = self.idTarget
 	if not idTarget then 
 		-- 立即销毁 ???
@@ -129,9 +122,7 @@ function M:OnUpdateLoaded(dt)
 	end
 	
 	if (self.isDisappear == true) then
-		self.isDisappear,self.timeOut = nil
-		self.isUping = false
-		self:ReturnSelf()
+		self:Disappear()
 	end
 
 	self.currt_time = self.currt_time + dt * self.speed
@@ -139,6 +130,16 @@ function M:OnUpdateLoaded(dt)
 		if self.timeOut <= self.currt_time then
 			self.isDisappear = true			
 		end
+	end
+end
+
+-- 消失
+function M:OnPreDisappear()
+	self.isUping,self.isDisappear,self.timeOut = nil
+	local _lfunc = self.lfDisappear
+	self.lfDisappear = nil
+	if _lfunc then
+		_lfunc()
 	end
 end
 
@@ -166,6 +167,23 @@ function M:ResetTimeOut( time_out_sec )
 	if self.timeOut and self.timeOut > 0 then
 		self.currt_time = 0
 	end
+end
+
+function M:SetSpeed( speed )
+	self.speed = speed or 1
+	if self.comp then
+		self.comp.speedRate = self.speed
+	end
+end
+
+function M:StartBy( out_sec,speed )
+	self:ResetTimeOut( out_sec )
+	self:ResetTimeOut( speed )
+	self:ShowView( true )
+end
+
+function M:Start(speed)
+	self:StartBy( self.timeOut,speed or self.speed )
 end
 
 return M

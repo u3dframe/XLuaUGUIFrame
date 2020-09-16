@@ -82,8 +82,8 @@ function M:_On_Up4Exit(dt)
 		self:Exit()
 	end
 
-	if self.time_out and self.time_out > 0 and self.up_sec >= self.time_out then
-		self.isDisappear = true
+	if self.time_out and self.time_out > 0 then
+		self.isDisappear = self.up_sec >= self.time_out
 	end
 end
 

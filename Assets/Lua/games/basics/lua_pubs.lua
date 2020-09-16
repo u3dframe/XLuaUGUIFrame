@@ -190,4 +190,18 @@ function M:_ClsUILst()
     return _cl_lst
 end
 
+function M:AddGray4Self()
+	if self.gobj and (not self.lbGray) then
+		self.lbGray = self:NewUGrayBy( self.gobj )
+	end
+	return self
+end
+
+function M:AddUEvent4Self()
+	if self.gobj and (not self.lbUEvt) then
+		self.lbUEvt = self:NewUEvtBy( self.gobj )
+	end
+	return self
+end
+
 return M

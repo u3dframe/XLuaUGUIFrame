@@ -213,7 +213,7 @@ function M.RemoveById(id)
 
 	local _obj = this.GetSObj( id )
 	if _obj then
-		_obj:ReturnSelf()
+		_obj:Disappear()
 	end
 	MgrScene.RemoveCurrMapObj( id )
 end

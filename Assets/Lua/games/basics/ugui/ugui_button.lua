@@ -43,10 +43,6 @@ function M:ctor( obj,callFunc,val,isNoScale )
 	_tmp = (not isNoScale)
 	self:SetRaycastTarget(true,_tmp)
 	self:SetIsPressScale(_tmp)
-
-	self.lbUEvt = self:NewUEvtBy(gobj)
-	
-	self:AddGray4Self()
 end
 
 -- 单击自身
@@ -95,6 +91,8 @@ function M:SetIsSyncScroll( isBl )
 end
 
 function M:SetGray( isBl,isSyncRT )
+	self:AddGray4Self()
+
 	isBl = isBl == true
 	if self.lbGray then
 		self.lbGray:IsGray(isBl)

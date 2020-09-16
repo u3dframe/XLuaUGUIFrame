@@ -60,9 +60,25 @@ end
 function M:On_Clear()
 end
 
+-- pool调用函数 - 已归还
+function M:OnReback2Pool()
+end
+
 -- 外包调用函数
 function M:ReturnSelf()
 	objsPool:ReturnObj( self )
+end
+
+function M:Disappear()
+	self:OnPreDisappear()
+	self:ReturnSelf()
+	self:OnDisappear()
+end
+
+function M:OnPreDisappear()
+end
+
+function M:OnDisappear()
 end
 
 return M

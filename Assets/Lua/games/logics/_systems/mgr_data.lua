@@ -130,4 +130,29 @@ function M:GetCfgBuff(idKey)
 	return self:GetOneData( "buff",idKey )
 end
 
+-- Check Validity
+function M:CheckCfg4Effect( e_id )
+	if not e_id then return end
+	local cfgEft = self:GetCfgSkillEffect( e_id )
+	if not cfgEft then return end
+	if cfgEft.type == 1 then return end
+	
+	if not cfgEft.point then return end
+	if not cfgEft.resid then return end
+	local _points = LES_Ani_Eft_Point[cfgEft.point]
+	if not _points then return end
+	local _cfgRes = self:GetCfgRes(cfgEft.resid)
+	if not _cfgRes then return end
+	return true,cfgEft,_points
+end
+
+function M:CheckCfg4Buff( b_id )
+	if not b_id then return end
+	if not b_id then return end
+	local _cfg = self:GetCfgBuff( b_id )
+	if not _cfg then return end
+	local _isOkey = self:CheckCfg4Effect( _cfg.cast_effect ) 
+	return _isOkey,_cfg
+end
+
 return M

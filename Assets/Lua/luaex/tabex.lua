@@ -12,7 +12,17 @@ local math_max = math.max;
 local math_min = math.min;
 local math_random = math.random
 
+-- 取数组长度
 function table.lens(src)
+    local count = 0
+    if type(src) == "table" then
+        count = #src
+    end
+    return count
+end
+
+-- 取对象长度
+function table.size(src)
     local count = 0
     if type(src) == "table" then
         for _,_ in pairs(src) do
@@ -20,10 +30,6 @@ function table.lens(src)
         end
     end
     return count
-end
-
-function table.size(src)
-    return table.lens(src);
 end
 
 function table.end_arr(src,nEnd)
@@ -278,7 +284,7 @@ function table.shuffle(arrTab)
 end
 
 local function _clear(src,isDeep)
-    local _lens,_tp = table.lens(src);
+    local _lens,_tp = table.size(src);
 	if _lens == 0 then
 		return src;
 	end

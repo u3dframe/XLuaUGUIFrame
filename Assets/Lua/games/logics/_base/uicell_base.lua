@@ -25,13 +25,6 @@ function M:ctor(gobj,cfClick,lbParent,comp)
 	end
 end
 
-function M:AddGray4Self()
-	if self.gobj and (not self.lbGray) then
-		self.lbGray = self:NewUGrayBy( self.gobj )
-	end
-	return self.lbGray
-end
-
 function M:OnClickSelf()
 	self:ExcuteCallFunc(self)
 end

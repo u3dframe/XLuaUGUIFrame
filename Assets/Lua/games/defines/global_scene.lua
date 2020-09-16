@@ -181,6 +181,13 @@ LES_C_Action = {
 	End                        = _add(),  -- 结束
 }
 
+-- 特效 - 类型
+LE_Effect_Type = {
+	Effect               = 1,      -- 特效
+	Buff                 = 2,      -- buff 
+	Bullet               = 3,      -- 子弹
+}
+
 -- 动作特效 - 类型
 LES_Ani_Eft_Type = {
 	BigSkill             = 1,      -- 大招
