@@ -23,7 +23,7 @@ local M = {}
 local this = M
 
 -- idCaster
-function M.MakeEffect(eftType,idMarker,idTarget,...)
+function M.Make(eftType,idMarker,idTarget,...)
 	local _ret
 	if eftType == E_Type.Effect then
 		-- 参数 : e_id
@@ -46,7 +46,7 @@ function M.CreateEffect( idMarker,idTarget,e_id )
 
 	local _lb,_it = {}
 	for _, v in ipairs(_elNms) do
-		_it = ClsEffect.Builder( idMarker,idTarget,cfgEft.resid,v,cfgEft.effecttime,_isFollow )
+		_it = ClsEffect.Builder( idMarker,idTarget,cfgEft.resid,v,_isFollow,cfgEft.effecttime )
 		if _it then
 			tb_insert( _lb,_it )
 		end

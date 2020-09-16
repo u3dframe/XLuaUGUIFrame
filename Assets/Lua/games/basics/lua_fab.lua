@@ -99,8 +99,11 @@ function M:Showing()
 	end
 
 	self.enabled = true
-	self:_PreLoadUI()
-	self:_JudgeLoad()
+	if self._isPreLoad then
+		self:_JudgeLoad()
+	else
+		self:_PreLoadUI()
+	end
 end
 
 function M:OnPreShow()

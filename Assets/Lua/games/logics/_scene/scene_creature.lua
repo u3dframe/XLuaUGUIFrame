@@ -6,7 +6,6 @@
 ]]
 
 local SceneCUnit = require ("games/logics/_scene/scene_c_unit") -- 生物 - 单元
-local EffectFactory = EffectFactory
 
 local tb_insert,tb_sort,tb_lens = table.insert,table.sort,table.lens
 local tostring,NumEx = tostring,NumEx
@@ -231,10 +230,10 @@ function M:ExcuteEffectByEid( e_id,isHurt )
 	end
 	
 	if cfgEft.type == E_CEType.FlyTarget or cfgEft.type == E_CEType.FlyPosition then
-		EffectFactory.MakeEffect( E_EType.Bullet,_idCaster,_idTarget,e_id )
+		EffectFactory.Make( E_EType.Bullet,_idCaster,_idTarget,e_id )
 	else
 		local _speed = 1
-		EffectFactory.MakeEffect( E_EType.Effect,_idCaster,_idTarget,e_id,_speed )
+		EffectFactory.Make( E_EType.Effect,_idCaster,_idTarget,e_id,_speed )
 	end
 end
 
@@ -349,7 +348,7 @@ end
 
 function M:AddBuff( b_id,duration )
 	local _idCaster = self:GetCursor()
-	local _buff = EffectFactory.MakeEffect( E_EType.Buff,_idCaster,_idCaster,b_id,duration )
+	local _buff = EffectFactory.Make( E_EType.Buff,_idCaster,_idCaster,b_id,duration )
 	if not _buff then return end
 	local _pool = self.buffs or {}
 	self.buffs = _pool
