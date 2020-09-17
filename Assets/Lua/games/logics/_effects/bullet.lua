@@ -34,6 +34,10 @@ function M.Builder(idMarker,idTarget,e_id)
 	local _mvSpeed,_v3Target = (range / _t_out),_vec3.New( _pos2.x,_pos2.y,_pos2.z)
 	local isMv2Pos = cfgEft.type == E_Eft_Type.FlyPosition
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. e_id
+
+	if cfgEft.min_mv_speed and _mvSpeed < cfgEft.min_mv_speed then
+		_mvSpeed = cfgEft.min_mv_speed
+	end
 	
 	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,e_id,range,_mvSpeed,_diff,(_t_out + 0.06),_v3Target,isMv2Pos )
 	return _ret
@@ -175,6 +179,7 @@ function M:_OnTarget(dt)
 	local _diff = self.v3Target - _pos1
 	self.maxDistance = _diff.magnitude
 	self.mileAge = 0
+	self:SetMoveDir( _diff )
 	self:_OnPos( dt )
 end
 

@@ -188,6 +188,7 @@ function M:_DoAttack(svMsg,cfgSkill,cfgAction,e_id)
 	
 	self:LookTarget( svMsg.target,svMsg.targetx,svMsg.targety )
 	self:SetState( E_State.Attack )
+	self:ExcuteEffectByEid( e_id,false,true )
 end
 
 function M:_DoComboAttack(svMsg, cfgSkill, cfgAction)
@@ -216,11 +217,11 @@ function M:GetAttackEffets()
 	return self.tmEfts
 end
 
-function M:ExcuteEffectByEid( e_id,isHurt )	
+function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )	
 	local _isOkey,cfgEft = MgrData:CheckCfg4Action( e_id )
 	if not _isOkey then return end
 
-	if cfgEft.action_state then
+	if (not isNotAct) and cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )
 	end
 	_isOkey = MgrData:CheckCfg4Effect( e_id )
