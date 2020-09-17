@@ -98,15 +98,16 @@ function M:OnViewBeforeOnInit()
 	
 	-- 跟随
 	self:SetParent(_lbT_Point.trsf,true)
-	if not self.isFollow then
-		self:SetParent()
-		self:SetLocalScale(1)
-	end
 	
 	if self.v3Offset then
 		self:AddLocalPosByV3(self.v3Offset)
 	end
 
+	if not self.isFollow then
+		self:SetParent()
+		self:SetLocalScale(1)
+	end
+	
 	self.isUping = true
 end
 

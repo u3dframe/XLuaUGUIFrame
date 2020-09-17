@@ -134,10 +134,11 @@ function M:_AddECastData( e_id,e_svData )
 end
 
 function M:_GetECastData( e_id )
+	local _e_data = nil
 	if self.lbEInfo and e_id then
-		return self.lbEInfo[e_id]
+		_e_data = self.lbEInfo[e_id]
 	end
-	return self.svDataCast
+	return _e_data or self.svDataCast
 end
 
 function M:CastAttack(svMsg)
