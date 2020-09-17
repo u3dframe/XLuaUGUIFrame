@@ -137,6 +137,7 @@ function M:_GetECastData( e_id )
 	if self.lbEInfo and e_id then
 		return self.lbEInfo[e_id]
 	end
+	return self.svDataCast
 end
 
 function M:CastAttack(svMsg)
@@ -215,12 +216,14 @@ function M:GetAttackEffets()
 end
 
 function M:ExcuteEffectByEid( e_id,isHurt )	
-	local _isOkey,cfgEft = MgrData:CheckCfg4Effect( e_id )
+	local _isOkey,cfgEft = MgrData:CheckCfg4Action( e_id )
 	if not _isOkey then return end
 
 	if cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )
 	end
+	_isOkey = MgrData:CheckCfg4Effect( e_id )
+	if not _isOkey then return end
 	
 	local _e_data,_idCaster,_idTarget = self:_GetECastData( e_id ),self:GetCursor()
 	_idTarget = _idCaster
@@ -230,10 +233,10 @@ function M:ExcuteEffectByEid( e_id,isHurt )
 	end
 	
 	if cfgEft.type == E_CEType.FlyTarget or cfgEft.type == E_CEType.FlyPosition then
-		EffectFactory.Make( E_EType.Bullet,_idCaster,_idTarget,e_id )
+		return EffectFactory.Make( E_EType.Bullet_Show,_idCaster,_idTarget,e_id )
 	else
 		local _speed = 1
-		EffectFactory.Make( E_EType.Effect,_idCaster,_idTarget,e_id,_speed )
+		return EffectFactory.Make( E_EType.Effect_Show,_idCaster,_idTarget,e_id,_speed )
 	end
 end
 
@@ -278,6 +281,8 @@ function M:DoInjured(svMsg)
 	if (not _cfgSkill) or (not _cfgSkill.cast_order) then return end
 	local _data = _cfgSkill.cast_order[self.nOrder]
 	if not _data or _data <= 0 then return end
+	local _isOkey,cfgEft = MgrData:CheckCfg4Effect( _data )
+	if not _isOkey then return end
 	self:_AddECastData( _data,svMsg )
 	self:LookTarget( svMsg.target,svMsg.targetx,svMsg.targety )
 	self:ExcuteEffectByEid( _data )

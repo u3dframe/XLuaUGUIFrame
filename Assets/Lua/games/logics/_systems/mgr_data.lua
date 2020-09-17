@@ -131,11 +131,17 @@ function M:GetCfgBuff(idKey)
 end
 
 -- Check Validity
-function M:CheckCfg4Effect( e_id )
+function M:CheckCfg4Action( e_id )
 	if not e_id then return end
 	local cfgEft = self:GetCfgSkillEffect( e_id )
 	if not cfgEft then return end
 	if cfgEft.type == 1 then return end
+	return true,cfgEft
+end
+
+function M:CheckCfg4Effect( e_id )
+	local _isOk,cfgEft = self:CheckCfg4Action( e_id )
+	if not _isOk then return end
 	
 	if not cfgEft.point then return end
 	if not cfgEft.resid then return end

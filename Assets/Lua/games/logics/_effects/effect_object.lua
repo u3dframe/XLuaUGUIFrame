@@ -10,11 +10,11 @@ local M = class( "effect_object",super )
 local this = M
 this.nm_pool_cls = "p_efct"
 
-function M.Builder(idMarker,idTarget,resid,mount_point,isfollow,timeout)
+function M.Builder(idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset)
 	this:GetResCfg( resid )
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
 
-	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,resid,mount_point,isfollow,timeout )
+	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset )
 	return _ret
 end
 
@@ -23,13 +23,13 @@ function M:ctor()
 	self.isUping = false
 end
 
-function M:Reset(idMarker,idTarget,resid,mount_point,isfollow,timeout)
+function M:Reset(idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset)
 	self.isUping,self.isDisappear,self.timeOut = nil
 	if self.resid and resid and resid ~= self.resid then
 		self:OnUnLoad()
 	end
 	self:InitAsset4Resid( resid )
-	self:SetData( idMarker,idTarget,mount_point,isfollow,timeout )
+	self:SetData( idMarker,idTarget,mount_point,isfollow,timeout,v3Offset )
 end
 
 function M:InitComp4OnLoad(gobj)
@@ -43,11 +43,16 @@ function M:onAssetConfig( _cfg )
 	return _cfg
 end
 
-function M:OnSetData(idTarget,mount_point,isfollow,timeout)
+function M:OnSetData(idTarget,mount_point,isfollow,timeout,v3Offset)
 	self.idTarget = idTarget
 	self.mount_point = mount_point
 	self.isFollow = isfollow == true
-	self.timeOut = (timeout or 1000) / 1000
+	timeout = (timeout or 1000)
+	self.timeOut = timeout
+	if timeout > 0 then
+		self.timeOut = self.timeOut  * 0.001
+	end
+	self.v3Offset = v3Offset
 end
 
 function M:ReEvent4Self(isbind)
@@ -61,7 +66,7 @@ end
 
 function M:OnViewBeforeOnInit()
 	self.start_time = Time.time
-	self.currt_time = 0
+	self.curr_time = 0
 	self.isDelayTime = true
 	self.speed = 1 -- self:GetSpeed()
 	local idTarget = self.idTarget
@@ -97,6 +102,10 @@ function M:OnViewBeforeOnInit()
 		self:SetParent()
 		self:SetLocalScale(1)
 	end
+	
+	if self.v3Offset then
+		self:AddLocalPosByV3(self.v3Offset)
+	end
 
 	self.isUping = true
 end
@@ -125,11 +134,9 @@ function M:OnUpdateLoaded(dt)
 		self:Disappear()
 	end
 
-	self.currt_time = self.currt_time + dt * self.speed
+	self.curr_time = self.curr_time + dt * self.speed
 	if self.timeOut and self.timeOut > 0  then
-		if self.timeOut <= self.currt_time then
-			self.isDisappear = true			
-		end
+		self.isDisappear = (self.timeOut <= self.curr_time)
 	end
 end
 
@@ -165,7 +172,7 @@ end
 function M:ResetTimeOut( time_out_sec )
 	self.timeOut = time_out_sec
 	if self.timeOut and self.timeOut > 0 then
-		self.currt_time = 0
+		self.curr_time = 0
 	end
 end
 
@@ -178,7 +185,7 @@ end
 
 function M:StartBy( out_sec,speed )
 	self:ResetTimeOut( out_sec )
-	self:ResetTimeOut( speed )
+	self:SetSpeed( speed )
 	self:ShowView( true )
 end
 

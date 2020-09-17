@@ -61,11 +61,9 @@ function M:OnUpdate(dt)
 		self:Disappear()
 	end
 
-	self.currt_time = self.currt_time + dt * self.speed
+	self.curr_time = self.curr_time + dt * self.speed
 	if self.timeOut and self.timeOut > 0  then
-		if self.timeOut <= self.currt_time then
-			self.isDisappear = true			
-		end
+		self.isDisappear = (self.timeOut <= self.curr_time)
 	end
 end
 
@@ -76,12 +74,14 @@ function M:OnPreDisappear()
 end
 
 function M:_DisappearEffect()
-	if self.lbEfcts then
-		for _, v in ipairs(self.lbEfcts) do
+	local _lbs = self.lbEfcts
+	self.lbEfcts,self.currEft = nil
+
+	if _lbs then
+		for _, v in ipairs(_lbs) do
 			v:Disappear()
 		end
 	end
-	self.lbEfcts = nil
 end
 
 function M:Start( speed )
@@ -89,11 +89,16 @@ function M:Start( speed )
 	self.speed = speed
 	local _idCaster = self.idMarker or self.idTarget
 	local _idTarget = self.idTarget or self.idMarker
-	self.lbEfcts = EffectFactory.ViewEffect( _idCaster,_idTarget,self.e_id )
+	self.lbEfcts = EffectFactory.CreateEffect( _idCaster,_idTarget,self.e_id )
 	self.isUping = tb_lens(self.lbEfcts) > 0
-	self.currt_time = 0
+	self.curr_time = 0
+	if self.isUping then
+		self.currEft = self.lbEfcts[1]
+	end
 	self:ReEvent4OnUpdate(self.isUping)
 	self:ReEvent4Self(self.isUping)
+	
+	EffectFactory.ShowEffects( self.lbEfcts )
 end
 
 return M

@@ -183,9 +183,13 @@ LES_C_Action = {
 
 -- 特效 - 类型
 LE_Effect_Type = {
-	Effect               = 1,      -- 特效
-	Buff                 = 2,      -- buff 
-	Bullet               = 3,      -- 子弹
+	Effect               = _add(0),     -- 特效 - 创建 & 不显示
+	Buff                 = _add(),      -- buff - 创建 & 不显示
+	Bullet               = _add(),      -- 子弹 - 创建 & 不显示
+	
+	Effect_Show          = _add(),      -- 特效 - 创建 & 显示
+	Buff_Show            = _add(),      -- buff - 创建 & 显示
+	Bullet_Show          = _add(),      -- 子弹 - 创建 & 显示
 }
 
 -- 动作特效 - 类型

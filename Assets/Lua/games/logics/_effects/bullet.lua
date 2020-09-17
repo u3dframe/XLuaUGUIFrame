@@ -16,23 +16,26 @@ local M = class( "bullet",super,super2 )
 local this = M
 this.nm_pool_cls = "p_bullet"
 
+function M.GetSObj4Battle(id)
+	return MgrScene.OnGet_Map_Obj( id )
+end
+
 function M.Builder(idMarker,idTarget,e_id)
 	local _isOkey,cfgEft = MgrData:CheckCfg4Effect( e_id )
 	if (not _isOkey) or (cfgEft.type ~= E_Eft_Type.FlyPosition and cfgEft.type ~= E_Eft_Type.FlyTarget) then return end
-	local _lbCaster = MgrScene.OnGet_Map_Obj( idMarker )
-	local _lbTarget = MgrScene.OnGet_Map_Obj( idTarget )
+	local _lbCaster = this.GetSObj4Battle( idMarker )
+	local _lbTarget = this.GetSObj4Battle( idTarget )
 	if not _lbCaster or not _lbTarget then return end
 	local _pos1 = _lbCaster:GetPosition()
 	local _pos2 = _lbTarget:GetPosition()
 	local _diff = _pos2 - _pos1
 	local range = _diff.magnitude
-	local _mvSpeed,_v3OrgTarget = range / cfgEft.effecttime
-	if cfgEft.type == E_Eft_Type.FlyPosition then
-		_v3OrgTarget = _vec3.New( _pos2.x,_pos2.y,_pos2.z)
-	end
+	local _t_out = cfgEft.effecttime * 0.001
+	local _mvSpeed,_v3Target = (range / _t_out),_vec3.New( _pos2.x,_pos2.y,_pos2.z)
+	local isMv2Pos = cfgEft.type == E_Eft_Type.FlyPosition
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. e_id
-	local _t_out = (cfgEft.effecttime or 1000) * 0.001 + 0.06
-	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,e_id,range,_mvSpeed,_diff,_t_out,_v3OrgTarget )
+	
+	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,e_id,range,_mvSpeed,_diff,(_t_out + 0.06),_v3Target,isMv2Pos )
 	return _ret
 end
 
@@ -41,19 +44,20 @@ function M:ctor()
 	super2.ctor( self )
 end
 
-function M:Reset(idMarker,idTarget,e_id,range,mvSpeed,dir,timeOut,targetPos)
+function M:Reset(idMarker,idTarget,e_id,range,mvSpeed,dir,timeOut,targetPos,isMv2Pos)
 	self.isUping = false
-	self:SetData( e_id,idMarker,idTarget,range,mvSpeed,dir,timeOut,targetPos )
+	self:SetData( e_id,idMarker,idTarget,range,mvSpeed,dir,timeOut,targetPos,isMv2Pos )
 end
 
-function M:OnSetData(idMarker,idTarget,range,mvSpeed,dir,timeOut,targetPos)
+function M:OnSetData(idMarker,idTarget,range,mvSpeed,dir,timeOut,targetPos,isMv2Pos)
 	self.idMarker = idMarker
 	self.idTarget = idTarget
 	self.range = range
 	self.mvSpeed = mvSpeed
 	self.timeOut = timeOut
-	self.v3OrgTarget = targetPos
-	self.isMoveToPos = targetPos ~= nil
+	self.v3Target = targetPos
+	self.isMoveToPos = isMv2Pos
+	self.maxDistance = self.range or 0
 	self:SetMoveDir( dir )
 	self:_DisappearEffect()
 end
@@ -76,11 +80,9 @@ function M:OnUpdate(dt)
 		self:Disappear()
 	end
 
-	self.currt_time = self.currt_time + dt
+	self.curr_time = self.curr_time + dt
 	if self.timeOut and self.timeOut > 0  then
-		if self.timeOut <= self.currt_time then
-			self.isDisappear = true			
-		end
+		self.isDisappear = (self.timeOut <= self.curr_time)
 	end
 
 	self:_OnUpPos(dt)
@@ -124,19 +126,6 @@ function M:GetMvSpeed()
 	return self.mvSpeed or 1
 end
 
-function M:Start()
-	self.lbEfcts = EffectFactory.CreateEffect( self.idMarker,self.idMarker,self.e_id )
-	self.isUping = tb_lens(self.lbEfcts) > 0
-	self.currt_time = 0
-	self.mileAge = 0
-	self:ReEvent4OnUpdate(self.isUping)
-	self:ReEvent4Self(self.isUping)
-	if self.isUping then
-		self.currEft = self.lbEfcts[1]
-	end
-	EffectFactory.ShowEffects( self.lbEfcts )
-end
-
 function M:_OnUpPos(dt)
 	if (self.isDisappear == true) or (not self.currEft) or (not self.currEft:IsInitTrsf()) then
 		return
@@ -150,7 +139,7 @@ function M:_OnUpPos(dt)
 end
 
 function M:_OnPos(dt)
-	if self.mileAge >= self.range then
+	if self.mileAge >= self.maxDistance then
 		self.isDisappear = true
 		return
 	end
@@ -160,9 +149,9 @@ function M:_OnPos(dt)
 	self.mileAge = self.mileAge + _distance
 
 	local _curr = self.currEft
-	if self.mileAge >= self.range then
+	if self.mileAge >= self.maxDistance then
 		local _pos = _curr:GetPosition()
-		_v3Mov = self.v3OrgTarget - _pos
+		_v3Mov = self.v3Target - _pos
 	end
 
 	if _v3_zero:Equals(_v3Mov) then
@@ -172,6 +161,34 @@ function M:_OnPos(dt)
 end
 
 function M:_OnTarget(dt)
+	local _lbTarget = this.GetSObj4Battle( self.idTarget )
+	if not _lbTarget then
+		self.isDisappear = true
+		-- local _pos1 = self.currEft:GetPosition()
+		-- local _diff = self.v3Target - _pos1
+		-- self.maxDistance = _diff.magnitude
+		return
+	end
+	local _pos2 = _lbTarget:GetPosition()
+	self.v3Target:Set( _pos2.x,_pos2.y,_pos2.z)
+	local _pos1 = self.currEft:GetPosition()
+	local _diff = self.v3Target - _pos1
+	self.maxDistance = _diff.magnitude
+	self.mileAge = 0
+	self:_OnPos( dt )
+end
+
+function M:Start()
+	self.lbEfcts = EffectFactory.CreateEffect( self.idMarker,self.idMarker,self.data )
+	self.isUping = tb_lens(self.lbEfcts) > 0
+	self.curr_time = 0
+	self.mileAge = 0
+	self:ReEvent4OnUpdate(self.isUping)
+	self:ReEvent4Self(self.isUping)
+	if self.isUping then
+		self.currEft = self.lbEfcts[1]
+	end
+	EffectFactory.ShowEffects( self.lbEfcts )
 end
 
 return M

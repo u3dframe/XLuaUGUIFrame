@@ -233,6 +233,14 @@ function M:TranslateWorld( x,y,z )
 	self.trsf:Translate( x,y,z,UES_World )
 end
 
+function M:AddLocalPosByV3( vec3 )
+	local _pos = self.trsf.localPosition
+	vec3.x = vec3.x + _pos.x
+	vec3.y = vec3.y + _pos.y
+	vec3.z = vec3.z + _pos.z
+	self.trsf.localPosition = vec3
+end
+
 function M:_ExecuteAsync_Trsf()
 	if self._async_isLocal ~= nil then
 		self:SetParent( self._async_parent,self._async_isLocal )
