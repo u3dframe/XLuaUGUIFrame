@@ -21,4 +21,11 @@ function M.Builder(nCursor,resid)
 	return _ret
 end
 
+function M:OnShow()
+	if self.isSeparation then
+		local _e_id_sep = self:GetCfgEID4Separation()
+		self:ExcuteEffectByEid( _e_id_sep )
+	end
+end
+
 return M

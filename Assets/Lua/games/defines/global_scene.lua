@@ -72,7 +72,6 @@ LES_Battle_State = {
 	Ready                    = _add(),
 	Ready_Ing                = _add(),
 	GO                       = _add(),
-	Battle_Ing               = _add(),
 	Battle_End               = _add(),
 	Battle_Error             = _add(),
 	End                      = _add(),
@@ -201,6 +200,7 @@ LES_Ani_Eft_Type = {
 	TargetBodyPos        = 4,      -- 目标 - 只当时取下身上点位置
 	FlyTarget            = 5,      -- 飞行 到 目标身上
 	FlyPosition          = 6,      -- 飞行 到 目标当时的位置
+	Stone                = 8,      -- 石化
 }
 
 -- 动作特效 - 挂接点

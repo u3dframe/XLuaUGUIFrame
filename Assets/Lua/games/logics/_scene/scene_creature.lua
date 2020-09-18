@@ -68,7 +68,9 @@ end
 
 function M:OnSetData(svData)
 	self.svData = svData
+	self.isSeparation = false
 	if svData then
+		self.isSeparation = (svData.master ~= nil)
 		self:SetPos_SvPos( svData.x,svData.y )
 		local _attrs = svData.attrs
 		self:SetMoveSpeed( _attrs.speed )
@@ -226,19 +228,33 @@ function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 	end
 	_isOkey = MgrData:CheckCfg4Effect( e_id )
 	if not _isOkey then return end
-	
+
 	local _e_data,_idCaster,_idTarget = self:_GetECastData( e_id ),self:GetCursor()
 	_idTarget = _idCaster
 	if _e_data then
 		_idCaster = (isHurt == true) and _e_data.caster or _idCaster
-		_idTarget = (2 == cfgEft.type or 7 == cfgEft.type) and _idCaster or _e_data.target
+		_idTarget = (E_CEType.SelfBone == cfgEft.type or E_CEType.SelfBonePos == cfgEft.type) and _idCaster or _e_data.target
 	end
-	
+
+	if cfgEft.type > E_CEType.SelfBonePos then
+		self:_ExcuteSpecialEffect(e_id,cfgEft,_idCaster,_idTarget)
+	else
+		self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
+	end
+end
+
+function M:_ExcuteEffect( e_id,cfgEft,idCaster,idTarget )
 	if cfgEft.type == E_CEType.FlyTarget or cfgEft.type == E_CEType.FlyPosition then
-		return EffectFactory.Make( E_EType.Bullet_Show,_idCaster,_idTarget,e_id )
+		return EffectFactory.Make( E_EType.Bullet_Show,idCaster,idTarget,e_id )
 	else
 		local _speed = 1
-		return EffectFactory.Make( E_EType.Effect_Show,_idCaster,_idTarget,e_id,_speed )
+		return EffectFactory.Make( E_EType.Effect_Show,idCaster,idTarget,e_id,_speed )
+	end
+end
+
+function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget )
+	if cfgEft.type == E_CEType.Stone then
+		
 	end
 end
 
@@ -350,6 +366,12 @@ end
 function M:GetCfgEID4Die()
 	if self.data and self.data.die then
 		return self.data.die
+	end
+end
+
+function M:GetCfgEID4Separation()
+	if self.data and self.data.separation then
+		return self.data.separation
 	end
 end
 

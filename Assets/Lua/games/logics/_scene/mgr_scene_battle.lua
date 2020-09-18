@@ -54,10 +54,10 @@ function M.OnClear()
 end
 
 function M:OnUpdate(dt)
+	this._ST_Create_Obj()
 	if this.state == E_B_State.Start then
 		this.state = E_B_State.Create_Objs
 	elseif this.state == E_B_State.Create_Objs then
-		this._ST_Create_Obj()
 	elseif this.state == E_B_State.Create_Objs_End then
 		this.state = E_B_State.Entry_CG
 	elseif this.state == E_B_State.Entry_CG then
@@ -71,8 +71,6 @@ function M:OnUpdate(dt)
 	elseif this.state == E_B_State.Ready then
 		this._ST_Ready()
 	elseif this.state == E_B_State.GO then
-		this._ST_Go()
-	elseif this.state == E_B_State.Battle_Ing then
 	elseif this.state == E_B_State.Battle_End then
 		this.state = E_B_State.End
 		this.isUping = false
@@ -104,7 +102,7 @@ end
 function M._ST_Create_Obj()
 	if not this.sv_queue_add then return end
 	if #this.sv_queue_add <= 0 then
-		if (this._loaded >= this._need_load) then
+		if this.state == E_B_State.Create_Objs and (this._loaded >= this._need_load) then
 			this.state = E_B_State.Create_Objs_End
 		end
 		return
@@ -129,10 +127,6 @@ function M._On_ST_Start_Battle(msg)
 	else
 		this.state = E_B_State.Battle_Error
 	end
-end
-
-function M._ST_Go()
-	this.state = E_B_State.Battle_Ing
 end
 
 function M.OnSv_Add_Map_Obj(objType,svMsg)
