@@ -177,9 +177,10 @@ public class CharacterControllerEx : AnimatorEx
 	}
 
 	public void SetPosByAdd(float x,float y,float z){
-		Vector3 v3 = this.m_trsf.position;
-		Vector3 _v3 = ToV3(x,y,z);
-		this.m_trsf.position = _v3 + v3;
+		// Vector3 v3 = this.m_trsf.position;
+		// Vector3 _v3 = ToV3(x,y,z);
+		// this.m_trsf.position = _v3 + v3;
+		this.m_trsf.Translate(x,y,z,Space.World);
 	}
 
 	protected void CMove(Vector3 v3Add){

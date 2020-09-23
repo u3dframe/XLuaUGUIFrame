@@ -136,6 +136,7 @@ public static class ExampleConfig
                 typeof(RendererSortOrder),
                 typeof(ParticleEvent),
                 typeof(ParticleSystemEx),
+                typeof(RendererMatProperty),
                 //---------------------------------------------------------------  
             };
 

@@ -55,7 +55,12 @@ function M:onAssetConfig( _cfg )
 end
 
 function M:OnInit_Unit()
+	self.csRMatProp = CRMatProp.Get( self.gobj )
+	self.ccType = 0
 	self:OnInit_Creature()
+end
+
+function M:OnInit_Creature()
 end
 
 function M:OnActive(isActive)
@@ -63,6 +68,7 @@ function M:OnActive(isActive)
 	if not isActive then
 		self:SetParent(nil,true)
 		self.preState,self.state,self.n_action = nil
+		self:ExcuteSEByCCType( 0 )
 	end
 end
 
@@ -85,9 +91,6 @@ function M:OnEnd(isDestroy)
 			LTimer.RemoveDelayFunc( _cmd )
 		end
 	end
-end
-
-function M:OnInit_Creature()
 end
 
 function M:OnUpdate_CUnit(dt,undt)
@@ -219,6 +222,18 @@ function M:GetAttackEffets()
 	return self.tmEfts
 end
 
+function M:ExcuteSEByCCType( ccType )
+	if ccType and ccType ~= self.ccType then
+		local _pre = self.ccType
+		self.ccType = ccType
+		self.csRMatProp:SetInt("_CCType",self.ccType)
+		self:On_SEByCCType(_pre)
+	end
+end
+
+function M:On_SEByCCType(preType)
+end
+
 function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )	
 	local _isOkey,cfgEft = MgrData:CheckCfg4Action( e_id )
 	if not _isOkey then return end
@@ -253,8 +268,10 @@ function M:_ExcuteEffect( e_id,cfgEft,idCaster,idTarget )
 end
 
 function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget )
-	if cfgEft.type == E_CEType.Stone then
-		
+	local _obj = self:GetSObjBy( idTarget )
+	if _obj then
+		local _ccType = AET_2_SE[cfgEft.type]
+		_obj:ExcuteSEByCCType( _ccType )
 	end
 end
 
@@ -335,7 +352,7 @@ end
 function M:DoHurtEffect(svOne)
 	if self:_IsHurtEffect(svOne) then
 		local _temp = MgrData:GetCfgHurtEffect( svOne.effectid )
-		if _temp.hit_effect then
+		if _temp and _temp.hit_effect then
 			self:_AddECastData( _temp.hit_effect,svOne )
 			self:ExcuteEffectByEid( _temp.hit_effect,true )
 		end

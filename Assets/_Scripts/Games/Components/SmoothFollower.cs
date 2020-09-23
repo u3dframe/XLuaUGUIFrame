@@ -30,14 +30,14 @@ public class SmoothFollower : MonoBehaviour
 	    
 	public bool isLerpDistance = false;
 	public float distance = 10.0f;
-	public float distanceDamping = 2.0f;
+	public float distanceDamping = 1.8f;
 
 	public bool isLerpHeight = false;
 	public float height = 5.0f;
-	public float heightDamping = 2.0f;
+	public float heightDamping = 1.8f;
 	
 	public bool isLerpRotate = false;
-	public float rotationDamping = 3.0f;
+	public float rotationDamping = 1.8f;
 	
 	Vector3 lookAtVector = Vector3.zero;
 	float currentHeight = 0.0f;
@@ -113,8 +113,30 @@ public class SmoothFollower : MonoBehaviour
 			return;
 		
 		if (currentHeight >= (wantedHeight - offsetHeight4Call) && currentDistance >= (distance - offsetWidth4Call)) {
-			callFinished ();
+			System.Action _call = callFinished;
 			callFinished = null;
+			_call ();
 		}
+	}
+
+	public void DoStart(Transform target,float distance,float height,float lookAtHeight,bool isLerpDistance,bool isLerpHeight,bool isLerpRotate){
+		this.ReSetPars( target,distance,height,lookAtHeight,isLerpDistance,isLerpHeight,isLerpRotate );
+		this.isRunning = true;
+	}
+
+	public void ReSetPars(Transform target,float distance,float height,float lookAtHeight,bool isLerpDistance,bool isLerpHeight,bool isLerpRotate){
+		this.target = target;
+		this.lookAtHeight = lookAtHeight;
+		this.distance = distance;
+		this.height = height;
+		this.isLerpDistance = isLerpDistance;
+		this.isLerpHeight = isLerpHeight;
+		this.isLerpRotate = isLerpRotate;
+	}
+
+	public void ReSetDHL(float distance,float height,float lookAtHeight){
+		this.distance = distance;
+		this.height = height;
+		this.lookAtHeight = lookAtHeight;
 	}
 }  

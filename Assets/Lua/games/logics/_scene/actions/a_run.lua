@@ -6,7 +6,8 @@
 ]]
 local _vec3 = Vector3
 local _v3_zero = _vec3.zero
-local _speed_offset,_dis_end = 0.01,(0.06)^2
+local _min_end = (0.06)^2
+local _speed_offset,_dis_unit,_dis_end = 0.01,0.06,_min_end
 
 local E_Action = LES_C_Action
 local E_AniState = LES_C_Action_State
@@ -55,14 +56,14 @@ function M:_On_AUpdate(dt)
 end
 
 function M:OnUpdate4Moving(dt)
-    local _owner,_comp,movement,speed,_v3To = self.lbOwner
+    local _owner,_comp,movement,speed,_v3To,c_spd = self.lbOwner
     local _pos = _owner:GetPosition()
     _comp,movement,speed,_v3To = _owner:Move_Info()
     if _v3To then
         self.v3To:Set(_v3To.x,_v3To.y,_v3To.z)
     end
     --注意，这里需要修改movement的y轴
-    if _comp.isGrounded then
+    if _owner:IsGrounded( _pos.y ) then
         self.groundPosY = _pos.y
         self.gravityPosY = 0
         _owner:SetUpMovement( 0 )
@@ -77,16 +78,22 @@ function M:OnUpdate4Moving(dt)
     if _v3_zero:Equals(movement) then
         return
     end
-    speed = speed * dt * _speed_offset
+    c_spd = speed * dt * _speed_offset
 
-    self.v3Move.x = self:TF( movement.x * speed,9 )
+    self.v3Move.x = self:TF( movement.x * c_spd,9 )
     self.v3Move.y = movement.y
-    self.v3Move.z = self:TF( movement.z * speed,9 )
+    self.v3Move.z = self:TF( movement.z * c_spd,9 )
 
     if _v3_zero:Equals(self.v3Move) then
         return
     end
     _comp:Move(self.v3Move.x, self.v3Move.y, self.v3Move.z)
+    self:_ReCalcDisEnd( speed )
+end
+
+function M:_ReCalcDisEnd( speed )
+    _dis_end = (_dis_unit * speed * _speed_offset)^2
+    _dis_end = _dis_end < _min_end and _min_end or _dis_end
 end
 
 function M:_Jugde_MoveEnd()

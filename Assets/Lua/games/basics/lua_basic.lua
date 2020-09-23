@@ -76,6 +76,10 @@ end
 function M:OnUpdate(dt)
 end
 
+function M:SetPause( isPause )
+	self.isPause = (isPause == true)
+end
+
 -- 暂停
 function M:Pause()
 	if self.isPause then

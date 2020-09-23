@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local E_Object = LES_Object
+local E_Object,ET_SE = LES_Object,LET_Shader_Effect
 
 local super = SceneCreature
 local M = class( "scene_monster",super )
@@ -25,6 +25,20 @@ function M:OnShow()
 	if self.isSeparation then
 		local _e_id_sep = self:GetCfgEID4Separation()
 		self:ExcuteEffectByEid( _e_id_sep )
+	end
+end
+
+function M:On_SEByCCType(preType)
+	self:SetPause( self.prePause )
+	self.prePause = self.isPause
+	if preType == ET_SE.Stone then
+		self.prePause = nil
+		self:CsAniSpeed()
+	end
+
+	if self.ccType == ET_SE.Stone then
+		self:SetPause( true )
+		self:CsAniSpeed(0)
 	end
 end
 

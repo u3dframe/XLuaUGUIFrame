@@ -70,14 +70,22 @@ public class RendererMatProperty : GobjLifeListener
         }
     }
 
+    public float CalcColor(float val){
+        if(val <= 0)
+            return 0;
+        val %= 255;
+        val = val > 1 ? val / 255 : val;
+        return val;
+    }
+
     public void SetColor(string key,float r,float g,float b,float a){
         if(this.m_lensRender <= 0)
             return;
         
-        m_color.a = a;
-        m_color.b = b;
-        m_color.g = g;
-        m_color.r = r;
+        m_color.a = CalcColor(a);
+        m_color.b = CalcColor(b);
+        m_color.g = CalcColor(g);
+        m_color.r = CalcColor(r);
         if(m_color == Color.clear){
             return;
         }

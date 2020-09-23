@@ -5,7 +5,7 @@
 	-- Desc : 减少自身内部引用
 ]]
 
-local _c_trsf,_c_comp,_c_cmr,_c_ele,_lasset,_lfab = nil
+local _c_trsf,_c_comp,_c_cmr,_c_flr,_c_ele,_lasset,_lfab = nil
 local _uevt,_ugray,_utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
 local _cl_scl,_cl_lst = nil
 
@@ -53,6 +53,17 @@ end
 
 function M:NewEleBy(gobj)
     return self:_ClsEle().New( gobj ):AddSupUIPubs()
+end
+
+function M:_ClsFollower()
+    if not _c_flr then
+        _c_flr = LCFollower
+    end
+    return _c_flr
+end
+
+function M:NewFollowerBy(gobj,compName)
+    return self:_ClsFollower().New( gobj,compName )
 end
 
 function M:_ClsAsset()

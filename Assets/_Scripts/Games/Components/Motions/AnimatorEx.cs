@@ -245,7 +245,7 @@ public class AnimatorEx : PrefabElement
 			return;	
 		}
 
-		if(this._pre_aSpeed != value){
+		if(this._pre_aSpeed != value && this.m_animator.gameObject.activeInHierarchy){
 			this.m_animator.Update(0);
 		}
 

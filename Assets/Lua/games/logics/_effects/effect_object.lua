@@ -68,14 +68,7 @@ function M:OnViewBeforeOnInit()
 	self.start_time = Time.time
 	self.curr_time = 0
 	self.isDelayTime = true
-	self.speed = 1 -- self:GetSpeed()
-	local idTarget = self.idTarget
-	if not idTarget then 
-		-- 立即销毁 ???
-		return 
-	end
-
-	local _lbTarget = self:GetSObjBy( idTarget )
+	local _lbTarget = self:GetSObjBy( self.idTarget )
 	if not _lbTarget then
 		-- 立即销毁 ???
 		return
@@ -89,13 +82,6 @@ function M:OnViewBeforeOnInit()
 		_lbT_Point = _lbTarget
 	end
 
-	
-	local _cfgEft = self.cfgRes
-	if not _cfgEft then 
-		-- 立即销毁 ???
-		return 
-	end
-	
 	-- 跟随
 	self:SetParent(_lbT_Point.trsf,true)
 	

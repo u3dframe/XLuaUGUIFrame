@@ -40,6 +40,7 @@ local _L_Basic_1 = {
 	{"LUCamera","u_camera",3}, -- Camera
 	{"LCFabBasic","uc_fabbasic",3}, -- PrefabBasic
 	{"LCFabElement","uc_fabelement",3}, -- PrefabElement
+	{"LCFollower","uc_follower",3}, -- SmoothFollower
 }
 
 -- _base

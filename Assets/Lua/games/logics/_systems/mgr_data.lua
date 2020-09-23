@@ -142,6 +142,7 @@ end
 function M:CheckCfg4Effect( e_id )
 	local _isOk,cfgEft = self:CheckCfg4Action( e_id )
 	if not _isOk then return end
+	if cfgEft.type == 8 then return true,cfgEft end
 	
 	if not cfgEft.point then return end
 	if not cfgEft.resid then return end

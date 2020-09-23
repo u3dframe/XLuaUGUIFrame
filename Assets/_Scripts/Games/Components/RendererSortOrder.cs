@@ -30,7 +30,7 @@ public class RendererSortOrder : GobjLifeListener
     int m_sLayerID = 0;
     bool m_isNameInSLayer = true;
 
-    public bool m_isAddValue = true;
+    public bool m_isAdd = true;
     public int m_val_layer = 0;
     public int m_val_queue = 0;
 
@@ -164,7 +164,7 @@ public class RendererSortOrder : GobjLifeListener
             rer.sortingLayerID = this.m_sLayerID;
         }
 
-        if(m_isAddValue){
+        if(m_isAdd){
             int _r_o_id = rer.GetInstanceID();
             string _k = string.Format(_k_sl_val,_r_o_id);
             int _v = _GetDefVal(_k);
@@ -212,7 +212,7 @@ public class RendererSortOrder : GobjLifeListener
     void _ReRenderQueue(Renderer rer,bool isCan){
         if(!isCan || rer == null || this.m_val_queue == 0) return;
 
-        if(m_isAddValue){
+        if(m_isAdd){
             _AddRenderQueue(rer);
         }else{
             rer.ReRenderQueue(this.m_val_queue);

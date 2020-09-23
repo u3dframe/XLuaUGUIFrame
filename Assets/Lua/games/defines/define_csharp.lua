@@ -22,6 +22,8 @@ CFollower = CS.SmoothFollower
 CAnimator = CS.AnimatorEx
 CCCtrler = CS.CharacterControllerEx
 CParticleEx = CS.ParticleSystemEx
+CRSortOrder = CS.RendererSortOrder
+CRMatProp   = CS.RendererMatProperty
 
 CTxt = CS.UGUILocalize
 CGray = CS.UGUIGray

@@ -9,21 +9,22 @@ local ActionFactory = require ("games/logics/_scene/actions/action_factory")
 
 local _vec3,NumEx,type,tostring = Vector3,NumEx,type,tostring
 local tb_insert = table.insert
-local E_State,E_Flag,E_State2Action,E_AiState = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State,LES_C_Action_State
+local E_State,E_Flag,E_State2Action = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State
+local ET_SE,E_AiState = LET_Shader_Effect,LES_C_Action_State
 local _dis_max_sync_pos = (0.8)^2
 local super,_evt = SceneObject,Event
 local M = class( "scene_c_unit",super )
 
 function M:InitCUnit(worldY,mvSpeed)
 	self:SetWorldY( worldY or 0 )
-	self:SetMoveSpeed( mvSpeed or 1 )
+	self:SetMoveSpeed( mvSpeed or 100 ) -- 比例 1:100
 end
 
 function M:OnActive(isActive)
 	super.OnActive( self,isActive )
 	if not isActive then
 		self:RmvFunc("_a_up_" .. tostring(self.enter_a_state))
-		self.enter_a_state = nil
+		self.enter_a_state,self.lfOnceMvOver = nil
 	end
 end
 
@@ -36,7 +37,6 @@ function M:OnInit()
 	self._lf_On_A_Exit = handler_pcall(self,self.OnUpdate_A_Exit)
 
 	self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit)
-	self.lbSkin = self:NewTrsf("skin",true)
 
 	self:OnInit_Unit()
 end
@@ -47,12 +47,6 @@ end
 function M:OnShowBeg()
 	self:SetGName(self:GetCursor())
 	self:_LookAtOther()
-end
-
-function M:CloneSkin(parent)
-	if self.lbSkin then
-		return self.lbSkin:Clone(parent)
-	end
 end
 
 function M:_Init_CU_Vecs()
@@ -166,6 +160,11 @@ function M:LookTarget(target_id,svX,svY)
 	self:LookPos( _x,_z )
 end
 
+function M:IsGrounded(c_y)
+	c_y = c_y or 0
+	return self.comp.isGrounded or ( self.worldY - c_y <= 0.001 )
+end
+
 function M:SetWorldY(w_y)
 	self.worldY = w_y or 0
 end
@@ -208,12 +207,12 @@ function M:GetCurrAniSpeed()
 	return self.ani_speed or 1
 end
 
-function M:ReCsAniSpeed()
+function M:CsAniSpeed( ani_speed )
 	if not self.comp then
 		return
 	end
-	local _ani_speed = self:GetCurrAniSpeed()
-	self.comp:SetSpeed( _ani_speed )
+	ani_speed = ani_speed or self:GetCurrAniSpeed()
+	self.comp:SetSpeed( ani_speed )
 end
 
 function M:SetMoveDir( dir )
@@ -269,10 +268,19 @@ function M:MoveEnd(x,y)
 	self:SetPos( x,y )
 end
 
+function M:SetOnceFunc4MoveOver( funcMvOver )
+	self.lfOnceMvOver = funcMvOver
+end
+
 function M:Move_Over()
 	self._async_m_x,self._async_m_y = nil
 	self:SetState( E_State.Idle )
 	self:SetMoveDir()
+	local _lfc = self.lfOnceMvOver
+	self.lfOnceMvOver = nil
+	if _lfc then
+		_lfc()
+	end
 end
 
 function M:Move_Info()
@@ -280,19 +288,27 @@ function M:Move_Info()
 	return self.comp,self.movement,_speed,self.v3MoveTo
 end
 
+function M:IsInStiff()
+	return ET_SE.Stone == self.ccType
+end
+
 -- 暂停
 function M:Pause()
 	if not super.Pause( self ) then
 		return
 	end
-	self.comp:SetSpeed(0)
+	self:CsAniSpeed(0)
 	return true
 end
 
 -- 恢复
 function M:Regain()
+	if self:IsInStiff() then
+		self.prePause = nil
+		return
+	end
 	super.Regain( self )
-	self:ReCsAniSpeed()
+	self:CsAniSpeed()
 end
 
 function M:HaveFlag(flagid)

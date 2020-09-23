@@ -8,6 +8,7 @@
 local tonumber = tonumber
 local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 local tb_rm_val,tb_keys,tb_concat = table.removeValues,table.keys,table.concat
+local tb_lens = table.lens
 local MgrData,LTimer = MgrData,LTimer
 local E_B_State,E_Object = LES_Battle_State,LES_Object
 local _is_debug = false
@@ -22,9 +23,11 @@ function M.Init()
 	MgrScene:Init()
 
 	this._ms_delay_end = 0
-	this._need_load = 0
-	this._loaded = 0
+	this._need_load,this._loaded = 0,0
+	this._need_load_obj,this._loaded_obj = 0,0
 
+	this.eveRegion = this:TF((1 / (E_B_State.GO - E_B_State.None)),4)
+	this.progress = 0
 	this.state = E_B_State.None
 	this:ReEvent4OnUpdate( true )
 
@@ -46,8 +49,9 @@ end
 
 function M.OnClear()
 	this.state = E_B_State.Battle_End
-	this._need_load = 0
-	this._loaded = 0
+	this._need_load,this._loaded = 0,0
+	this._need_load_obj,this._loaded_obj = 0,0
+	this.progress = 0
 	this.RemoveAll()
 
 	MgrScene.OnClear()
@@ -55,10 +59,14 @@ end
 
 function M:OnUpdate(dt)
 	this._ST_Create_Obj()
+	this._ST_LoadObjs()
+
 	if this.state == E_B_State.Start then
 		this.state = E_B_State.Create_Objs
 	elseif this.state == E_B_State.Create_Objs then
-	elseif this.state == E_B_State.Create_Objs_End then
+		this._ST_OnUp_LoadObj( dt )
+	elseif this.state == E_B_State.LoadOtherObjs then
+		this._ST_OnUp_LoadObj( dt )
 		this.state = E_B_State.Entry_CG
 	elseif this.state == E_B_State.Entry_CG then
 		this.state = E_B_State.Entry_CG_Ing
@@ -74,14 +82,16 @@ function M:OnUpdate(dt)
 	elseif this.state == E_B_State.Battle_End then
 		this.state = E_B_State.End
 		this.isUping = false
-	elseif this.state == E_B_State.Battle_Error then
-		this.state = E_B_State.End
-		this.isUping = false
 	end
 end
 
 function M.GetSObj(uniqueID)
 	return MgrScene.OnGet_Map_Obj( uniqueID )
+end
+
+function M._Up_Progress()
+	this.progress = (this.state - 1) * this.eveRegion;
+	_evt.Brocast(Evt_Loading_UpPlg,this.progress)
 end
 
 function M._IsCanStart()
@@ -92,23 +102,86 @@ function M._IsCanStart()
 end
 
 function M.Start()
-	if this._IsCanStart() then
-		this.state = E_B_State.Start
-	end
-	this._ms_delay_end = 0
+	_evt.Brocast(Evt_Loading_Show,this.progress,this._ST_Begin)
+end
+
+function M._ST_Begin()
+	this.state = E_B_State.Start
 	this.isUping = true
+	this._ms_delay_end = 0
+	this._Up_Progress()
 end
 
 function M._ST_Create_Obj()
 	if not this.sv_queue_add then return end
 	if #this.sv_queue_add <= 0 then
 		if this.state == E_B_State.Create_Objs and (this._loaded >= this._need_load) then
-			this.state = E_B_State.Create_Objs_End
+			this.state = E_B_State.LoadOtherObjs
 		end
 		return
 	end
-	local _lf = this.sv_queue_add[1]
-	tb_remove( this.sv_queue_add,1 )
+	local _lf = tb_remove( this.sv_queue_add,1 )
+	_lf()
+end
+
+function M._ST_OnUp_LoadObj(dt)
+	this._cd1 = this._cd1 or 0.1
+
+	if this._cd1 and this._cd1 > 0 then
+		this._cd1 = this._cd1 - dt
+		if this._cd1 > 0 then
+			return 
+		end
+		this._cd1 = this._cd1 + 0.1
+	end
+	local _cur,_need = this._loaded,this._need_load
+	if this.state ~= E_B_State.Create_Objs then
+		_cur,_need = this._loaded_obj,this._need_load_obj
+	end
+
+	local _v = this:TF2(this.progress + (_cur * this.eveRegion / _need))
+	_evt.Brocast(Evt_Loading_UpPlg,_v)
+end
+
+function M._AddNeedLoadEid( e_id )
+	local _isOkey = MgrData:CheckCfg4Effect( e_id )
+	if not _isOkey then
+		return
+	end
+
+	local _lb = this.e_ids or {}
+	this.e_ids = _lb
+
+	if _lb[e_id] ~= nil then
+		return
+	end
+	_lb[e_id] = true
+
+	local _func_ = function()
+		local _obj_ = EffectFactory.Make( E_EType.Effect_Show,nil,nil,e_id )
+		if _obj_ then
+			_obj_.lfOnShowOnce = function()
+				this._loaded_obj = this._loaded_obj + 1
+				_obj_:View(false)
+			end
+		end
+	end
+
+	_lb = this._need_funcs or {}
+	this._need_funcs = _lb
+	tb_insert(_lb,_func_)
+	this._need_load_obj = this._need_load_obj + 1
+end
+
+function M._ST_LoadObjs()
+	if not this._need_funcs then return end
+	if #this._need_funcs <= 0 then
+		if this.state == E_B_State.LoadOtherObjs and (this._loaded_obj >= this._need_load_obj) then
+			this.state = E_B_State.Entry_CG
+		end
+		return
+	end
+	local _lf = tb_remove( this._need_funcs,1 )
 	_lf()
 end
 
@@ -124,8 +197,9 @@ end
 function M._On_ST_Start_Battle(msg)
 	if msg.e == 0 then
 		this.state = E_B_State.GO
+		_evt.Brocast(Evt_Loading_Hide)
 	else
-		this.state = E_B_State.Battle_Error
+		-- 弹出提示，并且重置所有
 	end
 end
 
@@ -148,13 +222,19 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 			_cfg_ = this:GetCfgData("hero",svMsg.cfgid)
 		end
 		if _cfg_ then
-			local _obj = MgrScene.Add_SObj( objType,_cfg_.resource,svMsg.id )
+			local _resid = _cfg_.resource
+			if svMsg.master then
+				_resid = _cfg_.resid_fs -- 分身资源
+			end
+			local _obj = MgrScene.Add_SObj( objType,_resid,svMsg.id )
 			if _obj then
 				_obj.lfOnShowOnce = function()
 					this._loaded = this._loaded + 1
 				end
 				_obj:View(true,_cfg_,svMsg)
 			end
+
+			
 		end
 	end
 
@@ -188,8 +268,22 @@ end
 
 function M.OnSv_Map_Obj_Skill_Effect(svMsg)
 	local _obj = this.GetSObj( svMsg.caster )
-	if not _obj then return end
-	_obj:CastInjured( svMsg )
+	if _obj then 
+		_obj:CastInjured( svMsg )
+		return 
+	end
+	local _list = svMsg.list
+	local _lens = tb_lens( _list )
+	if _lens > 0 then
+		local _svOne,_obj
+		for i = 1, _lens do
+			_svOne = _list[i]
+			_obj = this.GetSObj( _svOne.target )
+			if _obj ~= nil then
+				_obj:DoHurtEffect( _svOne )
+			end
+		end
+	end
 end
 
 function M.RemoveCurr( id )

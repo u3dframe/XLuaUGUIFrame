@@ -62,7 +62,7 @@ LES_Battle_State = {
 	Start                    = _add(),
 
 	Create_Objs              = _add(),
-	Create_Objs_End          = _add(),
+	LoadOtherObjs            = _add(),
 
 	Entry_CG                 = _add(),
 	Entry_CG_Ing             = _add(),
@@ -214,6 +214,16 @@ LES_Ani_Eft_Point = {
 	[7]                  = "f_l_foot",
 	[8]                  = "f_r_foot",
 	[9]                  = "foot",
+}
+
+-- shader特效 - 类型
+LET_Shader_Effect = {
+	None                 = _add(0),     -- 无效果
+	Stone                = _add(),      -- 石化效果
+}
+
+AET_2_SE = {
+	[LES_Ani_Eft_Type.Stone] = LET_Shader_Effect.Stone,
 }
 
 local function _init_global()

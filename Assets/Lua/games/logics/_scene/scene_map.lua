@@ -28,18 +28,23 @@ function M:OnViewBeforeOnInit()
 end
 
 function M:OnInit()
-	self.lbCamera = self:NewCmr("MainCamera")
+	self.lbCamera = self:NewCmr("MainCamera",true)
+	self.isHasCamera = self.lbCamera ~= nil
 	self.lbGBox = _clsGBox.New(self:GetElement("gbox"))
 	self.compPPLayer = self:GetElementComponent( "MainCamera","PostProcessLayer" )
 	if self.compPPLayer then
 		self.compPPLayer.enabled = Is_PPLayer_Enabled
 	end
 
-	_evt.Brocast(Evt_Vw_Def3DCamera,false,self.lbCamera)
+	if self.isHasCamera then
+		_evt.Brocast(Evt_Vw_Def3DCamera,false,self.lbCamera)
+	end
 end
 
 function M:OnDestroy()
-	_evt.Brocast(Evt_Vw_Def3DCamera,true)
+	if self.isHasCamera then
+		_evt.Brocast(Evt_Vw_Def3DCamera,true)
+	end
 end
 
 function M:GetGBoxUnit(nIndex)

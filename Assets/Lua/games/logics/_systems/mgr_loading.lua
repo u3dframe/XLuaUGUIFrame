@@ -20,8 +20,8 @@ function M._InitUI()
 		abName = "commons/ui_loading",
 		isStay = true,
 		hideType = LE_UI_Mutex.None,
+		layer = LE_UILayer.Pop,
 		-- isUpdate = true,
-		-- layer = LE_UILayer.Pop,
 	})
 	this.ui = ui
 

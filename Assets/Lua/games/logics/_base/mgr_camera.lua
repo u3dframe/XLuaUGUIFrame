@@ -23,10 +23,18 @@ function M:_InitFab()
 	self.lbCamera.OnInit = function(_s)
 		local _c = _s.comp.m_camera
 		_s.mainCamera = UIPubs:NewCmrBy(_c,_c)
+		_c = _s.comp.m_target
+		_s.lbTarget = UIPubs:NewTrsfBy( _c )
+		_c = _s.comp.m_follower
+		_s.lbFlower = UIPubs:NewFollowerBy( _c,_c )
 		_s:SetParent(nil,true)
 		_s:DonotDestory()
 		_s:SetEulerAngles(0,0,0)
 	end
+end
+
+function M:GetFollower()
+	return self.lbCamera.lbFlower
 end
 
 function M:SetLBUICamera(lbUICamera)
