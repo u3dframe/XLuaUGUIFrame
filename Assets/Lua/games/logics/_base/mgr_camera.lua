@@ -37,6 +37,23 @@ function M:GetFollower()
 	return self.lbCamera.lbFlower
 end
 
+function M:GetDTarget()
+	return self.lbCamera.lbTarget
+end
+
+function M:SetTargetPos(x,y,z)
+	return self:GetDTarget():SetPosition( x,y,z )
+end
+
+function M:SetFTarget(target)
+	return self:GetFollower():SetTarget( target )
+end
+
+function M:SetDefTarget(x,y,z)
+	self:SetTargetPos(x,y,z)
+	return self:SetFTarget( self:GetDTarget().trsf )
+end
+
 function M:SetLBUICamera(lbUICamera)
 	self.lbUICamera = lbUICamera
 end

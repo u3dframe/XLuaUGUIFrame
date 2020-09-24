@@ -335,3 +335,22 @@ function table.getVK4Arr(src,itKey,itVal)
 		end
 	end
 end
+
+-- 交集
+function table.intersection(t1,t2)
+    local dest = t1 or t2
+    local src = (dest == t1) and t2 or t1
+	if src then
+        dest = dest or {}
+        local _ret = {}
+		for _, v1 in pairs( src ) do
+            for _, v2 in pairs( dest ) do
+                if v2 == v1 then
+                    tb_insert( _ret,v2 )
+                end
+			end
+		end
+        return _ret
+    end
+    return dest
+end

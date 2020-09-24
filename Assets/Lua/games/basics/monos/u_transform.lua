@@ -241,6 +241,23 @@ function M:AddLocalPosByV3( vec3 )
 	self.trsf.localPosition = vec3
 end
 
+function M:GetSiblingIndex()
+	return self.trsf:GetSiblingIndex()
+end
+
+function M:SetSiblingIndex( bIndex )
+	bIndex = tonum(bIndex) or 0
+	self.trsf:SetSiblingIndex( bIndex )
+end
+
+function M:SetAsFirstSibling()
+	self.trsf:SetAsFirstSibling()
+end
+
+function M:SetAsLastSibling()
+	self.trsf:SetAsLastSibling()
+end
+
 function M:_ExecuteAsync_Trsf()
 	if self._async_isLocal ~= nil then
 		self:SetParent( self._async_parent,self._async_isLocal )

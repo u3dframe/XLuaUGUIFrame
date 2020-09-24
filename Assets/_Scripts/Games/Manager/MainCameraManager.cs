@@ -27,6 +27,7 @@ public class MainCameraManager : MonoBehaviour
 			m_follower = SmoothFollower.Get(m_camera.gameObject);
 			m_follower.target = m_target;
 			m_follower.isUpByLate = true;
+			m_follower.isRunning = true;
 		}
 	}
 }
