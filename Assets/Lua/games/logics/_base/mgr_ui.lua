@@ -16,12 +16,6 @@ local this = M
 
 function M.Init()
 	this.uiViews = {}
-
-	--TODO:功能解锁检查函数初始化
-	local _lb = {}
-	this.lfChecks = _lb
-	
-	_lb[1] = this.CheckLevel
 end
 
 function M.URoot()

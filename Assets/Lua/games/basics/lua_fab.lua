@@ -282,6 +282,11 @@ function M:OnCF_EndOnDestroy()
 	self:OnExit(true)
 end
 
+function M:pre_clean()
+	self.lfPrefEnd1,self.lfPrefEnd2,self.lfOnShowOnce = nil
+	super.pre_clean( self )
+end
+
 function M:Set4NotClear(kk,vv)
 	self.cfgNotClear = self.cfgNotClear or {}
 	self.cfgNotClear[kk] = vv

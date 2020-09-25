@@ -52,10 +52,11 @@ end
 
 function M:OnCF_Fab( obj )
 	super.OnCF_Fab( self,obj )
-	if self.lfLoaded then
-		self.lfLoaded()
-	end
+	local _lf = self.lfLoaded
 	self.lfLoaded = nil
+	if _lf then
+		_lf()
+	end
 end
 
 function M:OnViewBeforeOnInit()

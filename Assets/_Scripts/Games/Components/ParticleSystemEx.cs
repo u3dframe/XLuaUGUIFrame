@@ -163,9 +163,13 @@ public class ParticleSystemEx : GobjLifeListener {
 		Animator ani;
 		AnimationClip[] arrClips;
 		int key;
+		RuntimeAnimatorController runAniCtrl;
 		for (int i = 0; i < arrs.Length; i++) {
 			ani = arrs [i];
-			arrClips = ani.runtimeAnimatorController.animationClips;
+			runAniCtrl = ani.runtimeAnimatorController;
+			if(runAniCtrl == null)
+				continue;
+			arrClips = runAniCtrl.animationClips;
 			if (arrClips == null || arrClips.Length <= 0) {
 				continue;
 			}

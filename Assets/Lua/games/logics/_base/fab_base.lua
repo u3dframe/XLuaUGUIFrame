@@ -6,7 +6,7 @@
 ]]
 
 local ClsObjBasic = ClsObjBasic
-
+local str_contains = string.contains
 local _E_AType = LE_AsType
 
 local super,super2 = LuaFab,UIPubs
@@ -28,10 +28,31 @@ function M:onAssetConfig( _cfg )
 	return _cfg;
 end
 
+local __special_fabs = { "timeline/" }
+-- 没放在 prefabs 文件夹下面的的fab
+function M:IsNoInPrefabsFab( abName )
+	if not abName or "" == abName then
+		return
+	end
+
+	local _isSp = false
+	for _, value in ipairs(__special_fabs) do
+		_isSp = str_contains(abName,value)
+		if _isSp then
+			return true
+		end
+	end
+end
+
 function M:onMergeConfig( _cfg )
 	_cfg = super.onMergeConfig( self,_cfg )
-	if _cfg.assetLType == _E_AType.Fab then
-		_cfg.abName = self:ReSBegEnd( _cfg.abName,"prefabs/",".fab" )
+	local abName = _cfg.abName
+	if abName and abName ~= "" and _cfg.assetLType == _E_AType.Fab then
+		if self:IsNoInPrefabsFab( abName ) then
+			_cfg.abName = self:ReSEnd( abName,".fab" )
+		else
+			_cfg.abName = self:ReSBegEnd( abName,"prefabs/",".fab" )
+		end
 	end
 	return _cfg;
 end

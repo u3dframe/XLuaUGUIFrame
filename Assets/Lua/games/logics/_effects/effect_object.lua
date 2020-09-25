@@ -18,6 +18,22 @@ function M.Builder(idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset
 	return _ret
 end
 
+function M.PreLoad(idMarker,idTarget,resid,lfOnceShow)
+	local _ret_ = this.Builder( idMarker,idTarget,resid )
+	_ret_:SetCallFunc( lfOnceShow )
+	_ret_.lfOnShowOnce = function()
+		local _lf = _ret_.callFunc
+		_ret_.callFunc = nil
+		_ret_:Disappear()
+
+		if _lf then
+			_lf()
+		end
+	end
+	_ret_:Start()
+	return _ret_
+end
+
 function M:ctor()
 	super.ctor( self )
 	self.isUping = false

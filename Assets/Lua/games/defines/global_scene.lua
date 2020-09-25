@@ -106,6 +106,7 @@ LES_C_Action_State = {
 	Hit_Down_3     = 57,     -- 击倒
 	Fear           = 58,     -- 恐惧
 	Sleep          = 59,     -- 睡眠
+	StandUp        = 60,     -- 站起来
 }
 
 -- Animator的层级Layer
@@ -189,6 +190,8 @@ LE_Effect_Type = {
 	Effect_Show          = _add(),      -- 特效 - 创建 & 显示
 	Buff_Show            = _add(),      -- buff - 创建 & 显示
 	Bullet_Show          = _add(),      -- 子弹 - 创建 & 显示
+	
+	Pre_Effect           = _add(),      -- 特效 - 预加载
 }
 
 -- 动作特效 - 类型

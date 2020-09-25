@@ -45,6 +45,9 @@ function M.Make(eftType,idMarker,idTarget,...)
 		if _isShow and _ret then
 			_ret:Start()
 		end
+	elseif eftType == E_Type.Pre_Effect then
+		-- 参数 : resid,lfOnceShow
+		_ret = ClsEffect.PreLoad( idMarker,idTarget,... )
 	end
 	return _ret
 end

@@ -11,6 +11,7 @@ local tb_rm_val,tb_keys,tb_concat = table.removeValues,table.keys,table.concat
 local tb_lens = table.lens
 local MgrData,LTimer = MgrData,LTimer
 local E_B_State,E_Object = LES_Battle_State,LES_Object
+local E_Type = LE_Effect_Type
 local _is_debug = false
 
 MgrScene = require( "games/logics/_scene/mgr_scene" )
@@ -52,6 +53,7 @@ function M.OnClear()
 	this._need_load,this._loaded = 0,0
 	this._need_load_obj,this._loaded_obj = 0,0
 	this.progress = 0
+	this.res_ids = nil
 	this.RemoveAll()
 
 	MgrScene.OnClear()
@@ -67,7 +69,7 @@ function M:OnUpdate(dt)
 		this._ST_OnUp_LoadObj( dt )
 	elseif this.state == E_B_State.LoadOtherObjs then
 		this._ST_OnUp_LoadObj( dt )
-		this.state = E_B_State.Entry_CG
+		-- this.state = E_B_State.Entry_CG
 	elseif this.state == E_B_State.Entry_CG then
 		this.state = E_B_State.Entry_CG_Ing
 	elseif this.state == E_B_State.Entry_CG_Ing then
@@ -143,28 +145,24 @@ function M._ST_OnUp_LoadObj(dt)
 	_evt.Brocast(Evt_Loading_UpPlg,_v)
 end
 
-function M._AddNeedLoadEid( e_id )
-	local _isOkey = MgrData:CheckCfg4Effect( e_id )
-	if not _isOkey then
+local function _pre_load_obj()
+	this._loaded_obj = this._loaded_obj + 1
+end
+
+function M._AddNeedLoadResid( resid )
+	if not resid then
 		return
 	end
 
-	local _lb = this.e_ids or {}
-	this.e_ids = _lb
+	local _lb = this.res_ids or {}
+	this.res_ids = _lb
 
-	if _lb[e_id] ~= nil then
+	if _lb[resid] ~= nil then
 		return
 	end
-	_lb[e_id] = true
-
+	_lb[resid] = true
 	local _func_ = function()
-		local _obj_ = EffectFactory.Make( E_EType.Effect_Show,nil,nil,e_id )
-		if _obj_ then
-			_obj_.lfOnShowOnce = function()
-				this._loaded_obj = this._loaded_obj + 1
-				_obj_:View(false)
-			end
-		end
+		EffectFactory.Make( E_Type.Pre_Effect,nil,nil,resid,_pre_load_obj )
 	end
 
 	_lb = this._need_funcs or {}
@@ -233,8 +231,12 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 				end
 				_obj:View(true,_cfg_,svMsg)
 			end
-
 			
+			if _cfg_.resids then
+				for _, resid in ipairs(_cfg_.resids) do
+					this._AddNeedLoadResid( resid )
+				end
+			end
 		end
 	end
 
