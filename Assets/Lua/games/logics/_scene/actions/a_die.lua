@@ -1,13 +1,13 @@
 --[[
-	-- 行为动作 - 死亡
+	-- 状态 - 死亡
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-09-07 10:25
 	-- Desc : 
 ]]
 
-local E_Action = LES_C_Action
-local E_AniState = LES_C_Action_State
+local E_Life = LES_Life
 local E_State = LES_C_State
+local E_AniState = LES_C_Action_State
 
 local MgrData = MgrData
 
@@ -30,7 +30,7 @@ function M:_On_AEnter()
 		self.time_out = _cfg.effecttime / 1000
 		evt.Brocast( Evt_Battle_Delay_End_MS,_cfg.effecttime )
 		self.lbOwner:ExcuteEffectByEid( self.cfg_id,true )
-		self:SetState( E_Action.Update )
+		self:SetState( E_Life.Update )
 	else
 		self:Exit()
 	end

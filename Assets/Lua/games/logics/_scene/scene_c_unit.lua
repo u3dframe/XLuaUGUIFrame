@@ -11,6 +11,7 @@ local _vec3,NumEx,type,tostring = Vector3,NumEx,type,tostring
 local tb_insert = table.insert
 local E_State,E_Flag,E_State2Action = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State
 local ET_SE,E_AiState = LET_Shader_Effect,LES_C_Action_State
+
 local _dis_max_sync_pos = (0.8)^2
 local super,_evt = SceneObject,Event
 local M = class( "scene_c_unit",super )
@@ -92,10 +93,6 @@ function M:PlayAction(n_action)
 	end
 end
 
-function M:GetActionStr()
-	return tostring(LES_Ani_Layer[0]) .. "." .. tostring(LES_Ani_State[self.n_action or 0])
-end
-
 function M:OnUpdate_A_Enter(_,_,_,a_state)
 	self.enter_a_state = a_state
 end
@@ -113,12 +110,23 @@ function M:Add_AUpFunc( a_state,func,obj )
 	self:AddFunc( "_a_up_" .. tostring(a_state),func,obj )
 end
 
-function M:SetState(state,force)
-	force = (force == true) or (self.state == nil)  or (state ~= self.state)
-	if not force then return end
-	self.preState = self.state
+function M:GetState()
+	return self.state,self.preState
+end
+
+function M:SetStateAndPre(state,preState)
+	self.preState = preState
 	self.state = state
-	self:SetMachine()
+end
+
+function M:SetState(state,force,...)
+	force = (force == true) or (self.state == nil)  or (state ~= self.state)
+	if not force then
+		return
+	end
+	self:SetStateAndPre( state,self.state )
+	-- printInfo("======= = pre =  [%s] = cur =  [%s]",self.preState,self.state)
+	self:SetMachine( ... )
 end
 
 function M:_LookAtOther()
@@ -238,7 +246,6 @@ function M:SetUpMovement(yVal,isAddWY)
 	self.movement.y = yVal
 end
 
-
 function M:MoveTo(to_x,to_y,cur_x,cur_y)
 	self._async_m_x,self._async_m_y,self._async_c_x,self._async_c_y = nil
 	if self.comp then
@@ -248,7 +255,6 @@ function M:MoveTo(to_x,to_y,cur_x,cur_y)
 			self.v3M_Temp:Set(cur_x,self.worldY,cur_y)
 			_diff = self.v3M_Temp - _pos
 			if _diff.sqrMagnitude > _dis_max_sync_pos then
-				-- printTable({dx =_diff.x,dy =_diff.y,dz = _diff.z},"big 1")
 				self:SetPos( cur_x,cur_y )
 				_pos = self.v3Pos
 			end
@@ -349,16 +355,13 @@ function M:CheckAttack()
 	return not (self:HaveFlag(E_Flag.No_Attack))
 end
 
-function M:GetState()
-	return self.state
-end
 
 function M:GetActionState()
 	return E_State2Action[self.state]
 end
 
-function M:SetMachine()
-	ActionFactory.MakeMachine( self )
+function M:SetMachine( ... )
+	ActionFactory.MakeMachine( self,... )
 end
 
 function M:EndAction()

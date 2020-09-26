@@ -1,5 +1,5 @@
 --[[
-	-- 行为动作 - 移动 Run
+	-- 状态 - 移动 Run
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-08-27 17:44
 	-- Desc : 
@@ -9,9 +9,8 @@ local _v3_zero = _vec3.zero
 local _min_end = (0.06)^2
 local _speed_offset,_dis_unit,_dis_end = 0.01,0.06,_min_end
 
-local E_Action = LES_C_Action
-local E_AniState = LES_C_Action_State
 local E_State = LES_C_State
+local E_AniState = LES_C_Action_State
 
 local super = ActionBasic
 local M = class("action_run", super)

@@ -62,7 +62,7 @@ public class CharacterControllerEx : AnimatorEx
 			this.m_c_ctrler = this.m_gobj.GetComponentInChildren<CharacterController>(true);
 		}
 		
-		_ReCalcSetOffset();
+		ReRHeight();
 	}
 
 	override protected void OnCall4Show(){
@@ -91,7 +91,8 @@ public class CharacterControllerEx : AnimatorEx
 		this.m_c_ctrler.radius = radius;
 		this.m_c_ctrler.height = height;
 		float yCenter =  (height <=  2 * radius) ? radius : height / 2;
-		this.m_c_ctrler.center = new Vector3(0,yCenter,0);
+		float skinWidth = this.m_c_ctrler.skinWidth;
+		this.m_c_ctrler.center = new Vector3(0,yCenter + skinWidth,0);
 
 		_ReCalcSetOffset();
 	}
@@ -99,6 +100,14 @@ public class CharacterControllerEx : AnimatorEx
 	[ContextMenu("Re Def Radius Height")]
 	public void ReRHeightDef(){
 		SetRadiusAndHeight(0.5f,2f);
+	}
+
+	[ContextMenu("Re Radius Height")]
+	public void ReRHeight(){
+		if(this.m_c_ctrler == null) return;
+		float radius = this.m_c_ctrler.radius;
+		float height = this.m_c_ctrler.height;
+		SetRadiusAndHeight(radius,height);
 	}
 
 	[ContextMenu("Re Bind Nodes (重新绑定所需节点)")]

@@ -1,5 +1,5 @@
 --[[
-	-- 行为动作 - 攻击 attack - skill
+	-- 状态 - 攻击 attack - skill
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-08-27 18:19
 	-- Desc : 
@@ -8,7 +8,7 @@
 local type,tostring = type,tostring
 local tb_end = table.end_arr
 
-local E_Action = LES_C_Action
+local E_Life = LES_Life
 local E_State = LES_C_State
 
 local super = ActionBasic
@@ -27,7 +27,7 @@ function M:_On_AEnter()
 	local _isBl = true
 	if self.lbOwner:IsBigSkill() then
 		_isBl = false
-		self:SetState( E_Action.Update )
+		self:SetState( E_Life.Update )
 	end
 	if _isBl then
 		self.isAi_Up = false
@@ -48,8 +48,7 @@ end
 
 function M:_On_AExit()
 	self.tmData,self.n_cursor = nil
-	local _owner = super._On_AExit( self )
-	_owner:SetState( E_State.Idle )
+	super._On_AExit( self )
 end
 
 function M:_Excute_Effect()

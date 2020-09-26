@@ -174,8 +174,12 @@ end
 function M._ST_LoadObjs()
 	if not this._need_funcs then return end
 	if #this._need_funcs <= 0 then
-		if this.state == E_B_State.LoadOtherObjs and (this._loaded_obj >= this._need_load_obj) then
-			this.state = E_B_State.Entry_CG
+		if this.state == E_B_State.LoadOtherObjs then
+			if (this._loaded_obj > this._need_load_obj) then
+				this.state = E_B_State.Entry_CG
+			elseif (this._loaded_obj == this._need_load_obj) then
+				this._loaded_obj = this._loaded_obj + 1
+			end
 		end
 		return
 	end

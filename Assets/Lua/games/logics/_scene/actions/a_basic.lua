@@ -1,11 +1,11 @@
 --[[
-	-- 行为动作 - 父类
+	-- 状态 - 父类
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-08-27 14:15
 	-- Desc : 
 ]]
 
-local E_Action = LES_C_Action
+local E_Life = LES_Life
 
 local super = LuaObject
 local M = class( "action_basic",super )
@@ -16,7 +16,7 @@ function M:ctor(lbObj)
 	self.lbOwner = lbObj
 	self.ownerCursor = lbObj:GetCursor()
 	self.isDoned = false
-	self.a_state = E_Action.Create
+	self.a_state = E_Life.Create
 	self.isBreakSelf = true -- 能否被自身 jugde_state 相同的 状态打断
 	self.isBreakOther = true -- 能否被其他 jugde_state 状态打断
 	-- self.action_state = 0
@@ -37,17 +37,17 @@ end
 
 function M:_AEnter()
 	if self:_IsAEnter() then
-		self.isDoned = true
 		self.action_state = self.action_state or self.lbOwner:GetActionState()
 		self.up_sec = 0
 		self.time_out = 0
 		self.isDisappear = false
 
 		if self:_On_AEnter() then
+			self.isDoned = true
 			self.start_sec = Time.time
 			self:_Enter_Ai_State()
 			self.lbOwner:PlayAction( self.action_state )
-			self:SetState( E_Action.Update )
+			self:SetState( E_Life.Update )
 		end
 	end
 end
@@ -88,10 +88,10 @@ function M:_On_Up4Exit(dt)
 end
 
 function M:_On_AExit()
-	if self.a_state == E_Action.End then
+	if self.a_state == E_Life.End then
 		return
 	end
-	self.a_state = E_Action.End
+	self.a_state = E_Life.End
 	local _lb = self.lbOwner
 	if not _lb then return end
 	self.lbOwner = nil
@@ -101,15 +101,15 @@ function M:_On_AExit()
 end
 
 function M:On_Update(dt)
-	if self.a_state == E_Action.Enter then
+	if self.a_state == E_Life.Enter then
 		self:_AEnter()
-	elseif self.a_state == E_Action.Update then
-		if self.pre_a_state == E_Action.Enter or self.pre_a_state == E_Action.Update then
+	elseif self.a_state == E_Life.Update then
+		if self.pre_a_state == E_Life.Enter or self.pre_a_state == E_Life.Update then
 			self.up_sec = self.up_sec + dt
 			self:_On_AUpdate(dt)
 			self:_On_Up4Exit(dt)
 		end
-	elseif self.a_state == E_Action.Exit then
+	elseif self.a_state == E_Life.Exit then
 		self:_On_AExit()
 	end
 end
@@ -122,15 +122,19 @@ function M:SetState(state,force)
 	self.a_state = state
 end
 
-function M:Enter()
-	self:SetState( E_Action.Enter )
+function M:Reset( ... )
+end
+
+function M:Enter( ... )
+	self:Reset( ... )
+	self:SetState( E_Life.Enter )
 	self:On_Update()
 	return self
 end
 
 function M:Exit()
-	if self.a_state == E_Action.End then return end
-	self:SetState( E_Action.Exit )
+	if self.a_state == E_Life.End then return end
+	self:SetState( E_Life.Exit )
 	self:On_Update()
 end
 

@@ -1,13 +1,12 @@
 --[[
-	-- 行为动作 - 待机 Idle
+	-- 状态 - 待机 Idle
 	-- Author : canyon / 龚阳辉
 	-- Date : 2020-08-27 14:15
 	-- Desc : 
 ]]
 
-local E_Action = LES_C_Action
-local E_AniState = LES_C_Action_State
 local E_State = LES_C_State
+local E_AniState = LES_C_Action_State
 
 local super = ActionBasic
 local M = class( "action_idle",super )

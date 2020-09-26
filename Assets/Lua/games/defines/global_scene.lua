@@ -145,8 +145,9 @@ LES_C_State = {
 	Die                  = _add(),      -- 死亡
 	Run                  = _add(),      -- 跑
 	Grab                 = _add(),      -- 被拧起
-	Show_1               = _add(),      -- 展示1
 	Attack               = _add(),      -- 攻击
+	BeHit                = _add(),      -- 被击,受击
+	Show_1               = _add(),      -- 展示1
 }
 
 -- 人性角色 - 状态 转为 动作Action状态
@@ -172,8 +173,8 @@ LES_C_Flag_No_Sub = {
 	Buff_Levitate            = 16, -- 浮空
 }
 
--- 人物动作事件Action的 State 
-LES_C_Action = {
+-- 生命周期状态 State 
+LES_Life = {
 	Create                     = _add(0), -- 创建
 	Enter                      = _add(),  -- 进入
 	Update                     = _add(),  -- 更新
@@ -204,6 +205,9 @@ LES_Ani_Eft_Type = {
 	FlyTarget            = 5,      -- 飞行 到 目标身上
 	FlyPosition          = 6,      -- 飞行 到 目标当时的位置
 	Stone                = 8,      -- 石化
+	HitFly               = 9,      -- 击飞
+	HitBack              = 10,     -- 击退
+	HitFall              = 11,     -- 击倒
 }
 
 -- 动作特效 - 挂接点

@@ -11,7 +11,7 @@ local tb_insert,tb_sort,tb_lens = table.insert,table.sort,table.lens
 local tostring,NumEx = tostring,NumEx
 local str_split = string.split
 
-local E_Object,E_State,E_AE_Point = LES_Object,LES_C_State,LES_Ani_Eft_Point
+local E_Object,E_State = LES_Object,LES_C_State
 local E_EType,E_CEType = LE_Effect_Type,LES_Ani_Eft_Type
 local MgrData,LTimer = MgrData,LTimer
 
@@ -101,16 +101,6 @@ end
 function M:OnUpdate_Creature(dt)
 end
 
-function M:GetActionState()
-	local _a_state
-	if self.state == E_State.Attack then
-		_a_state = self.cfgSkill_Action.action_state
-	else
-		_a_state = super.GetActionState( self )
-	end
-	return _a_state
-end
-
 function M:SetPos_SvPos(x,y)
 	x,y = self:SvPos2MapPos( x,y )
 	self:SetPos ( x,y )
@@ -125,11 +115,6 @@ end
 function M:MoveEnd_SvPos(x,y)
 	x,y = self:SvPos2MapPos( x,y )
 	self:MoveEnd( x,y )
-end
-
-function M:IsBigSkill()
-	if not self.cfgSkill_Action then return false end
-	return self.cfgSkill_Action.type == 1
 end
 
 function M:_AddECastData( e_id,e_svData )
@@ -234,36 +219,48 @@ end
 function M:On_SEByCCType(preType)
 end
 
-function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )	
+function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
+	isHurt = (isHurt == true)
 	local _isOkey,cfgEft = MgrData:CheckCfg4Action( e_id )
 	if not _isOkey then return end
 
 	if (not isNotAct) and cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )
 	end
-	_isOkey = MgrData:CheckCfg4Effect( e_id )
-	if not _isOkey then return end
-
+	
 	local _e_data,_idCaster,_idTarget = self:_GetECastData( e_id ),self:GetCursor()
 	_idTarget = _idCaster
+	local _e_tp = cfgEft.type
 	if _e_data then
-		_idCaster = (isHurt == true) and _e_data.caster or _idCaster
-		_idTarget = (E_CEType.SelfBone == cfgEft.type or E_CEType.SelfBonePos == cfgEft.type) and _idCaster or _e_data.target
+		_idCaster = (isHurt) and _e_data.caster or _idCaster
+		_idTarget = (E_CEType.SelfBone == _e_tp or E_CEType.SelfBonePos == _e_tp) and _idCaster or _e_data.target
 	end
 
-	if cfgEft.type > E_CEType.SelfBonePos then
-		self:_ExcuteSpecialEffect(e_id,cfgEft,_idCaster,_idTarget)
-	else
-		self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
+	self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
+
+	if isHurt then
+		local _e_id_,_e_tmp_ = self:GetCfgEIDByEType( _e_tp )
+		if _e_id_ then
+			_e_tmp_ = MgrData:GetCfgSkillEffect( _e_id_ )
+		end
+
+		if _e_tmp_ then
+			self.behit_action_state = _e_tmp_.action_state
+			self:SetState( E_State.BeHit,false,e_id,cfgEft,_idCaster,_idTarget,_e_data )
+		end
 	end
 end
 
 function M:_ExcuteEffect( e_id,cfgEft,idCaster,idTarget )
+	local _isOkey = MgrData:CheckCfg4Effect( e_id )
+	if not _isOkey then
+		return
+	end
+
 	if cfgEft.type == E_CEType.FlyTarget or cfgEft.type == E_CEType.FlyPosition then
 		return EffectFactory.Make( E_EType.Bullet_Show,idCaster,idTarget,e_id )
 	else
-		local _speed = 1
-		return EffectFactory.Make( E_EType.Effect_Show,idCaster,idTarget,e_id,_speed )
+		return EffectFactory.Make( E_EType.Effect_Show,idCaster,idTarget,e_id )
 	end
 end
 
@@ -378,18 +375,6 @@ end
 
 function M:IsDeath()
 	return self.isDied == true or self.state == E_State.Die
-end
-
-function M:GetCfgEID4Die()
-	if self.data and self.data.die then
-		return self.data.die
-	end
-end
-
-function M:GetCfgEID4Separation()
-	if self.data and self.data.separation then
-		return self.data.separation
-	end
 end
 
 function M:AddBuff( b_id,duration )
