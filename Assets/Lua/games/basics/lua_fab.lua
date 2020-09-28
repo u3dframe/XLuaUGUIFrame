@@ -274,8 +274,16 @@ end
 function M:OnExit(isInited)
 end
 
+function M:OnActive(isActive)
+	super.OnActive( self,isActive )
+	if not isActive then
+		self:OnEnd()
+	end
+end
+
 function M:OnCF_BegOnDestroy()
 	self:OnDestroy()
+	self:OnEnd(true)
 end
 
 function M:OnCF_EndOnDestroy()

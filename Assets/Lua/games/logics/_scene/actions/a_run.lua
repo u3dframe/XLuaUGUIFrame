@@ -57,7 +57,7 @@ end
 function M:OnUpdate4Moving(dt)
     local _owner,_comp,movement,speed,_v3To,c_spd = self.lbOwner
     local _pos = _owner:GetPosition()
-    _comp,movement,speed,_v3To = _owner:Move_Info()
+    _comp,speed,movement,_v3To = _owner:Move_Info()
     if _v3To then
         self.v3To:Set(_v3To.x,_v3To.y,_v3To.z)
     end

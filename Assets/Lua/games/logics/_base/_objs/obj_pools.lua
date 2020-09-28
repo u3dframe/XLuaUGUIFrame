@@ -57,27 +57,34 @@ function M:GetPool( name,isNew )
 	return _pool
 end
 
-function M:BorrowObj(name, ... )
+function M:Borrow(name)
 	if not name or "" == name then
 		if _is_debug then
-			printInfo("=== BorrowObj name is nil")
+			printInfo("=== Borrow name is nil")
 		end
 		return 
 	end
 
 	local _pool = self:GetPool( name,true )
 	local obj = tb_remove(_pool,1)
-
 	if not obj then
 		local _cls = self:GetClassBy( name,"@@" )
 		if type(_cls.IsObjPool) == "function" then
 			obj = _cls.New()
 			if _is_debug then
-				printInfo("=== BorrowObj == [%s] = [%s] = [%s]",name,obj,_cls:getCName())
+				printInfo("=== Borrow == [%s] = [%s] = [%s]",name,obj,_cls:getCName())
 			end
 		end
 	end
-	
+	return true,obj
+end
+
+function M:BorrowObj(name, ...)
+	local _isOkey,obj = self:Borrow( name )
+	if not _isOkey then
+		return 
+	end
+
 	if obj then
 		obj:SetObjPoolName( name )
 		obj:ResetAndShow( ... )
@@ -88,7 +95,26 @@ function M:BorrowObj(name, ... )
 	return obj
 end
 
-function M:ReturnObj(obj)
+local function _funcPre( obj )
+	local _func = function() 
+		obj:ResetAndHide() 
+	end
+	local _error = function()
+		if _is_debug then
+			printError(debug.traceback())
+		end
+		obj:Do_Clear()
+	end
+
+	local state = xpcall(_func,_error)
+	return (state == true)
+end
+
+function M:ReBackObj(obj)
+	self:ReturnObj( obj,_funcPre )
+end
+
+function M:ReturnObj(obj,lfPreBack)
 	if type(obj) ~= "table" or type(obj.IsObjPool) ~= "function" then return end
 	local _p_name = obj:GetObjPoolName()
 	if not _p_name then
@@ -98,15 +124,11 @@ function M:ReturnObj(obj)
 		return 
 	end
 
-	local _func = function() obj:ResetAndHide() end
-	local _error = function()
-		if _is_debug then
-			printError(debug.traceback())
-		end
-		obj:Do_Clear()
+	local state = true
+	if type(lfPreBack) == "function" then
+		state = lfPreBack( obj )
 	end
 
-	local state = xpcall(_func,_error)
 	if state == true then
 		local _pool = self:GetPool( _p_name )
 		if _pool ~= nil then

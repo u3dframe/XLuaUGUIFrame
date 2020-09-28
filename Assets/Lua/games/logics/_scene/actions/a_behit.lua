@@ -19,7 +19,6 @@ end
 
 function M:Reset( e_id,cfgEft,idCaster,idTarget,svData )
 	self.e_id = e_id
-	self.cfgEft = cfgEft
 	self.idCaster = idCaster
 	self.idTarget = idTarget
 	self.beType = -1
@@ -27,6 +26,8 @@ function M:Reset( e_id,cfgEft,idCaster,idTarget,svData )
 	if cfgEft then
 		self.beType = cfgEft.type
 	end
+	
+	self.isBFlay = (self.beType == E_CEType.HitBack) or (self.beType == E_CEType.HitFly)
 end
 
 function M:_On_AExit()
@@ -35,27 +36,29 @@ function M:_On_AExit()
 	super._On_AExit( self )
 end
 
-function M:_IsDBFlay()
-	return (self.beType == E_CEType.HitBack) or (self.beType == E_CEType.HitFall) or (self.beType == E_CEType.HitFly)
-end
-
 function M:_On_AEnter()
 	local _isBl = (self.svData ~= nil)
 	if _isBl then
 		_isBl = false
-		if self:_IsDBFlay() then
+		if self.isBFlay then
 			_isBl = true
 			local _x,_y = self.svData.args2 * 0.01,self.svData.args3 * 0.01
 			local to_x,to_y = self.lbOwner:SvPos2MapPos( _x,_y )
-			if self.beType ~= E_CEType.HitFly then
-				self.lbOwner:SetPos( to_x,to_y )
-			else
-				self.to_x,self.to_y = to_x,to_y
+			self.to_x,self.to_y = to_x,to_y
+
+			local cfgEft = self.lbOwner:GetCfgEftByEType( self.beType )
+			if cfgEft then
+				self.time_out = (cfgEft.effecttime) / 1000
 			end
 		end
-		
 	end
 	return _isBl == true
+end
+
+function M:_OnEnd_AEnter()
+	if self.isBFlay then
+		self.lbOwner:SetPos( self.to_x,self.to_y )
+	end
 end
 
 return M

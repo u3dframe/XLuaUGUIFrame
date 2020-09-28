@@ -9,6 +9,7 @@ local tb_lens = table.lens
 local E_CEType = LES_Ani_Eft_Type
 
 local MgrData = MgrData
+local tb_append = table.append
 
 local super,super2,_evt = LuaObject,ClsObjBasic,Event
 local M = class( "buff",super,super2 )
@@ -24,7 +25,7 @@ function M.Builder(idMarker,idTarget,b_id,duration,speed)
 	if not _isOkey then return end
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. b_id
 	duration = duration or (_cfg_buff.duration / 1000)
-	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,b_id,duration,_cfg_buff.cast_effect,speed )
+	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,b_id,duration,_cfg_buff.cast_effect,speed,_cfg_buff.cast_effects )
 	return _ret
 end
 
@@ -33,26 +34,21 @@ function M:ctor()
 	super2.ctor( self )
 end
 
-function M:Reset(idMarker,idTarget,b_id,duration,e_id,speed)
+function M:Reset(idMarker,idTarget,b_id,duration,e_id,speed,e_ids)
 	self.isUping = false
-	self:SetData( b_id,idMarker,idTarget,duration,e_id,speed )
+	self:SetData( b_id,idMarker,idTarget,duration,e_id,speed,e_ids )
 end
 
-function M:OnSetData(idMarker,idTarget,duration,e_id,speed)
-	self:_DisappearSEft()
+function M:OnSetData(idMarker,idTarget,duration,e_id,speed,e_ids)
+	self:_DisappearTarget()
 	self:_DisappearEffect()
 	
 	self.idCaster = idMarker
 	self.idTarget = idTarget or idMarker
 	self.timeOut = duration
 	self.e_id = e_id
+	self.e_ids = e_ids
 	self.speed = speed or 1
-
-	local _,cfgEft = MgrData:CheckCfg4Effect( self.e_id )
-	if cfgEft and cfgEft.type then
-		self.shaderType = AET_2_SE[cfgEft.type]
-	end
-	self.cfgEft = cfgEft
 end
 
 function M:ReEvent4Self(isbind)
@@ -82,13 +78,13 @@ end
 function M:OnPreDisappear()
 	self.isUping,self.isDisappear,self.timeOut = nil
 	self:_DisappearEffect()
-	self:_DisappearSEft()
+	self:_DisappearTarget()
 	self:ReEvent4OnUpdate(false)
 end
 
 function M:_DisappearEffect()
 	local _lbs = self.lbEfcts
-	self.lbEfcts,self.currEft = nil
+	self.lbEfcts = nil
 
 	if _lbs then
 		for _, v in ipairs(_lbs) do
@@ -97,14 +93,25 @@ function M:_DisappearEffect()
 	end
 end
 
-function M:_DisappearSEft()
+function M:_DisappearTarget()
 	local _set = self.shaderType
 	self.shaderType = nil
+	local _isPA = self.isPlayAction
+	self.isPlayAction = nil
+	local _isChgBd = self.isChgBody
+	self.isChgBody = nil
 
-	if _set then
-		local _lbTarget = this.GetSObj4Battle( self.idTarget )
-		if _lbTarget then
+	local _lbTarget = this.GetSObj4Battle( self.idTarget )
+	if _lbTarget then
+		if _set then
 			_lbTarget:ExcuteSEByCCType( 0 )
+		end
+		if _isPA then
+			_lbTarget:PlayAction( 0 )
+		end
+
+		if _isChgBd then
+			_lbTarget:StopChgBody()
 		end
 	end
 end
@@ -138,15 +145,54 @@ function M:_StartShaderEffect()
 end
 
 function M:_StartEffect()
-	if (not self.cfgEft) or (not self.cfgEft.resid) then
+	self:_DoEffect( self.e_id )
+	if self.e_ids then
+		for _, eid in ipairs(self.e_ids) do
+			self:_DoEffect( eid )
+		end
+	end
+end
+
+function M:_DoEffect( e_id )
+	if (not e_id) then
 		return
 	end
-	self.lbEfcts = EffectFactory.CreateEffect( self.idCaster,self.idTarget,self.e_id )
-	self.isUping = tb_lens(self.lbEfcts) > 0	
-	if self.isUping then
-		self.currEft = self.lbEfcts[1]
+	local _cfg = MgrData:GetCfgSkillEffect( e_id )
+	if (not _cfg) then
+		return
 	end
-	EffectFactory.ShowEffects( self.lbEfcts )
+	if _cfg and _cfg.type then
+		self.shaderType = AET_2_SE[_cfg.type]
+	end
+
+	local _lbTarget = this.GetSObj4Battle( self.idTarget )
+	if (not _lbTarget) then
+		return
+	end
+	local _e_id = _lbTarget:GetCfgEIDByEType( _cfg.type )
+	if _e_id then
+		_cfg = MgrData:GetCfgSkillEffect( _e_id )
+		if (not _cfg) then
+			return
+		end
+	else
+		_e_id = e_id
+	end
+
+	local _lbs = EffectFactory.CreateEffect( self.idCaster,self.idTarget,_e_id )
+	local _lens = tb_lens( _lbs )
+	self.isUping = (_lens > 0) or (_cfg.action_state)
+	
+	self.isPlayAction = (_cfg.action_state ~= nil)
+	if self.isPlayAction then
+		_lbTarget:PlayAction( _cfg.action_state )
+	end
+	if _lens > 0 and self.isUping then
+		self.lbEfcts = self.lbEfcts or {}
+		tb_append(self.lbEfcts, _lbs)
+	end
+	self.isChgBody = _lbTarget:ChangeBody( _e_id )
+	EffectFactory.ShowEffects( _lbs )
 end
 
 return M

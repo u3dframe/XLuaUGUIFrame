@@ -68,7 +68,7 @@ function M:Start(endTime, isAdd, startTime)
     self.isAdd = isAdd == true
     local _tmp = _ltimer.GetSvTime()
     if (endTime > yearSec and endTime < _tmp) or endTime <= 0 then
-        self:ExcuteCallFunc()
+        self:_OnEnd()
         return
     end
 
@@ -132,7 +132,7 @@ function M:_OnEnd()
     self.isUping = false
     self:RemoveEvents()
     self:SetText(1)
-    self:ExcuteCallFunc()
+    self:ExcuteCallFuncOnce()
 end
 
 function M:on_clean()
@@ -148,6 +148,10 @@ end
 function M:SetText( val,... )
     if not self.lbTxt then return end
     self.lbTxt:SetOrFmt( val,... )
+end
+
+function M:Stop()
+    self:_OnEnd()
 end
 
 return M

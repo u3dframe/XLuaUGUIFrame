@@ -1,6 +1,7 @@
 -- U开头代表Unity的CSharp Class, C开头代表自身封装的CSharp Class
 
 -- UAnimation = UnityEngine.Animation
+UApplication = CS.UnityEngine.Application
 UPlayerPrefs = CS.UnityEngine.PlayerPrefs
 UGameObject = CS.UnityEngine.GameObject
 UTransform = CS.UnityEngine.Transform

@@ -42,6 +42,30 @@ function M:ExcuteCallFunc(data)
 	end
 end
 
+function M:ExcuteCallFuncOnce(data)
+	local _lf = self.callFunc
+	self.callFunc = nil
+	if _lf then
+		_lf(data or self)
+	end
+end
+
+function M:SetMoveDir( dir )
+	self.movement = self.movement or Vector3.zero
+	if dir then
+		dir.y = 0
+		local mY = self.movement.y
+		self.movement.y = 0
+		local _dn = dir.normalized
+		if not _dn:Equals(self.movement) then
+			self.movement = _dn
+		end
+		self.movement.y = mY
+	else
+		self.movement:Set( 0,0,0)
+	end
+end
+
 function M:Lens4Pars( ... )
 	return _nPars( ... )
 end

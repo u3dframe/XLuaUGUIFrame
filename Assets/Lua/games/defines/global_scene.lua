@@ -208,6 +208,7 @@ LES_Ani_Eft_Type = {
 	HitFly               = 9,      -- 击飞
 	HitBack              = 10,     -- 击退
 	HitFall              = 11,     -- 击倒
+	ChgBody              = 12,     -- 改变大小 size
 }
 
 -- 动作特效 - 挂接点

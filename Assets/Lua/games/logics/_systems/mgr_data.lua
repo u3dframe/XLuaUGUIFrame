@@ -157,9 +157,8 @@ function M:CheckCfg4Buff( b_id )
 	if not b_id then return end
 	if not b_id then return end
 	local _cfg = self:GetCfgBuff( b_id )
-	if not _cfg then return end
-	local _isOkey = self:CheckCfg4Effect( _cfg.cast_effect ) 
-	return _isOkey,_cfg
+	if (not _cfg) or (not _cfg.cast_effect and not _cfg.cast_effects) then return end
+	return true,_cfg
 end
 
 return M

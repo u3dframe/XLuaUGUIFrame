@@ -36,7 +36,12 @@ function M:_On_AEnter()
 		if _d then
 			self.time_out = (_d.time + _d.duration) / 1000
 		else
-			self.isAi_Up = true
+			_d = self.lbOwner.cfgSkill_Action
+			if _d and _d.effecttime then
+				self.time_out = (_d.effecttime) / 1000
+			else
+				self.isAi_Up = true
+			end
 		end
 	end
 	return _isBl

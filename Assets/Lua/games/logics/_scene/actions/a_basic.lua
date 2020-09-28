@@ -48,6 +48,7 @@ function M:_AEnter()
 			self:_Enter_Ai_State()
 			self.lbOwner:PlayAction( self.action_state )
 			self:SetState( E_Life.Update )
+			self:_OnEnd_AEnter()
 		end
 	end
 end
@@ -58,6 +59,9 @@ end
 
 function M:_On_AEnter()
 	return true
+end
+
+function M:_OnEnd_AEnter()
 end
 
 function M:_Enter_Ai_State()
@@ -96,6 +100,7 @@ function M:_On_AExit()
 	if not _lb then return end
 	self.lbOwner = nil
 	_lb:RmvFunc("_a_up_" .. tostring(self.action_state))
+	-- printInfo("======= [%s] a exit = [%s] = [%s]",self.ownerCursor,self.action_state,self:getCName())
 	_lb:EndAction()
 	return _lb
 end
@@ -137,6 +142,5 @@ function M:Exit()
 	self:SetState( E_Life.Exit )
 	self:On_Update()
 end
-
 
 return M

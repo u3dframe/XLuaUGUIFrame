@@ -35,8 +35,8 @@ function M.Builder(idMarker,idTarget,e_id)
 	local isMv2Pos = cfgEft.type == E_Eft_Type.FlyPosition
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. e_id
 
-	if cfgEft.min_mv_speed and _mvSpeed < cfgEft.min_mv_speed then
-		_mvSpeed = cfgEft.min_mv_speed
+	if cfgEft.min_mv_speed and (_mvSpeed * 100) < cfgEft.min_mv_speed then
+		_mvSpeed = cfgEft.min_mv_speed * 0.01
 	end
 	
 	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,e_id,range,_mvSpeed,_diff,(_t_out + 0.06),_v3Target,isMv2Pos )
@@ -107,22 +107,6 @@ function M:_DisappearEffect()
 		for _, v in ipairs(_lbs) do
 			v:Disappear()
 		end
-	end
-end
-
-function M:SetMoveDir( dir )
-	self.movement = self.movement or _vec3.zero
-	if dir then
-		dir.y = 0
-		local mY = self.movement.y
-		self.movement.y = 0
-		local _dn = dir.normalized
-		if not _dn:Equals(self.movement) then
-			self.movement = _dn
-		end
-		self.movement.y = mY
-	else
-		self.movement:Set( 0,0,0)
 	end
 end
 

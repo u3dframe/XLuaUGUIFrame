@@ -6,8 +6,8 @@
 ]]
 
 local ActionFactory = require ("games/logics/_scene/actions/action_factory")
-
-local _vec3,NumEx,type,tostring = Vector3,NumEx,type,tostring
+local type,tostring,tonumber = type,tostring,tonumber
+local _vec3,NumEx = Vector3,NumEx
 local tb_insert = table.insert
 local E_State,E_Flag,E_State2Action = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State
 local ET_SE,E_AiState = LET_Shader_Effect,LES_C_Action_State
@@ -86,6 +86,7 @@ function M:PlayAction(n_action)
 	end
 	self._async_n_action = nil
 	if self.comp then
+		-- printInfo("======= [%s] PlayAction = pre = [%s] , cur = [%s]",self:GetCursor(),self.n_action,n_action)
 		self.n_action = n_action
 		self.comp:SetActionAndASpeed(self.n_action,self:GetCurrAniSpeed())
 	else
@@ -125,8 +126,12 @@ function M:SetState(state,force,...)
 		return
 	end
 	self:SetStateAndPre( state,self.state )
-	-- printInfo("======= = pre =  [%s] = cur =  [%s]",self.preState,self.state)
+	-- printInfo("======= [%s] SetState = pre =  [%s] = cur =  [%s]",self:GetCursor(),self.preState,self.state)
 	self:SetMachine( ... )
+end
+
+function M:State2Idle( force )
+	self:SetState( E_State.Idle,force )
 end
 
 function M:_LookAtOther()
@@ -223,19 +228,11 @@ function M:CsAniSpeed( ani_speed )
 	self.comp:SetSpeed( ani_speed )
 end
 
-function M:SetMoveDir( dir )
-	self.movement = self.movement or _vec3.zero
-	if dir then
-		dir.y = 0
-		local mY = self.movement.y
-		self.movement.y = 0
-		local _dn = dir.normalized
-		if not _dn:Equals(self.movement) then
-			self.movement = _dn
-		end
-		self.movement.y = mY
-	else
-		self.movement:Set( 0,0,0)
+function M:SetSize( size )
+	size = tonumber( size ) or 1
+	if size ~= self.size then
+		self.size = size
+		self:SetLocalScale( size,size,size )
 	end
 end
 
@@ -280,7 +277,7 @@ end
 
 function M:Move_Over()
 	self._async_m_x,self._async_m_y = nil
-	self:SetState( E_State.Idle )
+	self:State2Idle()
 	self:SetMoveDir()
 	local _lfc = self.lfOnceMvOver
 	self.lfOnceMvOver = nil
@@ -291,7 +288,7 @@ end
 
 function M:Move_Info()
 	local _speed = self:GetCurrMoveSpeed()
-	return self.comp,self.movement,_speed,self.v3MoveTo
+	return self.comp,_speed,self.movement,self.v3MoveTo
 end
 
 function M:IsInStiff()
@@ -367,12 +364,10 @@ end
 function M:EndAction()
 	local _machine = self.machine
 	self.machine = nil
-	if _machine then
-		if _machine.isDoned then
-			_machine:Exit()
-			if _machine.action_state ~= E_AiState.Idle then
-				self:SetState( E_State.Idle )
-			end
+	if _machine and _machine.isDoned then
+		local _m_astate = _machine.action_state
+		if _m_astate ~= E_AiState.Idle then
+			self:State2Idle()
 		end
 	end
 end

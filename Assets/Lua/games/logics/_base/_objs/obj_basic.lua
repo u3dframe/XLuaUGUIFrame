@@ -66,7 +66,7 @@ end
 
 -- 外包调用函数
 function M:ReturnSelf()
-	objsPool:ReturnObj( self )
+	objsPool:ReBackObj( self )
 end
 
 function M:Disappear()

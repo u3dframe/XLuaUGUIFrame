@@ -135,7 +135,7 @@ function M:CastAttack(svMsg)
 	if not svMsg then return false end
 	local _isOkey,_cfg,_cfgAction,_e_id = self:JugdeCastAttack( svMsg.skillid )
 	if not _isOkey then return false end
-	self:SetState( E_State.Idle )
+	self:State2Idle()
 	if (_cfgAction.type == 1)then
 		self:_DoComboAttack(svMsg,_cfg,_cfgAction)
 	else
@@ -238,12 +238,10 @@ function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 
 	self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
 
-	if isHurt then
-		local _e_id_,_e_tmp_ = self:GetCfgEIDByEType( _e_tp )
-		if _e_id_ then
-			_e_tmp_ = MgrData:GetCfgSkillEffect( _e_id_ )
-		end
+	self:_ExcuteSpecialEffect(e_id,cfgEft,_idCaster,_idTarget)
 
+	if isHurt then
+		local _e_tmp_ = self:GetCfgEftByEType( _e_tp )
 		if _e_tmp_ then
 			self.behit_action_state = _e_tmp_.action_state
 			self:SetState( E_State.BeHit,false,e_id,cfgEft,_idCaster,_idTarget,_e_data )
@@ -266,10 +264,16 @@ end
 
 function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget )
 	local _obj = self:GetSObjBy( idTarget )
-	if _obj then
-		local _ccType = AET_2_SE[cfgEft.type]
+	if not _obj then
+		return
+	end
+
+	local _ccType = AET_2_SE[cfgEft.type]
+	if _ccType then
 		_obj:ExcuteSEByCCType( _ccType )
 	end
+
+	self:ChangeBody( e_id )
 end
 
 -- 处理效果

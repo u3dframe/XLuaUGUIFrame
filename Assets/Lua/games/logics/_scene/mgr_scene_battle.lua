@@ -27,7 +27,7 @@ function M.Init()
 	this._need_load,this._loaded = 0,0
 	this._need_load_obj,this._loaded_obj = 0,0
 
-	this.eveRegion = this:TF((1 / (E_B_State.GO - E_B_State.None)),4)
+	this.eveRegion = this:TF((1 / (E_B_State.GO - E_B_State.Start)),4)
 	this.progress = 0
 	this.state = E_B_State.None
 	this:ReEvent4OnUpdate( true )
@@ -37,6 +37,7 @@ function M.Init()
 	_evt.AddListener( Evt_Map_SV_MoveObj,this.OnSv_Move_Map_Obj )
 	_evt.AddListener( Evt_Map_SV_Skill,this.OnSv_Map_Obj_Skill )
 	_evt.AddListener( Evt_Map_SV_Skill_Effect,this.OnSv_Map_Obj_Skill_Effect )
+	_evt.AddListener( Evt_Map_SV_BreakSkill,this.OnSv_Map_Obj_Skill_Break )
 	
 	_evt.AddListener( Evt_State_Battle_Start,this.Start )
 	_evt.AddListener( Evt_Battle_Delay_End_MS,this.SetDelayEndBattle )
@@ -64,18 +65,18 @@ function M:OnUpdate(dt)
 	this._ST_LoadObjs()
 
 	if this.state == E_B_State.Start then
-		this.state = E_B_State.Create_Objs
+		this._SetUpState( E_B_State.Create_Objs )
 	elseif this.state == E_B_State.Create_Objs then
 		this._ST_OnUp_LoadObj( dt )
 	elseif this.state == E_B_State.LoadOtherObjs then
 		this._ST_OnUp_LoadObj( dt )
 		-- this.state = E_B_State.Entry_CG
 	elseif this.state == E_B_State.Entry_CG then
-		this.state = E_B_State.Entry_CG_Ing
+		this._SetUpState( E_B_State.Entry_CG_Ing )
 	elseif this.state == E_B_State.Entry_CG_Ing then
-		this.state = E_B_State.Entry_CG_End
+		this._SetUpState( E_B_State.Entry_CG_End )
 	elseif this.state == E_B_State.Entry_CG_End then
-		this.state = E_B_State.Play_BG
+		this._SetUpState( E_B_State.Play_BG )
 	elseif this.state == E_B_State.Play_BG then
 		this._ST_PlayBG()
 	elseif this.state == E_B_State.Ready then
@@ -92,8 +93,15 @@ function M.GetSObj(uniqueID)
 end
 
 function M._Up_Progress()
-	this.progress = (this.state - 1) * this.eveRegion;
+	this.progress = (this.state - E_B_State.Start) * this.eveRegion;
 	_evt.Brocast(Evt_Loading_UpPlg,this.progress)
+end
+
+function M._SetUpState( state,isNoMsgProg )
+	this.state = state or E_B_State.None
+	if not isNoMsgProg then
+		this._Up_Progress();
+	end
 end
 
 function M._IsCanStart()
@@ -108,17 +116,16 @@ function M.Start()
 end
 
 function M._ST_Begin()
-	this.state = E_B_State.Start
 	this.isUping = true
 	this._ms_delay_end = 0
-	this._Up_Progress()
+	this._SetUpState( E_B_State.Start )
 end
 
 function M._ST_Create_Obj()
 	if not this.sv_queue_add then return end
 	if #this.sv_queue_add <= 0 then
 		if this.state == E_B_State.Create_Objs and (this._loaded >= this._need_load) then
-			this.state = E_B_State.LoadOtherObjs
+			this._SetUpState( E_B_State.LoadOtherObjs )
 		end
 		return
 	end
@@ -137,8 +144,12 @@ function M._ST_OnUp_LoadObj(dt)
 		this._cd1 = this._cd1 + 0.1
 	end
 	local _cur,_need = this._loaded,this._need_load
-	if this.state ~= E_B_State.Create_Objs then
+	if this.state == E_B_State.LoadOtherObjs then
 		_cur,_need = this._loaded_obj,this._need_load_obj
+		if _need <= 0 then
+			this._SetUpState( E_B_State.Entry_CG )
+			return
+		end
 	end
 
 	local _v = this:TF2(this.progress + (_cur * this.eveRegion / _need))
@@ -176,7 +187,7 @@ function M._ST_LoadObjs()
 	if #this._need_funcs <= 0 then
 		if this.state == E_B_State.LoadOtherObjs then
 			if (this._loaded_obj > this._need_load_obj) then
-				this.state = E_B_State.Entry_CG
+				this._SetUpState( E_B_State.Entry_CG )
 			elseif (this._loaded_obj == this._need_load_obj) then
 				this._loaded_obj = this._loaded_obj + 1
 			end
@@ -188,17 +199,17 @@ function M._ST_LoadObjs()
 end
 
 function M._ST_PlayBG()
-	this.state = E_B_State.Ready
+	this._SetUpState( E_B_State.Ready )
 end
 
 function M._ST_Ready()
-	this.state = E_B_State.Ready_Ing
+	this._SetUpState( E_B_State.Ready_Ing )
 	MgrBattle:FormalStartBattle(this._On_ST_Start_Battle)
 end
 
 function M._On_ST_Start_Battle(msg)
 	if msg.e == 0 then
-		this.state = E_B_State.GO
+		this._SetUpState( E_B_State.GO )
 		_evt.Brocast(Evt_Loading_Hide)
 	else
 		-- 弹出提示，并且重置所有
@@ -290,6 +301,12 @@ function M.OnSv_Map_Obj_Skill_Effect(svMsg)
 			end
 		end
 	end
+end
+
+function M.OnSv_Map_Obj_Skill_Break(svMsg)
+	local _obj = this.GetSObj( svMsg.id )
+	if not _obj then return end
+	_obj:State2Idle()
 end
 
 function M.RemoveCurr( id )

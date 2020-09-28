@@ -73,26 +73,30 @@ function M.GetState()
 	return this.state
 end
 
-function M.OnLoadMap(pars1, param)
+function M.OnLoadMap(pars1, pars2)
 	if pars1 and pars1 == this.mapid then return end
 	this.isUping = false
 	this.isUpingLoadMap = false
 	this:ReEvent4Self(false)
 	this.mapid,this.m_instruct = nil
-	if type(pars1) == "number" then
-		this.mapid = pars1
+	if pars1 then
+		if type(pars1) == "number" then
+			this.mapid = pars1
+		else
+			this.m_instruct = pars1
+		end
 	else
-		this.m_instruct = pars1
+		this.m_instruct = pars2
 	end
 	this.progress = 0
-	this.param = param --透传参数，用于确定从场景从哪加载
+	this.param = pars2 --透传参数，用于确定从场景从哪加载
 	-- 显示Loading
 	this.state = LES_State.Wait_Vw_Loading
 	_evt.Brocast(Evt_Loading_Show,this.progress,this._ST_Begin)
 end
 
 function M._Up_Progress()
-	this.progress = (this.state - 1) * this.eveRegion;
+	this.progress = (this.state - LES_State.Wait_Vw_Loading) * this.eveRegion;
 	_evt.Brocast(Evt_Loading_UpPlg,this.progress)
 end
 
@@ -197,9 +201,19 @@ function M._ST_Complete()
 	this.state = LES_State.FinshedEnd
 	_evt.Brocast(Evt_Loading_Hide)
 	if this.mapid then
-		_evt.Brocast(Evt_Map_Loaded, this.mapid,this.param);
-	elseif (not this.m_instruct) then
-		_evt.Brocast(Evt_ToView_Main)
+		_evt.Brocast(Evt_Map_Loaded, this.mapid,this.param)
+	else
+		local _isToMain = (not this.m_instruct)
+		if this.m_instruct == "ToUI" then
+			_isToMain = (not this.param)
+			if this.param then
+				MgrUI.OpenUI( this.param )
+			end
+		end
+
+		if _isToMain then
+			_evt.Brocast(Evt_ToView_Main)
+		end
 	end
 
 	-- local _arrs = MgrRes.GetDependences(this.lbMap:GetAbName())
