@@ -69,4 +69,11 @@ function M:MapPos2SvPos(x,z)
 	return (_x * self.edge_o1),(_y * -1 * self.edge_o1)
 end
 
+function M:GetUnitPos(nIndex)
+	local util = self:GetUnit(nIndex);
+	if (util)then
+		local _pos = util.v3Pos;
+		return _pos.x,_pos.y,_pos.z
+	end
+end
 return M

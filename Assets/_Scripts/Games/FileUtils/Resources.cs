@@ -223,5 +223,23 @@ namespace Core.Kernel
 				UResources.UnloadAsset(obj);
 			}
 		}
+
+        static public bool IsShaderAB(string abName){
+            if(string.IsNullOrEmpty(abName))
+                return false;
+            return abName.EndsWith(m_strShader);
+        }
+
+        static public bool IsMatAB(string abName){
+            if(string.IsNullOrEmpty(abName))
+                return false;
+            return abName.EndsWith(m_strMat);
+        }
+
+        static public bool IsTex2dAB(string abName){
+            if(string.IsNullOrEmpty(abName))
+                return false;
+            return abName.EndsWith(m_strTex2D) || abName.EndsWith(m_strCube);
+        }
     }
 }

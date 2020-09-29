@@ -70,4 +70,12 @@ function M:ReEvt_Press(lfunc,obj,isBind)
 	end
 end
 
+function M:ReEvt_PClick(lfunc,obj,isBind)
+	lfunc = self:_ReEvt_Func( lfunc,obj )
+	self.comp:onClick("-",lfunc);
+	if isBind == true then
+		self.comp:onClick("+",lfunc);
+	end
+end
+
 return M

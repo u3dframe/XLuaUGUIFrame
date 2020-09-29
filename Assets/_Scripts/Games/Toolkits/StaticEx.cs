@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System;
+using Core;
 using UObject = UnityEngine.Object;
 
 /// <summary>
@@ -61,14 +62,17 @@ public static class StaticEx {
         
         Shader _sd = material.shader;
         if(_sd != null && !string.IsNullOrEmpty(_sd.name)){
-            material.shader = Shader.Find(_sd.name);
+            _sd = ABShader.FindShader(_sd.name);
+            if(_sd != null){
+                material.shader = _sd;
+            }
         }
     }
 
+#if UNITY_EDITOR
     static public void ReShader(this Renderer render)
     {
         if(null == render) return;
-
         ReShader(render.sharedMaterial);
         Material[] _mats_ = render.sharedMaterials;
         if (_mats_ != null && _mats_.Length > 0)
@@ -80,6 +84,22 @@ public static class StaticEx {
             }
         }
     }
+#else
+    static public void ReShader(this Renderer render)
+    {
+        if(null == render) return;
+        ReShader(render.material);
+        Material[] _mats_ = render.materials;
+        if (_mats_ != null && _mats_.Length > 0)
+        {
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
+            {
+                ReShader(_mats_[i]);
+            }
+        }
+    }
+#endif
 
     static public void ReColor(this Material material,Color color)
     {
@@ -91,6 +111,7 @@ public static class StaticEx {
         }
     }
 
+#if UNITY_EDITOR
     static public void ReColor(this Renderer render,Color color)
     {
         if(null == render) return;
@@ -105,6 +126,22 @@ public static class StaticEx {
             }
         }
     }
+#else
+    static public void ReColor(this Renderer render,Color color)
+    {
+        if(null == render) return;
+        ReColor(render.material,color);
+        Material[] _mats_ = render.materials;
+        if (_mats_ != null && _mats_.Length > 0)
+        {
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
+            {
+                ReColor(_mats_[i],color);
+            }
+        }
+    }
+#endif
 
     static public void ReAlpha(this Material material,float alpha)
     {
@@ -122,6 +159,7 @@ public static class StaticEx {
         }
     }
 
+#if UNITY_EDITOR
     static public void ReAlpha(this Renderer render,float alpha)
     {
         if(null == render) return;
@@ -136,6 +174,22 @@ public static class StaticEx {
             }
         }
     }
+#else
+    static public void ReAlpha(this Renderer render,float alpha)
+    {
+        if(null == render) return;
+        ReAlpha(render.material,alpha);
+        Material[] _mats_ = render.materials;
+        if (_mats_ != null && _mats_.Length > 0)
+        {
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
+            {
+                ReAlpha(_mats_[i],alpha);
+            }
+        }
+    }
+#endif
 
     static public void ReSortingOrder(this Renderer render,int sortingOrder){
         if(null == render) return;
@@ -153,6 +207,7 @@ public static class StaticEx {
         material.renderQueue = renderQueue;
     }
 
+#if UNITY_EDITOR
     static public void ReRenderQueue(this Renderer render,int renderQueue)
     {
         if(null == render) return;
@@ -167,6 +222,22 @@ public static class StaticEx {
             }
         }
     }
+#else
+    static public void ReRenderQueue(this Renderer render,int renderQueue)
+    {
+        if(null == render) return;
+        ReRenderQueue(render.material,renderQueue);
+        Material[] _mats_ = render.materials;
+        if (_mats_ != null && _mats_.Length > 0)
+        {
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
+            {
+                ReRenderQueue(_mats_[i],renderQueue);
+            }
+        }
+    }
+#endif
 
     static public void AddRenderQueue(this Material material,int addValue)
     {
@@ -174,7 +245,7 @@ public static class StaticEx {
         material.renderQueue += addValue;
     }
     
-
+#if UNITY_EDITOR
     static public void AddRenderQueue(this Renderer render,int addValue)
     {
         if(null == render) return;
@@ -189,6 +260,22 @@ public static class StaticEx {
             }
         }
     }
+#else
+    static public void AddRenderQueue(this Renderer render,int addValue)
+    {
+        if(null == render) return;
+        AddRenderQueue(render.material,addValue);
+        Material[] _mats_ = render.materials;
+        if (_mats_ != null && _mats_.Length > 0)
+        {
+            int lens = _mats_.Length;
+            for (int i = 0; i < lens; i++)
+            {
+                AddRenderQueue(_mats_[i],addValue);
+            }
+        }
+    }
+#endif
 
     static public void ReShader(this GameObject gobj)
     {
@@ -224,7 +311,10 @@ public static class StaticEx {
         Shader shader = material.shader;
         if(null == shader) return;
         if (!"UI/Default".Equals(shader.name,StringComparison.OrdinalIgnoreCase)) {
-            material.shader = Shader.Find(shader.name);
+            Shader _sd = ABShader.FindShader(shader.name);
+            if(_sd != null){
+                material.shader = _sd;
+            }
         }
     }
 

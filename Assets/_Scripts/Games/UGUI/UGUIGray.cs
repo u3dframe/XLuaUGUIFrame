@@ -25,10 +25,12 @@ public class UGUIGray : GobjLifeListener {
 		get{
 			if (_matGray == null)
             {
-				Shader shader = Shader.Find("Custom/ui_default_multifunctional");
-				_matGray = new Material(shader);
-				_matGray.SetInt("_IsGray",1);
-                // _matGray.EnableKeyword("UI_GRAY_ON");
+				Shader shader = Core.ABShader.FindShader("Custom/ui_default_multifunctional");
+				if(shader != null){
+					_matGray = new Material(shader);
+					_matGray.SetInt("_IsGray",1);
+                	// _matGray.EnableKeyword("UI_GRAY_ON");
+				}
 			}
 			return _matGray;
 		}
