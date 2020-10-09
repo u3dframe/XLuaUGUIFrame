@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// 日期 : 2017-03-21 10:37
 /// 功能 : 场景烘培的贴图信息
 /// </summary>
-[ExecuteInEditMode]
+// [ExecuteInEditMode]
 public class LightMapEx : MonoBehaviour
 {
 	static readonly LightmapData[] ULMD_Empty = new LightmapData[0];
@@ -26,10 +26,8 @@ public class LightMapEx : MonoBehaviour
 	// 光照图列表
 	public SceneLightMapData[] m_slmData;
 	public LightmapsMode mode; //  = LightmapsMode.NonDirectional;
-
-	[SerializeField] int m_nRLMD = 0;
-
 	public string m_nameMInfo = "map_";
+	int m_nRLMD = 0;
 
 	// 光照图数据
 	LightmapData[] _datas = null;
@@ -49,16 +47,8 @@ public class LightMapEx : MonoBehaviour
 		}
 	}
 	
-	void Awake () {
-        if(Application.isPlaying){
-            _LoadLightmap();
-        }
-    }
-
 	void Start () {
-        if(Application.isPlaying){
-            _LoadRenders();
-        }
+        LoadSettings();
     }
 
 	void OnDestroy(){
@@ -107,7 +97,7 @@ public class LightMapEx : MonoBehaviour
         }
 	}
 
-	[ContextMenu("Save Mesh Renders Info")]
+	[ContextMenu("Save Renders")]
 	void _SaveMeshRenders(){
 		m_nRLMD = GetLen4RenderLMD();
 
@@ -150,12 +140,14 @@ public class LightMapEx : MonoBehaviour
 		_LoadRenders();
 	}
 
+	[ContextMenu("Load Lightmap")]
 	void _LoadLightmap ()
 	{
 		LightmapSettings.lightmapsMode = mode;
 		LightmapSettings.lightmaps = lightmapDatas;
 	}
 
+	[ContextMenu("ClearLMap")]
 	public void ClearLightmapping()
 	{
 		LightmapSettings.lightmaps = ULMD_Empty;
@@ -182,6 +174,7 @@ public class LightMapEx : MonoBehaviour
 		_it.BackToRender(render);
 	}
 
+	[ContextMenu("Load Renders")]
 	void _LoadRenders(){
 		List<LightMapRender> _infos = LightMapRender.GetInfos(this.m_nameMInfo);
 		if(_infos == null) return;

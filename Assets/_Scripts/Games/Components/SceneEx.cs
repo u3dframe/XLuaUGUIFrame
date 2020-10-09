@@ -51,7 +51,7 @@ public class SceneEx : MonoBehaviour
 	public float m_flareStrength;
 	public float m_flareFadeSpeed;
 
-	void Awake () {
+	void Start () {
         if(Application.isPlaying){
             LoadSetting();
         }
@@ -105,10 +105,12 @@ public class SceneEx : MonoBehaviour
 		RenderSettings.fogEndDistance = m_fogEndDistance;
 	}
 
-	void _LoadEnvironment(){
+	void _LoadSkyBox(){
 		RenderSettings.skybox = m_skybox;
-		RenderSettings.sun = m_sunlight;
-		
+		// RenderSettings.sun = m_sunlight;
+	}
+
+	void _LoadEnvironment(){
 		RenderSettings.ambientProbe = m_ambientProbe;
 		RenderSettings.ambientLight = m_ambientLight;
 		RenderSettings.ambientGroundColor = m_ambientGroundColor;
@@ -131,6 +133,7 @@ public class SceneEx : MonoBehaviour
 	public void LoadSetting ()
 	{
 		_LoadFog();
-		_LoadEnvironment();
+		_LoadSkyBox();
+		// _LoadEnvironment();
 	}
 }

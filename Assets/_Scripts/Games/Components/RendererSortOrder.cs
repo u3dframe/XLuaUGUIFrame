@@ -41,12 +41,28 @@ public class RendererSortOrder : GobjLifeListener
     string _k_mat_val = "m_val_{0}";
     Dictionary<string,int> m_r_sinfo = new Dictionary<string, int>();
 
+    public float m_delay = 0.2f;
+    bool m_isDoRe = false;
+    float m_curr_0 = 0f;
+
     override protected void OnCall4Start()
     {
         renderers = this.GetComponentsInChildren<Renderer>(true);
         _InitSortInfo();
+    }
 
-        ReRenderSorting();
+    void Update() {
+        _UpDelayReRS();
+    }
+
+    void _UpDelayReRS() {
+        if(m_isDoRe)
+            return;
+        m_curr_0 += Time.deltaTime;
+        if(m_curr_0 >= m_delay){
+            m_isDoRe = true;
+            ReRenderSorting();
+        }
     }
 
     void _InitSortInfo(){

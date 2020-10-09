@@ -12,6 +12,9 @@ using UObject = UnityEngine.Object;
 /// 功能 : Extension method must be defined in a non-generic static class
 /// </summary>
 public static class StaticEx {
+    
+    static public bool IsUseSharedMat = true;
+
 	static public void SetProperty(this Material material, int type, string name, object value)
     {
         if(null == material) return;
@@ -69,12 +72,32 @@ public static class StaticEx {
         }
     }
 
+    static Material GetMat(Renderer render)
+    {
+        if(null == render) return null;
+#if UNITY_EDITOR
+        return render.material;
+#else
+        return IsUseSharedMat ? render.sharedMaterial : render.material;
+#endif
+    }
+
+    static Material[] GetMats(Renderer render)
+    {
+        if(null == render) return null;
+#if UNITY_EDITOR
+        return render.materials;
+#else
+        return IsUseSharedMat ? render.sharedMaterials : render.materials;
+#endif
+    }
+
 #if UNITY_EDITOR
     static public void ReShader(this Renderer render)
     {
         if(null == render) return;
-        ReShader(render.sharedMaterial);
-        Material[] _mats_ = render.sharedMaterials;
+        ReShader(GetMat( render ));
+        Material[] _mats_ = GetMats( render );
         if (_mats_ != null && _mats_.Length > 0)
         {
             int lens = _mats_.Length;
@@ -115,8 +138,8 @@ public static class StaticEx {
     static public void ReColor(this Renderer render,Color color)
     {
         if(null == render) return;
-        ReColor(render.sharedMaterial,color);
-        Material[] _mats_ = render.sharedMaterials;
+        ReColor(GetMat( render ),color);
+        Material[] _mats_ = GetMats( render );
         if (_mats_ != null && _mats_.Length > 0)
         {
             int lens = _mats_.Length;
@@ -163,8 +186,8 @@ public static class StaticEx {
     static public void ReAlpha(this Renderer render,float alpha)
     {
         if(null == render) return;
-        ReAlpha(render.sharedMaterial,alpha);
-        Material[] _mats_ = render.sharedMaterials;
+        ReAlpha(GetMat( render ),alpha);
+        Material[] _mats_ = GetMats( render );
         if (_mats_ != null && _mats_.Length > 0)
         {
             int lens = _mats_.Length;
@@ -211,8 +234,8 @@ public static class StaticEx {
     static public void ReRenderQueue(this Renderer render,int renderQueue)
     {
         if(null == render) return;
-        ReRenderQueue(render.sharedMaterial,renderQueue);
-        Material[] _mats_ = render.sharedMaterials;
+        ReRenderQueue(GetMat( render ),renderQueue);
+        Material[] _mats_ = GetMats( render );
         if (_mats_ != null && _mats_.Length > 0)
         {
             int lens = _mats_.Length;
@@ -249,8 +272,8 @@ public static class StaticEx {
     static public void AddRenderQueue(this Renderer render,int addValue)
     {
         if(null == render) return;
-        AddRenderQueue(render.sharedMaterial,addValue);
-        Material[] _mats_ = render.sharedMaterials;
+        AddRenderQueue(GetMat( render ),addValue);
+        Material[] _mats_ = GetMats( render );
         if (_mats_ != null && _mats_.Length > 0)
         {
             int lens = _mats_.Length;
