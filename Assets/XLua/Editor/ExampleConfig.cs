@@ -91,6 +91,8 @@ public static class ExampleConfig
                 //typeof(Slider.SliderEvent),
                 //typeof(UnityEngine.Events.UnityEvent<float>),
                 typeof(UnityEngine.Events.UnityEventBase),
+                typeof(UnityWebRequest),
+                typeof(DownloadHandler),
                 typeof(RawImage),
                 typeof(InputField),
                 typeof(EventTrigger), // UGUIEventListener 的 父类

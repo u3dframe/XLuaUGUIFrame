@@ -54,7 +54,7 @@ end
 
 function M.CreateEffect( idMarker,idTarget,e_id )
 	local _isOkey,cfgEft,_points = MgrData:CheckCfg4Effect( e_id )
-	if not _isOkey then return end
+	if (not _isOkey) or (not cfgEft.resid)  then return end
 	local _elNms,_gobj,_isFollow = str_split(_points,";")
 	_isFollow = (2 == cfgEft.type) or (3 == cfgEft.type)
 

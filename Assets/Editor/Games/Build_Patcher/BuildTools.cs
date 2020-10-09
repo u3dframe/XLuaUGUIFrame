@@ -316,6 +316,51 @@ public class BuildTools : Core.EditorGameFile
     {
         DoBuild(true);
     }
+
+    static public void CopyTextFiles(string source, string dist)
+    {
+        FileUtil.DeleteFileOrDirectory(dist);
+        FileUtil.CopyFileOrDirectory(source, dist);
+        void RemoveMeta(DirectoryInfo _dir)
+        {
+            foreach (var file in _dir.GetFiles())
+            {
+
+                if (file.Extension == ".meta")
+                {
+                    file.Delete();
+                }
+            }
+            foreach (var file in _dir.GetDirectories())
+            {
+                RemoveMeta(file);
+            }
+        }
+        RemoveMeta(new DirectoryInfo(dist));
+    }
+
+    static void InnerBuild()
+    {
+        EditorUtility.DisplayProgressBar("DoBuild", "BuildAssetBundles ...", 0.2f);
+        CreateFolder(m_dirRes);
+        BuildPipeline.BuildAssetBundles(m_dirRes, BuildAssetBundleOptions.ChunkBasedCompression, GetBuildTarget());
+        EditorUtility.DisplayProgressBar("DoBuild", "ClearBuild ...", 0.3f);
+        MgrABDataDependence.SaveDeps();
+
+        EditorUtility.DisplayProgressBar("DoBuild", "Copy text files ...", 0.4f);
+        var txtDir = new DirectoryInfo(Path.Combine(m_dirData, m_edtAssetPath, "CsvTxts"));
+        foreach (var dir in txtDir.GetDirectories())
+        {
+            CopyTextFiles(dir.ToString(), Path.Combine(m_dirRes, dir.Name));
+        }
+
+        EditorUtility.DisplayProgressBar("DoBuild", "Copy lua files ...", 0.5f);
+        CopyTextFiles(Path.Combine(m_dirData, "Lua"), Path.Combine(m_dirRes, "Lua"));
+        FileUtil.DeleteFileOrDirectory(Path.Combine(m_dirRes, "Lua/games/cfg/svr"));
+        FileUtil.DeleteFileOrDirectory(Path.Combine(m_dirRes, "Lua/games/cfg/.git"));
+
+        EditorUtility.ClearProgressBar();
+    }
     
     static public void DoBuild(bool isCheckABSpace)
     {
@@ -328,16 +373,17 @@ public class BuildTools : Core.EditorGameFile
         EditorUtility.DisplayProgressBar("DoBuild", "Start DoBuild ...", 0.0f);
         int _lensAb = _CheckABName();
         bool _isMakeAB = (_lensAb > 0);
-        EditorUtility.DisplayProgressBar("DoBuild", "BuildAssetBundles ...", 0.2f);
         // BuildAssetBundleOptions.None : 使用LZMA算法压缩，压缩的包更小，但是加载时间更长，需要解压全部。
         // BuildAssetBundleOptions.ChunkBasedCompression : 使用LZ4压缩，压缩率没有LZMA高，但是我们可以加载指定资源而不用解压全部。
         if (_isMakeAB)
         {
-            CreateFolder(m_dirRes);
+			CreateFolder(m_dirRes);
             BuildPipeline.BuildAssetBundles(m_dirRes, BuildAssetBundleOptions.ChunkBasedCompression, GetBuildTarget());
             EditorUtility.DisplayProgressBar("DoBuild", "ClearBuild ...", 0.3f);
             EditorUtility.ClearProgressBar();
             MgrABDataDependence.SaveDeps();
+			
+            // InnerBuild();
             EditorUtility.DisplayDialog("提示", "[ab资源] - 打包完成!!!", "确定");
         }
         else
@@ -480,5 +526,108 @@ public class BuildTools : Core.EditorGameFile
             }
         }
         return _isRet;
+    }
+
+    static string[] GenBuildScene()
+    {
+        string[] buildList = {
+            "Assets/_Develop/Scene/Launcher.unity",
+            "Assets/_Develop/Scene/Loading01.unity",
+            "Assets/_Develop/Scene/Loading02.unity"
+        };
+
+        var settings = new List<EditorBuildSettingsScene>();
+        var paths = new List<string>();
+        foreach (EditorBuildSettingsScene setting in EditorBuildSettings.scenes)
+        {
+            bool enable = false;
+            foreach (string name in buildList)
+            {
+                if (setting.path == name)
+                {
+                    paths.Add(name);
+                    enable = true;
+                }
+            }
+            setting.enabled = enable;
+            settings.Add(setting);
+        }
+        EditorBuildSettings.scenes = settings.ToArray();
+        return paths.ToArray();
+    }
+
+    static void InnerBuildAll(string []scenes, string outpath, BuildTargetGroup targetgroup, BuildTarget target, BuildOptions option)
+    {
+        EditorUtility.DisplayProgressBar("BuidPlayer", "Switch Targe Group", 0.1f);
+        EditorUserBuildSettings.SwitchActiveBuildTargetAsync(targetgroup, target);
+        option |= BuildOptions.CompressWithLz4;
+        AssetDatabase.Refresh();
+
+        EditorUtility.DisplayProgressBar("BuidPlayer", "Generate Resource", 0.3f);
+        InnerBuild();
+        AssetDatabase.Refresh();
+
+        FileUtil.DeleteFileOrDirectory(m_dirStreaming);
+        Directory.CreateDirectory(m_dirStreaming);
+
+        EditorUtility.DisplayProgressBar("BuidPlayer", "Compress Resource", 0.4f);
+        SharpZipLib.Zipper.Compress(Path.Combine(Application.dataPath,"../..", m_resFdRoot), Path.Combine(m_dirStreaming, "base.zip"));
+        AssetDatabase.Refresh();
+
+        EditorUtility.DisplayProgressBar("BuidPlayer", "Build Runtime", 0.5f);
+        UnityEditor.Build.Reporting.BuildReport ret = BuildPipeline.BuildPlayer(scenes, outpath, target, option);
+        if (ret.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
+        {
+            Debug.LogError("Build Failure:");
+            foreach (UnityEditor.Build.Reporting.BuildStep step in ret.steps)
+            {
+                foreach (UnityEditor.Build.Reporting.BuildStepMessage msg in step.messages)
+                {
+                    Debug.LogError(step.name + ":" + msg.content);
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Build " + outpath);
+        }
+        EditorUtility.DisplayProgressBar("BuidPlayer", "Clean tmp files", 0.9f);
+        FileUtil.DeleteFileOrDirectory(m_dirStreaming);
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+    }
+
+    [MenuItem("Tools/BuildApk")]
+    static public void BuildAndroid()
+    {
+        Debug.Log("BuidAndroid--------------");
+        AssetDatabase.Refresh();
+        string directory = Path.Combine(Application.dataPath.Replace("/Assets", ""),"../build/android/apk/");
+        Directory.CreateDirectory(directory);
+
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        PlayerSettings.stripEngineCode = false;
+        //PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
+        PlayerSettings.companyName = "dianyuegame";
+        PlayerSettings.productName = "kesl";
+
+        PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+        PlayerSettings.allowedAutorotateToLandscapeRight = true;
+        PlayerSettings.allowedAutorotateToPortrait = false;
+        PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+
+        string apkName = $"c_{System.DateTime.Now.ToString("M.d_Hm")}.apk";
+
+        EditorUserBuildSettings.development = true;
+
+        string targetDir = Path.Combine(directory, apkName);
+        FileUtil.DeleteFileOrDirectory(targetDir);
+
+        BuildOptions option = BuildOptions.None;
+        option |= BuildOptions.Development;
+        option |= BuildOptions.AllowDebugging;
+        string[] scenes = GenBuildScene();        
+
+        InnerBuildAll(scenes, targetDir, BuildTargetGroup.Android, BuildTarget.Android, option);
     }
 }
