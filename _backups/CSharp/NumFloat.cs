@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// 类名 : Float 数据的扩展
 /// 作者 : Canyon / 龚阳辉
-/// 日期 : 2020-09-10 10:45
+/// 日期 : 2020-06-10 10:45
 /// 功能 : 
 /// </summary>
 [System.Serializable]
@@ -15,6 +15,9 @@ public class NumFloat
     public long valMul = 1;
     float valF = 0.0f;
     double valD = 0.0;
+	
+	public NumFloat(){
+	}
 
     public NumFloat(float val){
         ReInit(val);
