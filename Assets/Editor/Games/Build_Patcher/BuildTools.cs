@@ -438,6 +438,9 @@ public class BuildTools : Core.EditorGameFile
     }
     static bool _IsContains(string[] src, string cur)
     {
+        if(src == null || src.Length <= 0)
+            return false;
+        
         foreach (var item in src)
         {
             if (cur.Contains(item))
@@ -452,9 +455,11 @@ public class BuildTools : Core.EditorGameFile
         EL_Path _ep = EL_Path.builder.DoInit(m_dirRes);
 
         // "audios/","fnts/","materials/","prefabs/","shaders/","textures/","ui/"        
-        string[] arrs = new string[]{
-            "configs/","protos/",
-        };
+        string[] arrs = null;
+        // arrs = new string[]{
+        //     "configs/","protos/","lanuage/","maps/",
+        // };
+
 
         int curr = 0;
         float count = _ep.m_folders.Count;

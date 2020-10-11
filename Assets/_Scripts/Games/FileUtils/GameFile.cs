@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace Core
 {
@@ -205,5 +208,16 @@ namespace Core
                 return GetPath(m_curPlatform);
             }
         }
+
+#if UNITY_EDITOR
+		static public void CreateFab(GameObject obj, string assetPath,bool isOnlyOne)
+		{
+			assetPath = Path2AssetsStart(assetPath);
+			if(isOnlyOne)
+				assetPath = AssetDatabase.GenerateUniqueAssetPath(assetPath);
+			PrefabUtility.SaveAsPrefabAsset(obj,assetPath);
+		}
+#endif
+
 	}
 }

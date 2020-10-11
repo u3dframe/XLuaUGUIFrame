@@ -113,7 +113,9 @@ public class ImportTexture : AssetPostprocessor
                 if(!_isSpr) importer.textureType = TextureImporterType.Sprite;
                 // if(importer.alphaIsTransparency) importer.alphaIsTransparency = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
-                BuildTools.ReBindAB4SngOrAtlas(importer);
+
+                if(!BuildTools.isLoadOrg4Editor)
+                    BuildTools.ReBindAB4SngOrAtlas(importer);
             }
         }
         else
@@ -123,7 +125,9 @@ public class ImportTexture : AssetPostprocessor
                 if(_isSpr) importer.textureType = TextureImporterType.Default;
                 // if(importer.mipmapEnabled) importer.mipmapEnabled = false;
                 if(importer.spritePackingTag != null) importer.spritePackingTag = null;
-                BuildTools.ReBindAB4SngOrAtlas(importer);
+
+                if(!BuildTools.isLoadOrg4Editor)
+                    BuildTools.ReBindAB4SngOrAtlas(importer);
             }
         }
         
@@ -161,6 +165,9 @@ public class ImportTexture : AssetPostprocessor
                 }
             }
         }
+
+        // Debug.LogFormat("=======[{0}] = [{1}] = [{2}] = [{3}] = [{4}] = [{5}]",fp,_isChg,width, height,_v,_v2);
+        
         return _isChg;
     }
 

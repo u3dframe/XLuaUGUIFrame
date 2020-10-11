@@ -70,28 +70,17 @@ public class PrefabElement : GobjLifeListener {
 	/// <summary>
 	/// 取得自身对象下面的对象的相对路径name
 	/// </summary>
-	string GetRelativeName(Transform trsf,ref string refName)
+	void GetRelativeName(Transform trsf,ref string refName)
 	{
-		if(!trsf){
-			return refName;
-		}
-		
 		if(trsf == m_trsf){
 			if(string.IsNullOrEmpty(refName))
 			{
 				refName = "/";
 			}
-			return refName;
+			return;
 		}
 		
-		if(string.IsNullOrEmpty(refName))
-		{
-			refName = trsf.name;
-		} else {
-			refName = trsf.name + "/" + refName;
-		}
-		
-		return GetRelativeName(trsf.parent,ref refName);
+		UtilityHelper.RecursionName(trsf,ref refName);
 	}
 	
 	/// <summary>
@@ -113,6 +102,12 @@ public class PrefabElement : GobjLifeListener {
 		GetRelativeName(trsf,ref ret);
 		return ret;
 	}
+
+#if UNITY_EDITOR
+	public void SetChildGobjs(GameObject[] gobjs){
+		this.m_gobjs = gobjs;
+	}
+#endif
 	
 	/// <summary>
 	/// 取得可操作的对象

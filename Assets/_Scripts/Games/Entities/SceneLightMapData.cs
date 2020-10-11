@@ -12,6 +12,9 @@ public class SceneLightMapData
 {
 	public Texture2D lightmapColor,lightmapDir,shadowMask;
 
+    public SceneLightMapData(){
+    }
+
 	public SceneLightMapData(LightmapData data)
     {
 		this.SetLightmapData(data);

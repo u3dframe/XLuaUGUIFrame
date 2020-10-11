@@ -155,6 +155,8 @@ namespace Core.Kernel
             ".fnt",
             ".txt",
             "README",
+            "LightingData.asset",
+            "ReflectionProbe-0.exr",
         };
 
         static string[] mustFiles = {
@@ -163,6 +165,7 @@ namespace Core.Kernel
             ".ttf",
             ".fontsettings",
             ".shadervariants",
+            ".fbx",
         };
 
         static private bool _IsIn(string fp, string[] arrs)

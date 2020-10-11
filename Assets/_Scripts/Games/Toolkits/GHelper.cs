@@ -524,4 +524,35 @@ public class GHelper {
 		pY = _v3.y;
 		pZ = _v3.z;
 	}
+
+	// Relative 相对
+	static public void RecursionName(Transform trsf,ref string refName)
+	{
+		if(!trsf){
+			return;
+		}
+
+		if(string.IsNullOrEmpty(refName))
+		{
+			refName = trsf.name;
+		} else {
+			refName = trsf.name + "/" + refName;
+		}
+
+		RecursionName(trsf.parent,ref refName);
+	}
+
+	static public string RelativeName(Transform trsf){
+		string ret = "";
+		RecursionName(trsf,ref ret);
+		return ret;
+	}
+
+	static public string RelativeName(GameObject gobj){
+		string ret = "";
+		if(gobj){
+			RecursionName(gobj.transform,ref ret);
+		}
+		return ret;
+	}
 }

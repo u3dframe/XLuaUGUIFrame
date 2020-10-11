@@ -39,9 +39,11 @@ namespace Core.Kernel
         static public readonly string m_strFbx = ".ab_fbx";
         static public readonly string m_strAdoClip = ".ado";
         static public readonly string m_strMat = ".ab_mat";
+        static public readonly string m_strLightmap = ".ab_lms";
 
         static public readonly string m_suffix_png = ".png";
         static public readonly string m_suffix_fab = ".prefab";
+        static public readonly string m_suffix_light = ".exr";
 
         /// <summary>
         /// 路径转为以 Assets/ 开头的
@@ -96,18 +98,23 @@ namespace Core.Kernel
             if (string.IsNullOrEmpty (abName))
                 return null;
             string _fp = m_appAssetPath;
+            bool _isFab = false , _isLmap =  false;
             if(abName.Contains("/c_")){
                 _fp  += "Characters/Builds/";
             }else if(abName.Contains("timeline/")){
                 _fp  += "Characters/Builds/";
             }else if(abName.Contains("/maps/")){
                 _fp  += "Scene/Builds/";
+            }else if(abName.Contains("lightmaps/")){
+                _fp  += "Scene/Builds/";
+                _isLmap = true;
             }else if(abName.Contains("/effects/") || abName.Contains("/ef_")){
                 _fp  += "Effects/Builds/";
             }else{
                 _fp += "Builds/";
             }
-            bool _isFab = abName.EndsWith(m_strUI) || abName.EndsWith(m_strFab);
+
+            _isFab = abName.EndsWith(m_strUI) || abName.EndsWith(m_strFab);
             _fp += GetPathNoSuffix(abName);
             if(_isFab){
                 return Load4Develop<T>(_fp,m_suffix_fab);
@@ -116,6 +123,12 @@ namespace Core.Kernel
                 return Load4Develop<T>(_fp,m_suffix_png);
             }else if(abName.EndsWith(m_strTex2D)){
                 return Load4Develop<T>(_fp,m_suffix_png);
+            }else if(_isLmap){
+                string _suffix = GetSuffix(assetName);
+                _fp += "/" + GetPathNoSuffix(assetName);
+                if(string.IsNullOrEmpty(_suffix))
+                    _suffix = m_suffix_png;
+                return Load4Develop<T>(_fp,_suffix);
             }
             return null;
         }

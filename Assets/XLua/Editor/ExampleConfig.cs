@@ -157,6 +157,7 @@ public static class ExampleConfig
                 typeof(DF_LoadedAsset),
                 typeof(DF_LoadedFab),
                 typeof(DF_LoadedTex2D),
+                typeof(DF_LoadedTex2DExt),
                 typeof(DF_LoadedSprite),
                 typeof(DF_LoadedAnimator),
                 typeof(DF_LoadedAnimationClip),
@@ -220,6 +221,8 @@ public static class ExampleConfig
                 new List<string>(){ "Core.Kernel.Resources", "GetPath","UnityEngine.Object"},
                 new List<string>(){ "Core.Kernel.Resources", "GetObject","System.String","System.String"},
                 new List<string>(){ "Core.Kernel.Resources", "LoadInEditor","System.String","System.String"},
+                new List<string>(){ "PrefabElement", "SetChildGobjs","UnityEngine.GameObject[]"},
+                new List<string>(){ "Core.GameFile", "CreateFab","UnityEngine.GameObject","System.String","System.Boolean"},
             };
     
 #if UNITY_2018_1_OR_NEWER

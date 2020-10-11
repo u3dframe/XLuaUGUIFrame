@@ -8,7 +8,7 @@ public class Launcher : MonoBehaviour
     void Start()
     {
         _Init();
-        GameMgr.instance.Init();
+        GameMgr.instance.InitAll();
     }
 
     void _Init(){

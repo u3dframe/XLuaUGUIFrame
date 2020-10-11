@@ -50,14 +50,19 @@ public class GameMgr : GobjLifeListener {
 	/// <summary>
 	/// 初始化
 	/// </summary>
-	public void Init()
+	public void InitAll()
 	{
-		this.csAlias = "GMgr";
+		this.Init();
 		GameLanguage.Init();
 		Localization.language = GameLanguage.strCurLanguage;
 		UGUIEventSystem.instance.Init(false);
-		LuaManager.instance.Init();
 		InputMgr.instance.Init();
+		LuaManager.instance.Init();
+	}
+
+	public void Init()
+	{
+		this.csAlias = "GMgr";
 	}
 
 	void Update() {
