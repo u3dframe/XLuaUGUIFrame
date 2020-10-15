@@ -47,7 +47,7 @@ public class UGUIMatData
 
         if (_mat_ != null)
         {
-            GameObject.DestroyImmediate(_mat_);
+            Core.GameFile.UnLoadOne(_mat_);
         }
     }
 

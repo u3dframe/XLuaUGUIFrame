@@ -229,7 +229,7 @@ namespace Core.Kernel
 			
 			if(obj.GetType() == tpGobj)
 			{
-				GameObject.DestroyImmediate(obj,true);
+				GameObject.DestroyImmediate(obj,true); // Destroy
 			}
 			else
 			{

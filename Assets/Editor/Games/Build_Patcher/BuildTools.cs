@@ -171,7 +171,7 @@ public class BuildTools : BuildTBasic
         PlayerSettings.allowedAutorotateToPortrait = false;
         PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
 
-        string pName = $"{getOption(args, "targetName", "kesulu")}_{System.DateTime.Now.ToString("Md_Hm")}";
+        string pName = $"{getOption(args, "targetName", "kesulu")}_{System.DateTime.Now.ToString("MMdd_HHmm")}";
         string targetDir = Path.Combine(directory, pName + ".apk");
         FileUtil.DeleteFileOrDirectory(targetDir);
 

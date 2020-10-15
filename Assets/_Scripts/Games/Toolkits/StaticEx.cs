@@ -12,9 +12,6 @@ using UObject = UnityEngine.Object;
 /// 功能 : Extension method must be defined in a non-generic static class
 /// </summary>
 public static class StaticEx {
-    
-    static public bool IsUseSharedMat = true;
-
 	static public void SetProperty(this Material material, int type, string name, object value)
     {
         if(null == material) return;
@@ -78,7 +75,7 @@ public static class StaticEx {
 #if UNITY_EDITOR
         return render.material;
 #else
-        return IsUseSharedMat ? render.sharedMaterial : render.material;
+        return render.sharedMaterial;
 #endif
     }
 
@@ -88,7 +85,7 @@ public static class StaticEx {
 #if UNITY_EDITOR
         return render.materials;
 #else
-        return IsUseSharedMat ? render.sharedMaterials : render.materials;
+        return render.sharedMaterials;
 #endif
     }
 

@@ -83,7 +83,7 @@ public class RendererMatData
         int _len_ = _list.Count;
         for (int i = 0; i < _len_; i++)
         {
-            GameObject.DestroyImmediate(_list[i]); // Destroy
+            Core.GameFile.UnLoadOne(_list[i]);
         }
     }
 
