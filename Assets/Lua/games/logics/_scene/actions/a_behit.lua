@@ -9,6 +9,7 @@ local E_Life = LES_Life
 local E_State = LES_C_State
 local E_AniState = LES_C_Action_State
 local E_CEType = LES_Ani_Eft_Type
+local _Mathf = Mathf
 
 local super = ActionBasic
 local M = class( "behit",super )
@@ -47,8 +48,18 @@ function M:_On_AEnter()
 			self.to_x,self.to_y = to_x,to_y
 
 			local cfgEft = self.lbOwner:GetCfgEftByEType( self.beType )
+			self.fps_loop = nil
 			if cfgEft then
 				self.time_out = (cfgEft.effecttime) / 1000
+
+				if cfgEft.chg_time then
+					local chg_time = (cfgEft.chg_time) / 1000
+					local _fps = self:MCeil( chg_time / 0.02 )
+					local _cpos = self.lbOwner:GetPosition()
+					self.c_x,self.c_y = _cpos.x,_cpos.z
+					self.s_x,self.s_y = (self.to_x - self.c_x) / _fps , (self.to_y - self.c_y) / _fps
+					self.fps_loop = _fps
+				end
 			end
 		end
 	end
@@ -56,8 +67,20 @@ function M:_On_AEnter()
 end
 
 function M:_OnEnd_AEnter()
-	if self.isBFlay then
+	if (self.isBFlay) and (not self.fps_loop) then
 		self.lbOwner:SetPos( self.to_x,self.to_y )
+	end
+end
+
+function M:_On_AUpdate(dt)
+	if self.isBFlay and self.fps_loop then
+		if self.fps_loop > 0 then
+			self.c_x,self.c_y = self.c_x + self.s_x,self.c_y + self.s_y
+			self.c_x = _Mathf.Clamp(self.c_x, 0, self.to_x)
+			self.c_y = _Mathf.Clamp(self.c_y, 0, self.to_y)
+			self.lbOwner:SetPos( self.c_x,self.c_y )
+		end
+		self.fps_loop = self.fps_loop - 1
 	end
 end
 

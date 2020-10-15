@@ -28,7 +28,7 @@ function M:onAssetConfig( _cfg )
 	return _cfg;
 end
 
-local __special_fabs = { "timeline/" }
+local __special_fabs = { "timeline/","groudbox/" }
 -- 没放在 prefabs 文件夹下面的的fab
 function M:IsNoInPrefabsFab( abName )
 	if not abName or "" == abName then

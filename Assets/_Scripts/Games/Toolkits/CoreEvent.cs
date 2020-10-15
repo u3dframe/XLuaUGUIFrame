@@ -12,7 +12,7 @@ namespace Core
     public delegate void DF_LoadedAsset(AssetBase asset);
     public delegate void DF_LoadedFab(GameObject gobj);
     public delegate void DF_LoadedTex2D(Texture2D tex);
-    public delegate void DF_LoadedTex2DExt(Texture2D tex,object ext);
+    public delegate void DF_LoadedTex2DExt(Texture2D tex,object ext1,object ext2);
 	public delegate void DF_LoadedSprite(Sprite sprite);
     public delegate void DF_LoadedAnimator(Animator ator);
     public delegate void DF_LoadedAnimationClip(AnimationClip clip);

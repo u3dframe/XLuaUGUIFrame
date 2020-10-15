@@ -134,7 +134,7 @@ public class FBXImporter : AssetPostprocessor
         }
     }
 
-    [MenuItem("Assets/Tools/Re - Import All Fbx")]
+    // [MenuItem("Assets/Tools/Re - Import All Fbx")]
 	static void ReImportAllFbx()
 	{
 		string _fd = Application.dataPath;
@@ -151,7 +151,7 @@ public class FBXImporter : AssetPostprocessor
 		}
 	}
 
-     [MenuItem("Assets/Tools/Re - Import Select Fbx")]
+    //  [MenuItem("Assets/Tools/Re - Import Select Fbx")]
 	static void ReImportSelectFbx()
     {
         Object[] _arrs = Selection.GetFiltered(typeof(GameObject), SelectionMode.DeepAssets);

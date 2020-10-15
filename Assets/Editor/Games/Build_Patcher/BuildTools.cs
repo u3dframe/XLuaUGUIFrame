@@ -6,6 +6,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Core;
 using Core.Kernel;
+using UObject = UnityEngine.Object;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>
 /// 类名 : 资源导出工具脚本 
@@ -14,525 +18,8 @@ using Core.Kernel;
 /// 功能 : 将protobuf 文件转为 lua 文件
 /// 修改 : 2020-03-26 09:29
 /// </summary>
-public class BuildTools : Core.EditorGameFile
+public class BuildTools : BuildTBasic
 {
-    const string _fnSharder = "shaders.ab_shader";
-
-    public static void ClearBuild()
-    {
-        MgrABDataDependence.ClearDeps();
-    }
-
-    // 分析文件夹 - 得到所有文件的依赖关系
-    public static void AnalyseDir4Deps(Object obj)
-    {
-        if (obj == null)
-            return;
-
-        string strObjPath = GetPath(obj);
-#if Shader2OneAB
-		if (IsShader(strObjPath)) {
-			SetABInfo(strObjPath,_fnSharder);
-			return;
-		}
-#endif
-        EL_Path.Init(strObjPath);
-        float count = EL_Path.files.Count;
-        int curr = 0;
-        string _tmp = "";
-        EditorUtility.DisplayProgressBar("Analysis Dependence Init", strObjPath, 0.00f);
-
-        foreach (var item in EL_Path.files)
-        {
-            _tmp = Path2AssetsStart(item);
-            AnalyseFile4Deps(Load4Develop(_tmp));
-            curr++;
-            EditorUtility.DisplayProgressBar(string.Format("{0} - ({1}/{2})", strObjPath, curr, count), _tmp, (curr / count));
-        }
-        EditorUtility.ClearProgressBar();
-    }
-
-    // 分析文件的依赖关系
-    public static void AnalyseFile4Deps(Object obj)
-    {
-        string strObjPath = GetPath(obj);
-        bool isMust = false;
-        if (!IsInBuild(strObjPath, ref isMust))
-            return;
-
-        MgrABDataDependence.Init(obj, isMust);
-    }
-
-    static public void ClearObjABName(string abname)
-    {
-        string[] _arrs = AssetDatabase.GetAssetPathsFromAssetBundle(abname);
-        if(_arrs == null || _arrs.Length <= 0)
-            return;
-        
-        foreach (string assetPath in _arrs){
-            SetABInfo(assetPath);
-        }
-    }
-
-    static int _CheckABName()
-    {
-        EditorUtility.DisplayProgressBar("DoBuild", "CheckABName ...", 0.0f);
-        AssetDatabase.RemoveUnusedAssetBundleNames();
-        string[] strABNames = AssetDatabase.GetAllAssetBundleNames();
-        float count = strABNames.Length;
-        int curr = 0;
-        foreach (string abName in strABNames)
-        {
-            curr++;
-            EditorUtility.DisplayProgressBar(string.Format("CheckABName - ({0}/{1})", curr, count), abName, (curr / count));
-            if (abName.EndsWith("error"))
-            {
-                ClearObjABName(abName);
-                AssetDatabase.RemoveAssetBundleName(abName, true);
-                Debug.LogFormat("=Error ABName = [{0}]", abName);
-            }
-        }
-        AssetDatabase.RemoveUnusedAssetBundleNames();
-        EditorUtility.DisplayProgressBar("DoBuild", "RemoveUnusedAssetBundleNames ...", 0.1f);
-        strABNames = AssetDatabase.GetAllAssetBundleNames();
-        return strABNames.Length;
-    }
-
-    static public void ClearAllABNames(bool isClearBuild = true)
-    {
-        EditorUtility.DisplayProgressBar("Clear", "ClearABName ...", 0.0f);
-        AssetDatabase.RemoveUnusedAssetBundleNames();
-        string[] arrs = AssetDatabase.GetAllAssetBundleNames();
-        float count = arrs.Length;
-        int curr = 0;
-        foreach (string abName in arrs)
-        {
-            ClearObjABName(abName);
-            AssetDatabase.RemoveAssetBundleName(abName, true);
-            curr++;
-            EditorUtility.DisplayProgressBar(string.Format("ClearABName - ({0}/{1})", curr, count), abName, (curr / count));
-        }
-        AssetDatabase.RemoveUnusedAssetBundleNames();
-        AssetDatabase.Refresh();
-        EditorUtility.ClearProgressBar();
-
-        if(isClearBuild){
-            DelABFolders();
-            ClearBuild();
-        }
-    }
-
-    static void _ReBindABName(string objAssetPath)
-    {
-        Object obj = Load4Develop(objAssetPath);
-        if (obj == null)
-            return;
-        _ReBindABName(obj);
-    }
-
-    static void _HandlerEmpty(Object obj)
-    {
-        if (obj is GameObject)
-        {
-            GameObject gobj = obj as GameObject;
-            if (gobj.name.StartsWith("tl_") != true)//Timeline预制资源都不移除Animator
-            {
-                Animator[] arrsAnit = gobj.GetComponentsInChildren<Animator>(true);
-                foreach (var item in arrsAnit)
-                {
-                    if (item != null && item.runtimeAnimatorController == null)
-                    {
-                        GameObject.DestroyImmediate(item, true);
-                    }
-                }
-            }
-            
-            Animation[] arrsAnim = gobj.GetComponentsInChildren<Animation>(true);
-            foreach (var item in arrsAnim)
-            {
-                if (item != null && item.GetClipCount() <= 0)
-                {
-                    GameObject.DestroyImmediate(item, true);
-                }
-            }
-            CleanupMissingScripts(gobj);
-
-            // 加上这句，才会保存修改后的prefab
-            if(IsPrefabInstance(gobj,false)){
-                PrefabUtility.SavePrefabAsset(gobj);
-            }
-        }
-    }
-
-    /// <summary>
-    /// 判断Object是否是预制体资源。
-    /// </summary>
-    /// <param name="includePrefabInstance">是否将预制体资源的Scene实例视为预制体资源？</param>
-    /// <returns>如果是则返回 `true` ，如果不是则返回 `false` 。</returns>
-    static public bool IsPrefabAsset(UnityEngine.Object obj, bool includePrefabInstance)
-    {
-        if (!obj)
-        {
-            return false;
-        }
-
-        var type = PrefabUtility.GetPrefabAssetType(obj);
-        if (type == PrefabAssetType.NotAPrefab)
-        {
-            return false;
-        }
-
-        var status = PrefabUtility.GetPrefabInstanceStatus(obj);
-        if (status != PrefabInstanceStatus.NotAPrefab && !includePrefabInstance)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// 判断GameObject是否是预制体资源的实例。
-    /// </summary>
-    /// <param name="includeMissingAsset">是否将丢失预制体关联的GameObject视为预制体实例？</param>
-    /// <returns>如果是则返回 `true` ，如果不是则返回 `false` 。</returns>
-    static public bool IsPrefabInstance(UnityEngine.GameObject gobj, bool includeMissingAsset)
-    {
-        if (!gobj)
-        {
-            return false;
-        }
-
-        var type = PrefabUtility.GetPrefabAssetType(gobj);
-        if (type == PrefabAssetType.NotAPrefab || (!includeMissingAsset && type == PrefabAssetType.MissingAsset))
-        {
-            return false;
-        }
-
-        var status = PrefabUtility.GetPrefabInstanceStatus(gobj);
-        if (status == PrefabInstanceStatus.NotAPrefab)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    [MenuItem("Tools/Cleanup Missing Scripts")]
-    [MenuItem("Assets/Tools/Cleanup Missing Scripts")]
-    static void CleanupMissingScripts()
-    {
-        for (int i = 0; i < Selection.gameObjects.Length; i++)
-        {
-            CleanupMissingScripts(Selection.gameObjects[i]);
-        }
-    }
-
-    static void CleanupMissingScripts(GameObject gObj)
-    {
-        // We must use the GetComponents array to actually detect missing components
-        var components = gObj.GetComponents<Component>();
-
-        // Create a serialized object so that we can edit the component list
-        var serializedObject = new SerializedObject(gObj);
-        // Find the component list property
-        var prop = serializedObject.FindProperty("m_Component");
-
-        // Track how many components we've removed
-        int r = 0;
-        // Iterate over all components
-        for (int j = 0; j < components.Length; j++)
-        {
-            // Check if the ref is null
-            if (components[j] == null)
-            {
-                // If so, remove from the serialized component array
-                prop.DeleteArrayElementAtIndex(j - r);
-                // Increment removed count
-                r++;
-            }
-        }
-
-        // Apply our changes to the game object
-        serializedObject.ApplyModifiedProperties();
-        //这一行一定要加！！！
-        EditorUtility.SetDirty(gObj);
-    }
-
-    static void _ReBindABName(Object obj)
-    {
-        _HandlerEmpty(obj);
-        string _abSuffix = null;
-        string _abName = GetAbName(obj, ref _abSuffix);
-        bool _isError = _abName.EndsWith("error");
-        if (_isError)
-        {
-            _abName = null;
-            _abSuffix = null;
-            SetABInfo(obj);
-        }
-        else
-        {
-            SetABInfo(obj, _abName, _abSuffix);
-        }
-
-        var _abEn = MgrABDataDependence.GetData(obj);
-        _abEn.ReAB(_abName, _abSuffix);
-    }
-
-    public static void BuildNow(bool isBuildAB = true)
-    {
-        // EditorUtility.DisplayProgressBar("BuildNow", "XLua/Clear Code ...", 0.01f);
-        // CSObjectWrapEditor.Generator.ClearAll();
-
-        // EditorUtility.DisplayProgressBar("BuildNow", "XLua/Generate Code ...", 0.02f);
-        // CSObjectWrapEditor.Generator.GenAll();
-
-        EditorUtility.DisplayProgressBar("BuildNow", "Start BuildNow ...", 0.05f);
-        float count = MgrABDataDependence.instance.m_dic.Count;
-        int curr = 0;
-        foreach (var item in MgrABDataDependence.instance.m_dic.Values)
-        {
-            curr++;
-            if (item.GetBeUsedCount() > 1)
-            {
-                EditorUtility.DisplayProgressBar(string.Format("ReBindABName m_dic - ({0}/{1})", curr, count), item.m_res, (curr / count));
-                _ReBindABName(item.m_res);
-            }
-        }
-
-        AssetDatabase.RemoveUnusedAssetBundleNames();
-
-        if (isBuildAB)
-            DoBuild();
-
-        AssetDatabase.Refresh();
-        EditorUtility.ClearProgressBar();
-        if (!isBuildAB)
-            EditorUtility.DisplayDialog("提示", "资源重新绑定abname完成!!!", "确定");
-    }
-
-    [MenuItem("Tools/Re - AB")]
-    static public void DoBuild()
-    {
-        DoBuild(true);
-    }
-
-    static public void CopyTextFiles(string source, string dist)
-    {
-        FileUtil.DeleteFileOrDirectory(dist);
-        FileUtil.CopyFileOrDirectory(source, dist);
-        void RemoveMeta(DirectoryInfo _dir)
-        {
-            foreach (var file in _dir.GetFiles())
-            {
-
-                if (file.Extension == ".meta")
-                {
-                    file.Delete();
-                }
-            }
-            foreach (var file in _dir.GetDirectories())
-            {
-                RemoveMeta(file);
-            }
-        }
-        RemoveMeta(new DirectoryInfo(dist));
-    }
-
-    static void InnerBuild()
-    {
-        EditorUtility.DisplayProgressBar("DoBuild", "BuildAssetBundles ...", 0.2f);
-        CreateFolder(m_dirRes);
-        BuildPipeline.BuildAssetBundles(m_dirRes, BuildAssetBundleOptions.ChunkBasedCompression, GetBuildTarget());
-        EditorUtility.DisplayProgressBar("DoBuild", "ClearBuild ...", 0.3f);
-        MgrABDataDependence.SaveDeps();
-
-        EditorUtility.DisplayProgressBar("DoBuild", "Copy text files ...", 0.4f);
-        var txtDir = new DirectoryInfo(Path.Combine(m_dirData, m_edtAssetPath, "CsvTxts"));
-        foreach (var dir in txtDir.GetDirectories())
-        {
-            CopyTextFiles(dir.ToString(), Path.Combine(m_dirRes, dir.Name));
-        }
-
-        EditorUtility.DisplayProgressBar("DoBuild", "Copy lua files ...", 0.5f);
-        CopyTextFiles(Path.Combine(m_dirData, "Lua"), Path.Combine(m_dirRes, "Lua"));
-        FileUtil.DeleteFileOrDirectory(Path.Combine(m_dirRes, "Lua/games/cfg/svr"));
-        FileUtil.DeleteFileOrDirectory(Path.Combine(m_dirRes, "Lua/games/cfg/.git"));
-
-        EditorUtility.ClearProgressBar();
-    }
-    
-    static public void DoBuild(bool isCheckABSpace)
-    {
-        if(isCheckABSpace && IsHasSpace()){
-            EditorUtility.ClearProgressBar();
-            EditorUtility.DisplayDialog("提示", "[原始资源]名有空格，请查看输出打印!!!", "确定");
-            return;
-        }
-
-        EditorUtility.DisplayProgressBar("DoBuild", "Start DoBuild ...", 0.0f);
-        int _lensAb = _CheckABName();
-        bool _isMakeAB = (_lensAb > 0);
-        // BuildAssetBundleOptions.None : 使用LZMA算法压缩，压缩的包更小，但是加载时间更长，需要解压全部。
-        // BuildAssetBundleOptions.ChunkBasedCompression : 使用LZ4压缩，压缩率没有LZMA高，但是我们可以加载指定资源而不用解压全部。
-        if (_isMakeAB)
-        {
-			CreateFolder(m_dirRes);
-            BuildPipeline.BuildAssetBundles(m_dirRes, BuildAssetBundleOptions.ChunkBasedCompression, GetBuildTarget());
-            EditorUtility.DisplayProgressBar("DoBuild", "ClearBuild ...", 0.3f);
-            EditorUtility.ClearProgressBar();
-            MgrABDataDependence.SaveDeps();
-			
-            // InnerBuild();
-            EditorUtility.DisplayDialog("提示", "[ab资源] - 打包完成!!!", "确定");
-        }
-        else
-        {
-            EditorUtility.ClearProgressBar();
-            EditorUtility.DisplayDialog("提示", "没有[原始资源]设置了AssetBundleName , 即资源的abname都为None!!!", "确定");
-        }
-    }
-
-    static public BuildTarget m_buildTarget = BuildTarget.NoTarget;
-    static BuildTarget GetBuildTarget()
-    {
-        if (m_buildTarget == BuildTarget.NoTarget)
-        {
-            switch (EditorUserBuildSettings.activeBuildTarget)
-            {
-                case BuildTarget.iOS:
-                    return BuildTarget.iOS;
-                default:
-                    return BuildTarget.Android;
-            }
-        }
-        return m_buildTarget;
-    }
-
-    [MenuItem("Assets/Tools/导出 - 选中的Object")]
-    static void BuildSelectPrefab()
-    {
-        Object[] _arrs = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
-        for (int i = 0; i < _arrs.Length; ++i)
-        {
-            AnalyseFile4Deps(_arrs[i]);
-        }
-        BuildNow(true);
-    }
-
-    [MenuItem("Assets/Tools/清除 - 选中的AssetBundleName")]
-    static void ClearABName4Select()
-    {
-        Object[] _arrs = Selection.GetFiltered(typeof(Object), SelectionMode.DeepAssets);
-        for (int i = 0; i < _arrs.Length; ++i)
-        {
-            SetABInfo(_arrs[i]);
-        }
-        EditorUtility.DisplayDialog("提示", "已清除选中的所有文件(files)及文件夹(folders)的abname!!!", "确定");
-    }
-
-    [MenuItem("Tools/Delete ABFolders")]
-    static void _DelABFolders()
-    {
-        DelABFolders(true);
-    }
-    static bool _IsContains(string[] src, string cur)
-    {
-        if(src == null || src.Length <= 0)
-            return false;
-        
-        foreach (var item in src)
-        {
-            if (cur.Contains(item))
-                return true;
-        }
-        return false;
-    }
-
-    static public void DelABFolders(bool isTip = false)
-    {
-        EditorUtility.DisplayProgressBar("DeleteABFolders", " rm folder where is ab_resources inside ...", 0.0f);
-        EL_Path _ep = EL_Path.builder.DoInit(m_dirRes);
-
-        // "audios/","fnts/","materials/","prefabs/","shaders/","textures/","ui/"        
-        string[] arrs = null;
-        // arrs = new string[]{
-        //     "configs/","protos/","lanuage/","maps/",
-        // };
-
-
-        int curr = 0;
-        float count = _ep.m_folders.Count;
-        string _fd = null;
-        foreach (string _fn in _ep.m_folders)
-        {
-            curr++;
-            _fd = ReFnPath(_fn);
-            EditorUtility.DisplayProgressBar(string.Format("DeleteABFolders rm file - ({0}/{1})", curr, count), _fd, (curr / count));
-            if (_fd.EndsWith(m_assetRelativePath) || _IsContains(arrs, _fd))
-                continue;
-            DelFolder(_fd);
-        }
-
-        EditorUtility.ClearProgressBar();
-        if (isTip)
-            EditorUtility.DisplayDialog("提示", "已删除指定文件夹ABFolders!", "确定");
-    }
-
-    [MenuItem("Tools/Delete Same Material")]
-    static void DeleteSameMaterial()
-    {
-        // 这个是遍历当前场景的对象(不是全部资源对象)有思路，未实现
-        Dictionary<string, string> dicMaterial = new Dictionary<string, string>();
-        MeshRenderer[] _arrs = UnityEngine.Resources.FindObjectsOfTypeAll<MeshRenderer>();
-        string rootPath = Directory.GetCurrentDirectory();
-        int _lens = _arrs.Length,_lens2 = 0;
-        for (int i = 0; i < _lens; i++)
-        {
-            MeshRenderer meshRender = _arrs[i];
-            _lens2 = meshRender.sharedMaterials.Length;
-            Material[] newMaterials = new Material[_lens2];
-            for (int j = 0; j < _lens2; j++)
-            {
-                Material m = meshRender.sharedMaterials[j];
-                string mPath = GetPath(m);
-                if (!string.IsNullOrEmpty(mPath) && mPath.Contains("Assets/"))
-                {
-                    string fullPath = Path.Combine(rootPath, mPath);
-                    Debug.Log("fullPath = " + fullPath);
-                    string text = File.ReadAllText(fullPath).Replace(" m_Name: " + m.name, "");
-                    string change;
-                     Debug.Log("text = " + text);
-                    if (!dicMaterial.TryGetValue(text, out change))
-                    {
-                        dicMaterial[text] = mPath;
-                        change = mPath;
-                    }
-                    newMaterials[j] = Load4Develop(change) as Material;
-                }
-            }
-            meshRender.sharedMaterials = newMaterials;
-        }
-        EditorSceneManager.MarkAllScenesDirty();
-    }
-
-    [MenuItem("Tools/Check Has Space ABName")]
-    static public bool IsHasSpace(){
-        AssetDatabase.RemoveUnusedAssetBundleNames();
-        string[] arrs = AssetDatabase.GetAllAssetBundleNames();
-        int count = arrs.Length;
-        string strName = null;
-        bool _isRet = false;
-        for(int i = 0; i < count; i++){
-            strName = arrs[i];
-            if(strName.Contains(" ")){
-                _isRet = true;
-                Debug.LogErrorFormat("==== this has space,ab name = [{0}]",strName);
-            }
-        }
-        return _isRet;
-    }
-
     static string[] GenBuildScene()
     {
         string[] buildList = {
@@ -561,6 +48,45 @@ public class BuildTools : Core.EditorGameFile
         return paths.ToArray();
     }
 
+    static public void CopyTextFiles(string source, string dist)
+    {
+        FileUtil.DeleteFileOrDirectory(dist);
+        FileUtil.CopyFileOrDirectory(source, dist);
+        void RemoveMeta(DirectoryInfo _dir)
+        {
+            foreach (var file in _dir.GetFiles())
+            {
+
+                if (file.Extension == ".meta")
+                {
+                    file.Delete();
+                }
+            }
+            foreach (var file in _dir.GetDirectories())
+            {
+                RemoveMeta(file);
+            }
+        }
+        RemoveMeta(new DirectoryInfo(dist));
+    }
+
+    static void CopyTextFiles()
+    {
+        EditorUtility.DisplayProgressBar("CopyTextFiles", "Copy text files ...", 0.4f);
+        var txtDir = new DirectoryInfo(Path.Combine(m_dirData, m_edtAssetPath, "CsvTxts"));
+        foreach (var dir in txtDir.GetDirectories())
+        {
+            CopyTextFiles(dir.ToString(), Path.Combine(m_dirRes, dir.Name));
+        }
+
+        EditorUtility.DisplayProgressBar("CopyTextFiles", "Copy lua files ...", 0.5f);
+        CopyTextFiles(Path.Combine(m_dirData, "Lua"), Path.Combine(m_dirRes, "Lua"));
+        FileUtil.DeleteFileOrDirectory(Path.Combine(m_dirRes, "Lua/games/cfg/svr"));
+        FileUtil.DeleteFileOrDirectory(Path.Combine(m_dirRes, "Lua/games/cfg/.git"));
+
+        EditorUtility.ClearProgressBar();
+    }
+
     static void InnerBuildAll(string []scenes, string outpath, BuildTargetGroup targetgroup, BuildTarget target, BuildOptions option)
     {
         EditorUtility.DisplayProgressBar("BuidPlayer", "Switch Targe Group", 0.1f);
@@ -568,8 +94,10 @@ public class BuildTools : Core.EditorGameFile
         option |= BuildOptions.CompressWithLz4;
         AssetDatabase.Refresh();
 
+        // BuildAssetBundles();
+
         EditorUtility.DisplayProgressBar("BuidPlayer", "Generate Resource", 0.3f);
-        InnerBuild();
+        CopyTextFiles();
         AssetDatabase.Refresh();
 
         FileUtil.DeleteFileOrDirectory(m_dirStreaming);
@@ -581,58 +109,141 @@ public class BuildTools : Core.EditorGameFile
 
         EditorUtility.DisplayProgressBar("BuidPlayer", "Build Runtime", 0.5f);
         UnityEditor.Build.Reporting.BuildReport ret = BuildPipeline.BuildPlayer(scenes, outpath, target, option);
+
+        EditorUtility.DisplayProgressBar("BuidPlayer", "Clean tmp files", 0.9f);
+        FileUtil.DeleteFileOrDirectory(m_dirStreaming);
+        AssetDatabase.Refresh();
+        EditorUtility.ClearProgressBar();
+
         if (ret.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded)
         {
-            Debug.LogError("Build Failure:");
+            var sb = new System.Text.StringBuilder();
+            sb.Append("Build Failure:\n");
             foreach (UnityEditor.Build.Reporting.BuildStep step in ret.steps)
             {
                 foreach (UnityEditor.Build.Reporting.BuildStepMessage msg in step.messages)
                 {
-                    Debug.LogError(step.name + ":" + msg.content);
+                    sb.Append(step.name + ":" + msg.content + "\n");
                 }
             }
+            throw new Exception(sb.ToString());
         }
         else
         {
             Debug.Log("Build " + outpath);
         }
-        EditorUtility.DisplayProgressBar("BuidPlayer", "Clean tmp files", 0.9f);
-        FileUtil.DeleteFileOrDirectory(m_dirStreaming);
-        AssetDatabase.Refresh();
-        EditorUtility.ClearProgressBar();
     }
 
-    [MenuItem("Tools/BuildApk")]
+    static string getOption( Dictionary<string,string> args, string key, string def){
+        string o;
+        return args.TryGetValue(key, out o) ? o : def; 
+    }
+
     static public void BuildAndroid()
     {
-        Debug.Log("BuidAndroid--------------");
+        string CommandLine = Environment.CommandLine;
+        string[] CommandLineArgs = Environment.GetCommandLineArgs();
+        var args = new Dictionary<string,string>();
+        foreach(var c in CommandLineArgs) {
+            string[] vals=c.Split(new char[]{'='}, StringSplitOptions.RemoveEmptyEntries);
+            if(vals.Length==1) {
+                args.Add(vals[0].Trim(), "true");
+            }else{
+                args.Add(vals[0].Trim(), vals[1].Trim());
+            }
+        }
         AssetDatabase.Refresh();
-        string directory = Path.Combine(Application.dataPath.Replace("/Assets", ""),"../build/android/apk/");
+        string directory = getOption(args, "targetDir", Path.Combine(Application.dataPath.Replace("/Assets", ""),"../build/"));
+        directory = Path.Combine(directory, "android/");
         Directory.CreateDirectory(directory);
 
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-        PlayerSettings.stripEngineCode = false;
+        bool strip = getOption(args, "stripEngineCode", "false") == "true";
+        PlayerSettings.stripEngineCode = strip;
         //PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
-        PlayerSettings.companyName = "dianyuegame";
-        PlayerSettings.productName = "kesl";
+        PlayerSettings.companyName = getOption(args, "companyName", "com.dianyuegame");
+        PlayerSettings.productName = getOption(args, "productName", "kesulu");
+        string ident = PlayerSettings.companyName + "." + PlayerSettings.productName;
+        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, ident);
 
         PlayerSettings.allowedAutorotateToLandscapeLeft = true;
         PlayerSettings.allowedAutorotateToLandscapeRight = true;
         PlayerSettings.allowedAutorotateToPortrait = false;
         PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
 
-        string apkName = $"c_{System.DateTime.Now.ToString("M.d_Hm")}.apk";
-
-        EditorUserBuildSettings.development = true;
-
-        string targetDir = Path.Combine(directory, apkName);
+        string pName = $"{getOption(args, "targetName", "kesulu")}_{System.DateTime.Now.ToString("Md_Hm")}";
+        string targetDir = Path.Combine(directory, pName + ".apk");
         FileUtil.DeleteFileOrDirectory(targetDir);
 
+        
         BuildOptions option = BuildOptions.None;
-        option |= BuildOptions.Development;
-        option |= BuildOptions.AllowDebugging;
-        string[] scenes = GenBuildScene();        
+        bool development = getOption(args, "development", "true") == "true";
+        EditorUserBuildSettings.development = development;
+        if(development) {
+            option |= BuildOptions.Development;
+            option |= BuildOptions.AllowDebugging;
+        }
+        string[] scenes = GenBuildScene();
 
         InnerBuildAll(scenes, targetDir, BuildTargetGroup.Android, BuildTarget.Android, option);
+    }
+
+    static public void CMD_ClearWrap(){
+        CSObjectWrapEditor.Generator.ClearAll();
+        CSObjectWrapEditor.Generator.GenAll();
+        AssetDatabase.Refresh();
+    }
+
+    static public void CMD_BuildResource(){ // async
+        ClearAllABNames(true);
+        AssetDatabase.Refresh();
+        List<UObject> list = null;
+        ReLoadFolders(ref list,false);
+        if(list == null || list.Count <= 0){
+            throw new System.Exception("没有资源");
+        }
+        System.Type typeFolder = typeof(UnityEditor.DefaultAsset);
+        System.Type typeOrg = null;
+        UObject one = null;
+        for (int i = 0; i < list.Count; i++)
+        {
+            one = list[i];
+            typeOrg = one.GetType();
+            if (typeOrg == typeFolder){
+                AnalyseDir4Deps(one);
+            }
+        }
+        BuildNow(true, false);
+    }
+
+    static void CMD_BuildApk(bool isThread){
+        string _fp = CSObjectWrapEditor.GeneratorConfig.common_path;
+        System.DateTime _ldtime = System.DateTime.UtcNow;
+        if(!IsFolder(_fp)){
+            CMD_ClearWrap();
+            
+            if(!isThread){
+                System.Threading.Thread.Sleep(8000);
+                Debug.LogError("====== please re build apk");
+                return;
+            }
+            
+            System.TimeSpan diffSpan;
+            do{
+                System.DateTime _ntime = System.DateTime.UtcNow;
+                diffSpan = _ntime - _ldtime;
+                System.Threading.Thread.Sleep(1000);
+            }while(diffSpan.TotalSeconds < 50);
+            // Debug.LogErrorFormat("======= [{0}] = [{1}] = [{2}]",diffSpan.TotalMinutes,diffSpan.TotalSeconds,diffSpan.TotalMilliseconds);
+        }
+        
+        CMD_BuildResource();
+
+        BuildAndroid();
+    }
+
+    [MenuItem("Tools/CMD BuildApk")]
+    static void CMD_BuildApk(){
+        CMD_BuildApk(false);
     }
 }

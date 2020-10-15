@@ -5,6 +5,7 @@ using LitJson;
 using Core;
 using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
+using UnityEditor;
 using UnityEditor.SceneManagement;
 #endif
 
@@ -40,6 +41,9 @@ public class SceneInfoEx : MonoBehaviour
 	public string m_infoName = "";
 	[HideInInspector]
 	public string m_lmABName = "";
+	int m_lightmapsMode = 0;
+	bool m_isDebug = false; // 是否打印
+	bool m_isDebugRLmap = false; // 是否打印
 
 	string StrRight(string src,string rev){
 		int _ind = src.LastIndexOf(rev);
@@ -51,8 +55,8 @@ public class SceneInfoEx : MonoBehaviour
 	}
 	
 #if UNITY_EDITOR
-	[SerializeField]
 	string m_fabName = "";
+	string _fpInAsset4Gbox = "Assets/_Develop/Builds/groudbox/Excludes/gbox.prefab";
 
 	JsonData NewJObj(){
 		return LJsonHelper.NewJObj();
@@ -128,10 +132,20 @@ public class SceneInfoEx : MonoBehaviour
 		string fp = string.Format("{0}{1}{2}.prefab",GameFile.m_appAssetPath,"Scene/Builds/prefabs/maps/",this.m_fabName);
 		GameFile.CreateFolder(fp);
 
+		GameObject gobjBox = UtilityHelper.ChildRecursion(gameObject,"gbox");
+		if(!gobjBox){
+			GameObject _obj = AssetDatabase.LoadAssetAtPath(_fpInAsset4Gbox, typeof(GameObject)) as GameObject;
+			if(_obj){
+        		gobjBox = GameObject.Instantiate(_obj,transform,false) as GameObject;
+				gobjBox.name = "gbox";
+			}
+		}
+		UtilityHelper.SetLayerAll(gobjBox,"Ground");
+		
 		PrefabElement csEle = UtilityHelper.Get<PrefabElement>(gameObject,true);
 		GameObject[] m_gobjs = new GameObject[2];
 		m_gobjs[0] = UtilityHelper.ChildRecursion(gameObject,"MainCamera");
-		m_gobjs[1] = UtilityHelper.ChildRecursion(gameObject,"gbox");
+		m_gobjs[1] = gobjBox;
 		csEle.SetChildGobjs(m_gobjs);
 		GameFile.CreateFab(gameObject,fp,false);
 
@@ -255,6 +269,14 @@ public class SceneInfoEx : MonoBehaviour
 		if(!float.TryParse(jdFog["fogEndDistance"].ToString(),out _fv))
 			_fv = 0.0f;
 		RenderSettings.fogEndDistance = _fv;
+
+		if(m_isDebug){
+			Debug.LogErrorFormat("====== fog = [{0}] = [{1}] = [{2}] = [{3}] = [{4}] = [{5}]",
+				jdFog.ToJson(),RenderSettings.fog,
+				RenderSettings.fogColor,RenderSettings.fogDensity,
+				RenderSettings.fogStartDistance,RenderSettings.fogEndDistance
+			);
+		}
 	}
 
 	void _LoadLightmap(JsonData jdLm,System.Action<JsonData> cfCall) {
@@ -267,8 +289,13 @@ public class SceneInfoEx : MonoBehaviour
 	
 		// LightmapSettings.lightmapsMode = LightmapsMode.NonDirectional;
 		// Debug.Log(LightmapSettings.lightmapsMode);
-		int mode = (int)jdLm["lightmapsMode"];
-		LightmapSettings.lightmapsMode = (LightmapsMode)mode;
+		this.m_lightmapsMode = (int)jdLm["lightmapsMode"];
+		if(m_isDebug){
+			Debug.LogErrorFormat("====== lightmap = [{0}] = [{1}]",
+				LightmapSettings.lightmapsMode,
+				this.m_lightmapsMode
+			);
+		}
 		JsonData jdLmds = LJsonHelper.ToJData(jdLm,"lmDatas");
 		if(jdLmds == null || jdLmds.Count <= 0)
 			return;
@@ -287,53 +314,61 @@ public class SceneInfoEx : MonoBehaviour
 			_asset_ = LJsonHelper.ToStr(_jd,"lightmapColor");
 			if(!string.IsNullOrEmpty(_asset_)){
 				_asset_ = _asset_ + GameFile.m_suffix_light;
-				ResourceManager.LoadTexture(_fp_ab,_asset_,(tex2d,ext) =>{
-					int ind = (int)ext;
+				ResourceManager.LoadTexture(_fp_ab,_asset_,(tex2d,ext1,ext2) =>{
+					int ind = (int)ext1;
 					SceneLightMapData _item = dicLminfos[ind];
 					_item.lightmapColor = tex2d;
+
+					if(m_isDebug)
+						Debug.LogErrorFormat("====== cor ==[{0}] =[{1}] =[{2}] = [{3}]",tex2d,ext1,ext2,dicLminfos.Count);
+					
 					_n_loaded++;
 					if(_n_loaded >= n_need_load){
 						if(cfCall != null){
 							cfCall(jdRLmds);
 						}
 					}
-					// Debug.LogErrorFormat("=== cor ==[{0}] =[{1}] =[{2}]",tex2d,_asset_,tex2d == null);
-				},i);
+				},i,_asset_);
 			}
 
 			_asset_ = LJsonHelper.ToStr(_jd,"lightmapDir");
 			if(!string.IsNullOrEmpty(_asset_)){
-				ResourceManager.LoadTexture(_fp_ab,_asset_,(tex2d,ext) =>{
-					int ind = (int)ext;
+				ResourceManager.LoadTexture(_fp_ab,_asset_,(tex2d,ext1,ext2) =>{
+					int ind = (int)ext1;
 					SceneLightMapData _item = dicLminfos[ind];
 					_item.lightmapDir = tex2d;
+
+					if(m_isDebug)
+						Debug.LogErrorFormat("====== dir ==[{0}] =[{1}] =[{2}] = [{3}]",tex2d,ext1,ext2,dicLminfos.Count);
+					
 					_n_loaded++;
 					if(_n_loaded >= n_need_load){
 						if(cfCall != null){
 							cfCall(jdRLmds);
 						}
 					}
-					// Debug.LogErrorFormat("=== dir ==[{0}] =[{1}] =[{2}]",tex2d,_asset_,tex2d == null);
-				},i);
+				},i,_asset_);
 			}
 
 			_asset_ = LJsonHelper.ToStr(_jd,"shadowMask");
 			if(!string.IsNullOrEmpty(_asset_)){
-				ResourceManager.LoadTexture(_fp_ab,_asset_,(tex2d,ext) =>{
-					int ind = (int)ext;
+				ResourceManager.LoadTexture(_fp_ab,_asset_,(tex2d,ext1,ext2) =>{
+					int ind = (int)ext1;
 					SceneLightMapData _item = dicLminfos[ind];
 					_item.shadowMask = tex2d;
+
+					if(m_isDebug)
+						Debug.LogErrorFormat("====== sm ==[{0}] =[{1}] =[{2}] = [{3}]",tex2d,ext1,ext2,dicLminfos.Count);
+					
 					_n_loaded++;
 					if(_n_loaded >= n_need_load){
 						if(cfCall != null){
 							cfCall(jdRLmds);
 						}
 					}
-					// Debug.LogErrorFormat("=== sm ==[{0}] =[{1}] =[{2}]",tex2d,_asset_,tex2d == null);
-				},i);
+				},i,_asset_);
 			}
 		}
-		
 	}
 
 	[ContextMenu("Clear Lightmap")]
@@ -347,10 +382,18 @@ public class SceneInfoEx : MonoBehaviour
 				listLightMaps.Add(_item.ToLightmapData());
 			}
 		}
-		
+		LightmapSettings.lightmapsMode = (LightmapsMode)this.m_lightmapsMode;
 		LightmapSettings.lightmaps = listLightMaps.ToArray();
 		dicLminfos.Clear();
 		listLightMaps.Clear();
+
+		if(m_isDebug){
+			Debug.LogErrorFormat("====== lightmap set = [{0}] = [{1}] = [{2}]",
+				this.m_lightmapsMode,
+				LightmapSettings.lightmapsMode,
+				LightmapSettings.lightmaps.Length
+			);
+		}
 	}
 
 	void _LoadRenderLightmap(JsonData jdRLm) {
@@ -381,7 +424,7 @@ public class SceneInfoEx : MonoBehaviour
 
 			if(_jd == null)
 				continue;
-			_gobj.isStatic = false;
+			_gobj.isStatic = true;
 
 			_render.lightmapIndex = (int)_jd["lightmapIndex"];
 			mode = (int)_jd["lightProbeUsage"];
@@ -405,7 +448,12 @@ public class SceneInfoEx : MonoBehaviour
 	
 			_render.lightmapScaleOffset = _vec4;
 
-			_gobj.isStatic = true;
+			// _gobj.isStatic = true;
+			if(m_isDebugRLmap){
+				Debug.LogErrorFormat("====== r lightmap = [{0}] = [{1}] = [{2}]",
+					_jd.ToJson(),_render.lightmapIndex,_render.lightmapScaleOffset
+				);
+			}
 		}
 	}
 

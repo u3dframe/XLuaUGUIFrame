@@ -187,8 +187,12 @@ function M._ST_LoadObjs()
 	if #this._need_funcs <= 0 then
 		if this.state == E_B_State.LoadOtherObjs then
 			if (this._loaded_obj > this._need_load_obj) then
-				this._SetUpState( E_B_State.Entry_CG )
+				if this._ndelay_fps >= 3 then
+					this._SetUpState( E_B_State.Entry_CG )
+				end
+				this._ndelay_fps = this._ndelay_fps + 1
 			elseif (this._loaded_obj == this._need_load_obj) then
+				this._ndelay_fps = 0
 				this._loaded_obj = this._loaded_obj + 1
 			end
 		end
@@ -247,6 +251,10 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 				_obj:View(true,_cfg_,svMsg)
 			end
 			
+			if _cfg_.resid_fs then
+				this._AddNeedLoadResid( _cfg_.resid_fs )
+			end
+
 			if _cfg_.resids then
 				for _, resid in ipairs(_cfg_.resids) do
 					this._AddNeedLoadResid( resid )

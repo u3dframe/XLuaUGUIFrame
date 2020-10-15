@@ -63,7 +63,8 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 		}
 	}
 
-	[HideInInspector] public string poolName = "";
+	[HideInInspector] public object m_obj = null; // 主obj
+	[HideInInspector] public object m_obj1 = null; // 子obj
 	[HideInInspector] public string csAlias = ""; // CSharp 别名
 	// 是否是存活的
 	private bool _isAlive = false;
@@ -118,7 +119,6 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	}
 
 	void OnDestroy(){
-		// Debug.Log ("Destroy,poolName = " + poolName+",gobjname = " + gameObject.name);
 		if(!this.isAppQuit){
 			OnCall4Destroy();
 			_ExcDestoryCall();
@@ -154,5 +154,12 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 
 	public void DetroySelf(){
 		GameObject.Destroy(this);
+	}
+
+	public void AddOnlyOnceDCall(Core.DF_OnNotifyDestry call){
+		if(call == null)
+			return;
+		this.m_onDestroy -= call;
+		this.m_onDestroy += call;
 	}
 }

@@ -61,14 +61,14 @@ public class ImportTexture : AssetPostprocessor
                 // importer.wrapMode = TextureWrapMode.Clamp;
                 
                 ReTextureInfo(importer);
-                importer.SaveAndReimport();
+                // importer.SaveAndReimport();
                 // AssetDatabase.Refresh();
             }
         }
     }
 
-    [MenuItem("Assets/Tools/重置所有图片的AB")]
-    [MenuItem("Tools/重置所有图片的AB")]
+    // [MenuItem("Assets/Tools/重置所有图片的AB")]
+    // [MenuItem("Tools/重置所有图片的AB")]
     static public void ReTextureAll()
     {
         string _fd = Application.dataPath;
@@ -202,7 +202,7 @@ public class ImportTexture : AssetPostprocessor
         }
     }
 
-    [MenuItem("Assets/Tools/Re - Import All Texutes")]
+    // [MenuItem("Assets/Tools/Re - Import All Texutes")]
     static void ReImportAllTexutes()
     {
         string _fd = Application.dataPath;

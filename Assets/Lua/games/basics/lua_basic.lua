@@ -171,7 +171,7 @@ end
 
 function M:ExcFunc(cmd,...)
 	if not cmd or not self._lfuncs then return end
-	local _lb = self._lfuncs[cmd]
+	local _lb,_it = self._lfuncs[cmd]
 	if not _lb or not _lb.funcs then return end
 
 	for k, v in ipairs(_lb.funcs) do

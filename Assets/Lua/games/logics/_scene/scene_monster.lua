@@ -125,8 +125,10 @@ local function _chg_bodyend(_s)
 end
 
 function M:StopChgBody()
-	LTimer.RemoveDelayFunc("chg_body_end")
-	LTimer.RemoveDelayFunc("chg_body")
+	if self.strCmd then
+		LTimer.RemoveDelayFunc(self.strCmdEnd)
+		LTimer.RemoveDelayFunc(self.strCmd)
+	end
 
 	local _lt = self.isChgSize
 	self.isChgSize = nil
@@ -155,8 +157,11 @@ function M:ChangeBody( e_id )
 		local _delay = 0.02
 		local _loop = self:MCeil( _t_t / _delay )
 		self.chg_speed = (self.toSize - self.size) / _loop
-		LTimer.AddDelayFunc("chg_body",_delay,_chg_bodying,_loop,nil,self)
-		LTimer.AddDelayFunc1("chg_body_end",cfgEft.effecttime,_chg_bodyend,self)
+		local _id_ = tostring(self:GetCursor())
+		self.strCmd = "chg_body" .. _id_
+		self.strCmdEnd = "chg_body_end" .. _id_
+		LTimer.AddDelayFunc(self.strCmd,_delay,_chg_bodying,_loop,nil,self)
+		LTimer.AddDelayFunc1(self.strCmdEnd,cfgEft.effecttime,_chg_bodyend,self)
 	else
 		self:SetSize( self.toSize )
 	end

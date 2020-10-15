@@ -282,6 +282,7 @@ function M:OnActive(isActive)
 end
 
 function M:OnCF_BegOnDestroy()
+	self:PreOnEnd(true)
 	self:OnDestroy()
 	self:OnEnd(true)
 end

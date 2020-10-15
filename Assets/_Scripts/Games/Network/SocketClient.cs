@@ -74,6 +74,7 @@ public class SocketClient {
     /// </summary>
     void OnConnect(IAsyncResult asr) {
         try{
+            client.EndConnect(asr);
             outStream = client.GetStream();
             client.GetStream().BeginRead(_bts, 0, MAX_READ, new AsyncCallback(OnRead), null);
             NetworkManager.AddEvent(Protocal.Connect, null);

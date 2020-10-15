@@ -161,11 +161,11 @@ namespace Core.Kernel
 
         static string[] mustFiles = {
             ".prefab",
-            //".playable",
             ".ttf",
             ".fontsettings",
             ".shadervariants",
-            ".fbx",
+            //".playable",
+            // ".fbx",
         };
 
         static private bool _IsIn(string fp, string[] arrs)
@@ -276,13 +276,13 @@ namespace Core.Kernel
             return _data.GetBeUsedCount();
         }
 
-        [MenuItem("Tools/Deps/ClearDeps")]
+        // [MenuItem("Tools/Deps/ClearDeps")]
         static public void ClearDeps()
         {
             instance.m_dic.Clear();
         }
 
-        [MenuItem("Tools/Deps/SaveDeps", false, 31)]
+        // [MenuItem("Tools/Deps/SaveDeps", false, 31)]
         static public void SaveDeps()
         {
             string _fp = string.Format("{0}_deps.json", BuildTools.m_dirDataNoAssets);
@@ -291,7 +291,7 @@ namespace Core.Kernel
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/Deps/ReLoadDeps", false, 33)]
+        // [MenuItem("Tools/Deps/ReLoadDeps", false, 33)]
         static public void ReLoadDeps()
         {
             ClearDeps();
@@ -322,7 +322,7 @@ namespace Core.Kernel
             return System.Environment.CurrentDirectory;
         }
 
-        [MenuItem("Tools/Deps/PrintDic")]
+        // [MenuItem("Tools/Deps/PrintDic")]
         static public void PrintDic()
         {
             foreach (var item in instance.m_dic)
@@ -331,7 +331,7 @@ namespace Core.Kernel
             }
         }
 
-        [MenuItem("Tools/Deps/WriteDepsTxt")]
+        // [MenuItem("Tools/Deps/WriteDepsTxt")]
         static void WriteDepsTxt()
         {
             WriteDepsToTxt();

@@ -14,7 +14,6 @@ namespace Core.Kernel
     /// </summary>
     public class EL_Path
     {
-
         static string[] m_ignoreFiles = {
             ".manifest",
             ".meta",
@@ -72,6 +71,7 @@ namespace Core.Kernel
 
         static public EL_Path builder { get { return new EL_Path(); } }
 
+        public bool m_isAllFiles = false;
         /// <summary>
         /// 文件夹地址
         /// </summary>
@@ -95,7 +95,7 @@ namespace Core.Kernel
             string[] dirs = Directory.GetDirectories(path);
             foreach (string filename in names)
             {
-                if (_IsIgnoreFile(filename)) continue;
+                if (!m_isAllFiles && _IsIgnoreFile(filename)) continue;
                 m_files.Add(filename.Replace('\\', '/'));
             }
             foreach (string dir in dirs)
@@ -111,11 +111,16 @@ namespace Core.Kernel
             m_folders.Clear();
         }
 
-        public EL_Path DoInit(string path)
+        public EL_Path DoInit(string path,bool isAllFiles)
         {
+            this.m_isAllFiles = isAllFiles;
             DoClear();
             Recursive(path);
 			return this;
+        }
+
+        public EL_Path DoInit(string path){
+            return this.DoInit(path,false);
         }
     }
 }

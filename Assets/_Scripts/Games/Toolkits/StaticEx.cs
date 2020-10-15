@@ -72,7 +72,7 @@ public static class StaticEx {
         }
     }
 
-    static Material GetMat(Renderer render)
+    static public Material GetMat(Renderer render)
     {
         if(null == render) return null;
 #if UNITY_EDITOR
@@ -82,7 +82,7 @@ public static class StaticEx {
 #endif
     }
 
-    static Material[] GetMats(Renderer render)
+    static public Material[] GetMats(Renderer render)
     {
         if(null == render) return null;
 #if UNITY_EDITOR
@@ -351,5 +351,25 @@ public static class StaticEx {
         {
             ReUIShader(_arrs[i]);
         }
+    }
+
+    static public void SetProperty(this UnityEngine.UI.MaskableGraphic graphic, int type, string name, object value)
+    {
+        if(null == graphic) return;
+        Material material = graphic.material;
+        if(null == material) return;
+        GobjLifeListener glife = GobjLifeListener.Get(graphic.gameObject);
+        UGUIMatData udata = glife.m_obj1 as UGUIMatData;
+        if(udata == null){
+            udata = UGUIMatData.Builder(graphic,true);
+        }
+        if(udata != null){
+            material = udata.m_newMat;
+        }
+        SetProperty(material,type,name,value);
+    }
+
+    static public void SetProperty(this UnityEngine.UI.MaskableGraphic graphic,string name, float value){
+        SetProperty(graphic,2,name,value);
     }
 }

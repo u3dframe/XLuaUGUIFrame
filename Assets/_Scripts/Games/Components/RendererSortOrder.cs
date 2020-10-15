@@ -41,15 +41,35 @@ public class RendererSortOrder : GobjLifeListener
     string _k_mat_val = "m_val_{0}";
     Dictionary<string,int> m_r_sinfo = new Dictionary<string, int>();
 
-    public float m_delay = 0.2f;
+    public float m_delay = 0.1f;
     bool m_isDoRe = false;
     float m_curr_0 = 0f;
 
+    public bool m_isNewMat = true;
+    Dictionary<int,RendererMatData> m_dicAllMats = new Dictionary<int,RendererMatData>();
+    
     override protected void OnCall4Start()
     {
         renderers = this.GetComponentsInChildren<Renderer>(true);
         _InitSortInfo();
+
+        if(this.m_delay <= 0){
+            _UpDelayReRS();
+        }
     }
+
+    override protected void OnCall4Destroy(){
+        if(m_dicAllMats.Count > 0){
+            foreach (RendererMatData item in m_dicAllMats.Values)
+            {
+                item.ClearAll();
+            }
+        }
+    }
+
+     override protected void OnClear(){
+        this.m_dicAllMats.Clear();
+     }
 
     void Update() {
         _UpDelayReRS();
@@ -76,13 +96,14 @@ public class RendererSortOrder : GobjLifeListener
         Renderer _rer_;
         string _k;
 
-        Material[] _mats_;
+        RendererMatData rmData = null;
         Material _mat_;
         int len_mat = 0;
         for (int i = 0; i < lens; i++)
         {
             _rer_ = renderers[i];
-            if(_rer_ == null) continue;
+            if(_rer_ == null)
+                continue;
             _r_o_id = _rer_.GetInstanceID();
 
             _k = string.Format(_k_sl_id,_r_o_id);
@@ -91,25 +112,21 @@ public class RendererSortOrder : GobjLifeListener
             _k = string.Format(_k_sl_val,_r_o_id);
             _AddDefVal(_k,_rer_.sortingOrder);
 
-            _mat_ = _rer_.sharedMaterial;
-            if(_mat_ != null){
-                _m_o_id = _mat_.GetInstanceID();
-                _k = string.Format(_k_mat_val,_m_o_id);
-                _AddDefVal(_k,_mat_.renderQueue);
+            rmData = RendererMatData.Builder(_rer_,this.m_isNewMat);
+            if(rmData == null){
+                // Debug.LogErrorFormat("=========[{0}] =[{1}] =[{2}] =[{3}]",_r_o_id,this.m_isNewMat,RendererMatData.IsMatInRenderer(_rer_),_rer_.name);
+                continue;
             }
+            this.m_dicAllMats.Add(_r_o_id,rmData);
 
-            _mats_ = _rer_.sharedMaterials;
-            if (_mats_ != null && _mats_.Length > 0)
+            len_mat = rmData.m_rerMats.Count;
+            for (int j = 0; j < len_mat; j++)
             {
-                len_mat = _mats_.Length;
-                for (int j = 0; j < len_mat; j++)
-                {
-                    _mat_ = _mats_[j];
-                    if(_mat_ != null){
-                        _m_o_id = _mat_.GetInstanceID();
-                        _k = string.Format(_k_mat_val,_m_o_id);
-                        _AddDefVal(_k,_mat_.renderQueue);
-                    }
+                _mat_ = rmData.m_rerMats[j];
+                if(_mat_ != null){
+                    _m_o_id = _mat_.GetInstanceID();
+                    _k = string.Format(_k_mat_val,_m_o_id);
+                    _AddDefVal(_k,_mat_.renderQueue);
                 }
             }
         }
@@ -122,7 +139,6 @@ public class RendererSortOrder : GobjLifeListener
         }
         this.m_r_sinfo.Add(key,val);
     }
-
 
     int _GetDefVal(string key){
         if(this.m_r_sinfo.ContainsKey(key))
@@ -192,46 +208,44 @@ public class RendererSortOrder : GobjLifeListener
         }
     }
 
-    void _AddRenderQueue(Renderer rer){
-        if(rer == null) return;
-        int _m_o_id = 0;
-        string _k;
-        int _v;
-        Material _mat_ = rer.sharedMaterial;
-        if(_mat_ != null){
-            _m_o_id = _mat_.GetInstanceID();
-            _k = string.Format(_k_mat_val,_m_o_id);
-            _v = _GetDefVal(_k);
-            if(_v != -9999999){
-                _mat_.ReRenderQueue(this.m_val_queue + _v);
-            }
-        }
-        Material[] _mats_ = rer.sharedMaterials;
-        if (_mats_ != null && _mats_.Length > 0)
-        {
-            int lens = _mats_.Length;
-            for (int i = 0; i < lens; i++)
-            {
-                _mat_ = _mats_[i];
-                if(_mat_ != null){
-                    _m_o_id = _mat_.GetInstanceID();
-                    _k = string.Format(_k_mat_val,_m_o_id);
-                    _v = _GetDefVal(_k);
-                    if(_v != -9999999){
-                        _mat_.ReRenderQueue(this.m_val_queue + _v);
-                    }
-                }
-            }
-        }
+    int _GetRenderQueue(Material _mat_){
+        if(_mat_ == null)
+            return -9999999;
+        int _m_o_id = _mat_.GetInstanceID();
+        string _k = string.Format(_k_mat_val,_m_o_id);
+        return _GetDefVal(_k);
     }
 
     void _ReRenderQueue(Renderer rer,bool isCan){
         if(!isCan || rer == null || this.m_val_queue == 0) return;
+        int _r_o_id = rer.GetInstanceID();
+        RendererMatData rmData = null;
+        if(this.m_dicAllMats.ContainsKey(_r_o_id)){
+            rmData = this.m_dicAllMats[_r_o_id];
+        }
+        if(rmData == null){
+            return;
+        }
 
-        if(m_isAdd){
-            _AddRenderQueue(rer);
-        }else{
-            rer.ReRenderQueue(this.m_val_queue);
+        List<Material> _list = rmData.m_rerMats;
+        int _len_ = _list.Count;
+        if(_len_ <= 0) return;
+        Material _mat_;
+        int _rq = -1;
+        for (int i = 0; i < _len_; i++)
+        {
+            _mat_ = _list[i];
+            if(_mat_ == null)
+                continue;
+            
+            if(m_isAdd){
+                _rq = _GetRenderQueue(_mat_);
+                if(_rq != -9999999){
+                    _mat_.ReRenderQueue(this.m_val_queue + _rq);
+                }
+            }else{
+                _mat_.ReRenderQueue(this.m_val_queue);
+            } 
         }
     }
 }
