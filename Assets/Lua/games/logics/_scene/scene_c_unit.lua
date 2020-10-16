@@ -38,6 +38,9 @@ function M:OnInit()
 	self._lf_On_A_Exit = handler_pcall(self,self.OnUpdate_A_Exit)
 
 	self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit)
+	if self._async_isUsePhysics ~= nil then
+		self:SetIsUsePhysics( self._async_isUsePhysics )
+	end
 
 	self:OnInit_Unit()
 end
@@ -120,9 +123,26 @@ function M:SetStateAndPre(state,preState)
 	self.state = state
 end
 
+function M:SetIsUsePhysics( isUsePhysics )
+	isUsePhysics = isUsePhysics == true
+	if isUsePhysics == self.isUsePhysics then
+		return
+	end
+	self._async_isUsePhysics = nil
+	if self.comp then
+		self.isUsePhysics = isUsePhysics
+		self.comp.m_isUsePhysics = isUsePhysics
+	else
+		self._async_isUsePhysics = isUsePhysics
+	end
+end
+
 function M:SetState(state,force,...)
 	force = (force == true) or (self.state == nil)  or (state ~= self.state)
 	if not force then
+		if not self.machine then
+			self:SetMachine( ... )
+		end
 		return
 	end
 	self:SetStateAndPre( state,self.state )
@@ -243,10 +263,10 @@ function M:SetUpMovement(yVal,isAddWY)
 	self.movement.y = yVal
 end
 
-function M:MoveTo(to_x,to_y,cur_x,cur_y)
+function M:MoveTo(to_x,to_y,cur_x,cur_y,...)
 	self._async_m_x,self._async_m_y,self._async_c_x,self._async_c_y = nil
 	if self.comp then
-		self:SetState( E_State.Run )
+		self:SetState( E_State.Run,false,... )
 		local _pos,_diff = self:GetPosition()
 		if cur_x and cur_y then
 			self.v3M_Temp:Set(cur_x,self.worldY,cur_y)
@@ -275,9 +295,11 @@ function M:SetOnceFunc4MoveOver( funcMvOver )
 	self.lfOnceMvOver = funcMvOver
 end
 
-function M:Move_Over()
+function M:Move_Over(isNot2Idle)
 	self._async_m_x,self._async_m_y = nil
-	self:State2Idle()
+	if not isNot2Idle then
+		self:State2Idle()
+	end
 	self:SetMoveDir()
 	local _lfc = self.lfOnceMvOver
 	self.lfOnceMvOver = nil
@@ -366,7 +388,7 @@ function M:EndAction()
 	self.machine = nil
 	if _machine and _machine.isDoned then
 		local _m_astate = _machine.action_state
-		if _m_astate ~= E_AiState.Idle then
+		if _m_astate ~= E_AiState.Idle and (not _machine.isNot2Idle) then
 			self:State2Idle()
 		end
 	end

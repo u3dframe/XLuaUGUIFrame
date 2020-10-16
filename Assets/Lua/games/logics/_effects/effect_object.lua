@@ -6,6 +6,7 @@
 ]]
 
 local super,_evt = FabBase,Event
+local _cLayer = L_SObj
 local M = class( "effect_object",super )
 local this = M
 this.nm_pool_cls = "p_efct"
@@ -109,6 +110,7 @@ function M:OnViewBeforeOnInit()
 		self:SetParent()
 		self:SetLocalScale(1)
 	end
+	-- self:SetLayer( _cLayer,true )
 	
 	self.isUping = true
 end

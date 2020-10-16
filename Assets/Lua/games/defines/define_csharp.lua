@@ -55,6 +55,10 @@ UIT_Tiled  = UEImgType.Tiled
 UIT_Filled = UEImgType.Filled
 UES_World  = UESpace.World
 
+FrameRate = UApplication.targetFrameRate
+OneFrameSec = todecimal( 1 / FrameRate,4,0.016,true)
+
 Is_PPLayer_Enabled = (Is_LoadOrg4Editor) or (not GM_IsEditor) -- 设置 PostProcessLayer 的 enabled
 
+-- CGameFile.bLoadOrg4Editor = false -- 编辑模式下，读取 ab 资源
 -- TP_UText = typeof(UText)

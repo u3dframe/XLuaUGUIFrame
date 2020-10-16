@@ -131,7 +131,7 @@ function M:_OnPos(dt)
 		self.isDisappear = true
 		return
 	end
-	local _speed = dt * self:GetMvSpeed()
+	local _speed = self:GetMvSpeed() * dt
 	local _v3Mov = self.movement * _speed
 	local _distance = _v3Mov.magnitude
 	self.mileAge = self.mileAge + _distance

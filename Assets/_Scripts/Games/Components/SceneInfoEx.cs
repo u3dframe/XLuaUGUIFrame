@@ -28,7 +28,7 @@ public class SceneInfoEx : MonoBehaviour
 	}
 
 	static string ReFname(string fname){
-		if(string.IsNullOrEmpty(fname)) return null;
+		if(string.IsNullOrEmpty(fname)) return "";
 		if(!fname.StartsWith("maps/")) fname = "maps/" + fname;
 		if(!fname.EndsWith(".minfo")) fname += ".minfo";
 		return fname;

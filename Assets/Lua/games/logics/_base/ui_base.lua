@@ -74,6 +74,10 @@ function M:_SetSelfLayer()
 	end
 end
 
+function M:OnShowEnd()
+	self.lastShowTime = Time.time
+end
+
 function M:View(isShow,data,...)
 	super.View( self,isShow,data,... )
 	if true == isShow then
@@ -89,8 +93,15 @@ function M:HideOtherExcludeSelf()
 end
 
 function M:OnClickCloseSelf( isShowMain )
-	self:Set4NotClear("isCloseSelf",true)
 	isShowMain = (isShowMain == true)
+	if self.lastShowTime and isShowMain then
+		local _diff = Time.time - self.lastShowTime
+		if _diff <= 0.1 then
+			_evt.Brocast(Evt_Popup_Tips,"Click Too fast,Please Slowly")
+			return
+		end
+	end
+	self:Set4NotClear("isCloseSelf",true)
 	local _isNml = _E_Layer.Normal == self:GetLayer()
 	local _isBackSelf = _isNml and (not isShowMain)
 	local _isPNUI = _isBackSelf and _mgr().GetIsOpenPreUI()

@@ -132,6 +132,11 @@ function M:SetForward( x,y,z )
 	end
 end
 
+function M:GetForward()
+	local _fwd = self.trsf.forward
+	return _fwd.x,_fwd.y,_fwd.z
+end
+
 function M:SetAnchoredPosition3D( x,y,z )
 	self._async_ap3x,self._async_ap3y,self._async_ap3z = nil
 	if self:IsInitTrsf() then

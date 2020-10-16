@@ -6,14 +6,22 @@
 ]]
 local _vec3 = Vector3
 local _v3_zero = _vec3.zero
-local _min_end = (0.06)^2
-local _speed_offset,_dis_unit,_dis_end = 0.01,0.06,_min_end
+local _min_end,_speed_offset,_dis_unit = (0.06)^2 , 0.01 , 0.07
+local OneFrameSec,FrameRate = OneFrameSec,FrameRate
 
 local E_State = LES_C_State
 local E_AniState = LES_C_Action_State
 
 local super = ActionBasic
 local M = class("action_run", super)
+
+function M:Reset( isNot2Idle,distance )
+    self.isNot2Idle = isNot2Idle
+    distance = self:TNum( distance )
+    if distance > 0.06 then
+        _dis_unit = distance
+    end
+end
 
 function M:_On_A_Init()
     self.jugde_state = E_State.Run
@@ -77,7 +85,7 @@ function M:OnUpdate4Moving(dt)
     if _v3_zero:Equals(movement) then
         return
     end
-    c_spd = speed * dt * _speed_offset
+    c_spd = speed * _speed_offset * dt
 
     self.v3Move.x = self:TF( movement.x * c_spd,9 )
     self.v3Move.y = movement.y
@@ -87,27 +95,31 @@ function M:OnUpdate4Moving(dt)
         return
     end
     _comp:Move(self.v3Move.x, self.v3Move.y, self.v3Move.z)
-    self:_ReCalcDisEnd( speed )
+
+    self:_ReCalcDisEnd( speed,dt )
 end
 
-function M:_ReCalcDisEnd( speed )
-    _dis_end = (_dis_unit * speed * _speed_offset)^2
-    _dis_end = _dis_end < _min_end and _min_end or _dis_end
+function M:_ReCalcDisEnd( speed,dt )
+    dt = dt * (1 + (dt - OneFrameSec) * FrameRate)
+    self.dis_curr = self:TF(_dis_unit * dt,4,_dis_unit,true)
+    self.dis_end = (self.dis_curr * speed * _speed_offset)^2
+    self.dis_end = self.dis_end < _min_end and _min_end or self.dis_end
 end
 
 function M:_Jugde_MoveEnd()
     local _pos = self.lbOwner:GetPosition()
     self.v3Curr:Set( _pos.x,_pos.y,_pos.z )
     _pos = self.v3To - self.v3Curr
-    if _pos.sqrMagnitude < _dis_end then
+    if _pos.sqrMagnitude <= self.dis_end then
         self.lbOwner:SetPos(self.v3To.x,self.v3To.z)
         self:Exit()
     end
 end
 
 function M:_On_AExit()
+    local _isNot2Idle = self.isNot2Idle == true
     local _owner = super._On_AExit(self)
-    _owner:Move_Over()
+    _owner:Move_Over( _isNot2Idle )
 end
 
 return M
