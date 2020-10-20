@@ -10,7 +10,7 @@ local _str_beg = string.starts
 local _str_end = string.ends
 local _str_fmt = string.format
 local _nPars = lensPars
-local _m_ceill = math.ceil
+local _m_ceil,_m_floor,_m_abs = math.ceil , math.floor , math.abs
 local __tn = tonum
 local __ti = toint
 local __tf = todecimal
@@ -153,13 +153,21 @@ function M:IsEnd( sSrc,sEnd )
 end
 
 function M:MCeil( num )
-	return _m_ceill( num )
+	return _m_ceil( num )
+end
+
+function M:MFloor( num )
+	return _m_floor( num )
+end
+
+function M:MAbs( num )
+	return _m_abs( num )
 end
 
 function M:NPage( num,column )
 	if (not num) or (num <= 0) or (not column) or (column <= 0) then return 0 end
 	if num <= column then return 1 end
-	return _m_ceill( num / column )
+	return _m_ceil( num / column )
 end
 
 -- 保留 acc 位小数

@@ -6,7 +6,7 @@
 ]]
 local _vec3 = Vector3
 local _v3_zero = _vec3.zero
-local _min_end,_speed_offset,_dis_unit = (0.06)^2 , 0.01 , 0.07
+local _speed_offset,_dis_unit,_min_end,_diff_offset = 0.01 , 0.09 , (0.09)^2 , 0.003
 local OneFrameSec,FrameRate = OneFrameSec,FrameRate
 
 local E_State = LES_C_State
@@ -100,17 +100,21 @@ function M:OnUpdate4Moving(dt)
 end
 
 function M:_ReCalcDisEnd( speed,dt )
-    dt = dt * (1 + (dt - OneFrameSec) * FrameRate)
-    self.dis_curr = self:TF(_dis_unit * dt,4,_dis_unit,true)
+    local _multiple = 1
+    if dt > OneFrameSec then
+        _multiple = self:MCeil(dt * FrameRate)
+    end
+    self.dis_curr = _dis_unit * _multiple * dt
     self.dis_end = (self.dis_curr * speed * _speed_offset)^2
     self.dis_end = self.dis_end < _min_end and _min_end or self.dis_end
 end
 
 function M:_Jugde_MoveEnd()
-    local _pos = self.lbOwner:GetPosition()
-    self.v3Curr:Set( _pos.x,_pos.y,_pos.z )
-    _pos = self.v3To - self.v3Curr
-    if _pos.sqrMagnitude <= self.dis_end then
+    local _tmp = self.lbOwner:GetPosition()
+    self.v3Curr:Set( _tmp.x,_tmp.y,_tmp.z )
+    _tmp = self.v3To - self.v3Curr
+    _tmp = self:MAbs(_tmp.sqrMagnitude - self.dis_end)
+    if _tmp <= _diff_offset then
         self.lbOwner:SetPos(self.v3To.x,self.v3To.z)
         self:Exit()
     end
