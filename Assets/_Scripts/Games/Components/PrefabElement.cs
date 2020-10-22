@@ -192,6 +192,7 @@ public class PrefabElement : GobjLifeListener {
 	
 	[ContextMenu("Re-Rmv Empty")]
 	void ReSizeList(){
+		UtilityHelper.Is_App_Quit = false;
 		List<GameObject> list = new List<GameObject> ();
 		GameObject _gobj = null;
 		for (int i=0;i<m_gobjs.Length;++i)
@@ -208,6 +209,7 @@ public class PrefabElement : GobjLifeListener {
 
 	[ContextMenu("Re-Rmv Empty(This and Childs)")]
 	void ReSizeListAll(){
+		UtilityHelper.Is_App_Quit = false;
 		PrefabElement[] arrs = this.m_gobj.GetComponentsInChildren<PrefabElement> (true);
 		foreach (var item in arrs) {
 			item.ReSizeList ();
@@ -216,6 +218,7 @@ public class PrefabElement : GobjLifeListener {
 	
 	[ContextMenu("Re-Bind Transform's First Childs")]
 	void ReBindAllFirstChilds(){
+		UtilityHelper.Is_App_Quit = false;
 		int lens = this.m_trsf.childCount;
 		m_gobjs = new GameObject[lens];
 		for(int i = 0;i < lens;i++) {

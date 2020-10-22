@@ -112,6 +112,7 @@ public class CharacterControllerEx : AnimatorEx
 
 	[ContextMenu("Re Bind Nodes (重新绑定所需节点)")]
 	void ReBindNodes(){
+		UtilityHelper.Is_App_Quit = false;
 		List<GameObject> list = new List<GameObject> ();
 		GameObject _gobj = null;
 		int lens = m_gobjs.Length;
