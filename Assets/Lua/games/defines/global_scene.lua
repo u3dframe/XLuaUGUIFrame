@@ -222,6 +222,11 @@ LES_Ani_Eft_Point = {
 	[7]                  = "f_l_foot",
 	[8]                  = "f_r_foot",
 	[9]                  = "foot",
+	[10]                 = "heads",
+	[11]                 = "shadows",
+	[12]                 = "f_l_weapon",
+	[13]                 = "f_r_weapon",
+	[14]                 = "f_l_weapon;f_r_weapon",
 }
 
 -- shader特效 - 类型

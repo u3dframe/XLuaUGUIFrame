@@ -90,12 +90,12 @@ function M:SetIsSyncScroll( isBl )
 	end
 end
 
-function M:SetGray( isBl,isSyncRT )
+function M:SetGray( isBl,isSyncRT,isGrayTxt )
 	self:AddGray4Self()
 
 	isBl = isBl == true
 	if self.lbGray then
-		self.lbGray:IsGray(isBl)
+		self.lbGray:IsGrayAll( isBl,isGrayTxt )
 	end
 
 	if isSyncRT == true then

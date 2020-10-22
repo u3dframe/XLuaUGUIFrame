@@ -54,6 +54,7 @@ function M:_On_AEnter()
     self.v3To:Set(0,0,0)
 	self.groundPosY = 0
     self.gravityPosY = 0
+    self.dis_end = _min_end
     return true
 end
 

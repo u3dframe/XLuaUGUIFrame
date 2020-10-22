@@ -44,12 +44,8 @@ public class UGUIGray : GobjLifeListener {
 	
 	override protected void OnCall4Start(){
 		Init ();
-	}
-
-    override protected void OnCall4Show()
-    {
 		m_isGray = _m_isGray_2; // 避免没显示(没走生命周期的对象)调用了错误
-    }
+	}
 
 	override protected void OnCall4Destroy(){
 		if (m_isNew && _m_matGrap)
@@ -62,7 +58,7 @@ public class UGUIGray : GobjLifeListener {
 		m_imgs = null;
 		m_txts = null;
 		m_txtCols = null;
-		isGrayTxt = false;
+		m_isGrayTxt = false;
 		m_isNew = false;
 		_m_matGrap = null;
 	}
@@ -73,7 +69,7 @@ public class UGUIGray : GobjLifeListener {
 	Image[] m_imgs;
 
 	// 渲染的 Text 对象集合
-	public bool isGrayTxt{get;set;}
+	public bool m_isGrayTxt{get;set;}
 	Text[] m_txts;
 	Color[] m_txtCols;
 	
@@ -167,9 +163,6 @@ public class UGUIGray : GobjLifeListener {
 
 		m_imgs = gameObject.GetComponentsInChildren<Image> (true);
 
-		if (!isGrayTxt)
-			return;
-		
 		m_txts = gameObject.GetComponentsInChildren<Text> (true);
 		if (m_txts != null && m_txts.Length > 0) {
 			m_txtCols = new Color[m_txts.Length];
@@ -211,7 +204,10 @@ public class UGUIGray : GobjLifeListener {
 	void GrayTxt(bool isGray){
 		if (m_txts == null || m_txts.Length <= 0)
 			return;
-
+		
+		if (!m_isGrayTxt)
+			return;
+		
 		int lens = m_txts.Length;
 		Text graphic;
 		for (int i = 0; i < lens; i++) {
@@ -280,5 +276,10 @@ public class UGUIGray : GobjLifeListener {
 		if (isContains (excludeName))
 			return;
 		m_lExcludeNames.Add (excludeName);
+	}
+
+	public void IsGrayAll(bool isGray,bool isGrayTxt){
+		this.m_isGrayTxt = isGrayTxt;
+		this.m_isGray = isGray;
 	}
 }

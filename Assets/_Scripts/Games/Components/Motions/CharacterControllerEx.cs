@@ -133,8 +133,9 @@ public class CharacterControllerEx : AnimatorEx
 		}
 
 		string[] _arrs = {
+			"heads","shadows","foot",
 			"f_head","f_l_hand","f_r_hand","f_mid",
-			"f_back","f_l_foot","f_r_foot"
+			"f_back","f_l_foot","f_r_foot","f_l_weapon","f_r_weapon"
 		};
 
 		lens = _arrs.Length;

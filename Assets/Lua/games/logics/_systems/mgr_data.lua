@@ -135,7 +135,9 @@ function M:CheckCfg4Action( e_id )
 	if not e_id then return end
 	local cfgEft = self:GetCfgSkillEffect( e_id )
 	if not cfgEft then return end
-	if cfgEft.type == 1 then return end
+	if cfgEft.type == 1 then
+		return false,cfgEft
+	end
 	return true,cfgEft
 end
 

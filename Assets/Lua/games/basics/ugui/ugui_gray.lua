@@ -20,7 +20,7 @@ function M:IsGrayTxt(isBl)
 	isBl = (isBl == true)
 	if self.isGrayTxt ~= isBl then
 		self.isGrayTxt = isBl
-		self.comp.isGrayTxt = isBl
+		self.comp.m_isGrayTxt = isBl
 	end
 end
 
@@ -37,6 +37,20 @@ function M:IsGray(isBl)
 	if self.isGray ~= isBl then
 		self.isGray = isBl
 		self.comp.m_isGray = isBl
+	end
+end
+
+function M:IsGrayAll(isBl,isGrayTxt)
+	isBl = (isBl == true)
+	if isGrayTxt ~= nil then
+		isGrayTxt = (isGrayTxt == true)
+		if self.isGray ~= isBl and self.isGrayTxt ~= isGrayTxt then
+			self.isGray = isBl
+			self.isGrayTxt = isGrayTxt
+			self.comp:IsGrayAll( isBl,isGrayTxt )
+		end
+	else
+		self:IsGray( isBl )
 	end
 end
 

@@ -266,6 +266,7 @@ end
 function M:MoveTo(to_x,to_y,cur_x,cur_y,...)
 	self._async_m_x,self._async_m_y,self._async_c_x,self._async_c_y = nil
 	if self.comp then
+		self:SetIsUsePhysics( false )
 		self:SetState( E_State.Run,false,... )
 		local _pos,_diff = self:GetPosition()
 		if cur_x and cur_y then

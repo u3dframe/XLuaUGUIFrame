@@ -169,8 +169,8 @@ function M:_DoAttack(svMsg,cfgSkill,cfgAction,e_id)
 	self.cfgSkill = cfgSkill
 	self.cfgSkill_Action = cfgAction
 	self.tmEfts = {}
-	local _temp = {}
-	self:_InitAttackEffets( _temp,e_id )
+	local _temp,_temp0 = {},{}
+	self:_InitAttackEffets( _temp,e_id,_temp0 )
 	-- this.InsertTimeLineIds( _temp,_ef.nexttime,_ef_next )
 	for _,v in pairs(_temp) do
 		tb_insert(self.tmEfts,v)
@@ -179,22 +179,29 @@ function M:_DoAttack(svMsg,cfgSkill,cfgAction,e_id)
 	self:LookTarget( svMsg.target,svMsg.targetx,svMsg.targety )
 	self:SetState( E_State.Attack )
 	self:ExcuteEffectByEid( e_id,false,true )
+	for _, v_eid in ipairs(_temp0) do
+		self:ExcuteEffectByEid( v_eid,false,true )
+	end
 end
 
 function M:_DoComboAttack(svMsg, cfgSkill, cfgAction)
 	MgrCombo:PlayComboSkill(svMsg, cfgSkill, cfgAction);
 end
 
-function M:_InitAttackEffets(lb,e_id )
+function M:_InitAttackEffets(lb,e_id,lb0)
 	if not e_id then return end
 	local _ef = MgrData:GetCfgSkillEffect( e_id )
 	if (not _ef) or (not _ef.nextid) then return end
 
 	local _ef_next = MgrData:GetCfgSkillEffect( _ef.nextid )
 	if (not _ef_next) or (not _ef.nexttime) then return end
-	this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid,(_ef_next.effecttime or 0) )
+	if _ef.nexttime <= 0 then
+		tb_insert( lb0,_ef.nextid )
+	else
+		this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid,(_ef_next.effecttime or 0) )
+	end
 	if _ef_next.nextid then
-		self:_InitAttackEffets( lb,_ef.nextid )
+		self:_InitAttackEffets( lb,_ef.nextid,lb0 )
 	end
 end
 
@@ -222,7 +229,13 @@ end
 function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 	isHurt = (isHurt == true)
 	local _isOkey,cfgEft = MgrData:CheckCfg4Action( e_id )
-	if not _isOkey then return end
+	if not _isOkey then
+		if cfgEft and cfgEft.type == 1 then
+			local svMsg = self:_GetECastData( e_id )
+			self:_DoComboAttack(svMsg,self.cfgSkill,cfgEft)
+		end
+		return
+	end
 
 	if (not isNotAct) and cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )

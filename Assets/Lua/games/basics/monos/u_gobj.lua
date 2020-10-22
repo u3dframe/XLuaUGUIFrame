@@ -9,9 +9,13 @@ local super = LuaObject
 local M = class( "lua_gobj",super )
 local this = M
 
-function M.CsDestroy(gobj)
+function M.CsDestroy(gobj,isImmediate)
 	if gobj ~= nil then
-		UGameObject.Destroy(gobj);
+		if isImmediate == true then
+			UGameObject.DestroyImmediate( gobj,true )
+		else
+			UGameObject.Destroy(gobj);
+		end
 		return true;
 	end
 end
@@ -128,7 +132,7 @@ end
 function M:DestroyObj()
 	local _gobj = self.gobj
 	self.gobj = nil
-	return this.CsDestroy(_gobj)
+	return this.CsDestroy( _gobj,true )
 end
 
 function M:DonotDestory( )

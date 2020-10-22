@@ -51,4 +51,10 @@ end
 function M:OnVwEmpty()
 end
 
+function M:SetIsPressScale(isScale)
+	if self.lbBtnSelf then
+		self.lbBtnSelf:SetIsPressScale( isScale )
+	end
+end
+
 return M

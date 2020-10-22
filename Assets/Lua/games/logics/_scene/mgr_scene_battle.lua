@@ -50,6 +50,7 @@ function M.Init()
 end
 
 function M.OnClear()
+	Time:SetTimeScale(1)
 	this.state = E_B_State.Battle_End
 	this._need_load,this._loaded = 0,0
 	this._need_load_obj,this._loaded_obj = 0,0
