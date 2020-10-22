@@ -222,12 +222,12 @@ namespace Core.Kernel
             return UResources.Load(path);
         }
 
-        static public void UnLoadOne(UObject obj)
+        static public void UnLoadOne(UObject obj,bool isDestroy)
 		{
 			if(obj == null || !obj)
 				return;
 			
-			if(obj.GetType() == tpGobj)
+			if(isDestroy || obj.GetType() == tpGobj)
 			{
 				GameObject.DestroyImmediate(obj,true); // Destroy
 			}
@@ -236,6 +236,11 @@ namespace Core.Kernel
 				UResources.UnloadAsset(obj);
 			}
 		}
+
+        static public void UnLoadOne(UObject obj)
+        {
+            UnLoadOne(obj,false);
+        }
 
         static public bool IsShaderAB(string abName){
             if(string.IsNullOrEmpty(abName))
