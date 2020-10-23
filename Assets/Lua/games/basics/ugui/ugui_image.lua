@@ -18,18 +18,6 @@ function M:ctor( obj,com )
 	self.lfCFImage = handler(self,self._OnCF_Image)
 end
 
-function M:ReAtals( sVal )
-	return self:ReSBegEnd( sVal,"textures/ui_atlas/",".tex_atlas" )
-end
-
-function M:ReIcon( sVal )
-	return self:ReSBegEnd( sVal,"textures/ui_sngs/icons/",".tex" )
-end
-
-function M:ReBg( sVal )
-	return self:ReSBegEnd( sVal,"textures/ui_sngs/bgs/",".tex" )
-end
-
 function M:RePng( sVal )
 	local _arrs = str_split( sVal,"/" )
 	sVal = _arrs[#_arrs]
@@ -38,11 +26,17 @@ end
 
 function M:SetImage( sAtals,sImg,nType,isNativeSize )
 	if nType == 1 then
-		sAtals = self:ReIcon(sAtals)
+		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/icons/",".tex" )
 	elseif nType == 2 then
-		sAtals = self:ReBg(sAtals)
+		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/bgs/",".tex" )
+	elseif nType == 3 then
+		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/minihead/",".tex" )
+	elseif nType == 4 then
+		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/halfbody/",".tex" )
+	elseif nType == 5 then
+		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/fullbody/",".tex" )
 	else
-		sAtals = self:ReAtals(sAtals)
+		sAtals = self:ReSBegEnd( sAtals,"textures/ui_atlas/",".tex_atlas" )
 	end
 	sImg = self:RePng(sImg)
 	if sAtals == self._sAtals and sImg == self._sImg then return end
@@ -65,6 +59,18 @@ end
 
 function M:SetBg( bg,isNativeSize )
 	self:SetImage( bg,bg,2,isNativeSize )
+end
+
+function M:SetImgHead( head,isNativeSize )
+	self:SetImage( head,head,3,isNativeSize )
+end
+
+function M:SetImgHalfBody( body,isNativeSize )
+	self:SetImage( body,body,4,isNativeSize )
+end
+
+function M:SetImgBody( body,isNativeSize )
+	self:SetImage( body,body,5,isNativeSize )
 end
 
 function M:SetFillAmount( val,max )	
