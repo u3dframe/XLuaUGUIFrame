@@ -9,7 +9,7 @@ local E_Life = LES_Life
 local E_State = LES_C_State
 local E_AniState = LES_C_Action_State
 local E_CEType = LES_Ani_Eft_Type
-local _Mathf = Mathf
+local m_min 	= math.min
 
 local super = ActionBasic
 local M = class( "behit",super )
@@ -76,8 +76,8 @@ function M:_On_AUpdate(dt)
 	if self.isBFlay and self.fps_loop then
 		if self.fps_loop > 0 then
 			self.c_x,self.c_y = self.c_x + self.s_x,self.c_y + self.s_y
-			self.c_x = _Mathf.Clamp(self.c_x, 0, self.to_x)
-			self.c_y = _Mathf.Clamp(self.c_y, 0, self.to_y)
+			self.c_x = m_min(self.c_x,self.to_x)
+			self.c_y = m_min(self.c_y,self.to_y)
 			self.lbOwner:SetPos( self.c_x,self.c_y )
 		end
 		self.fps_loop = self.fps_loop - 1

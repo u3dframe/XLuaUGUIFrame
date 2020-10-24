@@ -425,13 +425,19 @@ end
 
 function M.OnMsg_OneAttrChg(svMsg)
 	local _obj = this.GetSObj( svMsg.id )
-	if not _obj then return end
-	if svMsg.speed then
-		_obj:SetMoveSpeed( tonumber( svMsg.speed ) or 1 )
+	if not _obj then
+		return
+	end
+	local _attrs = svMsg.attrs
+	if not _attrs then
+		return
+	end
+	if _attrs.speed then
+		_obj:SetMoveSpeed( tonumber( _attrs.speed ) or 1 )
 	end
 
-	if svMsg.atkspeed then
-		_obj:SetAtkSpeed( tonumber( svMsg.atkspeed ) or 1 )
+	if _attrs.atkspeed then
+		_obj:SetAtkSpeed( tonumber( _attrs.atkspeed ) or 1 )
 	end
 end
 

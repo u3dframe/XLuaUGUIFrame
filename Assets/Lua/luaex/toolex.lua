@@ -117,7 +117,7 @@ local function _appendHeap( src )
 	return str_format("%s\n%s",src,_deTrk());
 end
 
-local function _sort_key( a,b )
+function sort_key( a,b )
 	return str_byte(a) < str_byte(b);
 end
 
@@ -135,7 +135,7 @@ local function _ToCatTable( tb,dest,dic,tabNum,notSort )
 	tabNum = tabNum + 1
 
 	local keys = tb_keys( tb );
-	if not notSort then tb_sort(keys,_sort_key); end
+	if not notSort then tb_sort(keys,sort_key); end
 
 	local v,vv,kk,ktp,vtp,_str_temp;
 	for _, k in pairs( keys ) do

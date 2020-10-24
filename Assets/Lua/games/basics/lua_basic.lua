@@ -7,7 +7,8 @@
 
 local _nPars,type,tostring = lensPars,type,tostring
 local tb_has,tb_insert = table.contains,table.insert
-local _lbKeys = { "__cname","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
+local tb_sort,tb_keys,sort_key = table.sort,table.keys,sort_key
+local _lbKeys = { "__cname","_c_t_","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
 
 local M = class( "lua_basic" )
 
@@ -120,18 +121,35 @@ function M:OnSetData( ... )
 end
 
 function M:_clean()
-	local _tpv
-	for k, v in pairs(self) do
+	local keys,v,_tpv,vstr = tb_keys( self )
+	local _c_t_ = self._c_t_ or {}
+	self._c_t_ = _c_t_
+	_c_t_[tostring(self)] = 1
+	tb_sort(keys,sort_key)
+	for _, k in ipairs(keys) do
 		if not tb_has(_lbKeys,k) then
+			v = self[k]
 			_tpv = type(v)
 			if  _tpv ~= "function" then
 				if (_tpv == "table") and type(v.clean) == "function" and (v ~= self) then
-					v:clean()
+					v._c_t_ = _c_t_
+					vstr = tostring(v)
+					_tpv = _c_t_[vstr]
+					if _tpv then
+						_tpv = _tpv + 1
+						_c_t_[vstr] = _tpv
+						printError("====== clean error,tb more [%s] be use in cur = [%s] ,key = [%s],count = [%s]",v.__cname,self.__cname,k,_tpv)
+					else
+						_tpv = 1
+						_c_t_[vstr] = _tpv
+						v:clean()
+					end
 				end
 				self[k] = nil
 			end
 		end
 	end
+	self._c_t_ = nil
 end
 
 function M:pre_clean()

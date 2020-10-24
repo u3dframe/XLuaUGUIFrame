@@ -32,6 +32,7 @@ end
 function M:ctor()
 	super.ctor( self )
 	super2.ctor( self )
+	self.isDelayTime = true
 end
 
 function M:Reset(idMarker,idTarget,b_id,duration,e_id,speed,e_ids)
@@ -77,9 +78,9 @@ end
 
 function M:OnPreDisappear()
 	self.isUping,self.isDisappear,self.timeOut = nil
+	self:RemoveEvents()
 	self:_DisappearEffect()
 	self:_DisappearTarget()
-	self:ReEvent4OnUpdate(false)
 end
 
 function M:_DisappearEffect()
