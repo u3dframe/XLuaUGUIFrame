@@ -88,6 +88,7 @@ public static class ExampleConfig
                 // typeof(Image.Type), // 枚举不用到wrap文件
                 typeof(Toggle),
                 typeof(Slider),
+                typeof(CanvasGroup),
                 //typeof(Slider.SliderEvent),
                 //typeof(UnityEngine.Events.UnityEvent<float>),
                 typeof(UnityEngine.Events.UnityEventBase),
@@ -102,9 +103,10 @@ public static class ExampleConfig
                 typeof(FileEx),
                 typeof(ReadWriteHelper),
                 typeof(Core.Kernel.Resources),
+                typeof(SuperScrollView.LoopListView2),
+                typeof(SuperScrollView.LoopListViewItem2),
                 typeof(GameFile),
                 typeof(TNet.ByteBuffer),
-                
                 typeof(GobjLifeListener),
                 typeof(GameMgr),
                 typeof(NetworkManager),
@@ -147,12 +149,13 @@ public static class ExampleConfig
     public static List<Type> CSharpCallLua = new List<Type>() {
                 typeof(Action),
                 typeof(Func<double, double, double>),
+                typeof(Action<int>),
                 typeof(Action<string>),
                 typeof(Action<double>),
                 typeof(Action<float>),
                 typeof(UnityEngine.Events.UnityAction),
                 typeof(System.Collections.IEnumerator),
-                
+                typeof(System.Func<SuperScrollView.LoopListView2, int, SuperScrollView.LoopListViewItem2>),
                 typeof(DF_UWR),
 
                 typeof(DF_LoadedAsset),

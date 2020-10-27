@@ -145,4 +145,16 @@ function M:NewULst(elName,lbCfg,isNoPrint)
     printError("=== NewUScl is Null, name = [%s]", elName)
 end
 
+--基于SuperScrollList的特殊列表
+-- clsLua - 自己的子元素脚本,可以为路径，也可以为require对象 (必要)
+function M:NewSScl(elName, lbCfg, isNoPrint)
+    local _gobj = self:GetElement(elName)
+    if _gobj then
+        lbCfg.gobj = _gobj
+        return self:_ClsUISScl().New(lbCfg)
+    end
+    if isNoPrint == true then return end
+    printError("=== NewSScl is Null, name = [%s]", elName)
+end
+
 return M

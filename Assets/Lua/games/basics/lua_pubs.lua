@@ -6,8 +6,8 @@
 ]]
 
 local _c_trsf,_c_comp,_c_cmr,_c_flr,_c_ele,_lasset,_lfab = nil
-local _uevt,_ugray,_utxt,_ubtn,_utog,_uscl,_uimg,_uinpfld = nil
-local _cl_scl,_cl_lst = nil
+local _uevt,_ugray,_utxt,_ubtn,_utog,_uscl,_sscl,_uimg,_uinpfld = nil
+local _cl_scl,_cl_lst,_cl_sscl = nil
 
 local M = class("lua_pubs")
 
@@ -146,6 +146,17 @@ function M:NewSclBy(gobj, funcCreat, funcSetData, gobjItem)
     return self:_ClsUScl().New( gobj, funcCreat, funcSetData, gobjItem )
 end
 
+function M:_ClsSScl()
+    if not _sscl then
+        _sscl = LuScl2
+    end
+    return _sscl
+end
+
+function M:NewSSclBy(gobj, itemName,funcCreat, funcSetData,_lfClickCall)
+    return self:_ClsSScl().New( gobj,itemName, funcCreat, funcSetData ,_lfClickCall)
+end
+
 function M:_ClsUImg()
     if not _uimg then
         _uimg = LuImg
@@ -199,6 +210,14 @@ function M:_ClsUILst()
         _cl_lst = UILst
     end
     return _cl_lst
+end
+
+
+function M:_ClsUISScl()
+    if not _cl_sscl then
+        _cl_sscl = UIScl2
+    end
+    return _cl_sscl
 end
 
 function M:AddGray4Self()
