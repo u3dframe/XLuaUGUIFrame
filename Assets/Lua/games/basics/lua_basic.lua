@@ -8,6 +8,7 @@
 local _nPars,type,tostring = lensPars,type,tostring
 local tb_has,tb_insert = table.contains,table.insert
 local tb_sort,tb_keys,sort_key = table.sort,table.keys,sort_key
+local reTable2Str = reTable2Str
 local _lbKeys = { "__cname","_c_t_","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
 
 local M = class( "lua_basic" )
@@ -124,7 +125,10 @@ function M:_clean()
 	local keys,v,_tpv,vstr = tb_keys( self )
 	local _c_t_ = self._c_t_ or {}
 	self._c_t_ = _c_t_
-	_c_t_[tostring(self)] = 1
+	vstr = tostring(self)
+	if not _c_t_[vstr] then
+		_c_t_[vstr] = 1
+	end
 	tb_sort(keys,sort_key)
 	for _, k in ipairs(keys) do
 		if not tb_has(_lbKeys,k) then
@@ -138,10 +142,9 @@ function M:_clean()
 					if _tpv then
 						_tpv = _tpv + 1
 						_c_t_[vstr] = _tpv
-						printError("====== clean error,tb more [%s] be use in cur = [%s] ,key = [%s],count = [%s]",v.__cname,self.__cname,k,_tpv)
+						printError("====== clean error,root = [%s],more [%s] be used,keys = [%s],count = [%s]",self.__cname,v.__cname,k,_tpv)
 					else
-						_tpv = 1
-						_c_t_[vstr] = _tpv
+						_c_t_[vstr] = 1
 						v:clean()
 					end
 				end

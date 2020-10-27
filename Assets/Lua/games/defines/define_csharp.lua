@@ -6,6 +6,7 @@ UPlayerPrefs = CS.UnityEngine.PlayerPrefs
 UGameObject = CS.UnityEngine.GameObject
 UTransform = CS.UnityEngine.Transform
 URectTransform = CS.UnityEngine.RectTransform
+UCanvasGroup = CS.UnityEngine.CanvasGroup
 UWaitForSeconds = CS.UnityEngine.WaitForSeconds
 UWebRequest = CS.UnityEngine.Networking.UnityWebRequest
 UText = CS.UnityEngine.UI.Text

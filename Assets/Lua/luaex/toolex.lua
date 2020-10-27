@@ -185,6 +185,12 @@ function reTable( tb,dest,dic,notSort )
 	return dest
 end
 
+function reTable2Str( tb,cat,dest,dic,notSort )
+	local _ret = reTable( tb,dest,dic,notSort )
+	cat = cat or ""
+	return tb_concat(_ret, cat)
+end
+
 function printTable( tb,title,rgb,notSort )
 	rgb = rgb or "09f68f";
 	if not tb or type(tb) ~= "table" then

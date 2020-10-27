@@ -308,6 +308,24 @@ public class GHelper {
 		return GetGobj(name,true,true);
 	}
 
+	//设置子物体显示隐藏（不包括父物体本身）
+	static public void SetChildActive(GameObject gobj, bool isActive)
+	{
+		SetChildActive(gobj?.transform,isActive);
+	}
+
+	static public void SetChildActive(Transform trsf, bool isActive)
+	{
+		if(IsNull(trsf)) return;
+		int lens = trsf.childCount;
+		GameObject _go_;
+		for (int i = 0; i < lens; i++)
+		{
+			_go_ = trsf.GetChild(i).gameObject;
+			_go_.SetActive(isActive);
+		}
+	}
+
 	/// <summary>
 	/// 设置父节点
 	/// </summary>

@@ -21,6 +21,7 @@ function M.Init()
 	this._InitUI()
 
 	_evt.AddListener(Evt_Popup_Tips,PopupTip)
+	_evt.AddListener(Evt_Error_Tips,PopupTip)
 end
 
 function M._InitUI()
