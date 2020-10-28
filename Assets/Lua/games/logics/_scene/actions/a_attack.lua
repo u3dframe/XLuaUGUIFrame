@@ -6,7 +6,6 @@
 ]]
 
 local type,tostring = type,tostring
-local tb_end = table.end_arr
 
 local E_Life = LES_Life
 local E_State = LES_C_State
@@ -32,16 +31,11 @@ function M:_On_AEnter()
 	if _isBl then
 		self.isAi_Up = false
 		self.n_cursor = 0
-		local _d = tb_end( self.tmData )
-		if _d then
-			self.time_out = (_d.time + _d.duration) / 1000
+		local _tout = self.lbOwner:GetSkillTimeOut()
+		if _tout > 0 then
+			self.time_out = _tout / 1000
 		else
-			_d = self.lbOwner.cfgSkill_Action
-			if _d and _d.effecttime then
-				self.time_out = (_d.effecttime) / 1000
-			else
-				self.isAi_Up = true
-			end
+			self.isAi_Up = true
 		end
 	end
 	return _isBl

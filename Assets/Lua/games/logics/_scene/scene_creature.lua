@@ -169,12 +169,17 @@ function M:_DoAttack(svMsg,cfgSkill,cfgAction,e_id)
 	self.cfgSkill = cfgSkill
 	self.cfgSkill_Action = cfgAction
 	self.tmEfts = {}
-	local _temp,_temp0 = {},{}
+	local _temp,_temp0,_timeout,_tval = {},{},(cfgAction.effecttime or 0),0
 	self:_InitAttackEffets( _temp,e_id,_temp0 )
 	-- this.InsertTimeLineIds( _temp,_ef.nexttime,_ef_next )
 	for _,v in pairs(_temp) do
 		tb_insert(self.tmEfts,v)
+		_tval = (v.time + v.duration)
+		if _tval > _timeout then
+			_timeout = _tval
+		end
 	end
+	self.timeOut4Skill = _timeout
 	
 	self:LookTarget( svMsg.target,svMsg.targetx,svMsg.targety )
 	self:SetState( E_State.Attack )
@@ -193,12 +198,13 @@ function M:_InitAttackEffets(lb,e_id,lb0)
 	local _ef = MgrData:GetCfgSkillEffect( e_id )
 	if (not _ef) or (not _ef.nextid) then return end
 
-	local _ef_next = MgrData:GetCfgSkillEffect( _ef.nextid )
+	local _ef_next,_ef_time = MgrData:GetCfgSkillEffect( _ef.nextid )
 	if (not _ef_next) or (not _ef.nexttime) then return end
 	if _ef.nexttime <= 0 then
 		tb_insert( lb0,_ef.nextid )
 	else
-		this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid,(_ef_next.effecttime or 0) )
+		_ef_time = _ef_next.effecttime or _ef_next.chg_time
+		this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid,(_ef_time or 0) )
 	end
 	if _ef_next.nextid then
 		self:_InitAttackEffets( lb,_ef.nextid,lb0 )
@@ -226,6 +232,10 @@ end
 function M:On_SEByCCType(preType)
 end
 
+function M:IsSelf4TargetBy( e_tp )
+	return E_CEType.SelfBone == e_tp or E_CEType.SelfBonePos == e_tp or E_CEType.SelfStayAction == e_tp
+end
+
 function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 	isHurt = (isHurt == true)
 	local _isOkey,cfgEft = MgrData:CheckCfg4Action( e_id )
@@ -246,7 +256,7 @@ function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 	local _e_tp = cfgEft.type
 	if _e_data then
 		_idCaster = (isHurt) and _e_data.caster or _idCaster
-		_idTarget = (E_CEType.SelfBone == _e_tp or E_CEType.SelfBonePos == _e_tp) and _idCaster or _e_data.target
+		_idTarget = self:IsSelf4TargetBy( _e_tp ) and _idCaster or _e_data.target
 	end
 
 	self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
@@ -276,17 +286,6 @@ function M:_ExcuteEffect( e_id,cfgEft,idCaster,idTarget )
 end
 
 function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget )
-	local _obj = self:GetSObjBy( idTarget )
-	if not _obj then
-		return
-	end
-
-	local _ccType = AET_2_SE[cfgEft.type]
-	if _ccType then
-		_obj:ExcuteSEByCCType( _ccType )
-	end
-
-	self:ChangeBody( e_id )
 end
 
 -- 处理效果

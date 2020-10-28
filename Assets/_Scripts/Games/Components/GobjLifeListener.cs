@@ -69,7 +69,8 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 	// 是否是存活的
 	private bool _isAlive = false;
 	public bool isAlive { get {return _isAlive;} }
-	public bool isAppQuit { get;private set;}
+	bool _isAppQuit = false;
+	public bool isAppQuit { get{ return this._isAppQuit || UtilityHelper.Is_App_Quit; } }
 
 
 	/// <summary>
@@ -128,7 +129,7 @@ public class GobjLifeListener : MonoBehaviour,IUpdate {
 
 	protected void OnApplicationQuit(){
 		GHelper.Is_App_Quit = true;
-		this.isAppQuit = true;
+		this._isAppQuit = true;
 		_OnClear();
 	}
 	

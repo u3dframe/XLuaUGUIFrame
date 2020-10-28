@@ -185,6 +185,9 @@ function M._ExcDelayFunc(dt)
 end
 
 function M.PauseDelayFunc(cmd,isPause)
+	if not cmd then
+		return
+	end
 	local _v = tb_vk(this._lbFuncDelays,"cmd",cmd)
 	if _v then
 		_v.isPause = (isPause == true)

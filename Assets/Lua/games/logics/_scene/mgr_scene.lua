@@ -191,7 +191,14 @@ end
 function M._ST_CurObjs()
 	this._cd1,this.csAbInfo = nil
 	this._Up_Progress()
-	this.state = LES_State.Complete
+	if not this.ndCount  then
+		this.ndCount = 5
+	elseif this.ndCount <= 0 then
+		this.state = LES_State.Complete
+		this.ndCount = nil
+	else
+		this.ndCount = this.ndCount - 1
+	end
 end
 
 function M._ST_Complete()

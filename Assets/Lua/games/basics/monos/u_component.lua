@@ -122,14 +122,14 @@ function M:SetEnabled( isBl )
 	end
 end
 
-function M:_OnUpdate(dt)
-	super._OnUpdate( self,dt )
+function M:OnUpdateAll(dt,unscaledDt)
+	super.OnUpdateAll( self,dt,unscaledDt )
 	if self:IsNoLoaded() then return end
-	self:OnUpdateLoaded(dt)
+	self:OnUpdateLoaded( dt,unscaledDt )
 end
 
 function M:IsNoLoaded() return (not self:IsInitTrsf()) end
-function M:OnUpdateLoaded(dt) end
+function M:OnUpdateLoaded(dt,unscaledDt) end
 
 function M:pre_clean()
 	super.pre_clean( self )

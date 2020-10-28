@@ -209,6 +209,7 @@ LES_Ani_Eft_Type = {
 	HitBack              = 10,     -- 击退
 	HitFall              = 11,     -- 击倒
 	ChgBody              = 12,     -- 改变大小 size
+	SelfStayAction       = 13,     -- 自身 - 动作停止
 }
 
 -- 动作特效 - 挂接点

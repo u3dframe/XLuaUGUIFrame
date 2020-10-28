@@ -11,6 +11,14 @@ local tb_sort,tb_keys,sort_key = table.sort,table.keys,sort_key
 local reTable2Str = reTable2Str
 local _lbKeys = { "__cname","_c_t_","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
 
+local _evt_ = Event
+local function _fevt()
+	if not _evt_ then
+		_evt_ = Event
+	end
+	return _evt_
+end
+
 local M = class( "lua_basic" )
 
 function M.AddNoClearKeys( ... )
@@ -54,25 +62,30 @@ function M:OnInitEnd()
 end
 
 function M:ReEvent4OnUpdate(isBind)
-	if Event then
-		if self._lfUp then
-			Event.RemoveListener(Evt_Update,self._lfUp)
-		end
+	if not _fevt() then
+		return
+	end
+	if self._lfUp then
+		_fevt().RemoveListener(Evt_Update,self._lfUp)
+	end
 
-		if isBind == true then
-			self._lfUp = self._lfUp or handler_xpcall(self,self.__OnUpdate)
-			Event.AddListener(Evt_Update,self._lfUp);
-		end
+	if isBind == true then
+		self._lfUp = self._lfUp or handler_xpcall(self,self.__OnUpdate)
+		_fevt().AddListener(Evt_Update,self._lfUp);
 	end
 end
 
 function M:__OnUpdate(dt,unscaledDt)
 	if not self.isUping then return end
-	self:_OnUpdate((self.isDelayTime == true) and dt or unscaledDt)
+	self:OnUpdateAll( dt,unscaledDt )
 end
 
-function M:_OnUpdate(dt)
-	self:OnUpdate(dt)
+function M:GetDTimeBy(dt,unscaledDt)
+	return (self.isDelayTime == true) and dt or unscaledDt
+end
+
+function M:OnUpdateAll(dt,unscaledDt)
+	self:OnUpdate( self:GetDTimeBy( dt,unscaledDt ) )
 end
 
 function M:OnUpdate(dt)

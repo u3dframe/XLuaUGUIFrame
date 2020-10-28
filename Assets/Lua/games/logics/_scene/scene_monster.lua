@@ -9,6 +9,7 @@ local E_Object,ET_SE = LES_Object,LET_Shader_Effect
 local E_State = LES_C_State
 local E_CEType = LES_Ani_Eft_Type
 local MgrData,LTimer = MgrData,LTimer
+local tostring = tostring
 
 local super = SceneCreature
 local M = class( "scene_monster",super )
@@ -33,7 +34,32 @@ end
 
 function M:OnEnd(isDestroy)
 	super.OnEnd( self,isDestroy )
-	self:StopChgBody()
+	self:EndChgBody()
+	self:EndStopSAction()
+end
+
+function M:EndAction()
+	super.EndAction( self )
+	self:EndStopSAction()
+end
+
+function M:Pause()
+	if not super.Pause( self ) then
+		return
+	end
+	
+	LTimer.PauseDelayFunc( self.strCmd,true )
+	LTimer.PauseDelayFunc( self.strCmdEnd,true )
+	LTimer.PauseDelayFunc( self.strCmdSAct,true )
+	return true
+end
+
+function M:Regain()
+	super.Regain( self )
+
+	LTimer.PauseDelayFunc( self.strCmd,false )
+	LTimer.PauseDelayFunc( self.strCmdEnd,false )
+	LTimer.PauseDelayFunc( self.strCmdSAct,false )
 end
 
 function M:On_SEByCCType(preType)
@@ -100,13 +126,20 @@ function M:IsBigSkill()
 	end
 end
 
+function M:GetSkillTimeOut()
+	return self.timeOut4Skill or 0
+end
 
 function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget )
 	local _obj = self:GetSObjBy( idTarget )
-	if _obj then
-		local _ccType = AET_2_SE[cfgEft.type]
-		_obj:ExcuteSEByCCType( _ccType )
-	end
+	if not _obj then
+		return
+	end	
+	local _ccType = AET_2_SE[cfgEft.type]
+	_obj:ExcuteSEByCCType( _ccType )
+
+	_obj:ChangeBody( e_id )
+	_obj:StopSelfActionByEffect( cfgEft )
 end
 
 local function _chg_bodying(_s)
@@ -121,18 +154,15 @@ local function _chg_bodying(_s)
 end
 
 local function _chg_bodyend(_s)
-	_s:StopChgBody(  )
+	_s:EndChgBody(  )
 end
 
-function M:StopChgBody()
-	if self.strCmd then
-		LTimer.RemoveDelayFunc(self.strCmdEnd)
-		LTimer.RemoveDelayFunc(self.strCmd)
-	end
-
-	local _lt = self.isChgSize
-	self.isChgSize = nil
-	if _lt then
+function M:EndChgBody()
+	local _cmd1,_cmd2 = self.strCmdEnd,self.strCmd
+	self.strCmdEnd,self.strCmd = nil
+	if _cmd1 or _cmd2 then
+		LTimer.RemoveDelayFunc(_cmd1)
+		LTimer.RemoveDelayFunc(_cmd2)
 		self:SetSize( 1 )
 	end
 end
@@ -148,10 +178,9 @@ function M:ChangeBody( e_id )
 	end
 
 	self.toSize = cfgEft.size * 0.01
-	self:StopChgBody()
+	self:EndChgBody()
 	self.size = self.size or 1
-	self.isChgSize = (self.toSize ~= self.size)
-
+	
 	if cfgEft.chg_time then
 		local _t_t = cfgEft.chg_time * 0.001
 		local _delay = 0.02
@@ -165,6 +194,30 @@ function M:ChangeBody( e_id )
 	else
 		self:SetSize( self.toSize )
 	end
+	return true
+end
+
+local function _chg_sact_end(_s)
+	_s:EndStopSAction(  )
+end
+
+function M:EndStopSAction()
+	local _cmd = self.strCmdSAct
+	self.strCmdSAct = nil
+	if _cmd then
+		self:CsAniSpeed()
+		LTimer.RemoveDelayFunc( _cmd )
+	end
+end
+
+function M:StopSelfActionByEffect( cfgEft )
+	if (not cfgEft) or (cfgEft.type ~= E_CEType.SelfStayAction) or (not cfgEft.chg_time) then
+		return
+	end
+	self:EndStopSAction()
+	self:CsAniSpeed(0)
+	self.strCmdSAct = "s_s_a" .. tostring(self:GetCursor())
+	LTimer.AddDelayFunc1(self.strCmdSAct,cfgEft.chg_time * 0.001 ,_chg_sact_end,self)
 	return true
 end
 

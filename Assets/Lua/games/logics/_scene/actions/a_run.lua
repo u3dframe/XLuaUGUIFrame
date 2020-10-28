@@ -114,7 +114,7 @@ function M:_Jugde_MoveEnd()
     local _tmp = self.lbOwner:GetPosition()
     self.v3Curr:Set( _tmp.x,_tmp.y,_tmp.z )
     _tmp = self.v3To - self.v3Curr
-    _tmp = self:MAbs(_tmp.sqrMagnitude - self.dis_end)
+    _tmp = _tmp.sqrMagnitude - self.dis_end
     if _tmp <= _diff_offset then
         self.lbOwner:SetPos(self.v3To.x,self.v3To.z)
         self:Exit()

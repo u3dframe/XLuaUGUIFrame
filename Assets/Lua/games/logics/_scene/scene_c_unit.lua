@@ -245,6 +245,7 @@ function M:CsAniSpeed( ani_speed )
 		return
 	end
 	ani_speed = ani_speed or self:GetCurrAniSpeed()
+	self.cur_aniSpeed = ani_speed
 	self.comp:SetSpeed( ani_speed )
 end
 
@@ -323,6 +324,7 @@ function M:Pause()
 	if not super.Pause( self ) then
 		return
 	end
+	self.pre_aniSpeed = self.cur_aniSpeed
 	self:CsAniSpeed(0)
 	return true
 end
@@ -334,7 +336,10 @@ function M:Regain()
 		return
 	end
 	super.Regain( self )
-	self:CsAniSpeed()
+	
+	local _as = self.pre_aniSpeed
+	self.pre_aniSpeed = nil
+	self:CsAniSpeed( _as )
 end
 
 function M:HaveFlag(flagid)
