@@ -504,7 +504,7 @@ public class BuildTBasic : Core.EditorGameFile
             strName = arrs[i];
             if(strName.Contains(" ")){
                 _isRet = true;
-                Debug.LogErrorFormat("==== this has space,ab name = [{0}]",strName);
+                Debug.LogErrorFormat("====== this has space,ab name = [{0}]",strName);
             }
         }
         return _isRet;
@@ -542,5 +542,25 @@ public class BuildTBasic : Core.EditorGameFile
 
         if (isTip)
             EditorUtility.ClearProgressBar();
+    }
+
+    [MenuItem("Assets/Tools/Check Files Is Has Space")]
+    static void CheckHasSpace()
+    {
+        UObject[] _arrs = Selection.GetFiltered(typeof(UObject), SelectionMode.Assets | SelectionMode.DeepAssets);
+        string _fp;
+        float _lens_ = _arrs.Length;
+        int _curr_ = 0;
+
+        EditorUtility.DisplayProgressBar("CheckHasSpace", "Start ...", 0.0f);
+        foreach(UObject _obj_ in _arrs){
+            _fp = GetPath(_obj_);
+            _curr_++;
+            EditorUtility.DisplayProgressBar(string.Format("CheckHasSpace - ({0}/{1})", _curr_, _lens_), _fp, (_curr_ / _lens_));
+            if(_fp.Contains(" ")){
+                Debug.LogErrorFormat("====== has space,fp = [{0}]",_fp);
+            }
+        }
+        EditorUtility.ClearProgressBar();
     }
 }

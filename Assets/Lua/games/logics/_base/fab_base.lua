@@ -82,4 +82,15 @@ function M:GetSObjMapBox()
 	return self:GetSObjBy( "map.gbox" )
 end
 
+function M:OnInitBeg()
+	self.gobjLower = self:FindGobj( "offset/lower" )
+	self.gobjHigh = self:FindGobj( "offset/high" )
+	if self.gobjHigh then
+		self.gobjHigh:SetActive( false )
+	end
+end
+
+function M:OnShowBeg()
+end
+
 return M

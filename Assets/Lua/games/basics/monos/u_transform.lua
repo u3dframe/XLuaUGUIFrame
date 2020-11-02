@@ -321,6 +321,19 @@ function M:_ExecuteAsync_Trsf()
 	end
 end
 
+function M:Find(childName)
+	if type(childName) == "string" then
+		return self.trsf:Find( childName )
+	end
+end
+
+function M:FindGobj(childName)
+	local _vT = self:Find( childName )
+	if _vT then
+		return _vT.gameObject
+	end
+end
+
 function M:DestroyObj()
 	self.trsf = nil
 	self.rectTrsf = nil
