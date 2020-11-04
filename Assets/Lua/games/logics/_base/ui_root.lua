@@ -45,21 +45,24 @@ function M:OnInit()
 		if LE_UILayer.URoot ~= v and LE_UILayer.UpRes ~= v then
 			_it = self:GetElement(v);
 			if _it then
-				self[self:SFmt("l_%s", v)] = LUComonet.New(_it,"UGUICanvasAdaptive")
+				_it = LUComonet.New(_it,"UGUICanvasAdaptive")
+				self[self:SFmt("l_%s", v)]  = _it
 			else
 				printError("=== not has layer child = [%s]",v)
 			end
 		end
 	end
 	self.lbCamera = self:NewCmr("UICamera")
-	self.uiCamera = self.lbCamera.comp
+	self.orthographic = self.lbCamera.orthographic	
 	_evt.Brocast(Evt_Brocast_UICamera,self.lbCamera)
 end
 
+function M:GetUILayer(lay)
+	return self[self:SFmt("l_%s", lay)]
+end
+
 function M:SetUILayer( lbUIEntity )
-	local _lay = lbUIEntity:GetLayer()
-	local _key = self:SFmt("l_%s", _lay)
-	local _lb = self[_key];
+	local _lb = lbUIEntity:GetCurrUILayer()
 	if not _lb then
 		self._lbLayer = self._lbLayer or {}
 		if not tb_contain(self._lbLayer,lbUIEntity) then
@@ -97,6 +100,13 @@ end
 
 function M:GetUICamera(lfunc,obj)
 	M.DoCallFunc( lfunc,obj,self.lbCamera )
+end
+
+function M:SetUICamOrthographic( isBl )
+	if self.orthographic ~= isBl then
+		self.orthographic = (isBl == true)
+		self.lbCamera:SetOrthographic( self.orthographic )
+	end
 end
 
 return M

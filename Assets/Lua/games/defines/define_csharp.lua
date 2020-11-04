@@ -17,6 +17,7 @@ URawImage = CS.UnityEngine.UI.RawImage
 UCamera = CS.UnityEngine.Camera
 UAnimator =  CS.UnityEngine.Animator
 UTime = CS.UnityEngine.Time
+UScreen = CS.UnityEngine.Screen
 
 CGobjLife = CS.GobjLifeListener
 CPElement = CS.PrefabElement

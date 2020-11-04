@@ -42,8 +42,17 @@ function M:onMergeConfig( _cfg )
 	return _cfg;
 end
 
+function M:URoot()
+	return _mgr().URoot()
+end
+
 function M:GetLayer()
 	return self.cfgAsset.layer
+end
+
+function M:GetCurrUILayer()
+	local _lay = self:GetLayer()
+	return self:URoot():GetUILayer(_lay)
 end
 
 function M:GetMutexType()
@@ -70,7 +79,7 @@ function M:_SetSelfLayer()
 		self:SetParent(nil,true)
 		self:DonotDestory()
 	elseif _E_Layer.UpRes ~= _lay then
-		_mgr().URoot():SetUILayer(self)
+		self:URoot():SetUILayer(self)
 	end
 end
 

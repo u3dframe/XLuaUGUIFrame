@@ -193,6 +193,21 @@ function M:SetPivot( x,y )
 	end
 end
 
+function M:GetPivot( isV2 )
+	isV2 = (isV2 == true)
+	local _x,_y,_v = 0,0
+	if self:IsInitTrsf() then
+		_v = self.rectTrsf.pivot
+		_x,_y = _v.x,_v.y
+	end
+	if isV2 then
+		self.v2Pivot = self.v2Pivot or _vec2.zero
+		self:_ReXYZ( self.v2Pivot,_x,_y )
+		return self.v2Pivot
+	end
+	return _x,_y
+end
+
 function M:SetSizeDelta( x,y )
 	self._async_sdx,self._async_sdy = nil
 	if self:IsInitTrsf() then

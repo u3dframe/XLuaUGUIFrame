@@ -7,6 +7,7 @@
 
 local _vec3,_vec2,type = Vector3,Vector2,type
 local CHelper = CHelper
+local tonumber = tonumber
 
 local super = LUComonet
 local M = class( "u_camera",super )
@@ -44,6 +45,11 @@ end
 
 function M:GetOrthographic()
 	return (self.orthographic == true)
+end
+
+function M:SetOrthographicSize(size)
+	size = tonumber(size) or 5
+	self.comp.orthographicSize = size
 end
 
 function M:ScreenToViewportPoint(sV3)

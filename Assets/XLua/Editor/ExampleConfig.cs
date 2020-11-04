@@ -78,6 +78,7 @@ public static class ExampleConfig
                 typeof(Application),
                 typeof(Screen),
                 typeof(CharacterController),
+                typeof(Skybox),
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
                 typeof(UIBehaviour),

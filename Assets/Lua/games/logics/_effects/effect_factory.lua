@@ -58,12 +58,15 @@ function M.CreateEffect( idMarker,idTarget,e_id )
 	local _elNms,_gobj,_isFollow = str_split(_points,";")
 	_isFollow = (2 == cfgEft.type) or (3 == cfgEft.type)
 
-	local _lb,_it,_v3Of = {}
+	local _lb,_it,_v3Of,_v3Ang = {}
 	for _, v in ipairs(_elNms) do
 		if cfgEft.offset_x or cfgEft.offset_y or cfgEft.offset_z then
 			_v3Of = _vec3.New( (cfgEft.offset_x or 0) * 0.01,(cfgEft.offset_y or 0) * 0.01,(cfgEft.offset_z or 0) * 0.01 )
 		end
-		_it = ClsEffect.Builder( idMarker,idTarget,cfgEft.resid,v,_isFollow,cfgEft.effecttime,_v3Of )
+		if cfgEft.angle_x or cfgEft.angle_y or cfgEft.angle_z then
+			_v3Ang = _vec3.New( (cfgEft.angle_x or 0) * 0.01,(cfgEft.angle_y or 0) * 0.01,(cfgEft.angle_z or 0) * 0.01 )
+		end
+		_it = ClsEffect.Builder( idMarker,idTarget,cfgEft.resid,v,_isFollow,cfgEft.effecttime,_v3Of,_v3Ang )
 		if _it then
 			tb_insert( _lb,_it )
 		end

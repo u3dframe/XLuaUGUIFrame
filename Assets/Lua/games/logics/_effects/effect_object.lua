@@ -11,11 +11,11 @@ local M = class( "effect_object",super )
 local this = M
 this.nm_pool_cls = "p_efct"
 
-function M.Builder(idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset)
+function M.Builder(idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset,v3Angle)
 	this:GetResCfg( resid )
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
 
-	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset )
+	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset,v3Angle )
 	return _ret
 end
 
@@ -40,13 +40,13 @@ function M:ctor()
 	self.isUping = false
 end
 
-function M:Reset(idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset)
+function M:Reset(idMarker,idTarget,resid,mount_point,isfollow,timeout,v3Offset,v3Angle)
 	self.isUping,self.isDisappear,self.timeOut = nil
 	if self.resid and resid and resid ~= self.resid then
 		self:OnUnLoad()
 	end
 	self:InitAsset4Resid( resid )
-	self:SetData( idMarker,idTarget,mount_point,isfollow,timeout,v3Offset )
+	self:SetData( idMarker,idTarget,mount_point,isfollow,timeout,v3Offset,v3Angle )
 end
 
 function M:InitComp4OnLoad(gobj)
@@ -60,7 +60,7 @@ function M:onAssetConfig( _cfg )
 	return _cfg
 end
 
-function M:OnSetData(idTarget,mount_point,isfollow,timeout,v3Offset)
+function M:OnSetData(idTarget,mount_point,isfollow,timeout,v3Offset,v3Angle)
 	self.idTarget = idTarget
 	self.mount_point = mount_point
 	self.isFollow = isfollow == true
@@ -70,6 +70,7 @@ function M:OnSetData(idTarget,mount_point,isfollow,timeout,v3Offset)
 		self.timeOut = self.timeOut  * 0.001
 	end
 	self.v3Offset = v3Offset
+	self.v3Angle = v3Angle
 end
 
 function M:ReEvent4Self(isbind)
@@ -104,6 +105,10 @@ function M:OnViewBeforeOnInit()
 	
 	if self.v3Offset then
 		self:AddLocalPosByV3(self.v3Offset)
+	end
+
+	if self.v3Angle then
+		self:SetLocalEulerAngles( self.v3Angle.x,self.v3Angle.y,self.v3Angle.z )
 	end
 
 	if not self.isFollow then
