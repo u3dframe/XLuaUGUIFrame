@@ -64,7 +64,8 @@ public class CRCClass
 
     public static string GetCRC(string filePath)
     {
-        return GetCRC(File.OpenRead(filePath));
+		FileStream stream = File.OpenRead(filePath);
+        return GetCRC(stream);
     }
 
     public static string GetCRC(FileStream stream)

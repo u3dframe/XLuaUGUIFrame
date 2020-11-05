@@ -24,7 +24,7 @@ function M.Builder(idMarker,idTarget,b_id,duration,speed)
 	local _isOkey,_cfg_buff = MgrData:CheckCfg4Buff( b_id )
 	if not _isOkey then return end
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. b_id
-	duration = duration or (_cfg_buff.duration / 1000)
+	duration = duration or ((_cfg_buff.duration or 0) / 1000)
 	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,b_id,duration,_cfg_buff.cast_effect,speed,_cfg_buff.cast_effects )
 	return _ret
 end

@@ -238,7 +238,8 @@ public class InputMgr : GobjLifeListener {
 	}
 
 	public void SetLayerMaskMore(params string[] layerNames){
-		SetLayerMask(GetLayerMask(layerNames));
+		LayerMask _lm = GetLayerMask(layerNames);
+		SetLayerMask(_lm);
 	}
 
 	public void SetLayerMaskBy(string nmLayer){

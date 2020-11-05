@@ -33,6 +33,10 @@ function M:_InitFab()
 	end
 end
 
+function M:GetCsObj()
+	return self.lbCamera.comp
+end
+
 function M:GetFollower()
 	return self.lbCamera.lbFlower
 end
@@ -82,6 +86,16 @@ end
 
 function M:UIEvtPos2UILocalPos(gobjParent,evt_x,evt_y)
 	return self.lbUICamera:ToUILocalPointByEventPos( gobjParent,evt_x,evt_y );
+end
+
+function M:ReSRectWH(ofW,ofH)
+	ofW,ofH = self:TNum( ofW ),self:TNum( ofH )
+	self:GetCsObj():ReScreenRect( ofW,ofH )
+end
+
+function M:IsInCamera(gobj)
+	local _csCmr = self:GetMainCamera().comp
+	return self:GetCsObj():IsInCamera( _csCmr,gobj );
 end
 
 return M

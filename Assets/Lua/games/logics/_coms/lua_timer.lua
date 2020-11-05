@@ -26,6 +26,7 @@ function M:clean_end()
 	this.oneMin = 60
 	this.oneHour = 60 * 24
 	this.sumCDTime = 0
+	this.gcSec = 60 * 5
 	this.gcTime = 0
 	this.cdSec = 1
 	this.cdMin = this.oneMin
@@ -59,8 +60,8 @@ function M:OnUpdate(dt)
 
 	this._ExcDelayFunc(dt)
 
-	if this.gcTime >= 900 then
-		this.gcTime = this.gcTime - 900
+	if this.gcTime >= this.gcSec then
+		this.gcTime = this.gcTime - this.gcSec
 		this.GC()
 	end
 end

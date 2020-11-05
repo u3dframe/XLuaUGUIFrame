@@ -110,7 +110,8 @@ namespace Core
 			}
 
 			string _suffix = Path.GetExtension (fn);
-			string _fnNoSuffix = fn.Substring(0, fn.LastIndexOf(_suffix));
+			int _ind_ = fn.LastIndexOf(_suffix);
+			string _fnNoSuffix = fn.Substring(0, _ind_);
 			TextAsset txtAsset = Resources.Load<TextAsset> (_fnNoSuffix); // 可以不用考虑释放txtAsset
 			string _ret = "";
 			if (txtAsset){
@@ -143,7 +144,8 @@ namespace Core
 			}
 
 			string _suffix = Path.GetExtension (fn);
-			string _fnNoSuffix = fn.Substring(0, fn.LastIndexOf(_suffix));
+			int _ind_ = fn.LastIndexOf(_suffix);
+			string _fnNoSuffix = fn.Substring(0, _ind_);
 			TextAsset txtAsset = Resources.Load<TextAsset> (_fnNoSuffix); // 可以不用考虑释放txtAsset
 			byte[] _bts = null;
 			if (txtAsset){

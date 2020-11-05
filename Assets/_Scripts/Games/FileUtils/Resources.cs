@@ -103,7 +103,7 @@ namespace Core.Kernel
                 _fp  += "Characters/Builds/";
             }else if(abName.Contains("timeline/")){
                 _fp  += "Characters/Builds/";
-            }else if(abName.Contains("/maps/")){
+           }else if(abName.Contains("/maps/") || abName.Contains("/explores/")){
                 _fp  += "Scene/Builds/";
             }else if(abName.Contains("lightmaps/")){
                 _fp  += "Scene/Builds/";
