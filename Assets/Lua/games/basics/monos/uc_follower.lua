@@ -42,7 +42,7 @@ function M:Stop()
 end
 
 function M:SetTarget( target )
-	self.comp.target = target
+	self.comp:SetTarget( target )
 end
 
 return M

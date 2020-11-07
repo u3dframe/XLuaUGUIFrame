@@ -16,7 +16,18 @@ local math_random = math.random
 function table.lens(src)
     local count = 0
     if type(src) == "table" then
-        count = #src
+        count = #src  -- # 官方解释，取非队列数组的对象的长度不固定的
+    end
+    return count
+end
+
+-- 取数组长度
+function table.lens2(src)
+    local count = 0
+    if type(src) == "table" then
+        for _,_ in ipairs(src) do
+            count = count + 1;
+        end
     end
     return count
 end

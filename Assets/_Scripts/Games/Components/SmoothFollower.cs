@@ -139,4 +139,11 @@ public class SmoothFollower : MonoBehaviour
 		this.height = height;
 		this.lookAtHeight = lookAtHeight;
 	}
+
+	public void SetTarget(Transform target){
+		this.target = target;
+		if(!!target){
+			this._OnUpdate();
+		}
+	}
 }  
