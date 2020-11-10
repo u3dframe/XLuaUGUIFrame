@@ -6,7 +6,8 @@
 ]]
 
 local E_Object,ET_SE = LES_Object,LET_Shader_Effect
-local E_State,E_CEType = LES_C_State,LES_Ani_Eft_Type
+local E_State = LES_C_State
+local E_CEType = LES_Ani_Eft_Type
 local MgrData,LTimer = MgrData,LTimer
 local tostring = tostring
 
@@ -42,21 +43,23 @@ function M:EndAction()
 	self:EndStopSAction()
 end
 
-function M:OnUpdate_Child(dt,undt)
-	if self.chgBodyDuration then
-		self:ChgBodying()
-		self.chgBodyDuration = self.chgBodyDuration - dt
-		if self.chgBodyDuration <= 0 then
-			self:EndChgBody()
-		end
+function M:Pause()
+	if not super.Pause( self ) then
+		return
 	end
+	
+	LTimer.PauseDelayFunc( self.strCmd,true )
+	LTimer.PauseDelayFunc( self.strCmdEnd,true )
+	LTimer.PauseDelayFunc( self.strCmdSAct,true )
+	return true
+end
 
-	if self.sactDuration then
-		self.sactDuration = self.sactDuration - dt
-		if self.sactDuration <= 0 then
-			self:EndStopSAction()
-		end
-	end
+function M:Regain()
+	super.Regain( self )
+
+	LTimer.PauseDelayFunc( self.strCmd,false )
+	LTimer.PauseDelayFunc( self.strCmdEnd,false )
+	LTimer.PauseDelayFunc( self.strCmdSAct,false )
 end
 
 function M:On_SEByCCType(preType)
@@ -127,7 +130,7 @@ function M:GetSkillTimeOut()
 	return self.timeOut4Skill or 0
 end
 
-function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget,svData )
+function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget )
 	local _obj = self:GetSObjBy( idTarget )
 	if not _obj then
 		return
@@ -135,14 +138,42 @@ function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget,svData )
 	local _ccType = AET_2_SE[cfgEft.type]
 	_obj:ExcuteSEByCCType( _ccType )
 
-	_obj:ChangeBody( e_id,cfgEft )
+	_obj:ChangeBody( e_id )
 	_obj:StopSelfActionByEffect( cfgEft )
-	_obj:ShiftTeleporting( cfgEft,svData )
 end
 
-function M:ChangeBody( e_id,cfgEft )
-	cfgEft = cfgEft or MgrData:GetCfgSkillEffect( e_id )
-	if (not cfgEft) or (not cfgEft.size) or (cfgEft.type ~= E_CEType.ChgBody) then
+local function _chg_bodying(_s)
+	if _s.size >= _s.toSize then
+		return
+	end
+	local _size = _s.size + _s.chg_speed
+	if _size > _s.toSize then
+		_size = _s.toSize
+	end
+	_s:SetSize( _size )
+end
+
+local function _chg_bodyend(_s)
+	_s:EndChgBody(  )
+end
+
+function M:EndChgBody()
+	local _cmd1,_cmd2 = self.strCmdEnd,self.strCmd
+	self.strCmdEnd,self.strCmd = nil
+	if _cmd1 or _cmd2 then
+		LTimer.RemoveDelayFunc(_cmd1)
+		LTimer.RemoveDelayFunc(_cmd2)
+		self:SetSize( 1 )
+	end
+end
+
+function M:ChangeBody( e_id )
+	local cfgEft = MgrData:GetCfgSkillEffect( e_id )
+	if not cfgEft then
+		return
+	end
+
+	if (cfgEft.type ~= E_CEType.ChgBody) or (not cfgEft.size) then
 		return
 	end
 
@@ -155,64 +186,39 @@ function M:ChangeBody( e_id,cfgEft )
 		local _delay = 0.02
 		local _loop = self:MCeil( _t_t / _delay )
 		self.chg_speed = (self.toSize - self.size) / _loop
-		self.chgBodyFpsLoop = _loop
-		self.chgBodyDuration = cfgEft.effecttime	
+		local _id_ = tostring(self:GetCursor())
+		self.strCmd = "chg_body" .. _id_
+		self.strCmdEnd = "chg_body_end" .. _id_
+		LTimer.AddDelayFunc(self.strCmd,_delay,_chg_bodying,_loop,nil,self)
+		LTimer.AddDelayFunc1(self.strCmdEnd,cfgEft.effecttime,_chg_bodyend,self)
 	else
 		self:SetSize( self.toSize )
 	end
 	return true
 end
 
-function M:ChgBodying()
-	local _s = self
-	if (not _s.chgBodyFpsLoop) or (_s.chgBodyFpsLoop <= 0) or (_s.size >= _s.toSize) then
-		return
-	end
-	_s.chgBodyFpsLoop =  _s.chgBodyFpsLoop - 1
-	local _size = _s.size + _s.chg_speed
-	if (_s.chg_speed > 0 and _size > _s.toSize) or (_s.chg_speed < 0 and _size < _s.toSize) then
-		_size = _s.toSize
-	end
-	_s:SetSize( _size )
+local function _chg_sact_end(_s)
+	_s:EndStopSAction(  )
 end
 
-function M:EndChgBody()
-	local _tmp_ = self.chgBodyDuration
-	self.chgBodyFpsLoop,self.chgBodyDuration = nil
-	if _tmp_ ~= nil then
-		self:SetSize( 1 )
+function M:EndStopSAction()
+	local _cmd = self.strCmdSAct
+	self.strCmdSAct = nil
+	if _cmd then
+		self:CsAniSpeed()
+		LTimer.RemoveDelayFunc( _cmd )
 	end
 end
 
 function M:StopSelfActionByEffect( cfgEft )
-	if (not cfgEft) or (not cfgEft.chg_time) or (cfgEft.type ~= E_CEType.SelfStayAction) then
+	if (not cfgEft) or (cfgEft.type ~= E_CEType.SelfStayAction) or (not cfgEft.chg_time) then
 		return
 	end
 	self:EndStopSAction()
 	self:CsAniSpeed(0)
-	self.sactDuration = cfgEft.chg_time * 0.001
+	self.strCmdSAct = "s_s_a" .. tostring(self:GetCursor())
+	LTimer.AddDelayFunc1(self.strCmdSAct,cfgEft.chg_time * 0.001 ,_chg_sact_end,self)
 	return true
-end
-
-function M:EndStopSAction()
-	local _tmp_ = self.sactDuration
-	self.sactDuration = nil
-	if _tmp_ ~= nil then
-		self:CsAniSpeed()
-	end
-end
-
-function M:ShiftTeleporting( cfgEft,svData )
-	if (not cfgEft) or (not svData) or (cfgEft.type ~= E_CEType.Teleporting) then
-		return
-	end
-
-	local _x,_y = svData.args2 * 0.01,svData.args3 * 0.01
-	self:SetPos_SvPos( _x,_y )
-	local _sd = self.svDataCast
-	if _sd then
-		self:LookTarget( _sd.target,_sd.targetx,_sd.targety )
-	end
 end
 
 return M

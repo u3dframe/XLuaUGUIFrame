@@ -42,10 +42,10 @@ function M:OnInit()
 		self:SetIsUsePhysics( self._async_isUsePhysics )
 	end
 
-	self:OnInit_Unit()
+	self:OnInit_Child()
 end
 
-function M:OnInit_Unit()
+function M:OnInit_Child()
 end
 
 function M:OnShowBeg()
@@ -56,15 +56,6 @@ end
 function M:_Init_CU_Vecs()
 	self.v3M_Temp = _vec3.zero
 	self.v3MoveTo = _vec3.zero
-end
-
-function M:ReEvent4Self(isbind)
-	_evt.RemoveListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
-	_evt.RemoveListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
-	if (isbind)then
-		_evt.AddListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
-		_evt.AddListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
-	end
 end
 
 function M:OnUpdate_CUnit(dt,undt)
@@ -80,6 +71,10 @@ function M:OnUpdate_CUnit(dt,undt)
 	if _machine then
 		_machine:On_Update( dt * self:GetCurrAniSpeed() )
 	end
+	self:OnUpdate_Child( dt,undt )
+end
+
+function M:OnUpdate_Child(dt,undt)
 end
 
 function M:PlayAction(n_action)
@@ -163,43 +158,13 @@ function M:_LookAtOther()
 	self:LookAt( _x,_y,_z )
 end
 
-function M:SvPos2MapPos( svX,svY )
-	local _lb = self:GetSObjMapBox()
-	if not _lb then return svX,svY end
-	return _lb:SvPos2MapPos( svX,svY )
-end
-
-function M:SetPos(x,y)
-	self:SetPosition ( x,self.worldY,y )
-end
-
 function M:SetCurrPos(x,y)
 	self.comp:SetCurrPos( x,self.worldY,y )
-end
-
-function M:LookPos(x,y)
-	self:LookAt ( x,self.worldY,y )
-end
-
-function M:LookTarget(target_id,svX,svY)
-	local _target = self:GetSObjBy( target_id )
-	local _x,_z = 0,0
-	if _target then
-		local _pos = _target:GetPosition()
-		_x,_z = _pos.x,_pos.z
-	else
-		_x,_z = self:SvPos2MapPos( svX,svY )
-	end
-	self:LookPos( _x,_z )
 end
 
 function M:IsGrounded(c_y)
 	c_y = c_y or 0
 	return self.comp.isGrounded or ( self.worldY - c_y <= 0.001 )
-end
-
-function M:SetWorldY(w_y)
-	self.worldY = w_y or 0
 end
 
 function M:SetMoveSpeed(speed)
@@ -247,14 +212,6 @@ function M:CsAniSpeed( ani_speed )
 	ani_speed = ani_speed or self:GetCurrAniSpeed()
 	self.cur_aniSpeed = ani_speed
 	self.comp:SetSpeed( ani_speed )
-end
-
-function M:SetSize( size )
-	size = tonumber( size ) or 1
-	if size ~= self.size then
-		self.size = size
-		self:SetLocalScale( size,size,size )
-	end
 end
 
 function M:SetUpMovement(yVal,isAddWY)
@@ -379,7 +336,6 @@ end
 function M:CheckAttack()
 	return not (self:HaveFlag(E_Flag.No_Attack))
 end
-
 
 function M:GetActionState()
 	return E_State2Action[self.state]

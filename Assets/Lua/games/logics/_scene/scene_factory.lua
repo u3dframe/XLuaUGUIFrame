@@ -16,6 +16,7 @@ SceneCreature = _req (fdir .. "scene_creature") -- 生物
 SceneMonster = _req (fdir .. "scene_monster") -- 怪兽
 SceneHero = _req (fdir .. "scene_hero") -- 英雄、伙伴
 local UIModel = _req (fdir .. "ui_model") -- UI模型
+SceneTrigger = _req (fdir .. "scene_trigger") -- 机关，陷进
 
 objsPool:AddClassBy( SceneObject )
 objsPool:AddClassBy( SceneMap )
@@ -23,6 +24,7 @@ objsPool:AddClassBy( SceneCreature )
 objsPool:AddClassBy( SceneMonster )
 objsPool:AddClassBy( SceneHero )
 objsPool:AddClassBy( UIModel )
+objsPool:AddClassBy( SceneTrigger )
 
 local _lbCls_ = {
 	[E_Object.Object]    = SceneObject,
@@ -31,6 +33,7 @@ local _lbCls_ = {
 	[E_Object.Monster]   = SceneMonster,
 	[E_Object.Hero]      = SceneHero,
 	[E_Object.UIModel]   = UIModel,
+	[E_Object.Trigger]   = SceneTrigger,
 }
 
 local M = {}

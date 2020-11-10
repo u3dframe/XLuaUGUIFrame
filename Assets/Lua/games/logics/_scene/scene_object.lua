@@ -6,6 +6,7 @@
 ]]
 
 local E_Object,E_Layer = LES_Object,LES_Layer
+local tostring,tonumber = tostring,tonumber
 
 local super,_evt = FabBase,Event
 local M = class( "scene_object",super )
@@ -57,10 +58,6 @@ function M:GetCursor()
 	return self.nCursor
 end
 
-function M:GetResid()
-	return self.resid
-end
-
 -- 设置阵营
 function M:SetCamp( nCamp )
 	self.n_camp = nCamp
@@ -70,6 +67,63 @@ end
 function M:IsEnemy()
 	if self.n_camp then return (self.n_camp == 1) end
 	return true
+end
+
+function M:SetWorldY(w_y)
+	self.worldY = w_y or 0
+end
+
+function M:SvPos2MapPos( svX,svY )
+	local _lb = self:GetSObjMapBox()
+	if not _lb then return svX,svY end
+	return _lb:SvPos2MapPos( svX,svY )
+end
+
+function M:SetPos(x,y)
+	self:SetPosition ( x,self.worldY,y )
+end
+
+function M:SetPos_SvPos(x,y)
+	x,y = self:SvPos2MapPos( x,y )
+	self:SetPos ( x,y )
+end
+
+function M:LookPos(x,y)
+	self:LookAt ( x,self.worldY,y )
+end
+
+function M:LookPos_SvPos(x,y)
+	x,y = self:SvPos2MapPos( x,y )
+	self:LookAt ( x,self.worldY,y )
+end
+
+function M:LookTarget(target_id,svX,svY)
+	local _target = self:GetSObjBy( target_id )
+	local _x,_z = 0,0
+	if _target then
+		local _pos = _target:GetPosition()
+		_x,_z = _pos.x,_pos.z
+	else
+		_x,_z = self:SvPos2MapPos( svX,svY )
+	end
+	self:LookPos( _x,_z )
+end
+
+function M:SetSize( size )
+	size = tonumber( size ) or 1
+	if size ~= self.size then
+		self.size = size
+		self:SetLocalScale( size,size,size )
+	end
+end
+
+function M:ReEvent4Self(isbind)
+	_evt.RemoveListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
+	_evt.RemoveListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
+	if (isbind)then
+		_evt.AddListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
+		_evt.AddListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
+	end
 end
 
 function M:Reback()

@@ -1,6 +1,12 @@
 ﻿using UnityEngine;
 using System;
 
+/// <summary>
+/// 类名 : Lua 帮助脚本
+/// 作者 : Canyon / 龚阳辉
+/// 日期 : 2020-07-07 10:37
+/// 功能 : 
+/// </summary>
 public sealed class LuaHelper : UtilityHelper {
 	/// <summary>
 	/// 清理内存

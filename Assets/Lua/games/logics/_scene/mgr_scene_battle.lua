@@ -5,7 +5,7 @@
 	-- Desc : defenses,offenses
 ]]
 
-local tonumber = tonumber
+local tonumber,type,tostring = tonumber,type,tostring
 local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 local tb_rm_val,tb_keys,tb_concat = table.removeValues,table.keys,table.concat
 local tb_lens = table.lens
@@ -47,6 +47,8 @@ function M.Init()
 	_evt.AddListener( Evt_Msg_B_Buff_Rmv,this.OnMsg_Buff_Rmv )
 	_evt.AddListener( Evt_Bat_OneAttrChg,this.OnMsg_OneAttrChg )
 	_evt.AddListener(Evt_Re_Login,this.OnClear)
+	_evt.AddListener( Evt_Msg_B_Trigger_Add,this.OnMsg_Trigger_Add )
+	_evt.AddListener( Evt_Msg_B_Trigger_Rmv,this.OnMsg_Trigger_Rmv )
 end
 
 function M.OnClear()
@@ -235,15 +237,26 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 	end
 
 	_func = function()
-		local _cfg_
-		if objType ==  E_Object.Hero or objType ==  E_Object.Monster then
-			_cfg_ = this:GetCfgData("hero",svMsg.cfgid)
-		end
-		if _cfg_ then
-			local _resid = _cfg_.resource
-			if svMsg.master then
-				_resid = _cfg_.resid_fs -- 分身资源
+		local _cfg_,_resid
+		if objType ==  E_Object.Trigger then
+			_cfg_ = this:GetCfgData("skill_trigger",svMsg.cfgid)
+			if _cfg_ then
+				local _cfgEft = MgrData:GetCfgSkillEffect( _cfg_.cast_effect )
+				if _cfgEft then
+					_resid = _cfgEft.resid
+				end
 			end
+		elseif objType ==  E_Object.Hero or objType ==  E_Object.Monster then
+			_cfg_ = this:GetCfgData("hero",svMsg.cfgid)
+			if _cfg_ then
+				_resid = _cfg_.resource
+				if svMsg.master then
+					_resid = _cfg_.resid_fs -- 分身资源
+				end
+			end
+		end
+		
+		if _cfg_ and _resid then
 			local _obj = MgrScene.Add_SObj( objType,_resid,svMsg.id )
 			if _obj then
 				_obj.lfOnShowOnce = function()
@@ -294,7 +307,7 @@ end
 
 function M.OnSv_Map_Obj_Skill_Effect(svMsg)
 	local _obj = this.GetSObj( svMsg.caster )
-	if _obj then 
+	if _obj and type(_obj.CastInjured) == "function" then 
 		_obj:CastInjured( svMsg )
 		return 
 	end
@@ -376,7 +389,7 @@ function M._OnMsgEndBattle( msg )
 	local _max_ms,_e_id,_cfgEft = this._ms_delay_end
 	for _, k in ipairs(_keys) do
 		_sobj = this.GetSObj( k )
-		if _sobj and not _sobj:IsDeath() and _sobj.data then
+		if _sobj and _sobj.data and type(_sobj.IsDeath) == "function" and not _sobj:IsDeath() then
 			if _sobj:IsEnemy() then
 				if _isWin then
 					_e_id = _sobj.data.lose
@@ -439,6 +452,14 @@ function M.OnMsg_OneAttrChg(svMsg)
 	if _attrs.atkspeed then
 		_obj:SetAtkSpeed( tonumber( _attrs.atkspeed ) or 1 )
 	end
+end
+
+function M.OnMsg_Trigger_Add(svMsg)
+	this.OnSv_Add_Map_Obj( E_Object.Trigger,svMsg )
+end
+
+function M.OnMsg_Trigger_Rmv(svMsg)
+	this.OnSv_Rmv_Map_Obj( svMsg.id )
 end
 
 return M

@@ -5,7 +5,10 @@ using XLua;
 using Core;
 
 /// <summary>
-/// 重写里面的ReadFile，
+/// 类名 : 重写里面的ReadFile
+/// 作者 : Canyon / 龚阳辉
+/// 日期 : 2020-07-07 10:37
+/// 功能 : 加载 lua 脚本
 /// </summary>
 public class LuaFileLoader { 
     public byte[] ReadFile(ref string fileName) {

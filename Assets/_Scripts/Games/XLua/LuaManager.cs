@@ -9,6 +9,12 @@ using UnityEngine.SceneManagement;
 #endif
 using Core;
 
+/// <summary>
+/// 类名 : Lua 管理脚本
+/// 作者 : Canyon / 龚阳辉
+/// 日期 : 2020-07-07 10:37
+/// 功能 : 
+/// </summary>
 public class LuaManager : GobjLifeListener
 {
 	static LuaManager _instance;

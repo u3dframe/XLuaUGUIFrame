@@ -21,6 +21,7 @@ L_CG = LayerMask.NameToLayer("CG")
 LES_Object = {
 	Object         = _add(0),
 	MapObj         = _add(), -- 地图
+	Trigger        = _add(), -- 机关，陷进
 	Creature       = _add(), -- 生物
 	Monster        = _add(), -- 怪兽
 	Hero           = _add(), -- 英雄
@@ -33,6 +34,7 @@ LES_Object = {
 LES_Layer = {
 	[LES_Object.Object]         =    L_SObj,
 	[LES_Object.MapObj]         =    L_SObj,
+	[LES_Object.Trigger]        =    L_SObj,
 	[LES_Object.Creature]       =    L_SMonster,
 	[LES_Object.Monster]        =    L_SMonster,
 	[LES_Object.Hero]           =    L_SHero,
@@ -210,6 +212,9 @@ LES_Ani_Eft_Type = {
 	HitFall              = 11,     -- 击倒
 	ChgBody              = 12,     -- 改变大小 size
 	SelfStayAction       = 13,     -- 自身 - 动作停止
+	Teleporting          = 14,     -- 瞬移
+	Trigger              = 15,     -- 机关，陷进
+	TriggerMore          = 16,     -- 机关，陷进 - 从self -> target,产生节点 000 的 多个对象
 }
 
 -- 动作特效 - 挂接点

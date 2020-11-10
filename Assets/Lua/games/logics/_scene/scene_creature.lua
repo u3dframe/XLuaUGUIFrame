@@ -54,13 +54,10 @@ function M:onAssetConfig( _cfg )
 	return _cfg
 end
 
-function M:OnInit_Unit()
+function M:OnInit_Child()
+	super.OnInit_Child( self )
 	self.csRMatProp = CRMatProp.Get( self.gobj )
 	self.ccType = 0
-	self:OnInit_Creature()
-end
-
-function M:OnInit_Creature()
 end
 
 function M:OnActive(isActive)
@@ -91,19 +88,6 @@ function M:OnEnd(isDestroy)
 			LTimer.RemoveDelayFunc( _cmd )
 		end
 	end
-end
-
-function M:OnUpdate_CUnit(dt,undt)
-	super.OnUpdate_CUnit( self,dt,undt )
-	self:OnUpdate_Creature( dt )
-end
-
-function M:OnUpdate_Creature(dt)
-end
-
-function M:SetPos_SvPos(x,y)
-	x,y = self:SvPos2MapPos( x,y )
-	self:SetPos ( x,y )
 end
 
 function M:MoveTo_SvPos(to_x,to_y,cur_x,cur_y)
@@ -261,7 +245,7 @@ function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 
 	self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
 
-	self:_ExcuteSpecialEffect(e_id,cfgEft,_idCaster,_idTarget)
+	self:_ExcuteSpecialEffect(e_id,cfgEft,_idCaster,_idTarget,_e_data)
 
 	if isHurt then
 		local _e_tmp_ = self:GetCfgEftByEType( _e_tp )
@@ -285,7 +269,7 @@ function M:_ExcuteEffect( e_id,cfgEft,idCaster,idTarget )
 	end
 end
 
-function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget )
+function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget,svData )
 end
 
 -- 处理效果
