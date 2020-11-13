@@ -12,7 +12,6 @@ using UnityEngine.UI;
 public class UGUIGray : GobjLifeListener {
 	// 取得对象
 	static public new UGUIGray Get(GameObject gobj,bool isAdd){
-		
 		return UtilityHelper.Get<UGUIGray>(gobj,isAdd);
 	}
 

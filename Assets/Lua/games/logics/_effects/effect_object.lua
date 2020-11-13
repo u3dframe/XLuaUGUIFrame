@@ -71,6 +71,7 @@ function M:OnSetData(idTarget,mount_point,isfollow,timeout,v3Offset,v3Angle)
 	end
 	self.v3Offset = v3Offset
 	self.v3Angle = v3Angle
+	self.curex_time = 0
 end
 
 function M:ReEvent4Self(isbind)
@@ -110,19 +111,33 @@ function M:OnViewBeforeOnInit()
 	if self.v3Angle then
 		self:SetLocalEulerAngles( self.v3Angle.x,self.v3Angle.y,self.v3Angle.z )
 	end
-
+	
 	if not self.isFollow then
+		local _x,_y,_z
+		if self.v3Angle then
+			_x,_y,_z = self:GetEulerAngles()
+		end
 		self:SetParent()
 		self:SetLocalScale(1)
+		if self.v3Angle then
+			self:SetEulerAngles(_x,_y,_z)
+		end
 	end
 	-- self:SetLayer( _cLayer,true )
 	
 	self.isUping = true
 end
 
+function M:OnInit()
+	self.csCurve = CCurveEx.GetInChild(self.gobj)
+end
+
 function M:OnShow()
 	self.comp.speedRate = self.speed or 1
 	self.comp.isPause = (self.isPause == true)
+	if self.csCurve then
+		self.csCurve.m_indexCurve = -1
+	end
 end
 
 function M:GetSpeed()
@@ -147,6 +162,7 @@ function M:OnUpdateLoaded(dt)
 	self.curr_time = self.curr_time + dt * self.speed
 	if self.timeOut and self.timeOut > 0  then
 		self.isDisappear = (self.timeOut <= self.curr_time)
+		self:SetCurve( dt,self.timeOut )
 	end
 end
 
@@ -177,6 +193,20 @@ function M:Regain()
 	if self.comp then
 		self.comp.isPause = false
 	end
+end
+
+function M:SetIsNoCurve( isBl )
+	self.isNoCurve = (isBl == true)
+end
+
+function M:SetCurve( dt,maxtime,force )
+	force = (force == true) or (not self.isNoCurve)
+	if (not force) or (not self.csCurve) or (not maxtime) or (maxtime <= 0) then
+		return
+	end
+	self.curex_time = self.curex_time or 0
+	self.curex_time = self.curex_time  + (dt * self.speed)	
+	self.csCurve:ReVal(self.curex_time,maxtime)
 end
 
 function M:ResetTimeOut( time_out_sec )

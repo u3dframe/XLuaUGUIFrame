@@ -95,8 +95,10 @@ function M:OnShow()
 end
 
 function M:OnHide()
-	for i = 2 , self.nSizeTgs do
-		self.lb_tgs[i]:SetActive( false )
+	if self.nSizeTgs then
+		for i = 2 , self.nSizeTgs do
+			self.lb_tgs[i]:SetActive( false )
+		end
 	end
 end
 

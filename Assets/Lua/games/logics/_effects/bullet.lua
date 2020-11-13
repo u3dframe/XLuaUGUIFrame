@@ -37,9 +37,10 @@ function M.Builder(idMarker,idTarget,e_id)
 
 	if cfgEft.min_mv_speed and (_mvSpeed * 100) < cfgEft.min_mv_speed then
 		_mvSpeed = cfgEft.min_mv_speed * 0.01
+		_t_out = range / _mvSpeed
 	end
 	
-	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,e_id,range,_mvSpeed,_diff,(_t_out + 0.06),_v3Target,isMv2Pos )
+	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,e_id,range,_mvSpeed,_diff,(_t_out + 0.01),_v3Target,isMv2Pos )
 	return _ret
 end
 
@@ -124,6 +125,7 @@ function M:_OnUpPos(dt)
 	else
 		self:_OnTarget( dt )
 	end
+	self.currEft:SetCurve( dt,self.timeOut,true )
 end
 
 function M:_OnPos(dt)
@@ -176,6 +178,7 @@ function M:Start()
 	self:ReEvent4Self(self.isUping)
 	if self.isUping then
 		self.currEft = self.lbEfcts[1]
+		self.currEft:SetIsNoCurve( true )
 	end
 	EffectFactory.ShowEffects( self.lbEfcts )
 end

@@ -56,8 +56,7 @@ public class GameMgr : GobjLifeListener {
 		GameLanguage.Init();
 		Localization.language = GameLanguage.strCurLanguage;
 		UGUIEventSystem.instance.Init(false);
-		InputMgr.instance.Init();
-		LuaManager.instance.Init();
+		InputMgr.instance.Init();		
 	}
 
 	public void Init()

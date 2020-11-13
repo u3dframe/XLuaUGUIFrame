@@ -142,6 +142,7 @@ public static class ExampleConfig
                 typeof(ParticleEvent),
                 typeof(ParticleSystemEx),
                 typeof(RendererMatProperty),
+                typeof(CurveEx),
                 //---------------------------------------------------------------  
             };
 

@@ -8,12 +8,15 @@
 local super,LUtils,tostring = LuBase,LUtils,tostring
 local M = class( "ugui_inputfield", super )
 
-function M:ctor( obj,callFunc,val )
+function M:ctor( obj,val,callFunc )
 	assert(obj,"inpfield's obj is null")
 	local gobj = obj.gameObject
 	assert(gobj,"inpfield's gobj is null")
 	super.ctor( self,gobj,"InputField" )
-	
+	self.lf_ChgEnd = self.lf_ChgEnd or function()
+		self:ExcuteCallFunc()
+	end
+	self.comp.onEndEdit:AddListener(self.lf_ChgEnd)
 	self:_Init(callFunc,val)
 end
 
@@ -39,4 +42,15 @@ function M:SetOrFmt4Main( val, ... )
 	end
 	return self
 end
+
+function M:RemoveListeners()
+	if self.comp then
+		self.comp.onEndEdit:RemoveAllListeners()
+	end
+end
+
+function M:on_clean()
+	self:RemoveListeners()
+end
+
 return M

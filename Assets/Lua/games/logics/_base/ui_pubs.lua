@@ -97,10 +97,10 @@ function M:NewImg(elName,compName,isNoPrint)
     printError("=== NewImg is Null, name = [%s],comp = [%s]", elName,compName)
 end
 
-function M:NewInpFld(elName,val,isNoPrint)
+function M:NewInpFld(elName,val,callFunc,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:NewInpFldBy( _gobj,val,nil )
+        return self:NewInpFldBy( _gobj,val,callFunc )
     end
     if isNoPrint == true then return end
     printError("=== NewInpFld is Null, name = [%s]", elName)

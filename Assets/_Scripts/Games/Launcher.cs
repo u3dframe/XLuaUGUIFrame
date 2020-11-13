@@ -8,7 +8,7 @@ public class Launcher : MonoBehaviour
     void Start()
     {
         InitPars();
-        GameMgr.instance.InitAll();
+        Entry();
     }
 
     void InitPars(){
@@ -16,5 +16,10 @@ public class Launcher : MonoBehaviour
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         Application.targetFrameRate = 60;
         Application.runInBackground = true;
+    }
+
+    void Entry(){
+        GameMgr.instance.InitAll();
+        LuaManager.instance.Init();
     }
 }

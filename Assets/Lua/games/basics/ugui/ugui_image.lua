@@ -35,6 +35,8 @@ function M:SetImage( sAtals,sImg,nType,isNativeSize )
 		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/halfbody/",".tex" )
 	elseif nType == 5 then
 		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/fullbody/",".tex" )
+	elseif nType == 6 then
+		sAtals = self:ReSBegEnd( sAtals,"textures/ui_sngs/",".tex" )
 	else
 		sAtals = self:ReSBegEnd( sAtals,"textures/ui_atlas/",".tex_atlas" )
 	end

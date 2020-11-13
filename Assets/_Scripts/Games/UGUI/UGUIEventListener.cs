@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 public delegate void DF_UGUIPos(GameObject gameObject,Vector2 pos);
@@ -45,6 +46,8 @@ public class UGUIEventListener : EventTrigger {
 	float press_time = 0,diff_time = 0,dis_curr = 0,
 	limit_time = 0.2f,limit_dis_min = 0.1f * 0.1f,limit_dis_max = 0;
 	bool _isAppQuit = false;
+
+	[HideInInspector] public bool m_isPropagation = false; // 是否透传
 
 	[HideInInspector] public bool m_isSyncScroll = true;
 	ScrollRect _sclParent = null;
@@ -117,6 +120,8 @@ public class UGUIEventListener : EventTrigger {
 		if (onPress != null) {
 			onPress (gameObject, _isPressed, eventData.position);
 		}
+
+		PropagationFirst(eventData, ExecuteEvents.pointerDownHandler);
 	}
 
 	// 抬起
@@ -134,6 +139,8 @@ public class UGUIEventListener : EventTrigger {
 		if (onPress != null) {
 			onPress (gameObject, _isPressed, eventData.position);
 		}
+
+		PropagationFirst(eventData, ExecuteEvents.pointerUpHandler);
 	}
 
 	// 单击
@@ -155,6 +162,9 @@ public class UGUIEventListener : EventTrigger {
 		if (onClick != null) {
 			onClick (gameObject, eventData.position);
 		}
+
+		PropagationFirst(eventData, ExecuteEvents.submitHandler);
+        PropagationFirst(eventData, ExecuteEvents.pointerClickHandler);
 	}
 	
     // 开始拖拽
@@ -195,5 +205,38 @@ public class UGUIEventListener : EventTrigger {
         if (onDrop != null) {
 			onDrop (gameObject,eventData.position);
 		}
+    }
+
+	public void PropagationFirst<T>(PointerEventData data, ExecuteEvents.EventFunction<T> function) where T : IEventSystemHandler
+    {
+		if(!this.m_isPropagation)
+			return;
+		
+		// 参考 http://www.xuanyusong.com/archives/4241 
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(data, results);
+        GameObject current = data.pointerCurrentRaycast.gameObject,gobj;
+		int lens = results.Count;
+		if(lens <= 0)
+			return;
+
+		bool isDo = false;
+        for (int i = 0; i < lens; i++)
+        {
+			gobj = results[i].gameObject;
+            if (current != gobj)
+            {
+				do
+				{
+					isDo = ExecuteEvents.Execute(gobj, data, function);
+					if (gobj.transform.parent == null)
+                        break;
+					gobj = gobj.transform.parent.gameObject;
+				} while (!isDo);
+
+				if(isDo)
+                	break;
+            }
+        }
     }
 }

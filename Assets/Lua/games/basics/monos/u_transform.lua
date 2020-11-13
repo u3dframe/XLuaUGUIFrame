@@ -112,6 +112,21 @@ function M:SetEulerAngles( x,y,z )
 	end
 end
 
+function M:GetEulerAngles( isVec )
+	isVec = (isVec == true)
+	local _x,_y,_z,_v = 0,0
+	if self:IsInitTrsf() then
+		_v = self.trsf.eulerAngles
+		_x,_y,_z = _v.x,_v.y,_v.z
+	end
+	if isVec then
+		self.v3Angle = self.v3Angle or _vec3.zero
+		self:_ReXYZ( self.v3Angle,_x,_y,_z )
+		return self.v3Angle
+	end
+	return _x,_y,_z
+end
+
 function M:SetLocalEulerAngles( x,y,z )
 	self._async_lax,self._async_lay,self._async_laz = nil
 	if self:IsInitTrsf() then

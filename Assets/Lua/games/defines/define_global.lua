@@ -65,3 +65,10 @@ LE_UI_Mutex = {
 	AllExceptGuide = 5, -- 互斥: 所有(排除guide layer)
 	MainAndSelf    = 6, -- 互斥: 主界面 和 自身层级界面
 }
+
+-- 游戏 虚拟资源
+LE_VCoin = {
+    Item = 5,
+    Hero = 6,
+    Equip = 7,
+}

@@ -44,6 +44,7 @@ CLocliz = CS.Localization
 CLoadSceneMgr = CS.MgrLoadScene
 CMCaneraMgr = CS.MainCameraManager
 CInpMgr = CS.InputMgr
+CCurveEx = CS.CurveEx
 
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])

@@ -66,9 +66,7 @@ public class NetworkManager : GobjLifeListener {
 	/// 通知到lua那边
 	/// </summary>
 	void OnCF2Lua(int code, ByteBuffer data) {
-		bool isState = LuaHelper.CFuncLua(lua_func, code, data);
-		if (!isState)
-			Debug.LogErrorFormat("=== OnCF2Lua Fails,lua func = [{0}], code = [{1}]", lua_func, code);
+		Core.Kernel.Messenger.Brocast<string,int,ByteBuffer>("OnCF2Lua",lua_func, code, data);
 	}
 
 	public NetworkManager InitNet(string host, int port, string luaFunc) {

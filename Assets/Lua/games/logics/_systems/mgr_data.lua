@@ -10,13 +10,14 @@ local str_split = string.split
 local str_contains = string.contains
 local _req,pcall = require,pcall
 local clearLoadLua,weakTB,readonly = clearLoadLua,weakTB,readonly
+local _sp_symbols = "@@" -- "_"
 
 UIType = {}
 
 local M = class( "mgr_data")
 
 local function _lfIndexLoad(t, k)
-	local _arrs = str_split(k,"_")
+	local _arrs = str_split(k,_sp_symbols)
 	local _fn,_nm = _arrs[1],(_arrs[2] or _arrs[1])
 	local _fp,_data = strRoot .. _fn
 	pcall(function()
@@ -25,9 +26,9 @@ local function _lfIndexLoad(t, k)
 	end)
 	if not _data then return end
 	for kk,vv in pairs(_data) do
-		t[_fn .. "_" .. kk] = vv
+		t[_fn .. _sp_symbols .. kk] = vv
 	end
-	return t[_fn .. "_" .. _nm]
+	return t[_fn .. _sp_symbols .. _nm]
 end
 
 function M:Init()
@@ -49,7 +50,7 @@ function M:_LoadCfgs()
 		if _data then
 			if _isOneXlsMoreSheet then
 				for kk,vv in pairs(_data) do
-					_nk = v .. "_" .. kk
+					_nk = v .. _sp_symbols .. kk
 					_itm = self._cfgDic[_nk]
 					if (_itm) then
 						printError( "配置表[%s]的[%s]配置重复，請检查", _fp,_nk )
@@ -73,8 +74,8 @@ function M:_InitCfgs()
 end
 
 function M:GetConfig(cfgKey)
-	if cfgKey and not str_contains(cfgKey,"_") then
-		cfgKey = cfgKey .. "_" .. cfgKey
+	if cfgKey and not str_contains(cfgKey,_sp_symbols) then
+		cfgKey = cfgKey .. _sp_symbols .. cfgKey
 	end
 	local _vb = self._cfgDic[cfgKey]
 	if not _vb then
@@ -106,6 +107,15 @@ function M:_InitUnlock()
 	end
 end
 
+function M:CfgBasic()
+	return self:GetConfig("basic")
+end
+function M:GetCfgBasic( key )
+	return self:GetOneData( "basic",key )
+end
+function M:GetCfgAttribute(key)
+	return self:GetOneData( "attribute",key )
+end
 function M:GetCfgRes(idKey)
 	return self:GetOneData( "resource",idKey )
 end
@@ -119,7 +129,7 @@ function M:GetCfgSkill(idKey)
 end
 
 function M:GetCfgSkillEffect(idKey)
-	return self:GetOneData( "skill_skilleffect",idKey )
+	return self:GetOneData( "skill@@skilleffect",idKey )
 end
 
 function M:GetCfgHurtEffect(idKey)

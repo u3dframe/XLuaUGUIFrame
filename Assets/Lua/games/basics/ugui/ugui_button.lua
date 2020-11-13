@@ -90,6 +90,18 @@ function M:SetIsSyncScroll( isBl )
 	end
 end
 
+function M:SetIsPropagation( isBl )
+	if not self.comp then
+		return
+	end
+
+	isBl = isBl == true
+	if isBl ~= self.isPropagation then
+		self.isPropagation = isBl
+		self.comp:IsPropagation(isBl)
+	end
+end
+
 function M:SetGray( isBl,isSyncRT,isGrayTxt )
 	self:AddGray4Self()
 

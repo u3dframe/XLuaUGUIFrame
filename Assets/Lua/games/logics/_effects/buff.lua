@@ -112,7 +112,7 @@ function M:_DisappearTarget()
 		end
 
 		if _isChgBd then
-			_lbTarget:StopChgBody()
+			_lbTarget:EndChgBody()
 		end
 	end
 end

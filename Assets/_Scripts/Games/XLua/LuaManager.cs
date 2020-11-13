@@ -38,7 +38,9 @@ public class LuaManager : GobjLifeListener
 	public bool m_isPaused{get; private set;}
 	private DF_OnBool luaAppPaused;
 
-	public void Init(){}
+	public void Init(){
+		Core.Kernel.Messenger.AddListener<string,int,TNet.ByteBuffer>("OnCF2Lua",this.OnCFNet2Lua);
+	}
 
 	/// <summary>
 	///  初始化
@@ -236,6 +238,12 @@ public class LuaManager : GobjLifeListener
 		return luaEnv.Global.GetInPath<T>(name);
 	}
 
+	void OnCFNet2Lua(string luaFunc,int code,TNet.ByteBuffer data) {
+		bool isState = this.CFuncLua(luaFunc,code,data);
+		if (!isState)
+			Debug.LogErrorFormat("=== OnCFNet2Lua Fails,lua func = [{0}], code = [{1}]", luaFunc, code);
+	}
+
 	override protected void OnClear(){
 		luaUpdate = null;
 		luaFixedUpdate = null;
@@ -244,6 +252,7 @@ public class LuaManager : GobjLifeListener
 		luaSceneChange = null;
 		luaAppPaused = null;
 		StopAllCoroutines();
+		Core.Kernel.Messenger.RemoveListener<string,int,TNet.ByteBuffer>("OnCF2Lua",this.OnCFNet2Lua);
 	}
 
 	override protected void OnCall4Destroy(){

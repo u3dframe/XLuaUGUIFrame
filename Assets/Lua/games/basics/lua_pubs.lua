@@ -178,7 +178,7 @@ function M:_ClsUInpFld()
 end
 
 function M:NewInpFldBy(gobj,val,callFunc)
-    return self:_ClsUInpFld().New( gobj,callFunc,val )
+    return self:_ClsUInpFld().New( gobj,val,callFunc )
 end
 
 function M:NewAsset(ab,asset,atp,callFunc,isNoAuto)
