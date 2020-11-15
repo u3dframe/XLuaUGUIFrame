@@ -83,7 +83,7 @@ public class RendererMatData
         int _len_ = _list.Count;
         for (int i = 0; i < _len_; i++)
         {
-            Core.GameFile.UnLoadOne(_list[i],true);
+            Core.Kernel.UGameRes.UnLoadOne(_list[i],true);
         }
     }
 

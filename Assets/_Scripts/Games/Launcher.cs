@@ -7,6 +7,7 @@ public class Launcher : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Core.GameFile.CurrDirRes();
         InitPars();
         Entry();
     }
@@ -19,7 +20,9 @@ public class Launcher : MonoBehaviour
     }
 
     void Entry(){
-        GameMgr.instance.InitAll();
+        GameMgr.instance.Init();
+        InputMgr.instance.Init();
+        Localization.language = GameLanguage.strCurLanguage;
         LuaManager.instance.Init();
     }
 }

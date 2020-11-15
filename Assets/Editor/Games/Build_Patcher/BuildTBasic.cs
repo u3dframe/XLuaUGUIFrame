@@ -322,9 +322,10 @@ public class BuildTBasic : Core.EditorGameFile
 
     static void BuildAssetBundles()
 	{
+        string _dirRes_ = CurrDirRes();
 		EditorUtility.DisplayProgressBar("DoBuild", "BuildAssetBundles ...", 0.2f);
-		CreateFolder(m_dirRes);
-		BuildPipeline.BuildAssetBundles(m_dirRes, BuildAssetBundleOptions.ChunkBasedCompression, GetBuildTarget());
+		CreateFolder(_dirRes_);
+		BuildPipeline.BuildAssetBundles(_dirRes_, BuildAssetBundleOptions.ChunkBasedCompression, GetBuildTarget());
 		EditorUtility.DisplayProgressBar("DoBuild", "ClearBuild ...", 0.3f);
 		EditorUtility.ClearProgressBar();
 		MgrABDataDependence.SaveDeps();
@@ -416,8 +417,9 @@ public class BuildTBasic : Core.EditorGameFile
 
     static public void DelABFolders(bool isTip = false)
     {
+        string _dirRes_ = CurrDirRes();
         EditorUtility.DisplayProgressBar("DeleteABFolders", " rm folder where is ab_resources inside ...", 0.0f);
-        EL_Path _ep = EL_Path.builder.DoInit(m_dirRes);
+        EL_Path _ep = EL_Path.builder.DoInit(_dirRes_);
 
         // "audios/","fnts/","materials/","prefabs/","shaders/","textures/","ui/"
         string[] arrs = null;
@@ -439,7 +441,7 @@ public class BuildTBasic : Core.EditorGameFile
             DelFolder(_fd);
         }
 
-        _ep = EL_Path.builder.DoInit(m_dirRes,true);
+        _ep = EL_Path.builder.DoInit(_dirRes_,true);
         curr = 0;
         count = _ep.m_files.Count;
         foreach (string _fn in _ep.m_files)

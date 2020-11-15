@@ -56,6 +56,7 @@ namespace Core.Kernel{
 		}
 
 		void OnEnable(){
+			Core.GameFile.CurrDirRes();
 			m_Object = new SerializedObject (this);
 			m_Property = m_Object.FindProperty ("_assetList");
 		}

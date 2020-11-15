@@ -154,6 +154,7 @@ namespace Core.Kernel
             ".cs",
             ".fnt",
             ".txt",
+            ".dll",
             "README",
             "LightingData.asset",
             "ReflectionProbe-0.exr",

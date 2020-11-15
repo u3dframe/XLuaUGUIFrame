@@ -35,7 +35,7 @@ CEvtListener = CS.UGUIEventListener
 
 CWWWMgr = CS.Core.Kernel.WWWMgr
 CBtBuffer = CS.TNet.ByteBuffer
-CNetMgr = CS.NetworkManager
+CNetMgr = CS.TNet.NetworkManager
 CResMgr = CS.Core.ResourceManager
 CLuaMgr = CS.LuaManager
 CGameFile = CS.Core.GameFile

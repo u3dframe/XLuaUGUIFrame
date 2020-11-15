@@ -103,6 +103,7 @@ public static class ExampleConfig
                 typeof(PathEx),
                 typeof(FileEx),
                 typeof(ReadWriteHelper),
+                typeof(UGameRes),
                 typeof(Core.Kernel.Resources),
                 typeof(SuperScrollView.LoopListView2),
                 typeof(SuperScrollView.LoopListViewItem2),
@@ -110,7 +111,7 @@ public static class ExampleConfig
                 typeof(TNet.ByteBuffer),
                 typeof(GobjLifeListener),
                 typeof(GameMgr),
-                typeof(NetworkManager),
+                typeof(TNet.NetworkManager),
                 typeof(WWWMgr),
                 typeof(GameLanguage),
 
@@ -120,6 +121,7 @@ public static class ExampleConfig
                 typeof(UGUICanvasAdaptive),
                 typeof(UGUIEventListener),
                 typeof(UGUIEventSystem),
+                typeof(PrefabBasic),
                 typeof(PrefabElement),
                 typeof(Localization),
                 typeof(UGUILocalize),
@@ -135,6 +137,7 @@ public static class ExampleConfig
                 typeof(SmoothFollower),
                 typeof(MainCameraManager),
                 typeof(RayScreenPointInfo),
+                typeof(InputBaseMgr),
                 typeof(InputMgr),
                 typeof(AnimatorEx),                
                 typeof(CharacterControllerEx),
@@ -142,6 +145,7 @@ public static class ExampleConfig
                 typeof(ParticleEvent),
                 typeof(ParticleSystemEx),
                 typeof(RendererMatProperty),
+                typeof(CurveBase),
                 typeof(CurveEx),
                 //---------------------------------------------------------------  
             };
@@ -227,7 +231,7 @@ public static class ExampleConfig
                 new List<string>(){ "Core.Kernel.Resources", "GetPath","UnityEngine.Object"},
                 new List<string>(){ "Core.Kernel.Resources", "GetObject","System.String","System.String"},
                 new List<string>(){ "Core.Kernel.Resources", "LoadInEditor","System.String","System.String"},
-                new List<string>(){ "PrefabElement", "SetChildGobjs","UnityEngine.GameObject[]"},
+                // new List<string>(){ "PrefabElement", "SetChildGobjs","UnityEngine.GameObject[]"},
                 new List<string>(){ "Core.GameFile", "CreateFab","UnityEngine.GameObject","System.String","System.Boolean"},
             };
     
