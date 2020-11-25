@@ -39,6 +39,7 @@ CNetMgr = CS.TNet.NetworkManager
 CResMgr = CS.Core.ResourceManager
 CLuaMgr = CS.LuaManager
 CGameFile = CS.Core.GameFile
+CGFile = CGameFile.curInstance
 CHelper = CS.LuaHelper
 CLocliz = CS.Localization
 CLoadSceneMgr = CS.MgrLoadScene
@@ -51,6 +52,7 @@ CCurveEx = CS.CurveEx
 GM_IsEditor = CGameFile.isEditor
 Is_LoadOrg4Editor = CGameFile.isLoadOrg4Editor
 CRC_DPath = CGameFile.crcDataPath
+Ltmap_End = CGameFile.m_strLightmap
 
 UIT_Simple = UEImgType.Simple
 UIT_Sliced = UEImgType.Sliced

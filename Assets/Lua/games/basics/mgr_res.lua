@@ -28,6 +28,7 @@ function M._InitLoadFuncs()
 	_lb[LE_AsType.AnimationClip] = this._LoadAnimationClip;
 	_lb[LE_AsType.AudioClip] = this._LoadAudioClip;
 	_lb[LE_AsType.Playable] = this._LoadPlayable;
+	_lb[LE_AsType.TextureExr] = this._LoadTexture;
 end
 
 function M._GetAssetFuncs()
@@ -41,6 +42,7 @@ function M._GetAssetFuncs()
 	_lb[LE_AsType.AnimationClip] = this._Get4AnimationClip;
 	_lb[LE_AsType.AudioClip] = this._Get4AudioClip;
 	_lb[LE_AsType.Playable] = this._Get4Playable;
+	_lb[LE_AsType.TextureExr] = this._Get4Texture;
 end
 
 function M._LoadFab(abName,assetName,callLoad,parent)

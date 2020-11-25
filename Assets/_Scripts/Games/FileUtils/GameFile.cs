@@ -1,77 +1,67 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 namespace Core
 {
-    /// <summary>
-    /// 类名 : 游戏 路径
-    /// 作者 : Canyon / 龚阳辉
-    /// 日期 : 2020-03-26 09:29
-    /// 功能 : 
-    /// </summary>
-    public class GameFile : Kernel.Resources
-    {
-        // zip 压缩文件列表(将文件分包体大小来压缩,减小解压时所需内存)
-        static public readonly string m_fpZipList = string.Concat(m_appContentPath, "ziplist.txt");
-        static public readonly string m_fmtZip = string.Concat(m_appContentPath, "resource{0}.zip");
+	using Core.Kernel;
 
-        static public string crcDataPath
-        {
-            get
-            {
-                return CRCClass.GetCRCContent(m_dirDataNoAssets);
-            }
-        }
+	/// <summary>
+	/// 类名 : 游戏 路径
+	/// 作者 : Canyon / 龚阳辉
+	/// 日期 : 2020-03-26 09:29
+	/// 功能 : 
+	/// </summary>
+	public class GameFile : Kernel.Resources
+	{
+        static private readonly GameFile instance = new GameFile();
+		static private bool m_init = false;
+		static public string crcDataPath { get{	return CRCClass.GetCRCContent (m_dirDataNoAssets); } }
+		static public string m_bk_url = null;
 
-        // 编辑模式
-        static public bool isEditor
-        {
-            get
-            {
 #if UNITY_EDITOR
-                return true;
-#else
-				return false;
+		static public readonly string m_url_editor = "http://192.168.1.30:8006/dykj";
 #endif
-            }
-        }
-
-        // 编辑模式 -  加载原始资源 Original
-        static public bool bLoadOrg4Editor = true;
-        static public bool isLoadOrg4Editor
-        {
-            get
-            {
-#if UNITY_EDITOR
-                return bLoadOrg4Editor;
-#else
+		// 编辑模式
+		static public bool isEditor{
+			get{
+				#if UNITY_EDITOR
+				return true;
+				#else
 				return false;
-#endif
-            }
-        }
+				#endif
+			}
+		}
 
-        static public void AppQuit()
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
+		// 编辑模式 -  加载原始资源 Original
+		static public bool bLoadOrg4Editor = true;
+		static public bool isLoadOrg4Editor{
+			get{
+                return instance.IsLoadOrg4Editor();
+            }
+		}
+
+		static public void AppQuit(){
+			#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPlaying = false;
+			#else
 			Application.Quit ();
-#endif
-        }
+			#endif
+		}
 
-        static public void AppPause()
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPaused = true;
-#endif
-        }
+		static public void AppPause(){
+			#if UNITY_EDITOR
+			UnityEditor.EditorApplication.isPaused = true;
+			#endif
+		}
 
-        static public void InitFpType()
+        static void InitGameFile()
         {
+			if(m_init)
+				return;
+			m_init = true;
+
 #if UNITY_EDITOR && UNITY_ANDROID
             m_emFpType = Kernel.ET_FPType.UNITY_EDITOR_ANDROID;
 #elif UNITY_EDITOR && UNITY_IOS
@@ -81,141 +71,110 @@ namespace Core
 #elif UNITY_IOS
 			m_emFpType = Kernel.ET_FPType.UNITY_IOS;
 #else
-			m_emFpType = Kernel.ET_FPType.UNITY_EDITOR;
+            m_emFpType = Kernel.ET_FPType.UNITY_EDITOR;
+#endif
+            curInstance = instance;
+			InitFdRoot(m_resFdRoot);
+			GameEntranceEx.Entrance(_OnCFError);
+			// EncodeWordFile = EM_EnCode.None;
+#if UNITY_EDITOR
+			CfgPackage.InitPackage(()=>{
+				m_bk_url = CfgPackage.instance.m_urlVersion;
+				Debug.LogError(CfgPackage.instance.ToJson());
+			});
 #endif
         }
-		
-		static public string CurrDirRes(){
-			InitFpType();
-			return m_dirRes;
+
+		static void InitFdRoot(string fdRoot){
+			m_resFdRoot = fdRoot;
+			m_fpZipList = string.Concat (m_appContentPath,"ziplist.txt");
+			m_fmtZip = string.Concat (m_appContentPath,"resource{0}.zip");
 		}
 
-        static private bool IsTextInCT(string fn)
+		static public void InitFirst()
         {
-            return fn.EndsWith(".csv") || fn.EndsWith(".minfo") || fn.IndexOf("protos/") != -1;
-        }
-
-        // 取得路径
-        static public string GetFilePath(string fn)
-        {
+            InitGameFile();
 #if UNITY_EDITOR
-            if (IsTextInCT(fn))
-            {
-                return string.Format("{0}CsvTxts/{1}", m_appAssetPath, fn);
-            }
+			CfgVersion.instance.m_urlVersion = m_url_editor;
 #endif
-            return string.Concat(m_dirRes, fn);
         }
 
-        static public string GetStreamingFilePath(string fn)
+		static void _OnCFError(string errMsg){
+#if UNITY_EDITOR
+			AppPause();
+#endif
+		}
+
+        static public string CurrDirRes()
         {
-            return string.Concat(m_appContentPath, fn);
+            InitGameFile();
+			if(!string.IsNullOrEmpty(m_bk_url))
+				CfgVersion.instance.m_urlVersion = m_bk_url;
+            return m_dirRes;
         }
 
-        static public string GetPath(string fn)
-        {
-            string _fp = GetFilePath(fn);
-            if (File.Exists(_fp))
-            {
-                return _fp;
-            }
+        static public bool IsTextInCT(string fn){
+			return fn.EndsWith(".csv") || fn.EndsWith(".minfo") || fn.IndexOf("protos/") != -1;
+		}
 
-            return GetStreamingFilePath(fn);
-        }
-
-        static public void DeleteFile(string fn, bool isFilePath)
-        {
-            string _fp = isFilePath ? fn : GetFilePath(fn);
-            DelFile(_fp);
-        }
-
-        static public void DeleteFile(string fn)
-        {
-            DeleteFile(fn, false);
-        }
-
-        // 取得文本内容
-        static public string GetText(string fn)
-        {
-            string _fp = GetPath(fn);
-            if (File.Exists(_fp))
-            {
-                return File.ReadAllText(_fp);
-            }
-
-            string _suffix = Path.GetExtension(fn);
-            int _ind_ = fn.LastIndexOf(_suffix);
-            string _fnNoSuffix = fn.Substring(0, _ind_);
-            TextAsset txtAsset = Resources.Load<TextAsset>(_fnNoSuffix); // 可以不用考虑释放txtAsset
-            string _ret = "";
-            if (txtAsset)
-            {
-                _ret = txtAsset.text;
-                Resources.UnloadAsset(txtAsset);
-            }
-            return _ret;
-        }
-
-        static public void WriteText(string fn, string content, bool isFilePath)
-        {
-            string _fp = isFilePath ? fn : GetFilePath(fn);
-            CreateText(_fp, content);
-        }
-
-        static public void WriteText(string fn, string content)
-        {
-            WriteText(fn, content, false);
-        }
-
-        // 文件是否存在可读写文件里
-        static public bool IsExistsFile(string fn, bool isFilePath)
-        {
-            string _fp = isFilePath ? fn : GetFilePath(fn);
-            return File.Exists(_fp);
-        }
-
-        // 取得文件流
-        static public byte[] GetFileBytes(string fn)
-        {
-            string _fp = GetPath(fn);
-            if (File.Exists(_fp))
-            {
-                return File.ReadAllBytes(_fp);
-            }
-
-            string _suffix = Path.GetExtension(fn);
-            int _ind_ = fn.LastIndexOf(_suffix);
-            string _fnNoSuffix = fn.Substring(0, _ind_);
-            TextAsset txtAsset = Resources.Load<TextAsset>(_fnNoSuffix); // 可以不用考虑释放txtAsset
-            byte[] _bts = null;
-            if (txtAsset)
-            {
-                _bts = txtAsset.bytes;
-                UnLoadOne(txtAsset);
-            }
-            return _bts;
-        }
-
-        /// <summary>
-        /// manifest的路径
-        /// </summary>
-        static public string m_fpABManifest
-        {
-            get
-            {
-                return GetPath(m_curPlatform);
-            }
+		static public bool IsUpdateUIRes (string resName)
+		{
+			return resName.EndsWith ("updateui.ui") || resName.EndsWith ("uiupdate.atlas") || resName.EndsWith ("update_bg.tex");
+		}
+		
+		// 取得路径
+		override public string GetFilePath(string fn){
+#if UNITY_EDITOR
+			if(IsTextInCT(fn)){
+				return string.Format("{0}CsvTxts/{1}",m_appAssetPath,fn);
+			}
+#else
+			ResInfo _rinfo = CfgFileList.instance.GetInfo(fn);
+			if(_rinfo != null){
+				fn = _rinfo.m_resName;
+			}
+#endif
+            return base.GetFilePath(fn);
         }
 
 #if UNITY_EDITOR
-        static public void CreateFab(GameObject obj, string assetPath, bool isOnlyOne)
-        {
-            assetPath = Path2AssetsStart(assetPath);
-            if (isOnlyOne)
-                assetPath = AssetDatabase.GenerateUniqueAssetPath(assetPath);
-            PrefabUtility.SaveAsPrefabAsset(obj, assetPath);
-        }
+		static public void CreateFab(GameObject obj, string assetPath,bool isOnlyOne)
+		{
+			assetPath = Path2AssetsStart(assetPath);
+			if(isOnlyOne)
+				assetPath = AssetDatabase.GenerateUniqueAssetPath(assetPath);
+			PrefabUtility.SaveAsPrefabAsset(obj,assetPath);
+		}
 #endif
 
+        override public bool IsLoadOrg4Editor()
+        {
+#if UNITY_EDITOR
+				return bLoadOrg4Editor;
+#else
+            return false;
+#endif
+        }
+
+        override public string GetPath(string fn)
+        {
+#if !UNITY_EDITOR
+			ResInfo _info = CfgFileList.instance.GetInfo(fn);
+			if(_info == null)
+				Debug.LogErrorFormat("=== resinfo null,nm = [{0}]",fn);
+			else
+				fn = _info.m_resName;
+#endif
+            return base.GetPath(fn);
+        }
+
+        override public string GetDecryptText(string fn)
+        {
+#if UNITY_EDITOR
+			return GetText(fn);
+#else
+            return base.GetDecryptText(fn);
+#endif
+        }
     }
 }

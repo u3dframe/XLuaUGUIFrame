@@ -79,6 +79,7 @@ function M:ShowScroll(listData)
 		_isActive = self.isAllActive or (i <= nLen)
 		_it = self.lbCells[i]
 		if _it then
+			_it.index = i;
 			if _it.SetActive then
 				_it:SetActive(_isActive)
 			else

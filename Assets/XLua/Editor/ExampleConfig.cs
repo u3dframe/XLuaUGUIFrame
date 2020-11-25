@@ -104,6 +104,7 @@ public static class ExampleConfig
                 typeof(FileEx),
                 typeof(ReadWriteHelper),
                 typeof(UGameRes),
+                typeof(UGameFile),
                 typeof(Core.Kernel.Resources),
                 typeof(SuperScrollView.LoopListView2),
                 typeof(SuperScrollView.LoopListViewItem2),
@@ -233,6 +234,7 @@ public static class ExampleConfig
                 new List<string>(){ "Core.Kernel.Resources", "LoadInEditor","System.String","System.String"},
                 // new List<string>(){ "PrefabElement", "SetChildGobjs","UnityEngine.GameObject[]"},
                 new List<string>(){ "Core.GameFile", "CreateFab","UnityEngine.GameObject","System.String","System.Boolean"},
+                new List<string>(){ "Core.GameFile", "m_url_editor"},
             };
     
 #if UNITY_2018_1_OR_NEWER

@@ -181,18 +181,22 @@ function M:NewInpFldBy(gobj,val,callFunc)
     return self:_ClsUInpFld().New( gobj,val,callFunc )
 end
 
-function M:NewAsset(ab,asset,atp,callFunc,isNoAuto)
+function M:NewAsset(ab,asset,atp,callFunc,isNoAuto,isPreLoad)
     local _lb = self:_ClsAsset().New({
         abName = ab,
         assetName = asset,
         assetLType = atp
     })
-    _lb.lfAssetLoaded = function(isNo,obj)
+    _lb.lfAssetLoaded = function(isNo,obj,_s)
         if callFunc ~= nil then
-            callFunc( isNo,obj )
+            callFunc( isNo,obj,_s )
+        end
+        if isPreLoad == true then
+            _s = _s or _lb
+            _s:OnUnLoad()
         end
     end
-    if not isNoAuto then
+    if (isPreLoad == true) or (not isNoAuto) then
         _lb:LoadAsset()
     end
     return _lb

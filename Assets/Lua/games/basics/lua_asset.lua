@@ -67,8 +67,10 @@ function M:ReCheckCfgAsset()
 	local _isAs = (type(_assetName) == "string")
 	if _isAb and not _isAs then
 		_assetName = CGameFile.GetFileNameNoSuffix(_abName)
-		_assetName = self:SFmt("%s.%s",_assetName,_E_AType[_ltp])
 		_isAs = true
+	end
+	if _isAs then
+		_assetName = self:ReSEnd(_assetName,"." .. _E_AType[_ltp])
 	end
 	self.cfgAsset.assetName = _assetName
 	self.cfgAsset.assetLType = _ltp
@@ -148,7 +150,7 @@ function M:_OnCFLoadAsset( obj )
 		self:OnCF_Texture(obj);
 	end
 	if self.lfAssetLoaded then
-		self.lfAssetLoaded(_isNoObj,obj)
+		self.lfAssetLoaded( _isNoObj,obj,self )
 	end
 	self.lfAssetLoaded = nil
 end

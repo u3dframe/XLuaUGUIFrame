@@ -5,14 +5,15 @@
 	-- Desc : defenses,offenses
 ]]
 
+local json = require "cjson.safe"
 local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 
 local mmax,type = math.max,type
 local MgrData,SceneFactory = MgrData,SceneFactory
 local LES_State,LES_Object = LES_State,LES_Object
 
-local super,_evt = MgrBase,Event
-local M = class( "mgr_scene",super )
+local super,_evt,UIPubs = MgrBase,Event,UIPubs
+local M = class( "mgr_scene",super,UIPubs )
 local this = M
 
 function M.Init()
@@ -55,7 +56,8 @@ function M:OnUpdate(dt)
 		this._ST_PreMap()
 	elseif this.state == LES_State.Load_Scene then
 		this._ST_LoadScene()
-	elseif this.state == LES_State.Wait_Loading_Scene then
+	elseif this.state == LES_State.Load_Map_Light then
+		this._ST_LoadLightMap()
 	elseif this.state == LES_State.Load_Map_Scene then
 		if this.lbMap then
 			this._ST_OnUp_LoadMap(dt)
@@ -133,7 +135,54 @@ end
 
 function M._On_LoadedScene()
 	this._Up_Progress()
-	this.state = LES_State.Load_Map_Scene
+	this.state = LES_State.Load_Map_Light
+end
+
+function M._ST_LoadLightMap()
+	if not this.mapid then
+		this.state = LES_State.Complete
+		return
+	end
+	
+	local _cfgMap = MgrData:GetCfgMap(this.mapid)
+	local _temp = _cfgMap.lightmap
+	if not _temp then
+		this.state = LES_State.Load_Map_Scene
+		return
+	end
+	_temp = this:ReSBegEnd( _temp,"maps/",".minfo" )
+	local _val = CGFile:GetDecryptText(_temp)
+	if not _val or _val == "" then
+		this.state = LES_State.Load_Map_Scene
+		return
+	end
+
+	this.state = LES_State.Wait_Map_Light
+
+	local _jdata = json.decode(_val)
+	local _ld = _jdata.info_lms
+	local _fp_ab = _ld.fp_lm .. Ltmap_End
+	local _need_load,_loaded_ = _ld.n_need_load,0
+	local _func_load = function()
+		_loaded_ = _loaded_  + 1
+		if _loaded_ >= _need_load then
+			this.state = LES_State.Load_Map_Scene
+		end
+	end
+	
+	for _, _it in ipairs(_ld.lmDatas) do
+		if _it.lightmapColor then
+			this:NewAsset(_fp_ab,_it.lightmapColor,LE_AsType.TextureExr,_func_load,nil,true)
+		end
+
+		if _it.lightmapDir then
+			this:NewAsset(_fp_ab,_it.lightmapDir,LE_AsType.Texture,_func_load,nil,true)
+		end
+
+		if _it.shadowMask then
+			this:NewAsset(_fp_ab,_it.shadowMask,LE_AsType.Texture,_func_load,nil,true)
+		end
+	end
 end
 
 local function _LF_LoadedScene(isNoObj,Obj)

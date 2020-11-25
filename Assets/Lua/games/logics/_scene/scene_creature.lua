@@ -48,10 +48,14 @@ end
 
 function M:onAssetConfig( _cfg )
 	_cfg = super.onAssetConfig( self,_cfg )
-	_cfg.strComp = "CharacterControllerEx"
+	-- _cfg.strComp = "CharacterControllerEx"
 	_cfg.isUpdate = true
 	_cfg.isStay = true
 	return _cfg
+end
+
+function M:GetComponent()
+	return CCCtrler.Get(self.gobj)
 end
 
 function M:OnInit_Child()
