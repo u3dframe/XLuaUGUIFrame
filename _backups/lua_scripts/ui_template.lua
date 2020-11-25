@@ -47,7 +47,14 @@ end
 
 -- 隐藏，销毁都会调用(可选)
 function M:OnEnd(isDestroy)
--- _evt.RemoveListener(Evt_ToChangeScene,self._lfXxx); -- 移除事件
+end
+
+-- 自定义的刷新事件绑定函数(非必要,处理事件刷新)
+function M:ReEvent4Self(isBind)
+	-- _evt.RemoveListener(Evt_ToChangeScene,self.Refresh,self); -- 移除事件
+	if isBind == true then
+		-- _evt.AddListener(Evt_ToChangeScene,self.Refresh,self); -- 添加事件
+	end
 end
 
 -- 当isUpdate = true,资源加载完毕后，每帧才会回调(非必要)
