@@ -75,8 +75,10 @@ namespace Core
 #endif
             curInstance = instance;
 			InitFdRoot(m_resFdRoot);
-			GameEntranceEx.Entrance(_OnCFError);
-			// EncodeWordFile = EM_EnCode.None;
+			if(Application.isPlaying){
+				GameEntranceEx.Entrance(_OnCFError);
+				LogToNetHelper.shareInstance.Init("http://push.dianyue.com/","client_log");
+			}
 #if UNITY_EDITOR
 			CfgPackage.InitPackage(()=>{
 				m_bk_url = CfgPackage.instance.m_urlVersion;
@@ -99,9 +101,11 @@ namespace Core
 #endif
         }
 
-		static void _OnCFError(string errMsg){
+		static void _OnCFError(bool isException,string errMsg){
+			LogToNetHelper.shareInstance.SendDefault(isException ? "Exception" : "Error",errMsg);
 #if UNITY_EDITOR
-			AppPause();
+			if(isException)
+				AppPause();
 #endif
 		}
 

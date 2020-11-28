@@ -77,8 +77,7 @@ end
 
 -- 将第nIndex 个元素 设置到显示的第一个位置
 function M:SetTopByIndex(nIndex)
-	self.loopComp:MovePanelToItemIndex(nIndex - 1, 0);
-	self.loopComp:FinishSnapImmediately();
+	self.loopComp:MoveTo(nIndex - 1);
 end
 
 return M

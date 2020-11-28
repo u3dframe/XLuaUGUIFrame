@@ -19,6 +19,7 @@ namespace SuperScrollView
         SerializedProperty mItemPrefabDataList;
         SerializedProperty mItemSnapPivot;
         SerializedProperty mViewPortSnapPivot;
+        SerializedProperty m_isUpAlphaScale;
 
         GUIContent mSupportScrollBarContent = new GUIContent("SupportScrollBar");
         GUIContent mItemSnapEnableContent = new GUIContent("ItemSnapEnable");
@@ -26,6 +27,7 @@ namespace SuperScrollView
         GUIContent mItemPrefabListContent = new GUIContent("ItemPrefabList");
         GUIContent mItemSnapPivotContent = new GUIContent("ItemSnapPivot");
         GUIContent mViewPortSnapPivotContent = new GUIContent("ViewPortSnapPivot");
+        GUIContent m_isUpAlphaScaleContent = new GUIContent("IsUpAlphaScale");
 
         protected virtual void OnEnable()
         {
@@ -35,6 +37,7 @@ namespace SuperScrollView
             mItemPrefabDataList = serializedObject.FindProperty("mItemPrefabDataList");
             mItemSnapPivot = serializedObject.FindProperty("mItemSnapPivot");
             mViewPortSnapPivot = serializedObject.FindProperty("mViewPortSnapPivot");
+            m_isUpAlphaScale = serializedObject.FindProperty("m_isUpAlphaScale");
         }
 
 
@@ -115,7 +118,7 @@ namespace SuperScrollView
                 EditorGUILayout.PropertyField(mViewPortSnapPivot, mViewPortSnapPivotContent);
             }
             EditorGUILayout.PropertyField(mArrangeType, mArrangeTypeGuiContent);
-
+            EditorGUILayout.PropertyField(m_isUpAlphaScale, m_isUpAlphaScaleContent);
             serializedObject.ApplyModifiedProperties();
         }
     }

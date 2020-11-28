@@ -2898,6 +2898,27 @@ namespace SuperScrollView
                 }
             }
         }
+
+        public bool m_isUpAlphaScale = false;
+        void LateUpdate()
+        {
+            if(!this.m_isUpAlphaScale)
+                return;
+            
+            this.UpdateAllShownItemSnapData();
+            int count = this.ShownItemCount;
+            LoopListViewItem2 item;
+            for (int i = 0; i < count; ++i)
+            {
+                item = this.GetShownItemByIndex(i);
+                item.UpdateAlphaScale();
+            }
+        }
+
+        public void MoveTo(int index){
+            this.MovePanelToItemIndex(index,0);
+            this.FinishSnapImmediately();
+        }
     }
 
 }

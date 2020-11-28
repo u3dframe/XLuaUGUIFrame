@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 namespace SuperScrollView
 {
@@ -251,6 +248,62 @@ namespace SuperScrollView
         {
             ClickEventListener listener = ClickEventListener.Get(gobj);
             listener.SetClickEventHandler((obj)=> { callback(ItemIndex); });
+        }
+
+        public float m_divisor = 0f; // 被除数 为 0 时就默认 = ItemSizeWithPadding
+        public Transform m_trsfScale = null;
+
+        public bool m_isScale = true;
+        public float m_minScale = 0.8f; // 缩放最小值
+        public float m_maxScale = 1f; // 缩放最大值
+
+        public bool m_isAlpha = true;
+        [Range(0f,1f)] public float m_minAlpha = 0.1f; // 透明最大值
+        [Range(0f,1f)] public float m_maxAlpha = 1.0f; // 透明最大值
+
+        CanvasGroup _cavGrp = null;
+        public CanvasGroup m_cavGroup {
+            get{
+                if(_cavGrp == null){
+                    _cavGrp = this.gameObject.GetComponent<CanvasGroup>();
+                    if(_cavGrp == null){
+                        _cavGrp = this.gameObject.AddComponent<CanvasGroup>();
+                    }
+                }
+                return _cavGrp;
+            }
+        }
+
+        public void UpdateAlphaScale()
+        {
+            if(!m_isScale && !m_isAlpha)
+                return;
+
+            if(m_divisor == 0)
+                m_divisor = this.ItemSizeWithPadding;
+
+            if(m_divisor < 0)
+                return;
+            
+            float quotient = 1 - Mathf.Abs(this.DistanceWithViewPortSnapCenter) / m_divisor;
+            float _min,_max;
+            if(m_isAlpha && m_minAlpha >= 0 && m_maxAlpha > 0){
+                _min = Mathf.Min(m_minAlpha,m_maxAlpha);
+                _max = (_min == m_minAlpha) ? m_maxAlpha : m_minAlpha;
+                float alpha = Mathf.Clamp(quotient,_min,_max);
+                this.m_cavGroup.alpha = alpha;
+            }
+
+            if(m_isScale && m_minScale >= 0 && m_maxScale > 0){
+                Transform _trsf = this.m_trsfScale;
+                if(_trsf == null)
+                    _trsf = this.CachedRectTransform;
+                
+                _min = Mathf.Min(m_minScale,m_maxScale);
+                _max = (_min == m_minScale) ? m_maxScale : m_minScale;
+                float scale = Mathf.Clamp(quotient,_min,_max);
+                _trsf.localScale = new Vector3(scale, scale, 1);
+            }
         }
 
     }

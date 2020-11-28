@@ -111,26 +111,21 @@ public class BuildTools : BuildPatcher
         string directory = getOption(args, "targetDir", Path.Combine(Application.dataPath.Replace("/Assets", ""),"../build/"));
         directory = Path.Combine(directory, "android/");
         Directory.CreateDirectory(directory);
-
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        //PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        //PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
         bool strip = getOption(args, "stripEngineCode", "false") == "true";
         PlayerSettings.stripEngineCode = strip;
-        //PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.Mono2x);
         PlayerSettings.companyName = getOption(args, "companyName", "com.dianyuegame");
         PlayerSettings.productName = getOption(args, "productName", "kesulu");
         string ident = PlayerSettings.companyName + "." + PlayerSettings.productName;
-        PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, ident);
-
-        PlayerSettings.allowedAutorotateToLandscapeLeft = true;
-        PlayerSettings.allowedAutorotateToLandscapeRight = true;
-        PlayerSettings.allowedAutorotateToPortrait = false;
-        PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
+        string bundleVersion = getOption(args, "bundleVersion", "1.0");
+        string bundleVersionCode = getOption(args, "bundleVersionCode",null);
+        LandscapePlatformSetting(BuildTarget.Android,ident,bundleVersion,bundleVersionCode);
 
         string pName = $"{getOption(args, "targetName", "kesulu")}_{System.DateTime.Now.ToString("MMdd_HHmm")}";
         string targetDir = Path.Combine(directory, pName + ".apk");
         FileUtil.DeleteFileOrDirectory(targetDir);
 
-        
         BuildOptions option = BuildOptions.None;
         bool development = getOption(args, "development", "true") == "true";
         EditorUserBuildSettings.development = development;
@@ -144,7 +139,16 @@ public class BuildTools : BuildPatcher
     }
 
     static public void CMD_ClearWrap(){
+        CMD_ClearCSWrap();
+        CMD_GenCSWrap();
+    }
+
+    static public void CMD_ClearCSWrap(){
         CSObjectWrapEditor.Generator.ClearAll();
+        AssetDatabase.Refresh();
+    }
+
+    static public void CMD_GenCSWrap(){
         CSObjectWrapEditor.Generator.GenAll();
         AssetDatabase.Refresh();
     }

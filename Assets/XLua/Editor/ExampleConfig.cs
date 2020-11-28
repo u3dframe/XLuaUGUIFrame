@@ -148,6 +148,7 @@ public static class ExampleConfig
                 typeof(RendererMatProperty),
                 typeof(CurveBase),
                 typeof(CurveEx),
+                typeof(LogToNetHelper),
                 //---------------------------------------------------------------  
             };
 
