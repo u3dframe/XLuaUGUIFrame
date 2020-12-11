@@ -72,7 +72,6 @@ function M:ReInit(bIsVertical,bIsCallNoData,bIsAlpha,iOffsetCell)
 	return self
 end
 
---排行榜滑动回调
 function M:OnValueChanged(v2)
 	self.v2Chg = self.v2Chg or {v2.x,v2.y}
 	self.v2Chg[1] = v2.x
@@ -91,7 +90,7 @@ function M:OnValueChanged(v2)
 end
 
 --设置滚动回调
-function M:SetOnValueChangeFunc(func)
+function M:SetFunc4ValueChanged(func)
 	self.cfChange = func
 end
 
@@ -383,6 +382,17 @@ function M:SetCenterByIndex(nIndex)
 	end
 	_x,_y = self.isVertical and 0 or (-1 * _v),self.isVertical and _v or 0
 	self:UpdateAllItem()
+end
+
+function M:SetNormalizedPosition(norVal)
+	if not self.comp then
+		return
+	end
+	if self.isVertical then
+		self.comp.verticalNormalizedPosition = 1 - norVal
+	else
+		self.comp.horizontalNormalizedPosition = norVal
+	end
 end
 
 return M

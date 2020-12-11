@@ -94,7 +94,9 @@ function M:GetOneData(cfgKey, idKey)
 		if (_lb) then
 			return readonly(_lb)
 		end
-		printError("未查找到[%s]的配置表 ID = [%s] 的数据，請检查", cfgKey, idKey)
+		if "effect" ~= cfgKey and "buff" ~= cfgKey then
+			printError("未查找到[%s]的配置表 ID = [%s] 的数据，請检查", cfgKey, idKey)
+		end
 	end
 end
 

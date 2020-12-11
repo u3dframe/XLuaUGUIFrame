@@ -29,6 +29,7 @@ function M._InitLoadFuncs()
 	_lb[LE_AsType.AudioClip] = this._LoadAudioClip;
 	_lb[LE_AsType.Playable] = this._LoadPlayable;
 	_lb[LE_AsType.TextureExr] = this._LoadTexture;
+	_lb[LE_AsType.Mat] = this._LoadMat;
 end
 
 function M._GetAssetFuncs()
@@ -43,6 +44,7 @@ function M._GetAssetFuncs()
 	_lb[LE_AsType.AudioClip] = this._Get4AudioClip;
 	_lb[LE_AsType.Playable] = this._Get4Playable;
 	_lb[LE_AsType.TextureExr] = this._Get4Texture;
+	_lb[LE_AsType.Mat] = this._Get4Mat;
 end
 
 function M._LoadFab(abName,assetName,callLoad,parent)
@@ -63,6 +65,10 @@ end
 
 function M._LoadTexture(abName,assetName,callLoad)
 	_csRes.LoadTexture(abName,assetName,callLoad)
+end
+
+function M._LoadMat(abName,assetName,callLoad)
+	_csRes.LoadMat(abName,assetName,callLoad)
 end
 
 function M._LoadAnimator(abName,assetName,callLoad)
@@ -109,6 +115,10 @@ end
 
 function M._Get4Texture(abName,assetName)
 	return _csRes.GetAsset4Texture(abName,assetName)
+end
+
+function M._Get4Mat(abName,assetName)
+	return _csRes.GetAsset4Mat(abName,assetName)
 end
 
 function M._Get4Animator(abName,assetName)

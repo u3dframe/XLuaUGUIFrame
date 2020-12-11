@@ -35,6 +35,7 @@ function M:OnEnd(isDestroy)
 	super.OnEnd( self,isDestroy )
 	self:EndChgBody()
 	self:EndStopSAction()
+	self:EndChgMat()
 end
 
 function M:EndAction()
@@ -138,6 +139,7 @@ function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget,svData )
 	_obj:ChangeBody( e_id,cfgEft )
 	_obj:StopSelfActionByEffect( cfgEft )
 	_obj:ShiftTeleporting( cfgEft,svData )
+	_obj:ChgMat( cfgEft )
 end
 
 function M:ChangeBody( e_id,cfgEft )
@@ -206,12 +208,69 @@ function M:ShiftTeleporting( cfgEft,svData )
 	if (not cfgEft) or (not svData) or (cfgEft.type ~= E_CEType.Teleporting) then
 		return
 	end
-
+	if (not svData.args2) or (not svData.args3) then
+		return
+	end
 	local _x,_y = svData.args2 * 0.01,svData.args3 * 0.01
 	self:SetPos_SvPos( _x,_y )
 	local _sd = self.svDataCast
 	if _sd then
 		self:LookTarget( _sd.target,_sd.targetx,_sd.targety )
+	end
+end
+
+function M:ChgMat( cfgEft )
+	if (not cfgEft) or (cfgEft.type ~= E_CEType.MatAdd and cfgEft.type ~= E_CEType.MatReplace) then
+		return
+	end
+	local _ntype = (cfgEft.type == E_CEType.MatReplace) and 1 or 2
+	local _resid = cfgEft.resid
+	local _cfgRes = self:GetResCfg( _resid )
+	local _abname = self:ReSBegEnd( _cfgRes.rsaddress,"materials/special_effects/",Mat_End )
+	local _lb = self.lbNewMat or {}
+	self.lbNewMat = _lb
+	_lb[_resid] = self:NewAssetABName(_abname,LE_AsType.Mat,function(isNo,obj)
+		if not isNo then
+			local _lb2 = self.unMat or {}
+			self.unMat = _lb2
+			local _unMat = CHelper.NewMat(obj)
+			_lb2[_resid] = _unMat
+			self.comp:ChgSkinMat(_unMat,_ntype)
+		end
+	end)
+	return _resid
+end
+
+function M:EndChgMat(resid)
+	local _isAll,_tmp_ = not resid
+	_tmp_ = self.lbNewMat
+	if _isAll then
+		self.lbNewMat = nil
+	end
+	if _tmp_ then
+		for _k, _v in pairs(_tmp_) do
+			if _isAll or resid == _k then
+				_v:OnUnLoad()
+			end 
+		end
+		if resid then
+			_tmp_[resid] = nil
+		end
+	end
+
+	_tmp_ = self.unMat
+	if _isAll then
+		self.unMat = nil
+	end
+	if _tmp_ then
+		for _k, _v in pairs(_tmp_) do
+			if _isAll or resid == _k then
+				self.comp:ChgSkinMat(_v,0)
+			end 
+		end
+		if resid then
+			_tmp_[resid] = nil
+		end
 	end
 end
 

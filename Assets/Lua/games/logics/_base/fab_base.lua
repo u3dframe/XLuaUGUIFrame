@@ -44,15 +44,21 @@ function M:IsNoInPrefabsFab( abName )
 	end
 end
 
+function M:ReFabABName( abName )
+	if abName and abName ~= "" then
+		if self:IsNoInPrefabsFab( abName ) then
+			abName = self:ReSEnd( abName,".fab" )
+		else
+			abName = self:ReSBegEnd( abName,"prefabs/",".fab" )
+		end
+	end
+	return abName
+end
+
 function M:onMergeConfig( _cfg )
 	_cfg = super.onMergeConfig( self,_cfg )
-	local abName = _cfg.abName
-	if abName and abName ~= "" and _cfg.assetLType == _E_AType.Fab then
-		if self:IsNoInPrefabsFab( abName ) then
-			_cfg.abName = self:ReSEnd( abName,".fab" )
-		else
-			_cfg.abName = self:ReSBegEnd( abName,"prefabs/",".fab" )
-		end
+	if _cfg.assetLType == _E_AType.Fab then
+		_cfg.abName = self:ReFabABName( _cfg.abName )
 	end
 	return _cfg;
 end
@@ -80,6 +86,15 @@ end
 
 function M:GetSObjMapBox()
 	return self:GetSObjBy( "map.gbox" )
+end
+
+function M:SetCursor(nCursor)
+	self.nCursor = nCursor
+	return self
+end
+
+function M:GetCursor()
+	return self.nCursor
 end
 
 function M:OnInitBeg()

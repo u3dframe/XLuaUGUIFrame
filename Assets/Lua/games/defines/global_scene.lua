@@ -28,6 +28,7 @@ LES_Object = {
 	Partner        = _add(), -- 伙伴
 	MPartner       = _add(), -- 怪物的伙伴
 	UIModel        = _add(), -- UI模型
+	UIRawModel     = _add(), -- UI-RawImage 模型
 	CG             = _add(), -- CG
 }
 
@@ -41,6 +42,7 @@ LES_Layer = {
 	[LES_Object.Partner]        =    L_SPartner,
 	[LES_Object.MPartner]       =    L_SMPartner,
 	[LES_Object.UIModel]        =    L_UI,
+	[LES_Object.UIRawModel]     =    L_UI,
 	[LES_Object.CG]             =    L_CG,
 }
 
@@ -217,6 +219,8 @@ LES_Ani_Eft_Type = {
 	Teleporting          = 14,     -- 瞬移
 	Trigger              = 15,     -- 机关，陷进
 	TriggerMore          = 16,     -- 机关，陷进 - 从self -> target,产生节点 000 的 多个对象
+	MatAdd               = 17,     -- mat 追加
+	MatReplace           = 18,     -- mat 替换
 }
 
 -- 动作特效 - 挂接点

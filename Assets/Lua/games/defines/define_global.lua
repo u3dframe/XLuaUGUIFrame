@@ -15,6 +15,7 @@ LE_AsType = {
     AudioClip = 7,
     Playable = 8,
     TextureExr = 9,
+    Mat = 10,
     [1] = "prefab",
     [2] = "prefab",
     [3] = "png",
@@ -24,6 +25,7 @@ LE_AsType = {
     [7] = "mp3",
     [8] = "playable",
     [9] = "exr",
+    [10] = "mat",
 }
 
 -- asset 加载状态

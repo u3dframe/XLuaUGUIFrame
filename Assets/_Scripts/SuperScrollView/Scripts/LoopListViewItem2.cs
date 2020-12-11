@@ -243,11 +243,17 @@ namespace SuperScrollView
                 return ItemSize + mPadding;
             }
         }
-            
-        public void SetClickEvent(GameObject gobj, System.Action<int> callback)
+
+        DF_OnUpItem m_onClickNotify = null;
+        public void SetClickEvent(DF_OnUpItem callback)
         {
-            ClickEventListener listener = ClickEventListener.Get(gobj);
-            listener.SetClickEventHandler((obj)=> { callback(ItemIndex); });
+            this.m_onClickNotify = callback;
+            ClickEventListener listener = ClickEventListener.Get(this.gameObject);
+            listener.SetClickEventHandler(_ExcuteClick);
+        }
+        void _ExcuteClick(GameObject gobj){
+            if(m_onClickNotify != null)
+                m_onClickNotify( UUID,ItemIndex );
         }
 
         public float m_divisor = 0f; // 被除数 为 0 时就默认 = ItemSizeWithPadding
@@ -255,7 +261,7 @@ namespace SuperScrollView
 
         public bool m_isScale = true;
         public float m_minScale = 0.8f; // 缩放最小值
-        public float m_maxScale = 1f; // 缩放最大值
+        [Range(0.1f,1f)] public float m_maxScale = 1f; // 缩放最大值
 
         public bool m_isAlpha = true;
         [Range(0f,1f)] public float m_minAlpha = 0.1f; // 透明最大值
@@ -273,6 +279,8 @@ namespace SuperScrollView
                 return _cavGrp;
             }
         }
+
+        public bool m_isInMiddle{get; private set;} // 判断是否在中间位置
 
         public void UpdateAlphaScale()
         {
@@ -292,6 +300,7 @@ namespace SuperScrollView
                 _max = (_min == m_minAlpha) ? m_maxAlpha : m_minAlpha;
                 float alpha = Mathf.Clamp(quotient,_min,_max);
                 this.m_cavGroup.alpha = alpha;
+                this.m_isInMiddle = (alpha > _min) && (_max - alpha) <= 0.03f;
             }
 
             if(m_isScale && m_minScale >= 0 && m_maxScale > 0){
@@ -303,6 +312,7 @@ namespace SuperScrollView
                 _max = (_min == m_minScale) ? m_maxScale : m_minScale;
                 float scale = Mathf.Clamp(quotient,_min,_max);
                 _trsf.localScale = new Vector3(scale, scale, 1);
+                this.m_isInMiddle = (scale > _min) && (_max - scale) <= 0.03f;
             }
         }
 

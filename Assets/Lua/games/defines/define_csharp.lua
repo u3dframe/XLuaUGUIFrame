@@ -53,6 +53,7 @@ GM_IsEditor = CGameFile.isEditor
 Is_LoadOrg4Editor = CGameFile.isLoadOrg4Editor
 CRC_DPath = CGameFile.crcDataPath
 Ltmap_End = CGameFile.m_strLightmap
+Mat_End = CGameFile.m_strMat
 
 UIT_Simple = UEImgType.Simple
 UIT_Sliced = UEImgType.Sliced

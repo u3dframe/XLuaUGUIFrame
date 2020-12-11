@@ -149,10 +149,12 @@ function M:_OnCFLoadAsset( obj )
 	elseif _E_AType.Texture == _tp then
 		self:OnCF_Texture(obj);
 	end
-	if self.lfAssetLoaded then
-		self.lfAssetLoaded( _isNoObj,obj,self )
-	end
+	
+	local _func = self.lfAssetLoaded
 	self.lfAssetLoaded = nil
+	if _func then
+		_func( _isNoObj,obj,self )
+	end
 end
 
 function M:OnCF_Fab( obj )
@@ -188,6 +190,7 @@ end
 
 function M:pre_clean()
 	super.pre_clean( self )
+	self.lfAssetLoaded = nil
 	self:_OnUnLoad()
 end
 

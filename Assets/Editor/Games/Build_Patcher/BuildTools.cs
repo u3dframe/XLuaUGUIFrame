@@ -1,15 +1,10 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
-using Core;
 using Core.Kernel;
-using UObject = UnityEngine.Object;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+
 
 /// <summary>
 /// 类名 : 资源导出工具脚本 
@@ -170,21 +165,8 @@ public class BuildTools : BuildPatcher
         // BuildPatcher.CopyTest();
     }
 
-    [MenuItem("Tools/ZipMainChild")]
-    static public void Zip_MainChild(){
-        SaveDefaultCfgVersion();
-        BuildPatcher.ZipMainChild();
-    }
-
-    [MenuItem("Tools/ZipMainObb")]
-    static public void Zip_MainObb(){
-        SaveDefaultCfgVersion();
-        BuildPatcher.ZipMainObb();
-    }
-
-    [MenuItem("Tools/ZipPatche")]
-    static public void Zip_Patche(){
-        SaveDefaultCfgVersion();
-        BuildPatcher.ZipPatche();
+    [MenuItem("Tools/ReBindClipStateMachine")]
+    static public void ReBindClipStateMachine(){
+        BuildPatcher.BindStateMachineBehaviour<ClipStateMachine>("show_1");
     }
 }

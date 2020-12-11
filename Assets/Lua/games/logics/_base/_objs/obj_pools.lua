@@ -69,6 +69,11 @@ function M:Borrow(name)
 	local obj = tb_remove(_pool,1)
 	if not obj then
 		local _cls = self:GetClassBy( name,"@@" )
+		if not _cls then
+			printError("=== Borrow cls is null == [%s]",name)
+			return
+		end
+
 		if type(_cls.IsObjPool) == "function" then
 			obj = _cls.New()
 			if _is_debug then

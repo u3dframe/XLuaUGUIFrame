@@ -16,6 +16,7 @@ function M:ctor(lbCfg)
 	local gobj = lbCfg.gobj
 	local clsLua = lbCfg.clsLua
 	local cfClick = lbCfg.cfClick
+	local cfShow = lbCfg.cfShow
 	local ItemName = lbCfg.itemName
 	local _ext,_tmp = {}
 	for i = 1,10 do
@@ -37,6 +38,7 @@ function M:ctor(lbCfg)
 	self.clsLua = _tmp
 	self.tpClsLua = type(_tmp)
 	self.lfClick = cfClick
+	self.lfShow = cfShow
 	self.exts = _ext
 
 	local _lfCCell = handler(self,self._CreateCell)

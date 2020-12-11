@@ -101,6 +101,8 @@ function M:_DisappearTarget()
 	self.isPlayAction = nil
 	local _isChgBd = self.isChgBody
 	self.isChgBody = nil
+	local _matResId = self.matResId
+	self.matResId = nil
 
 	local _lbTarget = this.GetSObj4Battle( self.idTarget )
 	if _lbTarget then
@@ -113,6 +115,10 @@ function M:_DisappearTarget()
 
 		if _isChgBd then
 			_lbTarget:EndChgBody()
+		end
+
+		if _matResId then
+			_lbTarget:EndChgMat( _matResId )
 		end
 	end
 end
@@ -131,18 +137,6 @@ function M:Start( speed )
 	end
 	self:ReEvent4OnUpdate(self.isUping)
 	self:ReEvent4Self(self.isUping)
-end
-
-
-function M:_StartShaderEffect()
-	if not self.shaderType then
-		return
-	end
-	local _lbTarget = this.GetSObj4Battle( self.idTarget )
-	if _lbTarget then
-		_lbTarget:ExcuteSEByCCType( self.shaderType )
-		self.isUping = true
-	end
 end
 
 function M:_StartEffect()
@@ -193,7 +187,22 @@ function M:_DoEffect( e_id )
 		tb_append(self.lbEfcts, _lbs)
 	end
 	self.isChgBody = _lbTarget:ChangeBody( _e_id )
+	self.matResId  = _lbTarget:ChgMat( _cfg )
 	EffectFactory.ShowEffects( _lbs )
+	if not self.isUping then
+		self.isUping = self.isChgBody or self.matResId ~= nil
+	end
+end
+
+function M:_StartShaderEffect()
+	if not self.shaderType then
+		return
+	end
+	local _lbTarget = this.GetSObj4Battle( self.idTarget )
+	if _lbTarget then
+		_lbTarget:ExcuteSEByCCType( self.shaderType )
+		self.isUping = true
+	end
 end
 
 return M

@@ -202,6 +202,11 @@ function M:NewAsset(ab,asset,atp,callFunc,isNoAuto,isPreLoad)
     return _lb
 end
 
+function M:NewAssetABName(ab,atp,callFunc,isNoAuto,isPreLoad)
+    local assetName = CGameFile.GetFileNameNoSuffix(ab)
+    return self:NewAsset(ab,assetName,atp,callFunc,isNoAuto,isPreLoad)
+end
+
 function M:_ClsUIScl()
     if not _cl_scl then
         _cl_scl = UIScl

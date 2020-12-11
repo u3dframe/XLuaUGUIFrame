@@ -3,7 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
+
+public delegate string DF_GetPrefabName(int index);
+public delegate void DF_OnCreateItem(SuperScrollView.LoopListViewItem2 item);
+public delegate void DF_OnUpItem(int uuid,int index);
 
 namespace SuperScrollView
 {
@@ -465,10 +470,12 @@ namespace SuperScrollView
         */
         public void SetListItemCount(int itemCount, bool resetPos = true)
         {
+            /*
             if(itemCount == mItemTotalCount)
             {
                 return;
             }
+            */
             mCurSnapData.Clear();
             mItemTotalCount = itemCount;
             if (mItemTotalCount < 0)
@@ -579,11 +586,6 @@ namespace SuperScrollView
             {
                 return null;
             }
-            return mItemList[index];
-        }
-
-        public LoopListViewItem2 GetShownItemByIndexWithoutCheck(int index)
-        {
             return mItemList[index];
         }
 
@@ -1156,16 +1158,35 @@ namespace SuperScrollView
             {
                 return null;
             }
-            LoopListViewItem2 newItem = mOnGetItemByIndex(this, index);
+            LoopListViewItem2 newItem = null;
+            if(mOnGetItemByIndex != null){
+                newItem = mOnGetItemByIndex(this, index);
+            }else{
+                if(this.m_OnGetPName != null){
+                    string _name = this.m_OnGetPName(index);
+                    if(!string.IsNullOrEmpty(_name))
+                        newItem = this.NewListViewItem(_name);
+                }
+            }
             if (newItem == null)
             {
                 return null;
             }
+
+            if(newItem.UUID <= 0){
+                _item_uuid++;
+                newItem.UUID = _item_uuid;
+                if(this.m_OnCreateItem != null){
+                    this.m_OnCreateItem(newItem);
+                }
+            }
             newItem.ItemIndex = index;
             newItem.ItemCreatedCheckFrameCount = mListUpdateCheckFrameCount;
+            if(this.m_OnUpItem != null){
+                this.m_OnUpItem(newItem.UUID,index);
+            }
             return newItem;
         }
-
 
         void SetItemSize(int itemIndex, float itemSize,float padding)
         {
@@ -2899,7 +2920,20 @@ namespace SuperScrollView
             }
         }
 
+        DF_GetPrefabName m_OnGetPName = null;
+        DF_OnCreateItem m_OnCreateItem = null;
+        DF_OnUpItem m_OnUpItem = null;
+        int _item_uuid = 0;
+        public void InitList(int itemTotalCount,DF_GetPrefabName callGetPname, DF_OnCreateItem callCreate,DF_OnUpItem callUpItem){
+            this.m_OnGetPName = callGetPname;
+            this.m_OnCreateItem = callCreate;
+            this.m_OnUpItem = callUpItem;
+            this.InitListView(itemTotalCount,null,null);
+        }
+
         public bool m_isUpAlphaScale = false;
+        LoopListViewItem2 m_itMiddle = null;
+        public System.Action<LoopListView2, LoopListViewItem2> mOnMiddle = null;
         void LateUpdate()
         {
             if(!this.m_isUpAlphaScale)
@@ -2907,18 +2941,78 @@ namespace SuperScrollView
             
             this.UpdateAllShownItemSnapData();
             int count = this.ShownItemCount;
-            LoopListViewItem2 item;
+            LoopListViewItem2 item = null,item2 = null;
             for (int i = 0; i < count; ++i)
             {
                 item = this.GetShownItemByIndex(i);
                 item.UpdateAlphaScale();
+                if(item.m_isInMiddle)
+                    item2 = item;
+            }
+
+            // 通知到界面上去
+            if(item2 != null && item2.m_isInMiddle && (this.m_itMiddle == null || item2.UUID != this.m_itMiddle.UUID)){
+                this.m_itMiddle = item2;
+                if(mOnMiddle != null)
+                    mOnMiddle(this,this.m_itMiddle);
             }
         }
 
-        public void MoveTo(int index){
-            this.MovePanelToItemIndex(index,0);
+        public void MoveTo(int index,float duration = 0.0f){
+            int _cur = this.mCurSnapData.mSnapTargetIndex;
+            int diff = index - _cur;
+            bool isSpan = (duration > 0.01f) && (Mathf.Abs(diff) > 1);
+            if(!isSpan){
+                this.MovePanelToItemIndex(index,0);
+                this.FinishSnapImmediately();
+                return;
+            }
+
             this.FinishSnapImmediately();
+            LoopListViewItem2 _it = this.GetShownItemByItemIndex(_cur);
+            if(_it == null){
+                _it = this.GetShownItemByIndex(0);
+            }
+
+            float val = _it.ItemSizeWithPadding * diff;
+            float _curVal = 0;
+            if(this.IsVertList){
+                _curVal = this.ContainerTrans.localPosition.y;
+                 if (_curVal < 0)
+                    _curVal = 0;
+                if(mArrangeType == ListItemArrangeType.TopToBottom)
+                    _curVal = -_curVal + val;
+                else
+                    _curVal = -_curVal - val;
+                this.ContainerTrans.DOLocalMoveY(_curVal, duration).onComplete = ()=>{
+                    this.MoveTo(index);
+                };
+            }else{
+                _curVal = this.ContainerTrans.localPosition.x;
+                if (_curVal < 0)
+                    _curVal = 0;
+                if(mArrangeType == ListItemArrangeType.LeftToRight)
+                    _curVal = -_curVal - val;
+                else
+                    _curVal = -_curVal + val;
+                
+                this.ContainerTrans.DOLocalMoveX(_curVal + val, duration).onComplete = ()=>{
+                    this.MoveTo(index);
+                };
+            }
+        }
+
+
+        public void MoveTo2(int index)
+        {
+            SetSnapTargetItemIndex(index);
+            UpdateSnapMove();
+
+        }
+        void OnDestroy(){
+            this.ContainerTrans.DOPause();
+            this.ContainerTrans.DOKill();
         }
     }
-
 }
+

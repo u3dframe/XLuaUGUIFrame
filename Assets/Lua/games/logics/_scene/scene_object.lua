@@ -49,15 +49,6 @@ function M:GetSObjType()
 	return self.sobjType
 end
 
-function M:SetCursor(nCursor)
-	self.nCursor = nCursor
-	return self
-end
-
-function M:GetCursor()
-	return self.nCursor
-end
-
 -- 设置阵营
 function M:SetCamp( nCamp )
 	self.n_camp = nCamp

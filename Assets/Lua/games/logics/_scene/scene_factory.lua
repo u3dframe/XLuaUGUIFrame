@@ -17,6 +17,7 @@ SceneMonster = _req (fdir .. "scene_monster") -- 怪兽
 SceneHero = _req (fdir .. "scene_hero") -- 英雄、伙伴
 local UIModel = _req (fdir .. "ui_model") -- UI模型
 SceneTrigger = _req (fdir .. "scene_trigger") -- 机关，陷进
+local UIRawModel = _req (fdir .. "uiraw_model") -- UI RawImage 模型
 
 objsPool:AddClassBy( SceneObject )
 objsPool:AddClassBy( SceneMap )
@@ -25,6 +26,7 @@ objsPool:AddClassBy( SceneMonster )
 objsPool:AddClassBy( SceneHero )
 objsPool:AddClassBy( UIModel )
 objsPool:AddClassBy( SceneTrigger )
+objsPool:AddClassBy( UIRawModel )
 
 local _lbCls_ = {
 	[E_Object.Object]    = SceneObject,
@@ -34,8 +36,10 @@ local _lbCls_ = {
 	[E_Object.Hero]      = SceneHero,
 	[E_Object.UIModel]   = UIModel,
 	[E_Object.Trigger]   = SceneTrigger,
+	[E_Object.UIRawModel]= UIRawModel,
 }
 
+local max_cursor = 9999999
 local M = {}
 local this = M
 
@@ -45,15 +49,22 @@ end
 
 function M.AddCursor()
 	this.cursor = this.cursor + 1
+	if max_cursor < this.cursor then
+		this.cursor = 1
+	end
 	return this.cursor
 end
 
-function M.Create(objType,resid,uuid)
+function M.Create(objType,resid,uuid,...)
 	local _cls,_ret = _lbCls_[objType]
 	if _cls then
-		_ret = _cls.Builder((uuid or this.AddCursor()),resid)
+		_ret = _cls.Builder((uuid or this.AddCursor()),resid,...)
 	end
 	return _ret
+end
+
+function M.CreateUIRaw(trsfParent)
+	return this.Create( E_Object.UIRawModel,nil,nil,trsfParent )
 end
 
 return M

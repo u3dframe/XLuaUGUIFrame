@@ -91,14 +91,51 @@ public static class ExampleConfig
                 typeof(Slider),
                 typeof(CanvasGroup),
                 //typeof(Slider.SliderEvent),
-                //typeof(UnityEngine.Events.UnityEvent<float>),
                 typeof(UnityEngine.Events.UnityEventBase),
                 typeof(UnityWebRequest),
                 typeof(DownloadHandler),
                 typeof(RawImage),
                 typeof(InputField),
                 typeof(EventTrigger), // UGUIEventListener 的 父类
-                //------------------------ 导出 工程封装的类 ---------------------
+                //------------------------ 类1 ---------------------
+                typeof(SuperScrollView.LoopListView2),
+                typeof(SuperScrollView.LoopListViewItem2),
+                //------------------------ 类2 ---------------------
+#if USE_DOTWEEN
+                typeof(DG.Tweening.AutoPlay),
+                typeof(DG.Tweening.AxisConstraint),
+                typeof(DG.Tweening.Ease),
+                typeof(DG.Tweening.LogBehaviour),
+                typeof(DG.Tweening.LoopType),
+                typeof(DG.Tweening.PathMode),
+                typeof(DG.Tweening.PathType),
+                typeof(DG.Tweening.RotateMode),
+                typeof(DG.Tweening.ScrambleMode),
+                typeof(DG.Tweening.TweenType),
+                typeof(DG.Tweening.UpdateType),
+
+                typeof(DG.Tweening.DOTween),
+                typeof(DG.Tweening.DOVirtual),
+                typeof(DG.Tweening.EaseFactory),
+                typeof(DG.Tweening.Tweener),
+                typeof(DG.Tweening.Tween),
+                typeof(DG.Tweening.Sequence),
+                typeof(DG.Tweening.TweenParams),
+                typeof(DG.Tweening.Core.ABSSequentiable),
+
+                typeof(DG.Tweening.Core.TweenerCore<Vector3, Vector3, DG.Tweening.Plugins.Options.VectorOptions>),
+
+                typeof(DG.Tweening.TweenCallback),
+                typeof(DG.Tweening.TweenExtensions),
+                typeof(DG.Tweening.TweenSettingsExtensions),
+                typeof(DG.Tweening.ShortcutExtensions),
+            
+                //dotween pro 的功能
+                // typeof(DG.Tweening.DOTweenAnimation),
+                // typeof(DG.Tweening.DOTweenPath),
+                // typeof(DG.Tweening.DOTweenVisualManager),
+#endif
+                //------------------------ 类3 ---------------------
                 typeof(StaticEx),
                 typeof(PathEx),
                 typeof(FileEx),
@@ -106,8 +143,6 @@ public static class ExampleConfig
                 typeof(UGameRes),
                 typeof(UGameFile),
                 typeof(Core.Kernel.Resources),
-                typeof(SuperScrollView.LoopListView2),
-                typeof(SuperScrollView.LoopListViewItem2),
                 typeof(GameFile),
                 typeof(TNet.ByteBuffer),
                 typeof(GobjLifeListener),
@@ -115,7 +150,6 @@ public static class ExampleConfig
                 typeof(TNet.NetworkManager),
                 typeof(WWWMgr),
                 typeof(GameLanguage),
-
                 typeof(GHelper),
                 typeof(UtilityHelper),
                 typeof(LuaHelper),
@@ -128,12 +162,14 @@ public static class ExampleConfig
                 typeof(UGUILocalize),
                 typeof(UGUIGray),
                 typeof(UGUIButton),
+                typeof(UGUIModel),
                 typeof(AssetBase),
                 typeof(AssetInfo),
                 typeof(ABInfo),
                 // typeof(AssetBundleManager),
                 typeof(ResourceManager),
                 typeof(MgrLoadScene),
+                // typeof(MgrDownload),
                 typeof(LuaManager),
                 typeof(SmoothFollower),
                 typeof(MainCameraManager),
@@ -142,6 +178,7 @@ public static class ExampleConfig
                 typeof(InputMgr),
                 typeof(AnimatorEx),                
                 typeof(CharacterControllerEx),
+                typeof(RendererMatData),
                 typeof(RendererSortOrder),
                 typeof(ParticleEvent),
                 typeof(ParticleSystemEx),
@@ -149,6 +186,7 @@ public static class ExampleConfig
                 typeof(CurveBase),
                 typeof(CurveEx),
                 typeof(LogToNetHelper),
+                // typeof(CfgVersion),
                 //---------------------------------------------------------------  
             };
 
@@ -164,6 +202,9 @@ public static class ExampleConfig
                 typeof(UnityEngine.Events.UnityAction),
                 typeof(System.Collections.IEnumerator),
                 typeof(System.Func<SuperScrollView.LoopListView2, int, SuperScrollView.LoopListViewItem2>),
+                typeof(DF_GetPrefabName),
+                typeof(DF_OnCreateItem),
+                typeof(DF_OnUpItem),
                 typeof(DF_UWR),
 
                 typeof(DF_LoadedAsset),
@@ -175,6 +216,7 @@ public static class ExampleConfig
                 typeof(DF_LoadedAnimationClip),
                 typeof(DF_LoadedAudioClip),
                 typeof(DF_LoadedTimelineAsset),
+                typeof(DF_LoadedMat),
                 typeof(DF_OnBool),
                 typeof(DF_OnUpdate),
                 typeof(DF_OnSceneChange),
