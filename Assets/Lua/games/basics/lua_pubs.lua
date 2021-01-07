@@ -6,8 +6,10 @@
 ]]
 
 local _c_trsf,_c_comp,_c_cmr,_c_flr,_c_ele,_lasset,_lfab = nil
-local _uevt,_ugray,_utxt,_ubtn,_utog,_uscl,_sscl,_uimg,_uinpfld = nil
-local _cl_scl,_cl_lst,_cl_sscl = nil
+local _uevt,_ugray,_utxt,_ubtn,_utog,_uimg,_uinpfld = nil
+local _uscl,_uloop = nil
+local _cl_lst,_cl_scl,_cl_scloop,_cl_sscl = nil
+local _ueft,_uspe = nil
 
 local M = class("lua_pubs")
 
@@ -18,8 +20,8 @@ function M:_ClsTrsf()
     return _c_trsf
 end
 
-function M:NewTrsfBy(gobj)
-    return self:_ClsTrsf().New( gobj )
+function M:NewTrsfBy(gobj,isInitVecs)
+    return self:_ClsTrsf().New( gobj,isInitVecs )
 end
 
 function M:_ClsComp()
@@ -135,28 +137,6 @@ function M:NewTogBy(gobj, uniqueID, callFunc, val, isNoCall4False)
     return self:_ClsUTog().New( uniqueID, gobj, callFunc, val, isNoCall4False )
 end
 
-function M:_ClsUScl()
-    if not _uscl then
-        _uscl = LuScl
-    end
-    return _uscl
-end
-
-function M:NewSclBy(gobj, funcCreat, funcSetData, gobjItem)
-    return self:_ClsUScl().New( gobj, funcCreat, funcSetData, gobjItem )
-end
-
-function M:_ClsSScl()
-    if not _sscl then
-        _sscl = LuScl2
-    end
-    return _sscl
-end
-
-function M:NewSSclBy(gobj, itemName,funcCreat, funcSetData,_lfClickCall)
-    return self:_ClsSScl().New( gobj,itemName, funcCreat, funcSetData ,_lfClickCall)
-end
-
 function M:_ClsUImg()
     if not _uimg then
         _uimg = LuImg
@@ -207,6 +187,28 @@ function M:NewAssetABName(ab,atp,callFunc,isNoAuto,isPreLoad)
     return self:NewAsset(ab,assetName,atp,callFunc,isNoAuto,isPreLoad)
 end
 
+function M:_ClsUScl()
+    if not _uscl then
+        _uscl = LuScl
+    end
+    return _uscl
+end
+
+function M:NewSclBy(gobj, funcCreat, funcSetData, gobjItem)
+    return self:_ClsUScl().New( gobj, funcCreat, funcSetData, gobjItem )
+end
+
+function M:_ClsULoop()
+    if not _uloop then
+        _uloop = LuScloop
+    end
+    return _uloop
+end
+
+function M:NewULoopBy(gobj, itemName, funcCreat, funcSetData)
+    return self:_ClsULoop().New( gobj, itemName, funcCreat, funcSetData )
+end
+
 function M:_ClsUIScl()
     if not _cl_scl then
         _cl_scl = UIScl
@@ -229,6 +231,13 @@ function M:_ClsUISScl()
     return _cl_sscl
 end
 
+function M:_ClsUIScloop()
+    if not _cl_scloop then
+        _cl_scloop = UIScloop
+    end
+    return _cl_scloop
+end
+
 function M:AddGray4Self()
 	if self.gobj and (not self.lbGray) then
 		self.lbGray = self:NewUGrayBy( self.gobj )
@@ -241,6 +250,32 @@ function M:AddUEvent4Self()
 		self.lbUEvt = self:NewUEvtBy( self.gobj )
 	end
 	return self
+end
+
+function M:_ClsUEffect()
+    if not _ueft then
+        _ueft = UIEffect
+    end
+    return _ueft
+end
+
+function M:NewUIEffect(resid,parent,timeout,v3LocPos,v3LocScale)
+    return self:_ClsUEffect().Builder( resid,parent,(timeout or -1),v3LocPos,v3LocScale )
+end
+
+function M:_ClsUSpine()
+    if not _uspe then
+        _uspe = UISpine
+    end
+    return _uspe
+end
+
+function M:NewUISpine(data,parent)
+    local _t_ = self:_ClsUSpine().New()
+    if data and parent then
+        _t_:View( true,data,parent )
+    end
+    return _t_
 end
 
 return M

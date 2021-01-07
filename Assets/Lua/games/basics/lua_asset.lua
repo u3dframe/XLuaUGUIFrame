@@ -29,7 +29,7 @@ function M:InitBase(assetCfg)
 		assetLType = _E_AType.Fab,
 		strComp = nil,
 		isUpdate = nil,
-		isVwCircle = nil,
+		isNoCircle = nil,
 		isStay = nil,
 		isLogVTime = nil,
 

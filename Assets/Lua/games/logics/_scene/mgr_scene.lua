@@ -11,7 +11,7 @@ local tb_remove,tb_insert,tb_contain = table.remove,table.insert,table.contains
 local mmax,type = math.max,type
 local MgrData,SceneFactory = MgrData,SceneFactory
 local LES_State,LES_Object = LES_State,LES_Object
-
+local LUtils = LUtils
 local super,_evt,UIPubs = MgrBase,Event,UIPubs
 local M = class( "mgr_scene",super,UIPubs )
 local this = M
@@ -75,6 +75,12 @@ function M.GetState()
 	return this.state
 end
 
+function M.GetCurrMapCfg()
+	if this.mapid then
+		return MgrData:GetCfgMap(this.mapid)
+	end
+end
+
 function M.OnLoadMap(pars1, pars2)
 	if pars1 and pars1 == this.mapid then return end
 	this.isUping = false
@@ -106,6 +112,9 @@ function M._ST_Begin()
 	this._Up_Progress()
 	this.state = LES_State.Clear_Pre_Map_Objs
 	this.isUping = true
+	LUtils.ReEnvironment(nil,1)
+	MgrCamera:ReSkybox()
+	MgrCamera:RePPFile()
 end
 
 function M._ST_PreObjs()
@@ -144,7 +153,7 @@ function M._ST_LoadLightMap()
 		return
 	end
 	
-	local _cfgMap = MgrData:GetCfgMap(this.mapid)
+	local _cfgMap = this.GetCurrMapCfg()
 	local _temp = _cfgMap.lightmap
 	if not _temp then
 		this.state = LES_State.Load_Map_Scene
@@ -202,7 +211,7 @@ function M._ST_CurMap()
 	end
 	this._Up_Progress()
 
-	local _cfgMap = MgrData:GetCfgMap(this.mapid)
+	local _cfgMap = this.GetCurrMapCfg()
 	this.lbMap = this.GetOrNew_SObj(LES_Object.MapObj,_cfgMap.resid)
 	if this.lbMap == nil then
 		this.state = LES_State.None
@@ -242,6 +251,22 @@ function M._ST_CurObjs()
 	this._Up_Progress()
 	if not this.ndCount  then
 		this.ndCount = 5
+		
+		local _cfgMap = this.GetCurrMapCfg()
+		if _cfgMap then 
+			if _cfgMap.lightSource and _cfgMap.lightColors then
+				local _val = tonumber( _cfgMap.lightIntensity ) or 0
+				LUtils.ReEnvironment( _cfgMap.lightSource,_val * 0.01,unpack(_cfgMap.lightColors) )
+			end
+
+			if _cfgMap.residSkybox then
+				MgrCamera:ReSkybox( _cfgMap.residSkybox )
+			end
+
+			if _cfgMap.residPPFile then
+				MgrCamera:RePPFile( _cfgMap.residPPFile )
+			end
+		end
 	elseif this.ndCount <= 0 then
 		this.state = LES_State.Complete
 		this.ndCount = nil
@@ -285,6 +310,12 @@ function M.AddCurrMapObj(lbSObj)
 	
 	_lb[_cursor] = lbSObj
 	return _cursor
+end
+
+function M.GetCurrMapAllObjs()
+	if this.mapid then
+		return this[this.mapid]
+	end
 end
 
 function M.GetCurrMapObj(cursor)

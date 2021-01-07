@@ -80,7 +80,7 @@ namespace Core
 			InitFdRoot(m_resFdRoot);
 			if(Application.isPlaying){
 				GameEntranceEx.Entrance(_OnCFError);
-				LogToNetHelper.shareInstance.Init("http://push.dianyue.com/","client_log");
+				LogToNetHelper.shareInstance.Init("https://push.dianyue.com/","client_log");
 			}
 
 			CfgPackage.InitPackage(()=>{
@@ -155,6 +155,10 @@ namespace Core
 			PrefabUtility.SaveAsPrefabAsset(obj,assetPath);
 		}
 #endif
+		static public void VwFps(bool isShow)
+		{
+			GameMgr.Fps(isShow);
+		}
 
         override public bool IsLoadOrg4Editor()
         {
@@ -186,26 +190,6 @@ namespace Core
 			return GetText(fn);
 #else
             return base.GetDecryptText(fn);
-#endif
-        }
-
-		override public Material GetMat(Renderer render)
-        {
-            if (null == render) return null;
-#if UNITY_EDITOR
-            return render.material;
-#else
-            return render.sharedMaterial;
-#endif
-        }
-
-        override public Material[] GetMats(Renderer render)
-        {
-            if (null == render) return null;
-#if UNITY_EDITOR
-            return render.materials;
-#else
-            return render.sharedMaterials;
 #endif
         }
 

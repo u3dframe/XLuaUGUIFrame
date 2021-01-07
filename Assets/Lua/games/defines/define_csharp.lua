@@ -33,6 +33,7 @@ CGray = CS.UGUIGray
 CBtn = CS.UGUIButton
 CEvtListener = CS.UGUIEventListener
 
+CWVCert = CS.Core.Kernel.WebVerifyCert
 CWWWMgr = CS.Core.Kernel.WWWMgr
 CBtBuffer = CS.TNet.ByteBuffer
 CNetMgr = CS.TNet.NetworkManager
@@ -45,7 +46,15 @@ CLocliz = CS.Localization
 CLoadSceneMgr = CS.MgrLoadScene
 CMCaneraMgr = CS.MainCameraManager
 CInpMgr = CS.InputMgr
+CELog2Net =  CELog2Net or CS.LogToNetHelper.shareInstance
+CRSettingEx = CS.RenderSettingsEx
 CCurveEx = CS.CurveEx
+CEDComp = CS.Core.Kernel.Beans.ED_Comp
+CEDUIImg = CS.ED_UIImg
+CEDUIItem = CS.ED_UIItem
+CEDCamera = CS.ED_Camera
+CEDUIEffect = CS.ED_UIEffect
+CEDUISpine = CS.ED_UISpine
 
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])
@@ -54,6 +63,7 @@ Is_LoadOrg4Editor = CGameFile.isLoadOrg4Editor
 CRC_DPath = CGameFile.crcDataPath
 Ltmap_End = CGameFile.m_strLightmap
 Mat_End = CGameFile.m_strMat
+Scriptable_End = CGameFile.m_strScriptable
 
 UIT_Simple = UEImgType.Simple
 UIT_Sliced = UEImgType.Sliced
@@ -66,5 +76,6 @@ OneFrameSec = todecimal( 1 / FrameRate,4,0.016,true)
 
 Is_PPLayer_Enabled = (Is_LoadOrg4Editor) or (not GM_IsEditor) -- 设置 PostProcessLayer 的 enabled
 
+CGameFile.VwFps(true)
 -- CGameFile.bLoadOrg4Editor = false -- 编辑模式下，读取 ab 资源
 -- TP_UText = typeof(UText)

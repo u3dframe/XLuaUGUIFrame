@@ -95,6 +95,7 @@ function M:OnUpdate4Moving(dt)
     if _v3_zero:Equals(self.v3Move) then
         return
     end
+    _owner.v3Pos:Add(self.v3Move)
     _comp:Move(self.v3Move.x, self.v3Move.y, self.v3Move.z)
 
     self:_ReCalcDisEnd( speed,dt )
@@ -116,7 +117,7 @@ function M:_Jugde_MoveEnd()
     _tmp = self.v3To - self.v3Curr
     _tmp = _tmp.sqrMagnitude - self.dis_end
     if _tmp <= _diff_offset then
-        self.lbOwner:SetPos(self.v3To.x,self.v3To.z)
+        self.lbOwner:SmoothPos( self.v3To.x,self.v3To.z )
         self:Exit()
     end
 end

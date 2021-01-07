@@ -21,6 +21,7 @@ function M._InitUI()
 		isStay = true,
 		hideType = LE_UI_Mutex.None,
 		layer = LE_UILayer.Pop,
+		isNoCircle = true,
 		-- isUpdate = true,
 	})
 	this.ui = ui
@@ -30,6 +31,7 @@ function M._InitUI()
 	end
 
 	ui.OnInit = function(_s)
+		_s.Slider = _s:GetElementComponent("Slider", "Slider");
 	end
 
 	ui.OnShow = function(_s)
@@ -49,7 +51,9 @@ function M._InitUI()
 	end
 
 	ui.Refresh = function(_s,progress)
-		-- printTable(progress)
+		if _s.Slider then
+			_s.Slider.value = progress or 0
+		end
 	end
 end
 

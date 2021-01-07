@@ -5,6 +5,28 @@
 	-- Desc : 
 ]]
 
+CELog2Net =  CELog2Net or CS.LogToNetHelper.shareInstance
+-- 最多支持6对 key,val 参数
+function FLog2Net(url,proj,...)
+	if GM_IsEditor then
+		return
+	end
+	if not proj then
+		CELog2Net:SendKvsByDefUProj( ... )
+	else
+		CELog2Net:SendKvs( url or "",proj,... )
+	end
+end
+
+function UserLog2Net(...)
+	FLog2Net(nil,"client_log_user",...)
+end
+
+function UserProcessLog2Net(step,child,...)
+	step = tonumber(step) or 0
+	FLog2Net(nil,"client_log_user_process","p_step",step,"p_step_2",child,...)
+end
+
 local M = {}
 
 function M.Init()
@@ -18,6 +40,8 @@ function M.Init()
 		require("keycode").Init()
 	end
 	Evt_No_Use_Coroutine = false
+	Event.AddListener( Evt_UserLog2Net,UserLog2Net );
+	Event.AddListener( Evt_UserProcessLog2Net,UserProcessLog2Net );
 	Event.Brocast(Evt_LoadAllShaders);
 end
 

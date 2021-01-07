@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _csMgr
+local _csMgr,_csNoVCert = nil
 local type = type
 local json = require "cjson.safe"
 
@@ -15,6 +15,7 @@ local this = M
 
 function M.Init()
 	_csMgr = CWWWMgr.instance
+	_csNoVCert = CWVCert.NoVCert
 end
 
 function M.SendWWW(url,callback,ext_1)
@@ -28,7 +29,7 @@ function M.SendWWW(url,callback,ext_1)
 			end
 			callback(isState,_d,pars)
 		end
-	end,ext_1)
+	end,_csNoVCert,ext_1)
 end
 
 function M.PostJsonWWW(url,body,callback,ext_1)
@@ -42,7 +43,7 @@ function M.PostJsonWWW(url,body,callback,ext_1)
 			end
 			callback(isState,_d,pars)
 		end
-	end,ext_1)
+	end,_csNoVCert,ext_1)
 end
 
 return M

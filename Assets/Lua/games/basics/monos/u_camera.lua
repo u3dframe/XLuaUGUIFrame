@@ -18,6 +18,10 @@ function M:ctor( obj,component )
 	self:_Init_Cmr_Vecs()
 end
 
+function M:BuilderUObj( uobj )
+	return CEDCamera.Builder( uobj )
+end
+
 function M:_Init_Cmr()
 	local _c = self.comp
 	self.depth = _c.depth
@@ -31,7 +35,7 @@ function M:_Init_Cmr()
 end
 
 function M:_Init_Cmr_Vecs()
-	self.v2ScreenPoint = _vec2.zero
+	self.v2ScreenPoint = self.v2ScreenPoint or _vec2.zero
 end
 
 function M:GetCamera()
@@ -50,6 +54,11 @@ end
 function M:SetOrthographicSize(size)
 	size = tonumber(size) or 5
 	self.comp.orthographicSize = size
+end
+
+function M:SetFieldOfView(size)
+	size = tonumber(size) or 60
+	self.csEDComp:SetFieldOfView( size )
 end
 
 function M:ScreenToViewportPoint(sV3)
@@ -97,6 +106,45 @@ end
 function M:ToWorldPointByUIEventPos(lbUICamera,gobjParent,x,y)
 	local _pos = lbUICamera:ToUIWorldPointByEventPos(gobjParent,x,y)
 	return self:ToWorldPoint(lbUICamera,_pos)
+end
+
+function M:GetUILocPos(uobj,uiCmr,uiUObj)
+	local _x,_y = self.csEDComp:GetUILocPos( uobj,uiCmr,uiUObj,0,0 )
+	return _vec2.New( _x,_y )
+end
+
+function M:ToSmooth4Local(x,y,z,fieldOfView,smoothTime,callFunc,smoothPos)
+	x = tonumber(x) or 0
+	y = tonumber(y) or 0
+	z = tonumber(z) or 0
+	fieldOfView = (tonumber(fieldOfView) or self.fieldOfView) or 60
+	smoothTime = tonumber(smoothTime) or 0
+	smoothPos = tonumber(smoothPos) or smoothTime
+	self.csEDComp:ToSmooth4Local( x,y,z,fieldOfView,smoothTime,smoothPos,callFunc )
+end
+
+function M:ToSmooth4LocXYZ(toVal,fieldOfView,smoothTime,callFunc,nXYZ,isStartAdd,smoothPos)
+	toVal = tonumber(toVal) or 0
+	fieldOfView = (tonumber(fieldOfView) or self.fieldOfView) or 60
+	smoothTime = tonumber(smoothTime) or 0
+	smoothPos = tonumber(smoothPos) or smoothTime
+	local _XYZ = 0
+	if nXYZ == "y" then
+		_XYZ = 1		
+	elseif nXYZ == "z" then
+		_XYZ = 2
+	end
+	if isStartAdd == true then
+		self.csEDComp:ToSmooth4LocXYZStartAdd( toVal,fieldOfView,smoothTime,smoothPos,_XYZ,callFunc )
+	else
+		self.csEDComp:ToSmooth4LocXYZ( toVal,fieldOfView,smoothTime,smoothPos,_XYZ,callFunc )
+	end
+end
+
+function M:RebackStart(smoothTime,callFunc,smoothPos)
+	smoothTime = tonumber(smoothTime) or 0
+	smoothPos = tonumber(smoothPos) or smoothTime
+	self.csEDComp:RebackStart( smoothTime,smoothPos,callFunc )
 end
 
 return M

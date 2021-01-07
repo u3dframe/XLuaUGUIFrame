@@ -28,7 +28,7 @@ function M:onAssetConfig( _cfg )
 	return _cfg;
 end
 
-local __special_fabs = { "timeline/","groudbox/" }
+local __special_fabs = { "timeline/","groudbox/","spines/" }
 -- 没放在 prefabs 文件夹下面的的fab
 function M:IsNoInPrefabsFab( abName )
 	if not abName or "" == abName then
@@ -95,17 +95,6 @@ end
 
 function M:GetCursor()
 	return self.nCursor
-end
-
-function M:OnInitBeg()
-	self.gobjLower = self:FindGobj( "offset/lower" )
-	self.gobjHigh = self:FindGobj( "offset/high" )
-	if self.gobjHigh then
-		self.gobjHigh:SetActive( false )
-	end
-end
-
-function M:OnShowBeg()
 end
 
 return M

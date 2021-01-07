@@ -58,8 +58,8 @@ function Vector3:Set(x,y,z)
 	self.z = z or 0
 end
 
-function Vector3.Get(v)		
-	return v.x, v.y, v.z	
+function Vector3:Get()		
+	return self.x, self.y, self.z	
 end
 
 function Vector3:Clone()

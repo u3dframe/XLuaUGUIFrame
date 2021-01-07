@@ -60,7 +60,7 @@ local _L_Basic_3 = {
 	{"LuBtn","ugui_button",4}, -- 组件 - 按钮
 	{"LuTog","ugui_toggle",4}, -- 组件 - toggle
 	{"LuScl","ugui_scroll",4}, -- 组件 - 循环滚动
-	{"LuScl2","ugui_scroll2",4}, -- 组件 - 循环滚动
+	{"LuScloop","ugui_scroll_loop",4}, -- 组件 - 循环滚动
 	{"LuImg","ugui_image",4}, -- 组件 - 图片
 	{"LuInpFld","ugui_inputfield",4}, -- 组件 - 输入框
 }
@@ -86,10 +86,12 @@ local _L_Midle_1 = {
 	{"LTimer","lua_timer",8}, -- sv时间(延迟，定点)
 	{"UIRow","uicell_row",8}, -- 行单元（多行多列使用）
 	{"UIScl","uic_scroll",8}, -- 固定循环
-	{"UIScl2","uic_scroll2",8}, -- 固定循环
+	{"UIScloop","uic_scroll_loop",8}, -- 固定循环
 	{"UILst","uic_list",8}, -- 不固定的少量单元
 	{"LCDown","lua_countdown",8}, -- 倒计时
 	{"UIItem","ui_item",8}, -- type_id_num组件代码
+	{"UIEffect","ui_effect",8}, -- ui 特效 组件
+	{"UISpine","ui_spine",8}, -- ui spine 组件
 }
 
 -- 最后
@@ -98,6 +100,7 @@ local _L_End = {
 
 	{"MgrData", "mgr_data", 9}, -- 配置 
 	{"MgrUnlock", "mgr_unlock", 9}, -- 功能解锁
+	{"MgrCircle", "mgr_circle", 9}, -- 发送请求，打开界面等锁屏界面
 	{"MgrPopTip", "mgr_popuptip", 9}, -- 文本弹出框
 	{"MgrLoading","mgr_loading",9}, -- 加载界面
 	

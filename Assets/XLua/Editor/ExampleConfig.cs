@@ -12,6 +12,7 @@ using UnityEngine;
 using XLua;
 using Core;
 using Core.Kernel;
+using Core.Kernel.Beans;
 #if UNITY_2019
 using UnityEngine.Networking;
 using UnityEngine.Rendering.PostProcessing;
@@ -70,6 +71,8 @@ public static class ExampleConfig
                 typeof(LightmapSettings),
                 typeof(WaitForSeconds),
                 typeof(UnityWebRequest),
+                typeof(DownloadHandler),
+                typeof(CertificateHandler),
                 typeof(AudioClip),
                 typeof(AudioSource),
                 typeof(LayerMask),
@@ -92,14 +95,11 @@ public static class ExampleConfig
                 typeof(CanvasGroup),
                 //typeof(Slider.SliderEvent),
                 typeof(UnityEngine.Events.UnityEventBase),
-                typeof(UnityWebRequest),
-                typeof(DownloadHandler),
                 typeof(RawImage),
                 typeof(InputField),
                 typeof(EventTrigger), // UGUIEventListener 的 父类
                 //------------------------ 类1 ---------------------
-                typeof(SuperScrollView.LoopListView2),
-                typeof(SuperScrollView.LoopListViewItem2),
+                typeof(LoopListView3),
                 //------------------------ 类2 ---------------------
 #if USE_DOTWEEN
                 typeof(DG.Tweening.AutoPlay),
@@ -136,7 +136,18 @@ public static class ExampleConfig
                 // typeof(DG.Tweening.DOTweenVisualManager),
 #endif
                 //------------------------ 类3 ---------------------
-                typeof(StaticEx),
+                typeof(ED_Basic),
+                typeof(EU_Basic),
+                typeof(ED_Comp),
+                typeof(ED_UIImg),
+                typeof(ED_UIItem),
+                typeof(ED_Camera),
+                typeof(ED_UIEffect),
+                typeof(ED_UISpine),
+                typeof(CanvasEx),
+                // typeof(StaticEx),
+                typeof(ObjEx),
+                typeof(StrEx),
                 typeof(PathEx),
                 typeof(FileEx),
                 typeof(ReadWriteHelper),
@@ -172,6 +183,7 @@ public static class ExampleConfig
                 // typeof(MgrDownload),
                 typeof(LuaManager),
                 typeof(SmoothFollower),
+                typeof(MgrMainCamera),
                 typeof(MainCameraManager),
                 typeof(RayScreenPointInfo),
                 typeof(InputBaseMgr),
@@ -186,7 +198,9 @@ public static class ExampleConfig
                 typeof(CurveBase),
                 typeof(CurveEx),
                 typeof(LogToNetHelper),
-                // typeof(CfgVersion),
+                typeof(CfgVersion),
+                typeof(RenderSettingsEx),
+                typeof(WebVerifyCert),
                 //---------------------------------------------------------------  
             };
 
@@ -201,11 +215,14 @@ public static class ExampleConfig
                 typeof(Action<float>),
                 typeof(UnityEngine.Events.UnityAction),
                 typeof(System.Collections.IEnumerator),
-                typeof(System.Func<SuperScrollView.LoopListView2, int, SuperScrollView.LoopListViewItem2>),
-                typeof(DF_GetPrefabName),
-                typeof(DF_OnCreateItem),
-                typeof(DF_OnUpItem),
+              
                 typeof(DF_UWR),
+
+                typeof(LoopListView3.DF_GetItemName),
+                typeof(LoopListView3.DF_OnItemCreated),
+                typeof(LoopListView3.DF_SetItemData),
+                typeof(LoopListView3.DF_OnIndexChanged),
+                typeof(LoopListView3.DF_OnValueChanged),
 
                 typeof(DF_LoadedAsset),
                 typeof(DF_LoadedFab),
@@ -216,7 +233,8 @@ public static class ExampleConfig
                 typeof(DF_LoadedAnimationClip),
                 typeof(DF_LoadedAudioClip),
                 typeof(DF_LoadedTimelineAsset),
-                typeof(DF_LoadedMat),
+                typeof(DF_LoadedMaterial),
+                typeof(DF_LoadedPPFile),
                 typeof(DF_OnBool),
                 typeof(DF_OnUpdate),
                 typeof(DF_OnSceneChange),

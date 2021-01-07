@@ -13,7 +13,8 @@ local M = class( "scene_map_gbox",super )
 
 function M:OnInit()
 	self.comp:ForeachElement(function(_,gobj)
-		self["n_" .. (gobj.name)] = self:NewTrsfBy(gobj)
+		local _nm = "n_" .. (gobj.name)
+		self[_nm] = self:NewTrsfBy(gobj,true)
 	end)
 
 	-- 目前没考虑旋转，缩放的情况下

@@ -18,11 +18,17 @@ function M:ctor(gobj,cfClick,lbParent,comp)
 		self.lbBtnSelf = self:NewBtnBy(self.gobj,handler(self,self.OnClickSelf))
 	end
 	self:_OnInit()
-	self:SetCF4OnShow(function() self:ReEvent4Self(true) end)
-	self:SetCF4OnHide(function() self:RemoveEvents() end)
 	if self:IsActiveInView() then
 		self:ReEvent4Self(true)
 	end
+end
+
+function M:OnCF_Show()
+	self:ReEvent4Self(true)
+end
+
+function M:OnCF_Hide()
+	self:RemoveEvents()
 end
 
 function M:OnClickSelf()
@@ -54,6 +60,12 @@ end
 function M:SetIsPressScale(isScale)
 	if self.lbBtnSelf then
 		self.lbBtnSelf:SetIsPressScale( isScale )
+	end
+end
+
+function M:SetRaycastTarget(isBl)
+	if self.lbBtnSelf then
+		self.lbBtnSelf:SetRaycastTarget( isBl )
 	end
 end
 

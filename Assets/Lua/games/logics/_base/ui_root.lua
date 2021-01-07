@@ -16,7 +16,7 @@ local __single = nil
 function M.singler()
 	if not __single then
 		__single = M.New()
-		__single:ReShow()
+		__single:View( true )
 	end
 	return __single
 end
@@ -42,7 +42,7 @@ function M:OnInit()
 
 	local _it
 	for _, v in pairs(LE_UILayer) do
-		if LE_UILayer.URoot ~= v and LE_UILayer.UpRes ~= v then
+		if LE_UILayer.URoot ~= v and LE_UILayer.UTemp ~= v then
 			_it = self:GetElement(v);
 			if _it then
 				_it = LUComonet.New(_it,"UGUICanvasAdaptive")
@@ -55,6 +55,7 @@ function M:OnInit()
 	self.lbCamera = self:NewCmr("UICamera")
 	self.orthographic = self.lbCamera.orthographic	
 	_evt.Brocast(Evt_Brocast_UICamera,self.lbCamera)
+	self:PreloadingUI()
 end
 
 function M:GetUILayer(lay)
@@ -96,6 +97,17 @@ function M:ReEvent4Self(isBind)
 	if isBind == true then
 		_evt.AddListener(Evt_Get_UICamera,self.GetUICamera,self); -- 添加事件
 	end
+end
+
+function M:PreloadingUI()
+	-- 加载 Loading界面
+	_evt.Brocast(Evt_Loading_Show,0,function()
+		_evt.Brocast(Evt_Loading_Hide)
+		_evt.Brocast(Evt_ToView_Login)
+	end)
+	
+	-- 加载 请求遮挡 界面
+	ShowCircle(0.02,HideCircle)
 end
 
 function M:GetUICamera(lfunc,obj)

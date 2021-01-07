@@ -5,7 +5,7 @@
 	-- Desc : 
 ]]
 
-local _func_time = nil
+local _func_time = os.clock
 local super = LuaAsset
 local M = class( "lua_fab",super )
 
@@ -28,10 +28,15 @@ function M:ReEvent4OnUpdate(isBind)
 end
 
 function M:IsVwCircle4Load()
-	return (self.cfgAsset.isVwCircle == true)
+	return not (self.cfgAsset.isNoCircle == true)
 end
 
 function M:VwCircle(isShow)
+	if isShow then
+		M._fevt().Brocast(Evt_Circle_Show)
+	else
+		M._fevt().Brocast(Evt_Circle_Hide)
+	end
 end
 
 function M:_SetVisible(state)
@@ -71,6 +76,7 @@ end
 function M:View(isShow,data,...)
 	isShow = isShow == true
 	if isShow then
+		self.os_start_time = _func_time()
 		self:SetData( data,... )
 	end
 	self:ShowView( isShow )
@@ -146,7 +152,6 @@ function M:_OnView()
 	local _t1,_t2,_t3,_t4 = nil
 	local _isLog = self:_IsLogViewTime()
 	if _isLog then
-		_func_time = _func_time or os.clock
 		_t1 = _func_time()
 	end
 
@@ -166,7 +171,7 @@ function M:_OnView()
 
 	if _isLog then
 		_t4 = _func_time()
-		logMust("=== view [%s],use time,Before = [%s],OnInit = [%s], OnShow = [%s]",self:GetAssetName(),(_t2 - _t1),(_t3 -_t2),(_t4 -_t3))
+		logMust("=== view [%s],use time , Load = [%s] ms , Before = [%s] ms , OnInit = [%s] ms , OnShow = [%s] ms , Total = [%s] ms , TotalAll = [%s] ms",self:GetAssetName(),(_t1 - self.os_start_time) * 1000,(_t2 - _t1) * 1000,(_t3 -_t2) * 1000,(_t4 -_t3) * 1000,(_t4 -_t1) * 1000,(_t4 -self.os_start_time) * 1000)
 	end
 end
 

@@ -62,4 +62,12 @@ function M:RebackColor( )
 	self:SetColor( self.defColor )
 end
 
+function M:SetOrFmtTag( tag,isCsv,val, ... )
+	self.comp:SetOrFormat( tag,(isCsv == true),val,... )
+end
+
+function M:SetOrFmt2( tag,val, ... )
+	self:SetOrFmtTag( tag,true,val,... )
+end
+
 return M

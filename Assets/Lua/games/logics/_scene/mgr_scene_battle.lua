@@ -66,6 +66,7 @@ end
 function M:OnUpdate(dt)
 	this._ST_Create_Obj()
 	this._ST_LoadObjs()
+	this._ST_JugdeCamera()
 
 	if this.state == E_B_State.Start then
 		this._SetUpState( E_B_State.Create_Objs )
@@ -87,6 +88,7 @@ function M:OnUpdate(dt)
 	elseif this.state == E_B_State.GO then
 	elseif this.state == E_B_State.Battle_End then
 		this.state = E_B_State.End
+		this.isJugdeCmr = nil
 		this.isUping = false
 	end
 end
@@ -301,7 +303,7 @@ end
 
 function M.OnSv_Map_Obj_Skill(svMsg)
 	local _obj = this.GetSObj( svMsg.caster )
-	if not _obj then return end
+	if (not _obj) or type(_obj.CastAttack) ~= "function" then return end
 	_obj:CastAttack( svMsg )
 end
 
@@ -460,6 +462,93 @@ end
 
 function M.OnMsg_Trigger_Rmv(svMsg)
 	this.OnSv_Rmv_Map_Obj( svMsg.id )
+end
+
+function M._Get_CfgCmrMove( lb,cur )
+	if lb and cur and #lb > 0 then
+		local _min,_max,_item_ = nil
+		for _, item in ipairs(lb) do
+			if #item >= 4 then
+				_min,_max = item[1] * 0.01,item[2] * 0.01
+				if cur >= _min and cur <= _max then
+					return item[3] * 0.01,item[4] * 0.001
+				end
+				_item_ = item
+			end
+		end
+		if _item_ then
+			return _item_[3] * 0.01,_item_[4] * 0.001
+		end
+	end
+end
+
+function M._ST_JugdeCamera()
+	if (this.state ~= E_B_State.GO) or (not this.isJugdeCmr) then
+		this._avgX = 0
+		this._lbCmrX,this._lbCmrFOV = nil
+		this._curChgX,this._curChgFov = nil
+		return
+	end
+	
+	local _lbAlls = MgrScene.GetCurrMapAllObjs()
+	if not _lbAlls then
+		return
+	end
+
+	if not this._lbCmrX then
+		local _cfg_ = MgrScene.GetCurrMapCfg()
+		this._lbCmrX = _cfg_.fight_move_x
+		this._lbCmrFOV = _cfg_.fight_move_fov
+	end
+
+	local _minPosX,_maxPosX,_curPos = 0,0
+	local _sobjType = nil
+	for _, item in pairs(_lbAlls) do
+		_sobjType = item:GetSObjType()
+		if _sobjType and _sobjType >= E_Object.Creature and _sobjType <= E_Object.MPartner then
+			_curPos = item.v3Pos
+			if _curPos then
+				if _minPosX > _curPos.x then
+					_minPosX = _curPos.x
+				end
+				if _maxPosX < _curPos.x then
+					_maxPosX = _curPos.x
+				end
+			end
+		end
+	end
+
+	if _maxPosX == _minPosX and _minPosX == 0 then
+		return
+	end
+	local _avg = this:TF( (_maxPosX - _minPosX) * 0.5,2 )
+	local _abs = this:MAbs( _avg )
+	local _chgFov,_chgFovT = this._Get_CfgCmrMove( this._lbCmrFOV,_abs )
+	this._ceneterX = _minPosX + _avg
+	_abs = this:MAbs( this._ceneterX )
+	local _chgX,_chgXT = this._Get_CfgCmrMove( this._lbCmrX,_abs )
+	if _chgX  or _chgFov then
+		this._avgX = _avg
+		if this._ceneterX < 0 then
+			_chgX = (_chgX ~= nil) and _chgX * -1 or _chgX
+		end
+		if _chgX == this._curChgX and _chgFov == this._curChgFov then
+			return
+		end
+		this._curChgX,this._curChgFov = _chgX,_chgFov
+		MgrCamera:GetMainCamera():ToSmooth4LocXYZ( _chgX,_chgFov,_chgFovT,nil,nil,true,_chgXT )
+	end
+end
+
+function M.SetJugdeCamera( isBl )
+	if this.state ~= E_B_State.GO then
+		return
+	end
+
+	this.isJugdeCmr = isBl == true
+	if not this.isJugdeCmr then
+		MgrCamera:GetMainCamera():RebackStart( 0.3 )
+	end
 end
 
 return M

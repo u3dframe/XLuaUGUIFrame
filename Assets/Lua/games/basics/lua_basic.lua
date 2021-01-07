@@ -10,15 +10,7 @@ local tb_has,tb_insert = table.contains,table.insert
 local tb_sort,tb_keys,sort_key = table.sort,table.keys,sort_key
 local reTable2Str = reTable2Str
 local _lbKeys = { "__cname","_c_t_","class","super","__supers","__create","__index","__newindex","lbParent","isUping" }
-
 local _evt_ = Event
-local function _fevt()
-	if not _evt_ then
-		_evt_ = Event
-	end
-	return _evt_
-end
-
 local M = class( "lua_basic" )
 
 function M.AddNoClearKeys( ... )
@@ -30,6 +22,13 @@ function M.AddNoClearKeys( ... )
 			tb_insert(_lbKeys,v)
 		end
 	end
+end
+
+function M._fevt()
+	if not _evt_ then
+		_evt_ = Event
+	end
+	return _evt_
 end
 
 function M:ctor( )
@@ -62,16 +61,16 @@ function M:OnInitEnd()
 end
 
 function M:ReEvent4OnUpdate(isBind)
-	if not _fevt() then
+	if not M._fevt() then
 		return
 	end
 	if self._lfUp then
-		_fevt().RemoveListener(Evt_Update,self._lfUp)
+		M._fevt().RemoveListener(Evt_Update,self._lfUp)
 	end
 
 	if isBind == true then
 		self._lfUp = self._lfUp or handler_xpcall(self,self.__OnUpdate)
-		_fevt().AddListener(Evt_Update,self._lfUp);
+		M._fevt().AddListener(Evt_Update,self._lfUp);
 	end
 end
 

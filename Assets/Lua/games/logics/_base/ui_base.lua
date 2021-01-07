@@ -78,17 +78,36 @@ function M:_SetSelfLayer()
 	if _E_Layer.URoot == _lay then
 		self:SetParent(nil,true)
 		self:DonotDestory()
-	elseif _E_Layer.UpRes ~= _lay then
+	elseif _E_Layer.UTemp ~= _lay then
 		self:URoot():SetUILayer(self)
 	end
 end
 
+function M:OnInitEnd()
+	self._objTopBanner = self:GetElement("ui_topbanner")
+end
+
 function M:OnShowEnd()
 	self.lastShowTime = Time.time
+	if self._objTopBanner then
+		local resources
+		if type(self.__TopResources__) == "table" then
+			resources = self.__TopResources__
+		elseif type(self.__TopResources__) == "function" then
+			resources = self:__TopResources__()
+		else
+			--todo:从配置文件读取
+		end
+		MgrTopBanner:ShowResources(self._objTopBanner, resources)
+	end
 end
 
 function M:View(isShow,data,...)
 	super.View( self,isShow,data,... )
+	local _lay = self:GetLayer()
+	if _E_Layer.URoot == _lay then
+		return
+	end
 	if true == isShow then
 		_mgr().AddViewUI(self)
 	else
@@ -136,7 +155,11 @@ function M:OnExit(isInited)
 	if (_isClose == true) then
 		if _isMain then
 			_mgr().ClearPreInfo()
-			_evt.Brocast(Evt_ToView_Main);
+			if (MgrCScene:IsInCScene())then
+				_evt.Brocast(Evt_OpenCSBase);--如果在公共场景不打开主界面
+			else
+				_evt.Brocast(Evt_ToView_Main);
+			end
 		else
 			_mgr().SetIsOpenPreUI(_isBack)
 		end

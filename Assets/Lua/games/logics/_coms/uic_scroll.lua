@@ -26,7 +26,7 @@ function M:ctor(lbCfg)
 	local _ext,_tmp = {}
 	for i = 1,10 do
 		_tmp = lbCfg[self:SFmt("ext_%s",i)]
-		if _tmp then
+		if _tmp ~= nil then
 			tb_insert(_ext,_tmp)
 		end
 	end
@@ -82,7 +82,7 @@ function M:_ShowCell(lbCell,nRow)
 	if self.isUseRow then
 		lbCell:ShowViewByList(self.listData,nRow,_upk(self.exts))
 	else
-		lbCell:ShowViewByData(self.listData[nRow],_upk(self.exts))
+		lbCell:ShowViewByData(self.listData[nRow],nRow,_upk(self.exts))
 	end
 end
 

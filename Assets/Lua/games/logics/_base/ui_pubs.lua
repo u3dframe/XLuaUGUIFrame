@@ -8,10 +8,10 @@
 local super = LuaPubs
 local M = class( "ui_pubs",super )
 
-function M:NewTrsf(elName,isNoPrint)
+function M:NewTrsf(elName,isInitVecs,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:NewTrsfBy(_gobj)
+        return self:NewTrsfBy(_gobj,isInitVecs)
     end
     if isNoPrint == true then return end
     printError("=== NewTrsf is Null, name = [%s]", elName)
@@ -79,15 +79,6 @@ function M:NewTog(elName, uniqueID, callFunc, val, isNoCall4False,isNoPrint)
     printError("=== NewTog is Null, name = [%s]", elName)
 end
 
-function M:NewScl(elName, funcCreat, funcSetData, gobjItem,isNoPrint)
-    local _gobj = self:GetElement(elName)
-    if _gobj then
-        return self:NewSclBy(_gobj, funcCreat, funcSetData, gobjItem)
-    end
-    if isNoPrint == true then return end
-    printError("=== NewScl is Null, name = [%s]", elName)
-end
-
 function M:NewImg(elName,compName,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
@@ -128,6 +119,17 @@ function M:NewUScl(elName,lbCfg,elNameItem,isNoPrint)
     printError("=== NewUScl is Null, name = [%s]", elName)
 end
 
+-- lbCfg = {clsLua,cfClick,cfShow,nColumn,isAllActive,itemName,ext_1~10} 
+function M:NewUSclLoop(elName,lbCfg,isNoPrint)
+    local _gobj = self:GetElement(elName)
+    if _gobj then
+        lbCfg.gobj = _gobj
+        return self:_ClsUIScloop().New(lbCfg)
+    end
+    if isNoPrint == true then return end
+    printError("=== NewUSclLoop is Null, name = [%s]", elName)
+end
+
 -- lbCfg = {clsLua,cfClick,cfShow,isAllActive,ext_1~10} 
 -- 里面字段的意义
 -- clsLua - 自己的子元素脚本,可以为路径，也可以为require对象 (必要)
@@ -145,16 +147,5 @@ function M:NewULst(elName,lbCfg,isNoPrint)
     printError("=== NewUScl is Null, name = [%s]", elName)
 end
 
---基于SuperScrollList的特殊列表
--- clsLua - 自己的子元素脚本,可以为路径，也可以为require对象 (必要)
-function M:NewSScl(elName, lbCfg, isNoPrint)
-    local _gobj = self:GetElement(elName)
-    if _gobj then
-        lbCfg.gobj = _gobj
-        return self:_ClsUISScl().New(lbCfg)
-    end
-    if isNoPrint == true then return end
-    printError("=== NewSScl is Null, name = [%s]", elName)
-end
 
 return M

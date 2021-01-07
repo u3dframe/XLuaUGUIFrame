@@ -11,8 +11,8 @@ local _fmt = string.format
 local fdir = "all1"
 
 local M = {
-    defEditorUrl = "http://dianyuesetting.com/static/frontend/" .. fdir .."/serverlist.json",
-    defUrl = "http://xxxx/" .. fdir .."/serverlist.json;",
+    defEditorUrl = "https://setting.dianyue.com/static/frontend/" .. fdir .."/serverlist.json",
+    defUrl = "https://setting.dianyue.com/static/frontend/" .. fdir .."/serverlist.json",
     listUrl = {
     },
 

@@ -4,7 +4,8 @@
 	-- Date : 2020-07-27 19:35
 	-- Desc : 封装函数用 . 号
 ]]
-local Color = Color
+local tonumber,type,tostring = tonumber,type,tostring
+local Color,CRSettingEx = Color,CRSettingEx
 local str_2rgb = string.toColRGB
 
 local _x_util = require 'games/tools/xlua_util'
@@ -83,6 +84,25 @@ end
 
 function M.ReColor(r,g,b,a)
 	return this.RColor( nil,r,g,b,a )
+end
+
+function M.ReEnvironment(tp,intensity,...)
+	intensity = tonumber( intensity ) or 0
+	if tp == "gradient" then
+		local _t = {...}
+		if table.lens2(_t) < 9 then
+			return
+		end
+		local _c_s = this.ReColor( _t[1],_t[2],_t[3] )
+		local _c_e = this.ReColor( _t[4],_t[5],_t[6] )
+		local _c_g = this.ReColor( _t[7],_t[8],_t[9] )
+		CRSettingEx.SetAmbientGradient( _c_s,_c_e,_c_g,intensity )
+	elseif tp == "color" then
+		local _c = this.ReColor( ... )
+		CRSettingEx.SetAmbientColor( _c,intensity )
+	else
+		CRSettingEx.SetAmbientSkybox( intensity )
+	end
 end
 
 return M

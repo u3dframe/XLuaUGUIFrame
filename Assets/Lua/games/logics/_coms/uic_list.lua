@@ -21,7 +21,7 @@ function M:ctor(lbCfg)
 	local _ext,_tmp = {}
 	for i = 1,10 do
 		_tmp = lbCfg[self:SFmt("ext_%s",i)]
-		if _tmp then
+		if _tmp ~= nil then
 			tb_insert(_ext,_tmp)
 		end
 	end
@@ -79,7 +79,7 @@ function M:ShowScroll(listData)
 		_isActive = self.isAllActive or (i <= nLen)
 		_it = self.lbCells[i]
 		if _it then
-			_it.index = i;
+			_it.cur_index = i;
 			if _it.SetActive then
 				_it:SetActive(_isActive)
 			else
@@ -105,7 +105,7 @@ function M:_ShowCell(lbCell,nRow)
 		self.lfShow(lbCell,nRow,_upk(self.exts))
 		return
 	end
-	lbCell:ShowViewByData(self.listData[nRow],_upk(self.exts))
+	lbCell:ShowViewByData(self.listData[nRow],nRow,_upk(self.exts))
 end
 
 function M:_OnClickCell(lbCell)

@@ -4,7 +4,7 @@
 	-- Date : 2020-11-30 10:05
 	-- Desc : 
 ]]
-
+local tonumber,type,tostring = tonumber,type,tostring
 local super,evt = FabBase,Event
 local _cLayer = L_SObj
 local M = class( "uipart_model",super )
@@ -113,6 +113,18 @@ function M:ReSfwer(distance,height,offHeight)
 
 	if self:IsInitComp() then
 		self.comp:ReSfwer( self.s_distance,self.s_height,self.s_offHeight )
+	end
+	return self
+end
+
+function M:ReModelLocalScale(scale)
+	scale = tonumber( scale ) or 50
+	if scale == self.mdScale then
+		return
+	end
+	self.mdScale = scale
+	if self:IsInitComp() then
+		self.comp:ReModelLocalScale( self.mdScale )
 	end
 	return self
 end

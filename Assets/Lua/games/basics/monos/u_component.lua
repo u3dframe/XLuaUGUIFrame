@@ -9,25 +9,16 @@ local super = LUTrsf
 local M = class( "lua_component",super )
 local this = M
 
-function M.CsIsGLife(comp)
-	if comp ~= nil then
-		return CHelper.IsGLife(comp)
-	end
-	return false
-end
-
 function M:ctor( obj,component )
 	super.ctor(self,obj)
 	self._cf_ondestroy = self._cf_ondestroy or handler(self,self.OnCF_Destroy)
+	self._cf_onshow = self._cf_onshow or handler(self,self.OnCF_Show)
+	self._cf_onhide = self._cf_onhide or handler(self,self.OnCF_Hide)
 	self:InitComp(component)
 end
 
 function M:IsInitComp()
 	return self.comp ~= nil;
-end
-
-function M:IsInitGLife()
-	return self.compGLife ~= nil;
 end
 
 function M:InitComp( component )
@@ -36,26 +27,12 @@ function M:InitComp( component )
 	end
 
 	if not self.comp then
-		local com = component;
-		if type(component) == "string" then
-			com = self:GetComponent( component )
+		if self:IsNeedGetComp() then
+			component = self:GetComponent( component )
 		end
-		self.comp = com
-		self.strComp = tostring(component)
-
-		local _islife = self:IsGLife()
-		if _islife then
-			self.compGLife = self.comp
-		else
-			self.compGLife = CGobjLife.Get(self.gobj)
-		end
-		self:ReEvtDestroy(true)
+		self.csEDComp:InitComp( component,self._cf_ondestroy,self._cf_onshow,self._cf_onhide )
+		self.comp = self.csEDComp.m_comp
 	end
-end
-
-function M:DestroyObj()
-	self.comp = nil
-	return super.DestroyObj(self)
 end
 
 function M:OnCF_Destroy()
@@ -74,52 +51,15 @@ end
 function M:OnCF_EndOnDestroy()
 end
 
-function M:ReEvtDestroy(isBind)
-	return pcall(self._ReEvtDestroy,self,isBind)
+function M:OnCF_Show()
 end
 
-function M:IsGLife()
-	if not self.comp then
-		return false
-	end
-	local _k = self:SFmt("__isGLife_%s",self.strComp)
-	local _v = self[_k]
-	if _v == nil then
-		_v = this.CsIsGLife(self.comp)
-		self[_k] = _v
-	end
-	return _v
-end
-
-function M:_ReEvtDestroy(isBind)
-	if not self._cf_ondestroy or not self:IsInitGLife() then
-		return
-	end
-	self.compGLife:m_onDestroy("-",self._cf_ondestroy);
-	if isBind == true then
-		self.compGLife:m_onDestroy("+",self._cf_ondestroy);
-	end
-end
-
-function M:SetCF4OnShow( cfShow )
-	if not self:IsInitGLife() then
-		return
-	end
-	self.isSetCFOnShow = (cfShow ~= nil)
-	self.compGLife.m_callShow = cfShow;
-end
-
-function M:SetCF4OnHide( cfHide )
-	if not self:IsInitGLife() then
-		return
-	end
-	self.isSetCFOnHide = (cfHide ~= nil)
-	self.compGLife.m_callHide = cfHide;
+function M:OnCF_Hide()
 end
 
 function M:SetEnabled( isBl )
-	if self:IsInitComp() then
-		self.comp.enabled = (isBl == true);
+	if self:IsInitGobj() then
+		self.csEDComp:SetEnabled(isBl == true)
 	end
 end
 
@@ -129,14 +69,7 @@ function M:OnUpdateAll(dt,unscaledDt)
 	self:OnUpdateLoaded( dt,unscaledDt )
 end
 
-function M:IsNoLoaded() return (not self:IsInitTrsf()) end
+function M:IsNoLoaded() return (not self:IsInitGobj()) end
 function M:OnUpdateLoaded(dt,unscaledDt) end
-
-function M:pre_clean()
-	super.pre_clean( self )
-	self:ReEvtDestroy(false)
-	if self.isSetCFOnShow then self:SetCF4OnShow() end
-	if self.isSetCFOnHide then self:SetCF4OnHide() end
-end
 
 return M

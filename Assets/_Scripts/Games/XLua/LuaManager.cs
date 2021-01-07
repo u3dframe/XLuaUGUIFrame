@@ -171,6 +171,11 @@ public class LuaManager : GobjLifeListener
 	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
 	public static extern int luaopen_cjson(IntPtr L);
 
+	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
+	public static extern int luaopen_crypt(IntPtr L);
+
+	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
+	public static extern int luaopen_crypt_rc4(IntPtr L);
 	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
 	public static int OpenLpeg(IntPtr L)
 	{
@@ -195,12 +200,28 @@ public class LuaManager : GobjLifeListener
 		return luaopen_cjson_safe(L);
 	}
 
+	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
+	public static int OpenCrypt(IntPtr L)
+	{
+		return luaopen_crypt(L);
+	}
+
+	[MonoPInvokeCallback(typeof(XLua.LuaDLL.lua_CSFunction))]
+	public static int OpenCryptRc4(IntPtr L)
+	{
+		return luaopen_crypt_rc4(L);
+	}
+
+	
+
 	void InitSelfLibs()
 	{
 		luaEnv.AddBuildin("sproto.core", OpenSprotoCore);
 		luaEnv.AddBuildin("lpeg", OpenLpeg);
 		luaEnv.AddBuildin("cjson", OpenCjson);
 		luaEnv.AddBuildin("cjson.safe", OpenCjsonSafe);
+		luaEnv.AddBuildin("crypt", OpenCrypt);
+		luaEnv.AddBuildin("crypt.rc4", OpenCryptRc4);
 	}
 
 	public void LuaGC(){

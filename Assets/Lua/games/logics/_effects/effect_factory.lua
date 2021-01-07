@@ -16,9 +16,11 @@ local _req = reimport or require
 local ClsEffect               = _req (fdir .. "effect_object")  -- 特效
 local ClsBuff                 = _req (fdir .. "buff")           -- buff
 local ClsBullet               = _req (fdir .. "bullet")         -- buff
+local ClsUIEffect             = _req ("games/logics/_coms/ui_effect")         -- ui特效
 objsPool:AddClassBy( ClsEffect )
 objsPool:AddClassBy( ClsBuff )
 objsPool:AddClassBy( ClsBullet )
+objsPool:AddClassBy( ClsUIEffect )
 
 local M = {}
 local this = M

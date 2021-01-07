@@ -16,6 +16,7 @@ LE_AsType = {
     Playable = 8,
     TextureExr = 9,
     Mat = 10,
+    PPFile = 11,
     [1] = "prefab",
     [2] = "prefab",
     [3] = "png",
@@ -26,6 +27,7 @@ LE_AsType = {
     [8] = "playable",
     [9] = "exr",
     [10] = "mat",
+    [11] = "asset",
 }
 
 -- asset 加载状态
@@ -48,7 +50,7 @@ LE_StateView = {
 -- ui 层级
 LE_UILayer = {
     URoot = "URoot",
-    UpRes = "UpRes",
+    UTemp = "UTemp",
     Default = "Default",
     Main = "Main",
     Background = "Background",

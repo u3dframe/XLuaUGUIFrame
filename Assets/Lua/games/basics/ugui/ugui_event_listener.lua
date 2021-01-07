@@ -32,50 +32,32 @@ end
 
 function M:ReEvt_BegDrag(lfunc,obj,isBind)
 	lfunc = self:_ReEvt_Func( lfunc,obj )
-	self.comp:onBegDrag("-",lfunc);
-	if isBind == true then
-		self.comp:onBegDrag("+",lfunc);
-	end
+	self.comp:OnlyOnceCallBegDrag(lfunc,isBind == true)
 end
 
 function M:ReEvt_Draging(lfunc,obj,isBind)
 	lfunc = self:_ReEvt_Func( lfunc,obj )
-	self.comp:onDraging("-",lfunc);
-	if isBind == true then
-		self.comp:onDraging("+",lfunc);
-	end
+	self.comp:OnlyOnceCallDrag(lfunc,isBind == true)
 end
 
 function M:ReEvt_EndDrag(lfunc,obj,isBind)
 	lfunc = self:_ReEvt_Func( lfunc,obj )
-	self.comp:onEndDrag("-",lfunc);
-	if isBind == true then
-		self.comp:onEndDrag("+",lfunc);
-	end
+	self.comp:OnlyOnceCallEndDrag(lfunc,isBind == true)
 end
 
 function M:ReEvt_Drop(lfunc,obj,isBind)
 	lfunc = self:_ReEvt_Func( lfunc,obj )
-	self.comp:onDrop("-",lfunc);
-	if isBind == true then
-		self.comp:onDrop("+",lfunc);
-	end
+	self.comp:OnlyOnceCallDrop(lfunc,isBind == true)
 end
 
 function M:ReEvt_Press(lfunc,obj,isBind)
 	lfunc = self:_ReEvt_Func( lfunc,obj )
-	self.comp:onPress("-",lfunc);
-	if isBind == true then
-		self.comp:onPress("+",lfunc);
-	end
+	self.comp:OnlyOnceCallPress(lfunc,isBind == true)
 end
 
 function M:ReEvt_PClick(lfunc,obj,isBind)
 	lfunc = self:_ReEvt_Func( lfunc,obj )
-	self.comp:onClick("-",lfunc);
-	if isBind == true then
-		self.comp:onClick("+",lfunc);
-	end
+	self.comp:OnlyOnceCallClick(lfunc,isBind == true)
 end
 
 return M

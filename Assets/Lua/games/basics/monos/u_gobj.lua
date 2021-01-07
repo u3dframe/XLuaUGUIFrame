@@ -57,25 +57,40 @@ function M:ctor( obj )
 	super.ctor(self)
 	self.obj = obj
 	self.objType = type(obj)
-	self.gobj = obj.gameObject or obj.gobj
-	self.g_name = self.gobj.name
-	self.isActive = self.gobj.activeSelf
-
+	local _isTab = self.objType == "table"
+	local _gobj,_csEDComp,_trsf = obj
+	if _isTab then
+		_csEDComp = obj.csEDComp
+		_trsf = obj.trsf
+		_gobj = obj.gobj
+	end
+	_csEDComp = _csEDComp or self:BuilderUObj( _gobj )
+	self.csEDComp = _csEDComp
+	self.gobj = _isTab and _gobj or _csEDComp.m_gobj
+	self.trsf = _trsf or _csEDComp.m_trsf
 	self:_ExecuteAsync_Gobj()
 end
 
+function M:BuilderUObj( uobj )
+	return CEDComp.Builder( uobj )
+end
+
 function M:IsInitGobj()
-	return self.gobj ~= nil;
+	return self.csEDComp ~= nil;
 end
 
 function M:IsActive( )
 	return self.isActive == true;
 end
 
+function M:IsNeedGetComp()
+	return false
+end
+
 function M:GetComponent( com )
 	local _k = self:SFmt("__com_%s",com)
 	if not self[_k] then 
-		self[_k] = self.gobj:GetComponent( com )
+		self[_k] = self.csEDComp:GetComponent( com )
 	end
 	return self[_k]
 end
@@ -86,7 +101,7 @@ function M:SetActive( isActive )
 	if self:IsInitGobj() then
 		if self.isActive == nil or isActive ~= self.isActive then
 			self.isActive = isActive
-			self.gobj:SetActive( self.isActive )
+			self.csEDComp:SetActive( self.isActive )
 		end
 		self:OnActive(self.isActive)
 	else
@@ -102,14 +117,14 @@ function M:SetGName(gname)
 		return
 	end
 	self.g_name = gname
-	self.gobj.name = gname
+	self.csEDComp:SetGName(gname)
 end
 
 function M:SetLayer( layer,isAll )
 	isAll = isAll == true
 	self._async_layer,self._async_layer_all = nil
 	if self:IsInitGobj() then
-		CHelper.SetLayerBy( self.gobj,layer,isAll )
+		self.csEDComp:SetLayer( layer,isAll )
 	else
 		self._async_layer,self._async_layer_all = layer,isAll
 	end
@@ -117,26 +132,26 @@ end
 
 function M:IsActiveInView( )
 	if self:IsInitGobj() then
-		return self:IsActive() and self.gobj.activeInHierarchy;
+		return self.csEDComp.m_isActiveInView;
 	end
 end
 
 function M:Clone(parent)
-	if parent then
-		parent = ("nil" ~= parent and "null" ~= parent) and parent or nil
-		return this.CsCloneP2(self.gobj,parent)
+	if self:IsInitGobj() then
+		return self.csEDComp:Clone(parent)
 	end
-	return this.CsClone(self.gobj)
 end
 
 function M:DestroyObj()
-	local _gobj = self.gobj
-	self.gobj = nil
-	return this.CsDestroy( _gobj,true )
+	if self:IsInitGobj() then
+		return self.csEDComp:DestroyObj();
+	end
 end
 
 function M:DonotDestory( )
-	this.CsDontDestroyOnLoad(self.gobj)
+	if self:IsInitGobj() then
+		return self.csEDComp:DonotDestory()
+	end
 end
 
 function M:_ExecuteAsync_Gobj()

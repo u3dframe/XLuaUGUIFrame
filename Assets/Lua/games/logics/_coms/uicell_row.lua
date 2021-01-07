@@ -41,7 +41,7 @@ function M:ShowViewByList(listOrg,nRow,...)
 		_tmp = self.columns[i]
 		_nIndex = (nRow - 1) * self.nColumn + i;
 		_isActive = (_nIndex <= count) or self.isAllActive
-		if _isActive then			
+		if _isActive then
 			_tmp:ShowViewByData(listOrg[_nIndex],_nIndex,...)
 		end
 		_tmp:SetActive(_isActive)

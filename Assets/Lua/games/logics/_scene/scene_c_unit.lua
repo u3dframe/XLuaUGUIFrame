@@ -29,19 +29,23 @@ function M:OnActive(isActive)
 	end
 end
 
+function M:IsNeedGetComp()
+	return true
+end
+
 function M:OnInit()
 	self:_Init_CU_Vecs()
-
 	self._lf_On_Up = handler_pcall(self,self.OnUpdate_CUnit)
 	self._lf_On_A_Enter = handler_pcall(self,self.OnUpdate_A_Enter)
 	self._lf_On_A_Up = handler_pcall(self,self.OnUpdate_A_Up)
 	self._lf_On_A_Exit = handler_pcall(self,self.OnUpdate_A_Exit)
-
+	
 	self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit)
 	if self._async_isUsePhysics ~= nil then
 		self:SetIsUsePhysics( self._async_isUsePhysics )
 	end
 
+	self:_InitVecs()
 	self:OnInit_Child()
 end
 
@@ -247,7 +251,18 @@ end
 
 function M:MoveEnd(x,y)
 	self:Move_Over()
-	self:SetPos( x,y )
+	self:SmoothPos( x,y )
+end
+
+function M:SmoothPos( x,y,isLocal )
+	if self:IsInitGobj() then
+		if x and y then
+			isLocal = isLocal == true
+			self.csEDComp:ToSmoothPos( x,self.worldY,y,isLocal,0.01 )
+		end
+	else
+		self:SetPos( x,y )
+	end
 end
 
 function M:SetOnceFunc4MoveOver( funcMvOver )

@@ -10,40 +10,27 @@ local _vec3,_vec2,type = Vector3,Vector2,type
 local super = LUGobj
 local M = class( "lua_transform",super )
 
-function M:ctor( obj )
+function M:ctor( obj,isInitVecs )
 	super.ctor(self,obj)
-	self.trsf = self.gobj.transform
-	self.rectTrsf = CHelper.ToRectTransform(self.trsf)
-
-	self.parent = self.trsf.parent
-	if self.parent then
-		self.parentGobj = self.parent.gameObject
-	end
-
 	self:_CreateVecs()
-	self:_InitVecs()
-
+	if isInitVecs == true then
+		self:_InitVecs()
+	end
 	self:_ExecuteAsync_Trsf()
 end
 
 function M:_CreateVecs()
-	self.v3Pos = _vec3.zero
-	self.v3Temp = _vec3.zero
-
-	if not self.rectTrsf then return end
-
-	self.v2AncPos = _vec2.zero
-	self.v2Temp = _vec2.zero
+	self.v3Pos = self.v3Pos or _vec3.zero
+	self.v2AncPos = self.v2AncPos or _vec2.zero
 end
 
 function M:_InitVecs()
 	self:GetPosition()
-	if not self.rectTrsf then return end
 	self:GetAnchoredPosition()
 end
 
 function M:IsInitTrsf()
-	return self.trsf ~= nil;
+	return self:IsInitGobj();
 end
 
 function M:_ReXYZ( vec,x,y,z )
@@ -51,20 +38,17 @@ function M:_ReXYZ( vec,x,y,z )
 end
 
 function M:GetChildCount( )
-	return self.trsf.childCount;
+	return self.csEDComp.m_childCount;
 end
 
 function M:GetChild( nIndex )
 	nIndex = self:TInt( nIndex )
-	local _nc = self:GetChildCount()
-	if _nc > 0 and nIndex >= 0 and _nc > nIndex then
-		return self.trsf:GetChild(nIndex)
-	end
+	return self.csEDComp:GetChild( nIndex )
 end
 
 function M:GetPosition()
 	if self:IsInitTrsf() then
-		local _tmp = self.trsf.position
+		local _tmp = self.csEDComp:GetPosition()
 		self.v3Pos:Set(_tmp.x,_tmp.y,_tmp.z)
 	end
 	return self.v3Pos
@@ -74,7 +58,8 @@ function M:SetPosition( x,y,z )
 	self._async_px,self._async_py,self._async_pz = nil
 	if self:IsInitTrsf() then
 		self:_ReXYZ(self.v3Pos,x,y,z)
-		self.trsf.position = self.v3Pos
+		x,y,z = self.v3Pos:Get()
+		self.csEDComp:SetPosition( x,y,z )
 	else
 		self._async_px,self._async_py,self._async_pz = x,y,z
 	end
@@ -83,8 +68,8 @@ end
 function M:SetLocalPosition( x,y,z )
 	self._async_lpx,self._async_lpy,self._async_lpz = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3Temp,x,y,z)
-		self.trsf.localPosition = self.v3Temp
+		x,y,z = self:ReXYZ( x,y,z,6 )
+		self.csEDComp:SetLocalPosition( x,y,z )
 	else
 		self._async_lpx,self._async_lpy,self._async_lpz = x,y,z
 	end
@@ -95,8 +80,8 @@ function M:SetLocalScale( x,y,z )
 	if self:IsInitTrsf() then
 		y = y or x
 		z = z or x
-		self:_ReXYZ(self.v3Temp,x,y,z)
-		self.trsf.localScale = self.v3Temp
+		x,y,z = self:ReXYZ( x,y,z,6 )
+		self.csEDComp:SetLocalScale( x,y,z )
 	else
 		self._async_lsx,self._async_lsy,self._async_lsz = x,y,z
 	end
@@ -105,8 +90,8 @@ end
 function M:SetEulerAngles( x,y,z )
 	self._async_ax,self._async_ay,self._async_az = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3Temp,x,y,z)
-		self.trsf.eulerAngles = self.v3Temp
+		x,y,z = self:ReXYZ( x,y,z,6 )
+		self.csEDComp:SetEulerAngles( x,y,z )
 	else
 		self._async_ax,self._async_ay,self._async_az = x,y,z
 	end
@@ -116,7 +101,7 @@ function M:GetEulerAngles( isVec )
 	isVec = (isVec == true)
 	local _x,_y,_z,_v = 0,0
 	if self:IsInitTrsf() then
-		_v = self.trsf.eulerAngles
+		_v = self.csEDComp:GetEulerAngles()
 		_x,_y,_z = _v.x,_v.y,_v.z
 	end
 	if isVec then
@@ -130,8 +115,8 @@ end
 function M:SetLocalEulerAngles( x,y,z )
 	self._async_lax,self._async_lay,self._async_laz = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3Temp,x,y,z)
-		self.trsf.localEulerAngles = self.v3Temp
+		x,y,z = self:ReXYZ( x,y,z,6 )
+		self.csEDComp:SetLocalEulerAngles( x,y,z )
 	else
 		self._async_lax,self._async_lay,self._async_laz = x,y,z
 	end
@@ -140,30 +125,30 @@ end
 function M:SetForward( x,y,z )
 	self._async_fx,self._async_fy,self._async_fz = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3Temp,x,y,z)
-		self.trsf.forward = self.v3Temp
+		x,y,z = self:ReXYZ( x,y,z,6 )
+		self.csEDComp:SetForward( x,y,z )
 	else
 		self._async_fx,self._async_fy,self._async_fz = x,y,z
 	end
 end
 
 function M:GetForward()
-	local _fwd = self.trsf.forward
+	local _fwd = self.csEDComp:GetForward()
 	return _fwd.x,_fwd.y,_fwd.z
 end
 
 function M:SetAnchoredPosition3D( x,y,z )
 	self._async_ap3x,self._async_ap3y,self._async_ap3z = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v3Temp,x,y,z)
-		self.rectTrsf.anchoredPosition3D = self.v3Temp
+		x,y,z = self:ReXYZ( x,y,z,6 )
+		self.csEDComp:SetAnchoredPosition3D( x,y,z )
 	else
 		self._async_ap3x,self._async_ap3y,self._async_ap3z = x,y,z
 	end
 end
 
 function M:GetAnchoredPosition()
-	local _tmp = self.rectTrsf.anchoredPosition
+	local _tmp = self.csEDComp:GetAnchoredPosition()
 	self.v2AncPos:Set(_tmp.x,_tmp.y)
 	return self.v2AncPos
 end
@@ -172,7 +157,8 @@ function M:SetAnchoredPosition( x,y )
 	self._async_apx,self._async_apy = nil
 	if self:IsInitTrsf() then
 		self:_ReXYZ(self.v2AncPos,x,y)
-		self.rectTrsf.anchoredPosition = self.v2AncPos
+		x,y = self.v2AncPos:Get()
+		self.csEDComp:SetAnchoredPosition( x,y )
 	else
 		self._async_apx,self._async_apy = x,y
 	end
@@ -181,8 +167,8 @@ end
 function M:SetAnchorMin( x,y )
 	self._async_aminx,self._async_aminy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2Temp,x,y)
-		self.rectTrsf.anchorMin = self.v2Temp
+		x,y = self:ReXYZ( x,y,0,6 )
+		self.csEDComp:SetAnchorMin( x,y )
 	else
 		self._async_aminx,self._async_aminy = x,y
 	end
@@ -191,8 +177,8 @@ end
 function M:SetAnchorMax( x,y )
 	self._async_amaxx,self._async_amaxy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2Temp,x,y)
-		self.rectTrsf.anchorMax = self.v2Temp
+		x,y = self:ReXYZ( x,y,0,6 )
+		self.csEDComp:SetAnchorMax( x,y )
 	else
 		self._async_amaxx,self._async_amaxy = x,y
 	end
@@ -201,8 +187,8 @@ end
 function M:SetPivot( x,y )
 	self._async_pix,self._async_piy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2Temp,x,y)
-		self.rectTrsf.pivot = self.v2Temp
+		x,y = self:ReXYZ( x,y,0,6 )
+		self.csEDComp:SetPivot( x,y )
 	else
 		self._async_pix,self._async_piy = x,y
 	end
@@ -212,7 +198,7 @@ function M:GetPivot( isV2 )
 	isV2 = (isV2 == true)
 	local _x,_y,_v = 0,0
 	if self:IsInitTrsf() then
-		_v = self.rectTrsf.pivot
+		_v = self.csEDComp:GetPivot()
 		_x,_y = _v.x,_v.y
 	end
 	if isV2 then
@@ -226,8 +212,8 @@ end
 function M:SetSizeDelta( x,y )
 	self._async_sdx,self._async_sdy = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ(self.v2Temp,x,y)
-		self.rectTrsf.sizeDelta = self.v2Temp
+		x,y = self:ReXYZ( x,y,0,6 )
+		self.csEDComp:SetSizeDelta( x,y )
 	else
 		self._async_sdx,self._async_sdy = x,y
 	end
@@ -235,7 +221,7 @@ end
 
 function M:GetRectSize( )
 	if not self:IsInitTrsf() then return 0,0 end
-	local w,h = CHelper.GetRectSize(self.trsf,0,0);
+	local w,h = self.csEDComp:GetRectSize(0,0);
 	return w,h;
 end
 
@@ -243,11 +229,7 @@ function M:SetParent( parent,isLocal,isSyncLayer )
 	isLocal = (isLocal == true)
 	self._async_parent,self._async_isLocal = nil
 	if self:IsInitTrsf() then
-		if isSyncLayer == true then
-			CHelper.SetParentSyncLayer( self.trsf,parent,isLocal )
-		else
-			CHelper.SetParent( self.trsf,parent,isLocal )
-		end
+		self.csEDComp:SetParent( parent,isLocal,isSyncLayer == true )
 	else
 		self._async_parent,self._async_isLocal = parent,isLocal
 	end
@@ -256,41 +238,38 @@ end
 function M:LookAt( x,y,z )
 	self._async_look_x,self._async_look_y,self._async_look_z = nil
 	if self:IsInitTrsf() then
-		self:_ReXYZ( self.v3Temp,x,y,z )
-		self.trsf:LookAt( self.v3Temp )
+		x,y,z = self:ReXYZ( x,y,z,6 )
+		self.csEDComp:LookAt( x,y,z )
 	else
 		self._async_look_x,self._async_look_y,self._async_look_z = x,y,z
 	end
 end
 
 function M:TranslateWorld( x,y,z )
-	x,y,z = self:ReXYZ( x,y,z,9 )
-	self.trsf:Translate( x,y,z,UES_World )
+	x,y,z = self:ReXYZ( x,y,z,6 )
+	self.csEDComp:TranslateWorld( x,y,z )
 end
 
 function M:AddLocalPosByV3( vec3 )
-	local _pos = self.trsf.localPosition
-	vec3.x = vec3.x + _pos.x
-	vec3.y = vec3.y + _pos.y
-	vec3.z = vec3.z + _pos.z
-	self.trsf.localPosition = vec3
+	local x,y,z = self:ReXYZ( vec3.x,vec3.y,vec3.z,6 )
+	self.csEDComp:AddLocalPos( x,y,z )
 end
 
 function M:GetSiblingIndex()
-	return self.trsf:GetSiblingIndex()
+	return self.csEDComp:GetSiblingIndex()
 end
 
 function M:SetSiblingIndex( bIndex )
 	bIndex = tonum(bIndex) or 0
-	self.trsf:SetSiblingIndex( bIndex )
+	self.csEDComp:SetSiblingIndex( bIndex )
 end
 
 function M:SetAsFirstSibling()
-	self.trsf:SetAsFirstSibling()
+	self.csEDComp:SetAsFirstSibling()
 end
 
 function M:SetAsLastSibling()
-	self.trsf:SetAsLastSibling()
+	self.csEDComp:SetAsLastSibling()
 end
 
 function M:_ExecuteAsync_Trsf()
@@ -352,22 +331,11 @@ function M:_ExecuteAsync_Trsf()
 end
 
 function M:Find(childName)
-	if type(childName) == "string" then
-		return self.trsf:Find( childName )
-	end
+	return self.csEDComp:Find( childName )
 end
 
 function M:FindGobj(childName)
-	local _vT = self:Find( childName )
-	if _vT then
-		return _vT.gameObject
-	end
-end
-
-function M:DestroyObj()
-	self.trsf = nil
-	self.rectTrsf = nil
-	return super.DestroyObj(self)
+	return self.csEDComp:FindGobj( childName )
 end
 
 return M

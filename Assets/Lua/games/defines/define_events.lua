@@ -13,6 +13,8 @@ Evt_SceneLoaded = "Evt_SceneLoaded"; -- 场景加载完成 (level)
 Evt_SceneChanged = "Evt_SceneChanged"; -- 场景切换完成 [ 晚于 Evt_SceneLoaded ]
 
 Evt_SendRay4ScreenPoint = "Evt_SendRay4ScreenPoint"; -- 发射线 (v2,lfCall[ray,hit,layer],distance,isImmediate,nameLayers = ... )
+Evt_UserLog2Net = "Evt_UserLog2Net"; -- 用户日志记录
+Evt_UserProcessLog2Net = "Evt_UserProcessLog2Net"; -- 用户流程日志记录
 
 -------- 摄像机 - 所用事件
 Evt_Vw_Def3DCamera = "Evt_Vw_Def3DCamera"; -- 显/隐 默认的3D 摄像机 (true/false,otherCamera)
@@ -23,7 +25,8 @@ Evt_Loading_Show = "Evt_Loading_Show"; -- 显示 Loading 加载界面
 Evt_Loading_UpPlg = "Evt_Loading_UpPlg"; -- 更新 Loading 加载界面 的进度条
 Evt_Loading_Hide = "Evt_Loading_Hide"; -- 隐藏 Loading 加载界面
 
-Evt_ToView_UpRes = "Evt_ToView_UpRes"; -- 更新界面
+Evt_Circle_Show = "Evt_Circle_Show"; -- 显示 Circle 界面
+Evt_Circle_Hide = "Evt_Circle_Hide"; -- 隐藏 Circle 界面
 
 -------- 资源更新完毕后 - 所用事件
 Evt_LoadAllShaders = "Evt_LoadAllShaders"; -- 加载所有的shaders

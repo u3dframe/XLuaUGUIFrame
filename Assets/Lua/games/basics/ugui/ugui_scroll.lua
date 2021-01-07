@@ -236,7 +236,7 @@ function M:SetData(nIndex)
 	-- rowindex 从1开始，符合lua
 	local nRowIndex = self.curIndexArray[nIndex]
 
-	luaCell.index = nRowIndex --设置子物体在列表相对应的索引
+	luaCell.cur_index = nRowIndex --设置子物体在列表相对应的索引
 
 	local isActive = nRowIndex <= self.listCount
 	if not self.isCallNoData and luaCell.gobj then

@@ -51,7 +51,7 @@ function M._InitUI()
 	end
 
 	ui.OnUpdateLoaded = function(_s,_dt)
-		this.ui.trsf:SetAsLastSibling()
+		this.ui:SetAsLastSibling()
 		_s.cdTime = _s.cdTime - _dt
 		_s.toY = _s.toY + _dt * _s.speed
 		_s:SetAnchoredPosition(0,_s.toY)
