@@ -70,6 +70,8 @@ LES_Battle_State = {
 	Create_Objs              = _add(),
 	LoadOtherObjs            = _add(),
 
+	WaitOpenFightUI          = _add(),
+
 	Entry_CG                 = _add(),
 	Entry_CG_Ing             = _add(),
 	Entry_CG_End             = _add(),

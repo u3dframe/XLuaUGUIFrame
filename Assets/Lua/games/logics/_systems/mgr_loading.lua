@@ -35,12 +35,18 @@ function M._InitUI()
 	end
 
 	ui.OnShow = function(_s)
+		_evt.Brocast( Evt_Loading_Showing )
+
 		local _lf = _s.lfCallShow
 		_s.lfCallShow = nil
 		if _lf then
 			_lf()
 		end
 		_s:Refresh(_s.data)
+	end
+
+	ui.OnEnd = function(_s,isDestroy)
+		_evt.Brocast(Evt_Loading_Hided)
 	end
 
 	ui.ReEvent4Self = function(_s,isBind)
@@ -57,13 +63,15 @@ function M._InitUI()
 	end
 end
 
-function M.ShowLoading(progress,lfCallShow)
-	MgrUI.HideAll( nil,this.ui )
+function M.ShowLoading(progress,lfCallShow,exceptUI)
+	MgrUI.HideAll( nil,this.ui,exceptUI )
 	this.ui:View(true,(progress or 0),lfCallShow)
 end
 
 function M.HideLoading()
-	this.ui:View(false)
+	if this.ui:IsLoadedAndShow() then
+		this.ui:View(false)
+	end
 end
 
 return M

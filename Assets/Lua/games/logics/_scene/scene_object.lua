@@ -93,7 +93,9 @@ function M:LookTarget(target_id,svX,svY)
 	local _x,_z = 0,0
 	if _target then
 		local _pos = _target:GetPosition()
-		_x,_z = _pos.x,_pos.z
+		if _pos then
+			_x,_z = _pos.x,_pos.z
+		end
 	else
 		_x,_z = self:SvPos2MapPos( svX,svY )
 	end
@@ -117,12 +119,19 @@ function M:ReEvent4Self(isbind)
 	end
 end
 
+function M:DoHurtEffect(svOne)
+end
+
 function M:Reback()
 	_evt.Brocast( Evt_Map_SV_RmvObj,self:GetCursor() )
 end
 
 function M:OnCF_OnDestroy()
 	self:Reback()
+end
+
+function M:DestroyObj(isNotImmediate)
+	super.DestroyObj( self, not isNotImmediate)
 end
 
 return M

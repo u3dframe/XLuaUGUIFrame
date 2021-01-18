@@ -30,7 +30,10 @@ end
 function M:OnInit()
 	self.lbCamera = self:NewCmr("MainCamera",true)
 	self.isHasCamera = self.lbCamera ~= nil
-	self.lbGBox = _clsGBox.New(self:GetElement("gbox"))
+	local _gbox = self:GetElement("gbox")
+	if _gbox then
+		self.lbGBox = _clsGBox.New(_gbox)
+	end
 	self.compPPLayer = self:GetElementComponent( "MainCamera","PostProcessLayer" )
 	if self.compPPLayer then
 		self.compPPLayer.enabled = Is_PPLayer_Enabled

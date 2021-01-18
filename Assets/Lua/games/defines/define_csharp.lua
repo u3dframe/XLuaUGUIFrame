@@ -49,13 +49,15 @@ CInpMgr = CS.InputMgr
 CELog2Net =  CELog2Net or CS.LogToNetHelper.shareInstance
 CRSettingEx = CS.RenderSettingsEx
 CCurveEx = CS.CurveEx
-CEDComp = CS.Core.Kernel.Beans.ED_Comp
+CSMapEx = CS.SceneMapEx
+CEDComp = CS.ED_Animator
 CEDUIImg = CS.ED_UIImg
 CEDUIItem = CS.ED_UIItem
 CEDCamera = CS.ED_Camera
 CEDUIEffect = CS.ED_UIEffect
 CEDUISpine = CS.ED_UISpine
 
+CTimelineUtil = CS.TimelineUtil
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])
 GM_IsEditor = CGameFile.isEditor
@@ -77,5 +79,7 @@ OneFrameSec = todecimal( 1 / FrameRate,4,0.016,true)
 Is_PPLayer_Enabled = (Is_LoadOrg4Editor) or (not GM_IsEditor) -- 设置 PostProcessLayer 的 enabled
 
 CGameFile.VwFps(true)
+-- CGameFile.VwMems(true)
+
 -- CGameFile.bLoadOrg4Editor = false -- 编辑模式下，读取 ab 资源
 -- TP_UText = typeof(UText)

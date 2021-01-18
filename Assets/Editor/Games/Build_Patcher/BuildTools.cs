@@ -91,6 +91,7 @@ public class BuildTools : BuildPatcher
     [MenuItem("Tools/CMD BuildAndroid")]
     static public void BuildAndroid()
     {
+        Core.GameFile.CurrDirRes();
         string CommandLine = Environment.CommandLine;
         string[] CommandLineArgs = Environment.GetCommandLineArgs();
         var args = new Dictionary<string,string>();

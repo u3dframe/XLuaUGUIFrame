@@ -249,17 +249,14 @@ function M:MoveTo(to_x,to_y,cur_x,cur_y,...)
 	end
 end
 
-function M:MoveEnd(x,y)
+function M:MoveEnd(x,y,isSmooth)
 	self:Move_Over()
-	self:SmoothPos( x,y )
+	self:SmoothPos( x,y,false,isSmooth )
 end
 
-function M:SmoothPos( x,y,isLocal )
-	if self:IsInitGobj() then
-		if x and y then
-			isLocal = isLocal == true
-			self.csEDComp:ToSmoothPos( x,self.worldY,y,isLocal,0.01 )
-		end
+function M:SmoothPos( x,y,isLocal,isSmooth )
+	if (isSmooth == true) and self:IsInitGobj() then
+		super.SmoothPos( self,x,self.worldY,y,0.03,isLocal )
 	else
 		self:SetPos( x,y )
 	end

@@ -5,6 +5,7 @@
 	-- Desc : 
 ]]
 
+local tonumber,type,tostring = tonumber,type,tostring
 local super = LuaObject
 local M = class( "lua_gobj",super )
 local this = M
@@ -142,15 +143,35 @@ function M:Clone(parent)
 	end
 end
 
-function M:DestroyObj()
+function M:DestroyObj(isImmediate)
 	if self:IsInitGobj() then
-		return self.csEDComp:DestroyObj();
+		isImmediate = (isImmediate == true)
+		return self.csEDComp:DestroyObj( isImmediate );
 	end
 end
 
 function M:DonotDestory( )
 	if self:IsInitGobj() then
 		return self.csEDComp:DonotDestory()
+	end
+end
+
+function M:PlayAnimator(stateName,isOrder,callEnd,speed,unique)
+	isOrder = isOrder == true
+	unique = (unique or LE_Anim_Unique[stateName]) or 0
+	speed = tonumber(speed) or 1
+	self._async_anim = nil
+	if self:IsInitGobj() then
+		self.csEDComp:PlayAnimator( stateName,isOrder,speed,unique,callEnd )
+	else
+		self._async_anim = { stateName,isOrder,speed,unique,callEnd }
+	end
+end
+
+function M:ReAnimator()
+	self._async_anim = nil
+	if self:IsInitGobj() then
+		self.csEDComp:ReAnimator()
 	end
 end
 
@@ -161,6 +182,11 @@ function M:_ExecuteAsync_Gobj()
 
 	if self._async_active ~= nil then
 		self:SetActive( self._async_active )
+	end
+
+	if self._async_anim ~= nil then
+		local _a = self._async_anim
+		self:PlayAnimator( _a[1],_a[2],_a[5],_a[3],_a[4] )
 	end
 end
 

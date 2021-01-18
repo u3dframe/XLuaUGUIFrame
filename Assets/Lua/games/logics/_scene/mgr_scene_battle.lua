@@ -15,6 +15,7 @@ local E_Type = LE_Effect_Type
 local _is_debug = false
 
 MgrScene = require( "games/logics/_scene/mgr_scene" )
+local ClsCG = require( "games/logics/story/storyplaychild" )
 
 local super,_evt = MgrBase,Event
 local M = class( "mgr_scene_battle",super )
@@ -40,6 +41,7 @@ function M.Init()
 	_evt.AddListener( Evt_Map_SV_BreakSkill,this.OnSv_Map_Obj_Skill_Break )
 	
 	_evt.AddListener( Evt_State_Battle_Start,this.Start )
+	_evt.AddListener( Evt_FightUI_Showing,this._ST_UIOpenFinished )
 	_evt.AddListener( Evt_Battle_Delay_End_MS,this.SetDelayEndBattle )
 	_evt.AddListener( Evt_Msg_Battle_End,this._OnMsgEndBattle )
 
@@ -74,7 +76,6 @@ function M:OnUpdate(dt)
 		this._ST_OnUp_LoadObj( dt )
 	elseif this.state == E_B_State.LoadOtherObjs then
 		this._ST_OnUp_LoadObj( dt )
-		-- this.state = E_B_State.Entry_CG
 	elseif this.state == E_B_State.Entry_CG then
 		this._SetUpState( E_B_State.Entry_CG_Ing )
 	elseif this.state == E_B_State.Entry_CG_Ing then
@@ -122,6 +123,7 @@ end
 
 function M._ST_Begin()
 	this.isUping = true
+	this.isJugdeCmr = true
 	this._ms_delay_end = 0
 	this._SetUpState( E_B_State.Start )
 end
@@ -152,7 +154,8 @@ function M._ST_OnUp_LoadObj(dt)
 	if this.state == E_B_State.LoadOtherObjs then
 		_cur,_need = this._loaded_obj,this._need_load_obj
 		if _need <= 0 then
-			this._SetUpState( E_B_State.Entry_CG )
+			this._SetUpState( E_B_State.WaitOpenFightUI )
+			_evt.Brocast( Evt_View_FightUI )
 			return
 		end
 	end
@@ -165,7 +168,7 @@ local function _pre_load_obj()
 	this._loaded_obj = this._loaded_obj + 1
 end
 
-function M._AddNeedLoadResid( resid )
+function M._AddNeedLoadResid( resid,isCG )
 	if not resid then
 		return
 	end
@@ -177,9 +180,17 @@ function M._AddNeedLoadResid( resid )
 		return
 	end
 	_lb[resid] = true
-	local _func_ = function()
-		EffectFactory.Make( E_Type.Pre_Effect,nil,nil,resid,_pre_load_obj )
+	local _func_ = nil
+	if isCG == true then
+		_func_ = function()
+			ClsCG.PreLoad( resid,_pre_load_obj )
+		end
+	else
+		_func_ = function()
+			EffectFactory.Make( E_Type.Pre_Effect,nil,nil,resid,_pre_load_obj )
+		end
 	end
+	
 
 	_lb = this._need_funcs or {}
 	this._need_funcs = _lb
@@ -193,7 +204,8 @@ function M._ST_LoadObjs()
 		if this.state == E_B_State.LoadOtherObjs then
 			if (this._loaded_obj > this._need_load_obj) then
 				if this._ndelay_fps >= 3 then
-					this._SetUpState( E_B_State.Entry_CG )
+					this._SetUpState( E_B_State.WaitOpenFightUI )
+					_evt.Brocast( Evt_View_FightUI )
 				end
 				this._ndelay_fps = this._ndelay_fps + 1
 			elseif (this._loaded_obj == this._need_load_obj) then
@@ -205,6 +217,12 @@ function M._ST_LoadObjs()
 	end
 	local _lf = tb_remove( this._need_funcs,1 )
 	_lf()
+end
+
+function M._ST_UIOpenFinished()
+	if this.state == E_B_State.WaitOpenFightUI then
+		this._SetUpState( E_B_State.Entry_CG )
+	end
 end
 
 function M._ST_PlayBG()
@@ -275,6 +293,10 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 				for _, resid in ipairs(_cfg_.resids) do
 					this._AddNeedLoadResid( resid )
 				end
+			end
+
+			if _cfg_.resid_cg then
+				this._AddNeedLoadResid( _cfg_.resid_cg,true )
 			end
 		end
 	end

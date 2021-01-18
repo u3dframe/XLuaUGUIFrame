@@ -76,4 +76,11 @@ LE_VCoin = {
     Item = 5,
     Hero = 6,
     Equip = 7,
+    Skill = 999
+}
+
+
+-- 游戏回调函数
+LE_Anim_Unique = {
+    anc_pos_up2down = 1001,
 }

@@ -62,6 +62,7 @@ function M:OnView()
 	local _showNum = ""
 	local _qua,_name,_icon,_star,_cNum = nil
 	local _type,_cfgid,_nNum,_level = _data[1],_data[2],(_data[3] or 0)
+
 	_cfg = MgrStore:GetItemCfg(_type,_cfgid)
 	if not _cfg then
 		printError("==== ui_item,not has cfg ; type = [%s],id = [%s],num = [%s]",_type,_cfgid,_nNum)
@@ -88,7 +89,7 @@ function M:OnView()
 	local _de = (_type == 6) and "Lv." or "x"
 	self:VwValueDesc(_de)
 	self:VwStars(_star, _qua)
-	self:VwIcon(_icon,_type,_cfgid,_type)
+	self:VwIcon(_icon,_type)
 	self:VwRare(_rare, _qua)
 	self:VwQuality( _qua)
 	self:VwBgImg(_qua)
@@ -179,6 +180,10 @@ function M:VwValueBg(quality)
 	self.csEDComp:VwValueBg( _icon )
 end
 
+function M:VwSetValueBg(_icon)
+	self.csEDComp:VwValueBg( _icon )
+end
+
 function M:VwOrder(v)
 	self.csEDComp:VwOrder( v )
 end
@@ -191,21 +196,10 @@ function M:VwDesc(v)
 	self.csEDComp:VwDesc( v )
 end
 
-function M:VwIcon(icon,ntype,cid,ctype)
+function M:VwIcon(icon,ntype)
 	self.icon = icon
 	ntype = tonumber(ntype) or 0
 	self.csEDComp:VwIcon( icon,ntype )
-	local _cid = cid or self.data[2]
-	local _ctype = ctype
-	if _ctype and _ctype == MgrStore.EquipType and _cid then 	
-		local _cfg_ = MgrData:GetOneData("equip", _cid)
-		local x,y = 0,0
-		local _scale = _cfg_.scale
-		if _scale then
-			x,y = _scale[1],_scale[2]
-		end
-		self.csEDComp:SetIconSize(x,y)
-	end 
 end
 
 -- 显示品质
@@ -224,6 +218,12 @@ function M:VwBgImg(quality)
 		_icon = "bg_item_" .. quality
 	end
 	self.csEDComp:VwBgImg( _icon )
+end
+
+
+-- 显示背景品质
+function M:VwSetBgImg(img)
+	self.csEDComp:VwBgImg(img)
 end
 
 -- 显示品质
@@ -376,8 +376,11 @@ function M:ShowByArgs(ty, id, cnt, feature, level)
 		fragCfg = MgrStore:GetItemCfg(fragTarget[1], fragTarget[2])
 	end
 	self:VwStars(cfg.star or fragCfg.star, cfg.quality)
-	local icon = MgrStore:IsHeroType(ty) and cfg.min_icon or cfg.icon
-	self:VwIcon(icon, ty,id,ty)
+	local icon,_tp = cfg.icon,LE_VCoin.Item
+	if MgrStore:IsHeroType(ty) then
+		icon,_tp = cfg.min_icon,ty
+	end
+	self:VwIcon(icon,_tp)
 	self:VwRare(fragCfg.rare or cfg.rare, fragCfg.rare and fragCfg.quality or cfg.quality)
 	self:VwQuality( cfg.quality)
 	self:VwBgImg(cfg.quality)

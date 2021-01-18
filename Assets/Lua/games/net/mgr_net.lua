@@ -6,8 +6,6 @@
 ]]
 
 local tb_insert = table.insert
-local tb_has = table.contains
-local tb_remove = table.remove
 local tb_rmvals = table.removeValues
 local tb_contains = table.contains
 local _not_circle_cmd = { "ping" }
@@ -15,10 +13,13 @@ local _not_circle_cmd = { "ping" }
 _G.Network = require("games/net/network")
 _G.CfgSvList = require("games/net/severlist")
 
-local _lbQueExcepts = {}
+local crypt = require "crypt"
+local rc4 = require "crypt.rc4"
+local json = require "cjson.safe"
+json.encode_sparse_array("on")
+
 local host,sender,_csMgr
 local _cursor,_cb_requs,_cb_resps = 0,{},{}
-local _r_ques = {}
 
 local super,_evt = _G.LuaObject,_G.Event
 local M = _G.class( "mgr_net",super )
@@ -44,9 +45,79 @@ function M._Init_Sproto()
     sender = host:attach(c2s)
 end
 
-function M.OnDispatch_Msg(msg)
-    local _type, name, args, resp = host:dispatch(msg:ReadBytes())
+local function create_read_stream(ctx, crypt_call, handler, disconnect, data)
+	local buffer = crypt_call(data or "")
+	local packet = function ()
+		local bufferlen = #buffer
+		if bufferlen<2 then return end
+		local len = string.unpack(">H", buffer)
+		if bufferlen < 2 + len then return end
+		local msg = string.unpack('>s2', buffer)
+		buffer=buffer:sub(3+len)
+		assert(#msg==len)
+		return msg
+	end
+	local readbyte = #(data or "")
+	return {
+		append = function(s)
+			local d = crypt_call(s)
+			readbyte = readbyte + #d
+			buffer = buffer .. d
+		end,
+		ctx = ctx,
+		clean = function()
+			local b = buffer
+			buffer = ""
+			return b
+		end,
+		bytes = function()
+			return readbyte
+		end,
+		on_disconnect = disconnect,
+		execute = function()
+			while true do
+				local msg = packet()
+				if not msg then return end
+				local ok,err = xpcall(handler,debug.traceback,msg)
+				if not ok then
+					printError("=== err = [\n%s\n]",err)
+				end
+			end
+		end
+	}
+end
+
+function M.Hook(isHook)
+	this._isHook = isHook == "start"
+	return isHook
+end
+
+function M.SendCheat(message)
+	local msg = json.decode(message)
+	local cmd = msg.name
+	local args = json.decode(msg.request)
+	this.SendRequest(cmd , args, function()
+
+	end)
+end
+
+local CallCs = CS.CsWithLua.CallCs
+local function ON_HOOK_OCCUR(data)
+	if this._isHook then
+		pcall(CallCs,"MCheat",json.encode(data))
+	end
+end
+
+local function handle_sproto(msg)
+	local _type, name, args, resp = host:dispatch(msg)
 	if _type == "RESPONSE" then
+		if this._isHook then
+			ON_HOOK_OCCUR {
+				session = name,
+				response = json.encode(args)
+			}
+		end
+		
 		--客户端请求返回
 		local _lbRequs = _cb_requs[name]
 		_cb_requs[name] = nil
@@ -67,6 +138,12 @@ function M.OnDispatch_Msg(msg)
 			end
 		end
 	else
+		if this._isHook then
+			ON_HOOK_OCCUR {
+				name = name,
+				request = json.encode(args),
+			}
+		end
 		--服务器请求或者推送s2c
         local _s = this._ExcPushCall(name,args,resp)
         if not _s then
@@ -75,8 +152,192 @@ function M.OnDispatch_Msg(msg)
     end
 end
 
+local function newcipher(secret)
+	local key = table.concat{
+		crypt.hmac64_md5(secret, string.char(0,0,0,0,0,0,0,0)),
+		crypt.hmac64_md5(secret, string.char(1,0,0,0,0,0,0,0)),
+		crypt.hmac64_md5(secret, string.char(2,0,0,0,0,0,0,0)),
+		crypt.hmac64_md5(secret, string.char(3,0,0,0,0,0,0,0))
+	}
+	return rc4.init(key)
+end
+
+local stream_read, stream_write
+
+function M.OnDispatch_Msg(bf)
+	local d = bf:ReadBytes()
+	stream_read.append(d)
+	stream_read.execute()
+end
+
+local function create_write_stream(crypt_call, _maxbyte)
+	local losebyte = 0	-- 缓存(buffer_reuse)过大已导致丢弃的数据
+	local buffer = ""	-- 未发送数据缓存
+	local buffer_reuse = ""	-- 已发送数据缓存(固定大小)
+	local reusemax = _maxbyte or 65535	--64k缓存
+	local issend = false
+	local isstop = false
+	local trysend = function()
+		if issend then return end
+		if isstop then return end
+		if #buffer == 0 then return end
+		issend = true
+		local d
+		d, buffer = buffer, ""
+		_csMgr:SendBytes(d)
+		--print("trysend "..#d)
+
+		buffer_reuse = buffer_reuse .. d
+		local reuselen = #buffer_reuse
+		if reuselen > reusemax then
+			local lose = reuselen - reusemax -- todo 要不要直接减少固定大小数据? 减少小量数据(buffer)导致的sub行为
+			losebyte = losebyte + lose
+			buffer_reuse = buffer_reuse:sub(reuselen - reusemax + 1)
+		end
+		return true
+	end
+	return {
+		stop = function()
+			isstop = true
+		end,
+		append = function(s)
+			--print("append "..#s)
+			local d = crypt_call(s)
+			buffer = buffer .. d
+			trysend()
+		end,
+		finish = function()
+			issend = false
+			trysend()
+		end,
+		restart = function(recvbytes)
+			isstop = false
+			if recvbytes < losebyte then
+				return -- 服务器收到的数据 比我们丢弃的数据要少
+			end
+			buffer_reuse = buffer_reuse .. buffer
+			buffer = ""
+			if recvbytes > losebyte+#buffer_reuse then
+				return -- 服务器收到的数据 比我们发送的数据还要多?
+			end
+			local d = string.sub(buffer_reuse, recvbytes-losebyte + 1)
+			if #d>0 then
+				issend = true
+				_csMgr:SendBytes(d)
+				--print("restart " ..#d)
+			else
+				issend = false
+			end
+			return true
+		end
+	}
+end
+
 function M.OnWriteFinish()
-	this._ExcSendQueue()
+	if stream_write then
+		stream_write.finish()
+	end
+end
+
+local function handshake_new(callback, target)
+	local mykey = crypt.randomkey()
+	local pubkey = crypt.dhexchange(mykey)
+	local pair = crypt.base64encode(pubkey)
+	local m = (table.concat({0, pair, target ,0},'\n'))
+	_csMgr:SendBytes(string.pack(">s2",m))
+	---printInfo("handshake_new "..m)
+
+	local function handshake_read(a) return a end
+	local function handshake_on_disconnect(err) callback(false, err or "unknown") end
+	local function handshake_on_message(msg)
+		local tbl = string.split(msg,'\n')
+		local id = tonumber(tbl[1])
+		local otherkey = crypt.base64decode(tbl[2])
+		local secret = crypt.dhsecret(otherkey,mykey)
+
+		local rc4read, rc4write = newcipher(secret),newcipher(secret)
+		local function crypt_read(a) return rc4.crypt(rc4read, a) end
+		local function crypt_write(a) return rc4.crypt(rc4write, a) end
+		local function on_disconnect() this._ReConnect() end
+		stream_read = create_read_stream(
+			{id = id,secret = secret,},
+			crypt_read,
+			handle_sproto,
+			on_disconnect,
+			stream_read.clean()
+		)
+		stream_write = create_write_stream(
+			crypt_write,
+			65535,
+			1024
+		)
+		if callback then callback(true) end
+	end
+
+	stream_read = create_read_stream(nil, handshake_read, handshake_on_message, handshake_on_disconnect, nil)
+end
+--[[
+local function mem(str)
+	return table.concat({str.byte(str,1,#str)},',')
+end
+
+local function num(str)
+	local v = 0
+	for i,_v in ipairs({str.byte(str,1,#str)}) do
+		v = v | _v<<((i-1)*8)
+	end
+	return v
+end
+]]
+
+local handshake_error = {
+	['200'] = "OK"
+	,['400']='Malformed request' -- 数据解释失败
+	,['401']='Unauthorized' -- 表示 HMAC 计算错误
+	,['403']='Index Expired' -- 表示 Index 已经使用过
+	,['404']='User Not Found' -- 表示连接 id 已经无效
+	,['406']='Not Acceptable' -- 表示 cache 的数据流不够
+	,['501']='Network Error' -- 网络相关错误
+}
+
+local function handshake_reuse()
+	local ctx = assert(stream_read.ctx)
+	ctx.index = (ctx.index or 0) +1
+	local content = table.concat({ctx.id, ctx.index, stream_read.bytes()},'\n')..'\n'
+	local hmaccode = crypt.hmac64_md5(crypt.hashkey(content), ctx.secret)
+	local m = content..crypt.base64encode(hmaccode)
+	-- print(content)
+	-- print(m)
+	-- print(mem(crypt.hashkey(content)),num(crypt.hashkey(content)),num(ctx.secret))
+	--printInfo("handshake reuse " .. m)
+	_csMgr:SendBytes(string.pack(">s2",m))
+
+	local stream_read_last = stream_read
+	stream_write.stop() -- wait for stream_write.restart(recvnumber)
+
+	local function handshake_read(a) return a end
+	local function handshake_on_disconnect(err)
+		_evt.Brocast(Evt_Error_Tips,err)
+		this._ExitLogin()
+	end
+	local function handshake_on_message(msg)
+		local tbl = _G.string.split(msg,'\n')
+		local recvnumber = tonumber(tbl[1])
+		local err = handshake_error[tbl[2]] or "unknown"
+		if err ~= 'OK' then
+			handshake_on_disconnect("auth failre " .. err)	-- // 重连验证失败, 清空数据, 走重新登陆流程
+		else
+			--printInfo("reconnect success "..recvnumber)
+			stream_read_last.append(stream_read.clean())
+			stream_read = stream_read_last
+			if not stream_write.restart(recvnumber) then
+				handshake_on_disconnect("byte resend failure")	-- // 补发数据失败, 清空数据, 走重新登陆流程
+			else
+				LUtils.Wait(1,stream_read.execute)
+			end
+		end
+	end
+	stream_read = create_read_stream(nil, handshake_read,handshake_on_message, handshake_on_disconnect, nil)
 end
 
 function M.OnConnection(isSucess,errStr)
@@ -99,6 +360,9 @@ function M.OnDisConnection(isError)
 	if this.isShutDown then
 		this._ExitLogin()
 		return
+	end
+	if stream_read then
+		stream_read.on_disconnect(isError)
 	end
 end
 
@@ -132,7 +396,9 @@ function M.OnHeart(svMsg)
 end
 
 function M.Clean()
-	_cursor,_cb_requs,_r_ques = 0,{},{}
+	stream_read, stream_write = nil, nil
+	host, sender = nil, nil
+	_cursor,_cb_requs = 0,{}
 end
 
 function M.ShutDown(isExit)
@@ -191,43 +457,31 @@ end
 
 function M.Response(response,result)
 	--返回服务器主动请求数据
-    _csMgr:SendBytes(response(result))
+	local msg = string.pack(">s2", response(result))
+	stream_write.append(msg)
 end
 
 function M.SendRequest( cmd,data,callback )
 	if not cmd then
 		return
 	end
-	
-	local _lf = function()
-		this.isSending = true
-		if not tb_contains( _not_circle_cmd,cmd ) then
-			ShowCircle()
-		end
-		local _cur = _cursor + 1
-		_cursor = _cur
-		_cb_requs[_cur] = { cmd = cmd, callback = callback }
 
-		local msg = sender(cmd, data, _cur)
-		_csMgr:SendBytes(msg)
+	if not tb_contains( _not_circle_cmd,cmd ) then
+		ShowCircle()
 	end
-	
-	if this.isSending and (not tb_has(_lbQueExcepts,cmd)) then
-		tb_insert( _r_ques,_lf )
-	else
-		_lf()
-	end
-end
 
-function M._ExcSendQueue()
-	local _lens = (#_r_ques)
-	if _lens <= 0 then
-		this.isSending = false
-		return
+	local _cur = _cursor + 1
+	_cursor = _cur
+	_cb_requs[_cur] = { cmd = cmd, callback = callback }
+	local msg = string.pack(">s2", sender(cmd, data, _cur))
+	stream_write.append(msg)
+	if this._isHook then
+		ON_HOOK_OCCUR {
+			name = cmd,
+			session = _cur,
+			request = json.encode(data)
+		}
 	end
-	local _v = _r_ques[1]
-	tb_remove(_r_ques,1)
-	_v()
 end
 
 -- 推送常量函数

@@ -23,7 +23,17 @@ function M.URoot()
 end
 
 local function _lf_equipLUI(item,p1)
-	return (item == p1) or (item.strABAsset ~= nil and item.strABAsset == p1.strABAsset)
+	if (not item) or (not p1) then
+		return true
+	end
+
+	if (item == p1) then
+		return true
+	end
+	if (p1.strABAsset ~= nil and item.strABAsset ~= nil and item.strABAsset == p1.strABAsset) then
+		return true
+	end
+	return item:getCName() == p1:getCName()
 end
 
 function M.AddViewUI(ui)
@@ -55,25 +65,34 @@ function M.RmViewUI(ui)
 end
 
 
-function M.HideAll(layer,exceptUI)
+function M.HideAll(layer,...)
 	layer = layer or _layVw
 	local _tpVal = type(layer)
 	if _tpVal == "table" then
 		for _,v in ipairs(layer) do
-			this.HideOneLayer(v,exceptUI)
+			this.HideOneLayer(v,...)
 		end
 	else
-		this.HideOneLayer(layer,exceptUI)
+		this.HideOneLayer(layer,...)
 	end
 end
 
-function M.HideOneLayer(layer,exceptUI)
-	local _lb = this.uiViews[layer]
-	if not _lb then return end
-
-	for _,ui in pairs(_lb) do
-		if (not exceptUI) or (not _lf_equipLUI(ui,exceptUI)) then
-			this.HideUI(ui)
+function M.HideOneLayer(layer,...)
+	local _lb_ = this.uiViews[layer]
+	if (not _lb_) then return end
+	local _lens_,_ui_ = #_lb_
+	if _lens_ <= 0 then return end
+	local _isBl = false
+	local _lens,_exceptUIs = this:Lens4Pars( ... )
+	local _lfContains = table.contains_func
+	if _lens > 0 then
+		_exceptUIs = { ... }
+	end
+	for i = _lens_,1,-1 do
+		_ui_ = _lb_[i]
+		_isBl = (_ui_ ~= nil) and ((not _exceptUIs) or (not _lfContains(_exceptUIs,_lf_equipLUI,_ui_)))
+		if _isBl then
+			this.HideUI(_ui_)
 		end
 	end
 end
@@ -119,6 +138,25 @@ function M.OpenUI(id,lfPreOpen,...)
 			end
 		end
 		_evt.Brocast( id,id,... )
+	end
+end
+
+function M.OpenUI2(id,lfPreOpen,lfOnShowOnce,...)
+	--功能解锁判定
+	local _isBl,_cfg = this.IsUnlock(id,true)
+	if _isBl then
+		if lfPreOpen then
+			lfPreOpen()
+		end
+
+		if _cfg.nback then
+			if _cfg.nback == 1 then 
+				this.SetCurrUIType(id,true)
+			elseif _cfg.nback == 2 then
+				this.SetCurrUIType(id)
+			end
+		end
+		_evt.Brocast( id,id,lfOnShowOnce,... )
 	end
 end
 

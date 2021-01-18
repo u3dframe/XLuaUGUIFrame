@@ -36,6 +36,8 @@ function M._InitUI()
 	end
 
 	ui.OnShow = function(_s)
+		_evt.Brocast( Evt_Circle_Showing )
+		
 		local _lf = _s.lfCallShow
 		_s.lfCallShow = nil
 		if _lf then
@@ -44,7 +46,7 @@ function M._InitUI()
 	end
 
 	ui.OnUpdateLoaded = function(_s,_dt)
-		if not _s.data or _s.data <= 0 then
+		if not _s.data or _s.data < 0 then
 			return
 		end
 		_s.data = _s.data - _dt
@@ -57,15 +59,27 @@ function M._InitUI()
 			_s:View(false)
 		end
 	end
+
+	ui.OnEnd = function(_s,isDestroy)
+		_evt.Brocast( Evt_Circle_Hided )
+	end
 end
 
-function ShowCircle(duration,lfCallShow)
-	duration = tonumber(duration) or _def_duration
+function _ShowCircle(lfCallShow)
+	this.ui:View( true,_def_duration,lfCallShow )
+end
+
+function ShowCircle(lfCallShow,isImmediate)
 	if this._nShowCount <= 0 then
 		this._nShowCount = 0
 	end
 	this._nShowCount = this._nShowCount + 1
-	this.ui:View(true,duration,lfCallShow)
+
+	if (not isImmediate) then
+		LTimer.AddDelayFunc1( "DELAY_SHOW_CIRCLE",0.9,_ShowCircle,lfCallShow )
+	else
+		_ShowCircle( lfCallShow )
+	end
 end
 
 function HideCircle(isImmediate)
@@ -76,6 +90,7 @@ function HideCircle(isImmediate)
 	if (this._nShowCount > 0) then
 		return
 	end
+	LTimer.RemoveDelayFunc( "DELAY_SHOW_CIRCLE" )
 	this.ui:View(false)
 end
 

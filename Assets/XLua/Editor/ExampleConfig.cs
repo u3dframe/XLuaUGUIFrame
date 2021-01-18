@@ -145,6 +145,7 @@ public static class ExampleConfig
                 typeof(ED_UIEffect),
                 typeof(ED_UISpine),
                 typeof(CanvasEx),
+                typeof(MemDisplay),
                 // typeof(StaticEx),
                 typeof(ObjEx),
                 typeof(StrEx),
@@ -201,6 +202,7 @@ public static class ExampleConfig
                 typeof(CfgVersion),
                 typeof(RenderSettingsEx),
                 typeof(WebVerifyCert),
+                typeof(SceneMapEx),
                 //---------------------------------------------------------------  
             };
 

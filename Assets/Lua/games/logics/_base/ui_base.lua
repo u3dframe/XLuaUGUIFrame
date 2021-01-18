@@ -30,9 +30,14 @@ function M:InitBase(assetCfg)
 end
 
 function M:onAssetConfig( _cfg )
+	local _isNoC = nil
+	if _cfg then
+		_isNoC = _cfg.isNoCircle
+	end
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.assetLType = _E_AType.UI
 	_cfg.layer = _cfg.layer or _E_Layer.Normal
+	_cfg.isNoCircle = _isNoC
 	return _cfg;
 end
 
@@ -83,6 +88,20 @@ function M:_SetSelfLayer()
 	end
 end
 
+function M:SelfIsRoot()
+	local _lay = self:GetLayer()
+	if _E_Layer.URoot == _lay then
+		return true
+	end
+end
+
+function M:SelfIsCanHideLoading()
+	local _lay = self:GetLayer()
+	if _E_Layer.Main == _lay or _E_Layer.Normal == _lay then
+		return true
+	end
+end
+
 function M:OnInitEnd()
 	self._objTopBanner = self:GetElement("ui_topbanner")
 end
@@ -100,12 +119,15 @@ function M:OnShowEnd()
 		end
 		MgrTopBanner:ShowResources(self._objTopBanner, resources)
 	end
+
+	if self:SelfIsCanHideLoading() then
+		_evt.Brocast(Evt_Loading_Hide)
+	end
 end
 
 function M:View(isShow,data,...)
 	super.View( self,isShow,data,... )
-	local _lay = self:GetLayer()
-	if _E_Layer.URoot == _lay then
+	if self:SelfIsRoot() then
 		return
 	end
 	if true == isShow then

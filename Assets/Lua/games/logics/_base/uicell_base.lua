@@ -29,6 +29,10 @@ end
 
 function M:OnCF_Hide()
 	self:RemoveEvents()
+	self:OnHide()
+end
+
+function M:OnHide()
 end
 
 function M:OnClickSelf()

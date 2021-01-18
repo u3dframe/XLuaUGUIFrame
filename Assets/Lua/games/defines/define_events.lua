@@ -22,11 +22,15 @@ Evt_Get_UICamera = "Evt_Get_UICamera"; -- 取得UI摄像机 ( self.lfunc(lbUICam
 Evt_Brocast_UICamera = "Evt_Brocast_UICamera"; -- 广播UI摄像机 (lbUICamera)
 
 Evt_Loading_Show = "Evt_Loading_Show"; -- 显示 Loading 加载界面
+Evt_Loading_Showing = "Evt_Loading_Showing"; -- Loading 加载界面 显示中ing
 Evt_Loading_UpPlg = "Evt_Loading_UpPlg"; -- 更新 Loading 加载界面 的进度条
 Evt_Loading_Hide = "Evt_Loading_Hide"; -- 隐藏 Loading 加载界面
+Evt_Loading_Hided = "Evt_Loading_Hided"; -- Loading 加载界面 已执行了 隐藏
 
 Evt_Circle_Show = "Evt_Circle_Show"; -- 显示 Circle 界面
+Evt_Circle_Showing = "Evt_Circle_Showing"; -- Circle 界面 显示中ing
 Evt_Circle_Hide = "Evt_Circle_Hide"; -- 隐藏 Circle 界面
+Evt_Circle_Hided = "Evt_Circle_Hided"; -- 隐藏了 Circle 界面
 
 -------- 资源更新完毕后 - 所用事件
 Evt_LoadAllShaders = "Evt_LoadAllShaders"; -- 加载所有的shaders
@@ -61,6 +65,6 @@ Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示
 Evt_Desc_Tip = "Evt_Desc_Tip"; -- 弹出描述tip
 Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示
 Evt_EnterGameBeforeMain = "Evt_EnterGameBeforeMain"; -- 进入主界面前
-Evt_ToView_Login = "Evt_ToView_Login"; -- 登录界面
+Evt_ToView_Login = "Evt_ToView_Login"; -- 登录界面  ( isHide )
 
 Evt_Re_Login = "Evt_Re_Login"; -- 返回登陆

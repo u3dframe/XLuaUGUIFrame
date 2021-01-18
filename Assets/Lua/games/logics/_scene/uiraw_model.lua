@@ -12,8 +12,10 @@ local this = M
 this.nm_pool_cls = "up_model"
 this.n_x = 0
 this.n_y = 1000
-this.n_every = 300
-this.n_max = this.n_every * 30
+this.n_every_x = 300
+this.n_every_y = 20000
+this.n_max_x = this.n_every_x * 5
+this.n_max_y = this.n_every_y * 101
 
 function M.Builder(nCursor,_,parent)
 	local _ret = this.BorrowSelf( this.nm_pool_cls,nCursor,parent )
@@ -41,7 +43,11 @@ function M:OnInit()
 		self.trsfModelWrap = _temp.transform
 	end
 	self:SetParent( self.p_parent,true )
-	local _x,_y = self:CalcNodeXY()
+	local _x,_y = self._x1,self._y1
+	if not _x or not _y then
+		_x,_y = self:CalcNodeXY()
+	end
+	self._x1,self._y1 = _x,_y
 	self.lbNode:SetLocalPosition( _x,_y,0 )
 end
 
@@ -66,6 +72,7 @@ function M:ReHeroid(heroid)
 		end
 		self:_OnUnLoadAsset()
 	end
+	self._x1,self._y1 = self:CalcNodeXY()
 	self:InitAsset4Resid( _cfgHero.resource )
 	local _abName = self.cfgRes.rsaddress
 	self.m_abname = self:ReFabABName( _abName )
@@ -83,6 +90,10 @@ end
 function M:_OnCallLoaded(isNoObj,_,_s)	
 	if isNoObj then
 		return
+	end
+	local _c = _s.csEDComp:GetComponent("CharacterController")
+	if _c then
+		M.CsDestroy( _c,true )
 	end
 	self.lbAsset = self.lbAsset or _s
 	self.lbAsset:SetParent( self.trsfModelWrap,true,true )
@@ -131,9 +142,13 @@ end
 
 function M:CalcNodeXY()
 	local _x,_y = this.n_x,this.n_y;
-	this.n_x = this.n_x + this.n_every
-	if this.n_x >=  this.n_max then
-		this.n_y = this.n_y + this.n_every
+	this.n_x = this.n_x + this.n_every_x
+	if this.n_x >=  this.n_max_x then
+		this.n_y = this.n_y + this.n_every_y
+		this.n_x = 0
+	end
+	if this.n_y >=  this.n_max_y then
+		this.n_y = 0
 		this.n_x = 0
 	end
 	return _x,_y

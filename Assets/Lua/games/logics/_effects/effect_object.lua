@@ -95,7 +95,7 @@ function M:OnViewBeforeOnInit()
 
 	local _lbT_Point
 	if self.mount_point then
-		_lbT_Point = _lbTarget:NewTrsf(self.mount_point,true)
+		_lbT_Point = _lbTarget:NewTrsf(self.mount_point,true,true)
 	end
 	if not _lbT_Point then
 		_lbT_Point = _lbTarget

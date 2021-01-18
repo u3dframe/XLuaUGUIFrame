@@ -58,6 +58,8 @@ function M:OnUpdate(dt)
 		this._ST_LoadScene()
 	elseif this.state == LES_State.Load_Map_Light then
 		this._ST_LoadLightMap()
+	elseif this.state == LES_State.Wait_Map_Light then
+		this._ST_WaitLightMap()
 	elseif this.state == LES_State.Load_Map_Scene then
 		if this.lbMap then
 			this._ST_OnUp_LoadMap(dt)
@@ -82,7 +84,7 @@ function M.GetCurrMapCfg()
 end
 
 function M.OnLoadMap(pars1, pars2)
-	if pars1 and pars1 == this.mapid then return end
+	this.isSameMap = (pars1 == this.mapid)
 	this.isUping = false
 	this.isUpingLoadMap = false
 	this:ReEvent4Self(false)
@@ -159,38 +161,20 @@ function M._ST_LoadLightMap()
 		this.state = LES_State.Load_Map_Scene
 		return
 	end
-	_temp = this:ReSBegEnd( _temp,"maps/",".minfo" )
-	local _val = CGFile:GetDecryptText(_temp)
-	if not _val or _val == "" then
+
+	this.state = LES_State.Wait_Map_Light
+	this.m_csSceneMap = CSMapEx.LoadMapData( _temp )
+	-- printInfo("==== [%s] = [%s]",_temp,this.m_csSceneMap);
+end
+
+function M._ST_WaitLightMap()
+	if not this.m_csSceneMap then
 		this.state = LES_State.Load_Map_Scene
 		return
 	end
 
-	this.state = LES_State.Wait_Map_Light
-
-	local _jdata = json.decode(_val)
-	local _ld = _jdata.info_lms
-	local _fp_ab = _ld.fp_lm .. Ltmap_End
-	local _need_load,_loaded_ = _ld.n_need_load,0
-	local _func_load = function()
-		_loaded_ = _loaded_  + 1
-		if _loaded_ >= _need_load then
-			this.state = LES_State.Load_Map_Scene
-		end
-	end
-	
-	for _, _it in ipairs(_ld.lmDatas) do
-		if _it.lightmapColor then
-			this:NewAsset(_fp_ab,_it.lightmapColor,LE_AsType.TextureExr,_func_load,nil,true)
-		end
-
-		if _it.lightmapDir then
-			this:NewAsset(_fp_ab,_it.lightmapDir,LE_AsType.Texture,_func_load,nil,true)
-		end
-
-		if _it.shadowMask then
-			this:NewAsset(_fp_ab,_it.shadowMask,LE_AsType.Texture,_func_load,nil,true)
-		end
+	if this.m_csSceneMap.m_isDoned then
+		this.m_csSceneMap = nil
 	end
 end
 
@@ -280,7 +264,6 @@ function M._ST_Complete()
 	
 	this._Up_Progress()
 	this.state = LES_State.FinshedEnd
-	_evt.Brocast(Evt_Loading_Hide)
 	if this.mapid then
 		_evt.Brocast(Evt_Map_Loaded, this.mapid,this.param)
 	else

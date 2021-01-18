@@ -7,7 +7,7 @@ using Spine.Unity;
 /// 日期 : 2021-01-06 20:03
 /// 功能 : 
 /// </summary>
-public class ED_UISpine : Core.Kernel.Beans.ED_Comp
+public class ED_UISpine : ED_Animator
 {
     static public new ED_UISpine Builder(UnityEngine.Object uobj)
     {
@@ -21,15 +21,8 @@ public class ED_UISpine : Core.Kernel.Beans.ED_Comp
     {
     }
 
-    override public void InitComp(string strComp, Action cfDestroy, Action cfShow, Action cfHide)
-    {
-        base.InitComp(strComp, cfDestroy, cfShow, cfHide);
-    }
-
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
     {
-        if(comp == null)
-            comp = PrefabElement.Get(this.m_gobj,false);
         base.InitComp(comp, cfDestroy, cfShow, cfHide);
 
         this.m_csSpine = this.m_gobj.GetComponentInChildren<SkeletonAnimation>(true);
@@ -51,8 +44,11 @@ public class ED_UISpine : Core.Kernel.Beans.ED_Comp
             return;
         
         UtilityHelper.SetParent(this.m_trsf,uobjParent,true);
-        this.m_trsf.localScale = locScale;
-        this.m_trsf.localPosition = locPos;
+        RectTransform s = uobjParent as RectTransform;
+        s.localScale = locScale;
+        s.localPosition = locPos;
+        //this.m_trsf.localScale = locScale;
+        //this.m_trsf.localPosition = locPos;
 
         CanvasEx _c_ = CanvasEx.GetInParent( this.m_trsf );
         if(_c_ != null)

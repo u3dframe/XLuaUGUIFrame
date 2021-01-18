@@ -19,8 +19,13 @@ function M:ctor(assetCfg)
 end
 
 function M:onAssetConfig( _cfg )
+	local _isNoC = true
+	if _cfg and _cfg.isNoCircle ~= nil then
+		_isNoC = _cfg.isNoCircle
+	end
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.assetLType = _cfg.assetLType or _E_AType.Fab
+	_cfg.isNoCircle = _isNoC
 
 	if self.cfgRes then
 		_cfg.abName = self.cfgRes.rsaddress

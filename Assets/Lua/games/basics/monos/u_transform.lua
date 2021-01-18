@@ -272,6 +272,18 @@ function M:SetAsLastSibling()
 	self.csEDComp:SetAsLastSibling()
 end
 
+function M:SmoothPos( x,y,z,stime,isLocal )
+	if not (x and y and z) then
+		return
+	end
+
+	if self:IsInitGobj() then
+		isLocal = isLocal == true
+		stime = tonumber(stime) or 0.1
+		self.csEDComp:ToSmoothPos( x,y,z,isLocal,stime )
+	end
+end
+
 function M:_ExecuteAsync_Trsf()
 	if self._async_isLocal ~= nil then
 		self:SetParent( self._async_parent,self._async_isLocal )

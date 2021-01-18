@@ -20,6 +20,18 @@ function M:ctor( obj,val,callFunc )
 	self:_Init(callFunc,val)
 end
 
+function M:ReEvent4Self(isBind)
+	if isBind == true and not self.lbUEvt then self:AddUEvent4Self() end
+	if not self.lbUEvt then return end
+	self.lbUEvt:ReEvt_Press(self.OnPress, self, isBind)
+end
+
+function M:OnPress(_, ispress, pos)
+	if ispress then
+		self.comp:DeactivateInputField()
+	end
+end
+
 function M:GetTextVal()
 	if self.comp then
 		return self.comp.text

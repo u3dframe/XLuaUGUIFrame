@@ -32,6 +32,7 @@ function M:onAssetConfig( _cfg )
 	_cfg.isStay = true
 	_cfg.layer = LE_UILayer.URoot
 	_cfg.isUpdate = true
+	_cfg.isNoCircle = true
 	return _cfg;
 end
 
@@ -100,14 +101,14 @@ function M:ReEvent4Self(isBind)
 end
 
 function M:PreloadingUI()
-	-- 加载 Loading界面
-	_evt.Brocast(Evt_Loading_Show,0,function()
-		_evt.Brocast(Evt_Loading_Hide)
-		_evt.Brocast(Evt_ToView_Login)
-	end)
+	-- -- 加载 Loading界面
+	-- _evt.Brocast(Evt_Loading_Show,0,function()
+	-- 	-- 加载 请求遮挡 界面
+	-- 	ShowCircle( HideCircle,true )
+	-- 	_evt.Brocast(Evt_ToView_Login)
+	-- end)
 	
-	-- 加载 请求遮挡 界面
-	ShowCircle(0.02,HideCircle)
+	_evt.Brocast(Evt_ToView_Login)
 end
 
 function M:GetUICamera(lfunc,obj)
