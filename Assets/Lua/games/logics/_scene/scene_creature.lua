@@ -212,7 +212,9 @@ function M:ExcuteSEByCCType( ccType )
 	if ccType and ccType ~= self.ccType then
 		local _pre = self.ccType
 		self.ccType = ccType
-		self.csRMatProp:SetInt("_CCType",self.ccType)
+		if self.csRMatProp then
+			self.csRMatProp:SetInt("_CCType",self.ccType)
+		end
 		self:On_SEByCCType(_pre)
 	end
 end

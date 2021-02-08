@@ -108,8 +108,10 @@ function M:ToWorldPointByUIEventPos(lbUICamera,gobjParent,x,y)
 	return self:ToWorldPoint(lbUICamera,_pos)
 end
 
-function M:GetUILocPos(uobj,uiCmr,uiUObj)
-	local _x,_y = self.csEDComp:GetUILocPos( uobj,uiCmr,uiUObj,0,0 )
+function M:GetUILocPos(uobj,uiCmr,uiUObj,ofX,ofY)
+	ofX = tonumber(ofX) or 0
+	ofY = tonumber(ofY) or 0
+	local _x,_y = self.csEDComp:GetUILocPos( uobj,uiCmr,uiUObj,ofX,ofY )
 	return _vec2.New( _x,_y )
 end
 
@@ -145,6 +147,12 @@ function M:RebackStart(smoothTime,callFunc,smoothPos)
 	smoothTime = tonumber(smoothTime) or 0
 	smoothPos = tonumber(smoothPos) or smoothTime
 	self.csEDComp:RebackStart( smoothTime,smoothPos,callFunc )
+end
+
+function M:StopSmooth()
+	if self.csEDComp then
+		self.csEDComp:StopAllUpdate()
+	end
 end
 
 return M

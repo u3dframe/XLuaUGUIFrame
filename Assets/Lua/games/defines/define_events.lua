@@ -32,6 +32,8 @@ Evt_Circle_Showing = "Evt_Circle_Showing"; -- Circle 界面 显示中ing
 Evt_Circle_Hide = "Evt_Circle_Hide"; -- 隐藏 Circle 界面
 Evt_Circle_Hided = "Evt_Circle_Hided"; -- 隐藏了 Circle 界面
 
+Evt_View_Vdo = "Evt_View_Vdo"; -- Vdo 界面 显/隐 ( true/false,vdo,callEnd,callReady)
+
 -------- 资源更新完毕后 - 所用事件
 Evt_LoadAllShaders = "Evt_LoadAllShaders"; -- 加载所有的shaders
 Evt_GameEntryAfterUpRes = "Evt_GameEntryAfterUpRes"; -- 处理更新完毕后的入口
@@ -61,6 +63,7 @@ Evt_Battle_Delay_End_MS = "Evt_Battle_Delay_End_MS"; -- 设置延迟结束战斗
 Evt_Battle_End = "Evt_Battle_End"; -- 战斗 - 结束
 
 -------- 界面所用事件
+Evt_UI_Showing = "Evt_UI_Showing"; -- UI显示中ing事件
 Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示
 Evt_Desc_Tip = "Evt_Desc_Tip"; -- 弹出描述tip
 Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示
@@ -68,3 +71,6 @@ Evt_EnterGameBeforeMain = "Evt_EnterGameBeforeMain"; -- 进入主界面前
 Evt_ToView_Login = "Evt_ToView_Login"; -- 登录界面  ( isHide )
 
 Evt_Re_Login = "Evt_Re_Login"; -- 返回登陆
+
+Evt_View_FightUI = "Evt_View_FightUI"; -- 显隐 - 战斗UI  ( isHide )
+Evt_FightUI_Showing = "Evt_FightUI_Showing"; -- 战斗UI 显示中ing

@@ -245,6 +245,14 @@ function M:AddGray4Self()
 	return self
 end
 
+function M:SetGray( isBl,isGrayTxt )
+	self:AddGray4Self()
+	isBl = isBl == true
+	if self.lbGray then
+		self.lbGray:IsGrayAll( isBl,isGrayTxt )
+	end
+end
+
 function M:AddUEvent4Self()
 	if self.gobj and (not self.lbUEvt) then
 		self.lbUEvt = self:NewUEvtBy( self.gobj )

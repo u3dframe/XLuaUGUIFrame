@@ -73,4 +73,12 @@ function M:SetRaycastTarget(isBl)
 	end
 end
 
+function M:SetGray4Cell(isBl,isGrayTxt,isSyncRT)
+	if self.lbBtnSelf then
+		self.lbBtnSelf:SetGray( isBl,isSyncRT,isGrayTxt )
+	else
+		self:SetGray( isBl,isGrayTxt )
+	end
+end
+
 return M

@@ -116,9 +116,9 @@ public class BuildTools : BuildPatcher
         string ident = PlayerSettings.companyName + "." + PlayerSettings.productName;
         string bundleVersion = getOption(args, "bundleVersion", "1.0");
         string bundleVersionCode = getOption(args, "bundleVersionCode",null);
-        LandscapePlatformSetting(BuildTarget.Android,ident,bundleVersion,bundleVersionCode);
+        LandscapePlatformSetting(BuildTarget.Android,ident,ref bundleVersion,ref bundleVersionCode);
 
-        string pName = $"{getOption(args, "targetName", "kesulu")}_{System.DateTime.Now.ToString("MMdd_HHmm")}";
+        string pName = $"{getOption(args, "targetName", "kesulu")}_{System.DateTime.Now.ToString("MMdd_HHmm")}_ver{bundleVersion}_code{bundleVersionCode}";
         string targetDir = Path.Combine(directory, pName + ".apk");
         FileUtil.DeleteFileOrDirectory(targetDir);
 
@@ -127,6 +127,8 @@ public class BuildTools : BuildPatcher
         EditorUserBuildSettings.development = development;
         if(development) {
             option |= BuildOptions.Development;
+            option |= BuildOptions.ConnectWithProfiler;
+            option |= BuildOptions.EnableDeepProfilingSupport;
             option |= BuildOptions.AllowDebugging;
         }
         string[] scenes = GenBuildScene();
@@ -158,16 +160,33 @@ public class BuildTools : BuildPatcher
         CfgVersion.instance.SaveDefault();
     }
 
-    [MenuItem("Tools/ZipMain")]
     static public void Zip_Main(){
         SaveDefaultCfgVersion();
-        BuildPatcher.ZipMain();
-        // BuildPatcher2.ZipMain();
-        // BuildPatcher.CopyTest();
+        // Net_2_Out();
+        ZipMain();
     }
 
-    [MenuItem("Tools/ReBindClipStateMachine")]
-    static public void ReBindClipStateMachine(){
-        BuildPatcher.BindStateMachineBehaviour<ClipStateMachine>("show_1");
+    static void _CopySVList(int type = 0){
+        string _fname = "severlist_ed";
+        switch (type)
+        {
+            case 1:
+                _fname = "severlist";
+                break;
+        }
+        string _fp = string.Format("{0}/../_svlists/{1}.lua", Application.dataPath,_fname);
+        string _fpDest = string.Format("{0}/Lua/games/net/severlist.lua", Application.dataPath);
+        FileInfo fInfo = new FileInfo(_fp);
+        fInfo.CopyTo(_fpDest, true);
+    }
+
+    [MenuItem("Tools/change net 2 out(切为外网)",false,50)]
+    static public void Net_2_Out(){
+        _CopySVList(1);
+    }
+
+    [MenuItem("Tools/change net 2 in(切为内网)",false,50)]
+    static void Net_2_In(){
+        _CopySVList();
     }
 }

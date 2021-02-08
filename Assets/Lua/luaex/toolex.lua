@@ -223,6 +223,9 @@ local function _lfNewIndex ( t,k,v )
 end
 
 function readonly( tb )
+	if type(tb) ~= "table" then
+		return tb
+	end
 	local _ret = {};
 	local _mt = {
 		__index = tb,

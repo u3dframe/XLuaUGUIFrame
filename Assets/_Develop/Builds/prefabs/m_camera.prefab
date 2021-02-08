@@ -72,11 +72,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 4884812453537085446}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc86eb6a1ebf71f40bb8c4f922596d8f, type: 3}
+  m_Script: {fileID: -782026564, guid: 5235d3acadde3eb4094486c22cc9c70e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_target: {fileID: 5294850458224383034}
   m_camera: {fileID: 7472129470255988254}
+  m_offsetW: 300
+  m_offsetH: 300
 --- !u!1 &8690682414174122608
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,6 +91,9 @@ GameObject:
   - component: {fileID: 7472129470255988254}
   - component: {fileID: 9161386137664197620}
   - component: {fileID: 4962844665957266278}
+  - component: {fileID: 2721838176871221121}
+  - component: {fileID: 7625268823625201141}
+  - component: {fileID: 3967150013529391364}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -141,7 +146,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 23
+    m_Bits: 16151
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -170,20 +175,114 @@ MonoBehaviour:
   m_GameObject: {fileID: 8690682414174122608}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f2acdb5e0bfd664bbae9c7b7a29d151, type: 3}
+  m_Script: {fileID: 1611633535, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isUpByLate: 1
-  isRunning: 0
+  m_lookType: 0
   target: {fileID: 0}
-  lookAtHeight: 0
+  isUpByLate: 0
+  isRunningAt: 0
+  m_smoothAt: 0
+  dampingAt: 2.2
+  v3Offset: {x: 0, y: 0, z: 0}
+  v3Target: {x: 0, y: 0, z: 0}
+  isRunningFollow: 0
+  isBackDistance: 1
   isLerpDistance: 0
   distance: 10
-  distanceDamping: 2
+  distanceDamping: 1.8
   isLerpHeight: 0
   height: 5
-  heightDamping: 2
+  heightDamping: 1.8
   isLerpRotate: 0
-  rotationDamping: 3
+  rotationDamping: 1.8
+  isSmoothPos: 0
+  m_posSmoothTime: 0.1
   offsetHeight4Call: 0.05
   offsetWidth4Call: 0.05
+--- !u!45 &2721838176871221121
+Skybox:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8690682414174122608}
+  m_Enabled: 1
+  m_CustomSkybox: {fileID: 0}
+--- !u!114 &7625268823625201141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8690682414174122608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volumeTrigger: {fileID: 8232977911246858407}
+  volumeLayer:
+    serializedVersion: 2
+    m_Bits: 16128
+  stopNaNPropagation: 1
+  finalBlitToCameraTarget: 0
+  antialiasingMode: 0
+  temporalAntialiasing:
+    jitterSpread: 0.75
+    sharpness: 0.25
+    stationaryBlending: 0.95
+    motionBlending: 0.85
+  subpixelMorphologicalAntialiasing:
+    quality: 2
+  fastApproximateAntialiasing:
+    fastMode: 0
+    keepAlpha: 0
+  fog:
+    enabled: 1
+    excludeSkybox: 1
+  debugLayer:
+    lightMeter:
+      width: 512
+      height: 256
+      showCurves: 1
+    histogram:
+      width: 512
+      height: 256
+      channel: 3
+    waveform:
+      exposure: 0.12
+      height: 256
+    vectorscope:
+      size: 256
+      exposure: 0.12
+    overlaySettings:
+      linearDepth: 0
+      motionColorIntensity: 4
+      motionGridSize: 64
+      colorBlindnessType: 0
+      colorBlindnessStrength: 1
+  m_Resources: {fileID: 11400000, guid: d82512f9c8e5d4a4d938b575d47f88d4, type: 2}
+  m_ShowToolkit: 0
+  m_ShowCustomSorter: 0
+  breakBeforeColorGrading: 0
+  m_BeforeTransparentBundles: []
+  m_BeforeStackBundles: []
+  m_AfterStackBundles: []
+--- !u!114 &3967150013529391364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8690682414174122608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 0}
+  isGlobal: 0
+  blendDistance: 0
+  weight: 1
+  priority: 0

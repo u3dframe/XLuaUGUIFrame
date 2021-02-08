@@ -123,6 +123,8 @@ function M:OnShowEnd()
 	if self:SelfIsCanHideLoading() then
 		_evt.Brocast(Evt_Loading_Hide)
 	end
+
+	_evt.Brocast( Evt_UI_Showing,self:GetAbName(),self )
 end
 
 function M:View(isShow,data,...)

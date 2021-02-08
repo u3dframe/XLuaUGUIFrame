@@ -171,6 +171,9 @@ function M:pre_clean()
 	self:RemoveEvents()
 end
 
+function M:on_clean_comp()
+end
+
 function M:on_clean()
 end
 
@@ -179,6 +182,7 @@ end
 
 function M:clean()
 	self:pre_clean()
+	self:on_clean_comp()
 	self:on_clean()
 	self:_clean()
 	self:clean_end()

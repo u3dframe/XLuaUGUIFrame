@@ -21,6 +21,7 @@ UScreen = CS.UnityEngine.Screen
 
 CGobjLife = CS.GobjLifeListener
 CPElement = CS.PrefabElement
+CLookAt = CS.SmoothLookAt
 CFollower = CS.SmoothFollower
 CAnimator = CS.AnimatorEx
 CCCtrler = CS.CharacterControllerEx
@@ -28,6 +29,7 @@ CParticleEx = CS.ParticleSystemEx
 CRSortOrder = CS.RendererSortOrder
 CRMatProp   = CS.RendererMatProperty
 
+CRCClass = CS.CRCClass
 CTxt = CS.UGUILocalize
 CGray = CS.UGUIGray
 CBtn = CS.UGUIButton
@@ -57,6 +59,7 @@ CEDCamera = CS.ED_Camera
 CEDUIEffect = CS.ED_UIEffect
 CEDUISpine = CS.ED_UISpine
 
+CCardUtil = CS.CardUtil
 CTimelineUtil = CS.TimelineUtil
 
 -- Charpe 的 常量 cost 属性 ([[初始化后，不会在变化的属性]])

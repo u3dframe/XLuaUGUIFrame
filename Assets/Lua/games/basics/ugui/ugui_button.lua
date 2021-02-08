@@ -103,17 +103,10 @@ function M:SetIsPropagation( isBl )
 end
 
 function M:SetGray( isBl,isSyncRT,isGrayTxt )
-	self:AddGray4Self()
-
-	isBl = isBl == true
-	if self.lbGray then
-		self.lbGray:IsGrayAll( isBl,isGrayTxt )
-	end
-
+	super.SetGray( self,isBl,isGrayTxt )
 	if isSyncRT == true then
 		self:SetRaycastTarget(not isBl)
 	end
-
 end
 
 return M

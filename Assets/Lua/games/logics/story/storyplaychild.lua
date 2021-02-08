@@ -11,11 +11,11 @@ local M = class("storyplaychild", super)
 local this = M
 this.nm_pool_cls = "p_cls_tl_" .. tostring(E_Object.CG)
 
-function M.Builder(resid, playOverCallBack, preloadcompletecb)
+function M.Builder(resid,playOverCallBack,preloadcompletecb,time)
     this:GetResCfg( resid )
     local _p_name,_ret = this.nm_pool_cls .. "@@" .. resid
     local nCursor = SceneFactory.AddCursor()
-    _ret = this.BorrowSelf( _p_name,E_Object.CG,nCursor,resid,playOverCallBack,preloadcompletecb )
+    _ret = this.BorrowSelf( _p_name,E_Object.CG,nCursor,resid,playOverCallBack,preloadcompletecb,time )
 	return _ret
 end
 
@@ -43,8 +43,9 @@ function M:ctor()
     super.ctor( self )
 end
 
-function M:Reset(sobjType,nCursor,resid,playOverCallBack,preloadcompletecb)
-	super.Reset( self,(sobjType or E_Object.Creature),nCursor,resid )
+function M:Reset(sobjType,nCursor,resid,playOverCallBack,preloadcompletecb,time)
+    super.Reset( self,(sobjType or E_Object.Creature),nCursor,resid )
+    self.time = (tonumber(time) or 0) * 0.001
     self.playOverCallBack = playOverCallBack;
     self.PreloadCompleteCallBack = preloadcompletecb;
 end
@@ -56,7 +57,8 @@ function M:OnInit()
 end
 
 function M:OnShow()
-    self.csEDComp:Init(self.playOverCallBack)
+    self.csEDComp:Init(self.playOverCallBack,self.time)
+    -- super.SetPosition( self,0,10000,0 )
     if self.PreloadCompleteCallBack then self.PreloadCompleteCallBack() end
 end
 
@@ -66,6 +68,10 @@ function M:onAssetConfig( _cfg )
 	return _cfg;
 end
 
+function M:OnCF_Hide()
+    super.OnCF_Hide( self )
+    self:Disappear()
+end
 
 ---预加载剧情信息
 function M:PreloadPlayableAssetResources()
@@ -137,7 +143,7 @@ end
 
 function M:IsCanBinding(tarckname)
     if (self.csEDComp)then
-        return self.csEDComp:CanBinding(tarckname);
+        return self.csEDComp:IsHasTrack(tarckname);
     end
 end
 
@@ -163,9 +169,10 @@ function M:SetTarget(gobj, index)
     end
 end
 
-function M: SetTargetActive(index,isActive)
+function M:SetTargetActive(index,isActive)
     if (self.csEDComp)then
        return self.csEDComp:SetTargetActive(index,isActive)
     end
 end
+
 return M

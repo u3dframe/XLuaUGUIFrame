@@ -31,17 +31,20 @@ function M:ctor(gobj, itemName, funcCreat, funcSetData)
 end
 
 function M:ShowScroll(count)
+    count = tonumber( count ) or 0
     self.n_count = count
     self.comp:SetItemCount(count)
 end
 
 -- 平滑移动某个对象
 function M:MoveToForcibly(nIndex)
+    nIndex = tonumber( nIndex ) or 1
     self.comp:MoveToForcibly(nIndex - 1)
 end
 
 -- 移动某个对象
 function M:MoveToImmediately(nIndex)
+    nIndex = tonumber( nIndex ) or 1
     self.comp:MoveToImmediately(nIndex - 1)
 end
 
@@ -50,6 +53,7 @@ function M:SetSyncLoop(csLoop)
 end
 
 function M:GetPrefabName(index)
+    index = tonumber( index ) or 0
 	index = index + 1
 	if (index <= 0 or index > self.n_count) then
 		return
@@ -90,7 +94,8 @@ function M:OnUpItemData(gobj,index,n01)
 end
 
 function M:OnMovingEnd(index)
-    if not self.objlist then
+    index = tonumber( index )
+    if not self.objlist or not index then
         return
     end
     for _, _v in pairs(self.objlist) do

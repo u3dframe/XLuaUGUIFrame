@@ -46,6 +46,7 @@ function M._InitUI()
 	end
 
 	ui.OnEnd = function(_s,isDestroy)
+		_s.lfCallShow = nil
 		_evt.Brocast(Evt_Loading_Hided)
 	end
 
@@ -64,6 +65,9 @@ function M._InitUI()
 end
 
 function M.ShowLoading(progress,lfCallShow,exceptUI)
+	if exceptUI == true then
+		exceptUI = MgrUI.last_vw_ui
+	end
 	MgrUI.HideAll( nil,this.ui,exceptUI )
 	this.ui:View(true,(progress or 0),lfCallShow)
 end

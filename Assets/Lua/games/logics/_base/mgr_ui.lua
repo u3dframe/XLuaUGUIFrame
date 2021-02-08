@@ -54,6 +54,7 @@ function M.AddViewUI(ui)
 		tb_insert( _layVw,_layer )
 	end
 	this.uiViews[_layer] = _lb
+	this.last_vw_ui = ui
 end
 
 function M.RmViewUI(ui)

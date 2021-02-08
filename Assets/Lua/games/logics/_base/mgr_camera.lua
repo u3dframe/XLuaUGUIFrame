@@ -142,14 +142,14 @@ function M:GetMainCamera()
 	return self:GetCur3DLBCamera() -- .comp
 end
 
-function M:GetUILocPos(uobj,uiUObj,csCmr3d)
+function M:GetUILocPos(uobj,uiUObj,csCmr3d,ofX,ofY)
 	local _csCmr = self.lbUICamera.comp
 	if csCmr3d then
-		local _x,_y = CEDCamera.GetUILocPos( csCmr3d,uobj,_csCmr,uiUObj,0,0 )
+		local _x,_y = CEDCamera.GetUILocPos( csCmr3d,uobj,_csCmr,uiUObj,ofX or 0,ofY or 0 )
 		return _vec2.New( _x,_y )
 	else
 		local _c = self:GetCur3DLBCamera()
-		return _c:GetUILocPos( uobj,_csCmr,uiUObj )
+		return _c:GetUILocPos( uobj,_csCmr,uiUObj,ofX,ofY )
 	end
 end
 

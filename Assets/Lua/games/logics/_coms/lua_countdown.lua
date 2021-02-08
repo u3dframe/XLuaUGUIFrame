@@ -116,13 +116,7 @@ function M:OnUpSecond()
             if self.fmtIsFunc then
                 self._fmt(self,_h,_m,_s,_d)
             else
-                if self.tmType == LE_TmType.A_D_H_M_S then
-                    self:SetText(self._fmt,_d,_h,_m,_s)
-                elseif self.tmType == LE_TmType.A_H_M_S or self.tmType == LE_TmType.UTC_H_M_S then
-                    self:SetText(self._fmt,_h,_m,_s)
-                elseif self.tmType == LE_TmType.A_M_S or self.tmType == LE_TmType.UTC_M_S then
-                    self:SetText(self._fmt,(_m + _h * 60),_s)
-                end
+                self:ReSetText( _h,_m,_s,_d )
             end
         end
     end
@@ -146,8 +140,23 @@ function M:SetFmt(fmt)
 end
 
 function M:SetText( val,... )
-    if not self.lbTxt then return end
+    if not self.lbTxt then
+        return
+    end
     self.lbTxt:SetOrFmt( val,... )
+end
+
+function M:ReSetText(_h,_m,_s,_d)
+    local _fmt = (self.fmtIsFunc == true) and self.ltmKey or self._fmt
+    if self.tmType == LE_TmType.A_D_H_M_S then
+        self:SetText(_fmt,_d,_h,_m,_s)
+    elseif self.tmType == LE_TmType.A_H_M_S or self.tmType == LE_TmType.UTC_H_M_S then
+        self:SetText(_fmt,_h,_m,_s)
+    elseif self.tmType == LE_TmType.A_M_S or self.tmType == LE_TmType.UTC_M_S then
+        self:SetText(_fmt,(_m + _h * 60),_s)
+    else
+        self:SetText(_fmt,_h)
+    end
 end
 
 function M:Stop()

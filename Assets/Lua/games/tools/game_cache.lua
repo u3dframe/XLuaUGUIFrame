@@ -73,4 +73,14 @@ function M.GetCacheNum( key )
 	return this.GetCacheFloat( key )
 end
 
+function M.SetCacheBool( key,val,isImmSave )
+	val = (val == true) and 1 or 0
+	this.SetCacheInt( key,val,isImmSave )
+end
+
+function M.GetCacheBool( key )
+	local _v = this.GetCacheInt( key )
+	return 1 == _v
+end
+
 return M

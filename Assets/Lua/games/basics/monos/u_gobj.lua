@@ -150,9 +150,41 @@ function M:DestroyObj(isImmediate)
 	end
 end
 
+function M:on_clean_comp()
+	super.on_clean_comp( self )
+	if self:IsInitGobj() then
+		return self.csEDComp:Destroy4NoLife();
+	end
+end
+
 function M:DonotDestory( )
 	if self:IsInitGobj() then
 		return self.csEDComp:DonotDestory()
+	end
+end
+
+function M:AddAnimationEvent(stateName,...)
+	if self:IsInitGobj() then
+		local _lens = self:Lens4Pars(...)
+		if _lens >= 2 then
+			local _t,_k,_v = { ... }
+			for i = 1,_lens,2 do
+				_k,_v = tonumber(_t[i]),tonumber(_t[i+1])
+				if _k and _v then
+					self.csEDComp:AddAnimationEvent( stateName,_k,_v )
+				end
+			end
+		end
+	end
+end
+
+function M:RmvAnimationEvent(stateName)
+	if self:IsInitGobj() then
+		if stateName then
+			self.csEDComp:RmvAnimationEvent( stateName )
+		else
+			self.csEDComp:RmvAllRmvAnimationEvent()
+		end
 	end
 end
 

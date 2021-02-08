@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b08469ca1961a58458c41e4a6d6d70fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_isOnUpdate: 1
-  poolName: 
+  m_isOnUpdate: 0
+  m_isOnLateUpdate: 0
   csAlias: life
   m_gobjs:
   - {fileID: 5999145452730627902}
@@ -167,7 +167,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2138220840363687057}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920
@@ -289,7 +289,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2174540101363698242}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920
@@ -391,7 +391,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 8465574750537571252}
-  m_PlaneDistance: 700
+  m_PlaneDistance: 800
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -449,7 +449,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4077965856972068982}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920
@@ -571,7 +571,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5045259963987552444}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920
@@ -693,7 +693,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5418236344383603157}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920
@@ -815,7 +815,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5987535814756806780}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920
@@ -883,7 +883,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.1
+  near clip plane: 1
   far clip plane: 1500
   field of view: 60
   orthographic: 1
@@ -953,7 +953,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 8465574750537571252}
-  m_PlaneDistance: 600
+  m_PlaneDistance: 700
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -1011,7 +1011,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6571881856587798220}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920
@@ -1075,7 +1075,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 8465574750537571252}
-  m_PlaneDistance: 800
+  m_PlaneDistance: 1000
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -1133,7 +1133,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8742960806406163786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe36bc99b9d71d4dae75ee48e2e2645, type: 3}
+  m_Script: {fileID: 81519254, guid: b49c6da86d1b4c84a8ded8309c643fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_standard_width: 1920

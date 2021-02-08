@@ -34,10 +34,10 @@ end
 ---@param id int 资源配置表ID
 ---@param onBindCallBack func<util> 剧情播放开始前bind回调(此时资源已经准备完成，但还未开始，再此方法中手动调用开始)
 ---@param onOverCallBack func<剧情ID,是否播放成功> 剧情播放完成回调
-function M:PlayStory(id ,onBindCallBack ,onOverCallBack)
-    local config = self:GetCfgData("resource", id);
+function M:PlayStory(id ,onBindCallBack ,onOverCallBack,time)
+    local config = self:GetCfgData("resource",id);
     if (config)then
-        self:AddPlayStoryCacheQueue(id, onBindCallBack, onOverCallBack);--将剧情加入播放缓存队列
+        self:AddPlayStoryCacheQueue(id, onBindCallBack, onOverCallBack,time);--将剧情加入播放缓存队列
         self:PlayStoryCheck()--尝试播放动画(不管有没有加成功都尝试播放一次，驱动其他序列的东)
         return;
     end
@@ -123,11 +123,12 @@ function M:PlayStoryPreparation()
         --创建剧情
         --MgrUI.HideAll()--TODO：播放剧情前避免打开全屏界面，如果打开 应该强制关掉他
         --TODO：部分剧情可能需要打开某些可操作或显示的UI,在此将UI打开后通过回调再加载需要播放的资源，避免UI还未打开剧情已经播放完了（比如阴阳师画符）
-        self.CurrPlayStoryChild = ChildStory.Builder(self.CurrPlayStory.id, function ()
+        local _tCurr = self.CurrPlayStory
+        self.CurrPlayStoryChild = ChildStory.Builder(_tCurr.id, function ()
             self:StoryPlayOver();
         end, function ()
             self:OfficialStartDoPlayStory();
-        end);
+        end,_tCurr.time);
         self.CurrPlayStoryChild:ShowView(true);
     end
 end
@@ -202,9 +203,9 @@ end
 
 --region 剧情缓存（可在切换场景或剧情发生改变时移除还未播放的相关剧情）
 ---添加剧情（此方法不会触发播放逻辑，不允许私自调用）
-function M:AddPlayStoryCacheQueue(id, onBindCallBack, onOverCallBack)
+function M:AddPlayStoryCacheQueue(id,onBindCallBack,onOverCallBack,time)
     if (onBindCallBack == nil or onOverCallBack == nil)then return end
-    table.insert(self.PlayStoryCacheQueue, { id = id, onBindCallBack = onBindCallBack, onOverCallBack = onOverCallBack});
+    table.insert(self.PlayStoryCacheQueue, { id = id, onBindCallBack = onBindCallBack, onOverCallBack = onOverCallBack,time = time});
 end
 
 

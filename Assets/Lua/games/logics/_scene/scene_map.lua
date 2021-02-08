@@ -60,4 +60,36 @@ function M:GetWorldY()
 	return self.lbGBox.posY or 0
 end
 
+function M:CmrLookAt(tx,ty,tz,isNoSmooth,upLate)
+	if not self.lbCamera then
+		return
+	end
+	self.csAt = self.csAt or CLookAt.Get( self.lbCamera.gobj )
+	tx = tonumber(tx) or 0
+	ty = tonumber(ty) or 0
+	tz = tonumber(tz) or 0
+	isNoSmooth = not (isNoSmooth == true)
+	self.csAt:LookAt( tx,ty,tz,isNoSmooth,upLate == true )
+end
+
+function M:CmrLookAtTarget(trsfTaget,ox,oy,oz,isNoSmooth,upLate)
+	if not self.lbCamera or not trsfTaget then
+		return
+	end
+	self.csAt = self.csAt or CLookAt.Get( self.lbCamera.gobj )
+	ox = tonumber(ox) or 0
+	oy = tonumber(oy) or 0
+	oz = tonumber(oz) or 0
+	isNoSmooth = not (isNoSmooth == true)
+	self.csAt:LookAt( trsfTaget,ox,oy,oz,isNoSmooth,upLate == true )
+end
+
+function M:CmrFov(fov)
+	fov = tonumber(fov)
+	if not self.lbCamera or not fov then
+		return
+	end
+	self.lbCamera:SetFieldOfView(fov)
+end
+
 return M

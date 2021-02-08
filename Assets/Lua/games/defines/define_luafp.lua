@@ -103,6 +103,7 @@ local _L_End = {
 	{"MgrCircle", "mgr_circle", 9}, -- 发送请求，打开界面等锁屏界面
 	{"MgrPopTip", "mgr_popuptip", 9}, -- 文本弹出框
 	{"MgrLoading","mgr_loading",9}, -- 加载界面
+	{"MgrVdo","mgr_vdo",9}, -- Vdo
 	
 	{"MgrLoadScene","mgr_loadscene",10}, -- 加载场景管理
 	{"SceneFactory","scene_factory",10}, -- 场景工厂

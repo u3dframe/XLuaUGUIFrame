@@ -24,13 +24,8 @@ local this = M
 function M.Init()
 	MgrScene:Init()
 
-	this._ms_delay_end = 0
-	this._need_load,this._loaded = 0,0
-	this._need_load_obj,this._loaded_obj = 0,0
-
-	this.eveRegion = this:TF((1 / (E_B_State.GO - E_B_State.Start)),4)
-	this.progress = 0
-	this.state = E_B_State.None
+	this.ReInitPars()
+	this.eveRegion = this:TF((1 / (E_B_State.Entry_CG - E_B_State.Start)),4)
 	this:ReEvent4OnUpdate( true )
 
 	_evt.AddListener( Evt_Map_SV_AddObj,this.OnSv_Add_Map_Obj )
@@ -51,17 +46,38 @@ function M.Init()
 	_evt.AddListener(Evt_Re_Login,this.OnClear)
 	_evt.AddListener( Evt_Msg_B_Trigger_Add,this.OnMsg_Trigger_Add )
 	_evt.AddListener( Evt_Msg_B_Trigger_Rmv,this.OnMsg_Trigger_Rmv )
+	_evt.AddListener(Evt_Map_Load,this.EndBattle4Scene)
+end
+
+function M.ReInitPars()
+	this.isUping = false
+	this.state = E_B_State.None
+
+	this.progress = 0
+	this._ms_delay_end = 0
+	this._ndelay_fps = 0
+	this._need_load,this._loaded = 0,0
+	this._need_load_obj,this._loaded_obj = 0,0
+	-- this._deLObjSec = 0.03
+
+	this.ReInit_Cmr()
+
+	this.isJugdeCmr = nil
+	this.isBattleEnd = nil
+	this.res_ids,this._need_funcs = nil
+end
+
+function M.ReInit_Cmr()
+	this._avgX = 0
+	this._ceneterX = 0
+	this._lbCmrX,this._lbCmrFOV = nil
+	this._curChgX,this._curChgFov = nil
 end
 
 function M.OnClear()
 	Time:SetTimeScale(1)
-	this.state = E_B_State.Battle_End
-	this._need_load,this._loaded = 0,0
-	this._need_load_obj,this._loaded_obj = 0,0
-	this.progress = 0
-	this.res_ids = nil
+	this.ReInitPars()
 	this.RemoveAll()
-
 	MgrScene.OnClear()
 end
 
@@ -87,10 +103,6 @@ function M:OnUpdate(dt)
 	elseif this.state == E_B_State.Ready then
 		this._ST_Ready()
 	elseif this.state == E_B_State.GO then
-	elseif this.state == E_B_State.Battle_End then
-		this.state = E_B_State.End
-		this.isJugdeCmr = nil
-		this.isUping = false
 	end
 end
 
@@ -124,7 +136,6 @@ end
 function M._ST_Begin()
 	this.isUping = true
 	this.isJugdeCmr = true
-	this._ms_delay_end = 0
 	this._SetUpState( E_B_State.Start )
 end
 
@@ -140,15 +151,22 @@ function M._ST_Create_Obj()
 	_lf()
 end
 
-function M._ST_OnUp_LoadObj(dt)
-	this._cd1 = this._cd1 or 0.1
-
-	if this._cd1 and this._cd1 > 0 then
+function M._IsDelayLoadObj(dt)
+	if this._deLObjSec and this._deLObjSec >= 0.02 then
+		this._cd1 = this._cd1 or 0
+		while (this._cd1 <= 0) do
+			this._cd1 = this._cd1 + this._deLObjSec
+		end
 		this._cd1 = this._cd1 - dt
 		if this._cd1 > 0 then
-			return 
+			return true
 		end
-		this._cd1 = this._cd1 + 0.1
+	end
+end
+
+function M._ST_OnUp_LoadObj(dt)
+	if this._IsDelayLoadObj(dt) then
+		return
 	end
 	local _cur,_need = this._loaded,this._need_load
 	if this.state == E_B_State.LoadOtherObjs then
@@ -209,7 +227,6 @@ function M._ST_LoadObjs()
 				end
 				this._ndelay_fps = this._ndelay_fps + 1
 			elseif (this._loaded_obj == this._need_load_obj) then
-				this._ndelay_fps = 0
 				this._loaded_obj = this._loaded_obj + 1
 			end
 		end
@@ -365,33 +382,40 @@ function M.RemoveCurr( id )
 	this.sv_dic_add[id] = nil
 end
 
-function M.RemoveById(id)
+function M.RemoveById(id,isNotDis)
 	this.RemoveCurr( id )
 
 	local _obj = this.GetSObj( id )
 	MgrScene.RemoveCurrMapObj( id )
 	if _obj then
-		_obj:Disappear()
+		if not (isNotDis == true) then
+			_obj:Disappear()
+		end
 	end
 end
 
-function M.RemoveAll()
+function M.RemoveAll(isNotDis)
 	if (not this.sv_dic_add) then return end
 	local _keys = tb_keys( this.sv_dic_add )
+	local _tp = type(isNotDis)
+	local _isNotDis = (_tp ~= "number") and (isNotDis == true)
 	for _, k in ipairs(_keys) do
-		this.RemoveById( k )
+		if _tp == "number" then
+			_isNotDis = (k == isNotDis)
+		end
+		this.RemoveById( k,_isNotDis )
 	end
 end
 
-function M.EndBattle4Scene(isInterrupt)
+function M.EndBattle4Scene(isInterrupt,isNotRmv)
 	-- printTable("=========EndBattle4Scene")
 	LTimer.RemoveDelayFunc( "battle_end" )
+	this.ReInitPars()
+	if not isNotRmv then
+		this.RemoveAll()
+	end
 	_evt.Brocast(Evt_Battle_End)
-	this.RemoveAll()
-	this.state = E_B_State.Battle_End
-	this._need_load = 0
-	this._loaded = 0
-	MgrBattle:OpenBattleSettlement(isInterrupt)
+	-- MgrBattle:OpenBattleSettlement(isInterrupt)
 end
 
 function M.SetDelayEndBattle( ms )
@@ -402,6 +426,12 @@ function M.SetDelayEndBattle( ms )
 end
 
 function M._OnMsgEndBattle( msg )
+	this.isBattleEnd = true
+	local _uuid = nil 
+	if msg._msg_pre_end then
+		_uuid = msg._msg_pre_end.uuid
+		msg._msg_pre_end = nil
+	end
 	LTimer.RemoveDelayFunc( "battle_end" )
 	local _isInterrupt = (msg.terminate == true)
 	if _isInterrupt or (not this.sv_dic_add) then
@@ -442,7 +472,26 @@ function M._OnMsgEndBattle( msg )
 	end
 
 	if _max_ms > 0 then
-		LTimer.AddDelayFunc1( "battle_end",((_max_ms + 100) / 1000),this.EndBattle4Scene )
+		if _isWin and _uuid then
+			_sobj = this.GetSObj( _uuid )
+			local _tMap = this.GetSObj( "mapobj" )
+			if _sobj and _tMap then
+				_sobj:SetLocalEulerAngles( 0,0,0 )
+				this.RemoveAll( _uuid )
+				local _t,_ox,_oy,_oz,_fov = MgrData:GetCfgBasic("battle_end_offset"),-3,0.5,0
+				if _t then
+					_ox,_oy,_oz = (tonumber(_t[1]) or -300) * 0.01,(tonumber(_t[2]) or 50) * 0.01,(tonumber(_t[3]) or 0) * 0.01
+					
+					if _t[4] then
+						_fov = (tonumber(_t[4]) or 0) * 0.01
+					end
+				end
+				MgrCamera:GetMainCamera():StopSmooth()
+				_tMap:CmrFov( _fov )
+				_tMap:CmrLookAtTarget( _sobj.trsf,_ox,_oy,_oz )
+			end
+		end
+		LTimer.AddDelayFunc1( "battle_end",((_max_ms + 100) / 1000),this.EndBattle4Scene,false,true )
 	else
 		this.EndBattle4Scene()
 	end
@@ -505,10 +554,8 @@ function M._Get_CfgCmrMove( lb,cur )
 end
 
 function M._ST_JugdeCamera()
-	if (this.state ~= E_B_State.GO) or (not this.isJugdeCmr) then
-		this._avgX = 0
-		this._lbCmrX,this._lbCmrFOV = nil
-		this._curChgX,this._curChgFov = nil
+	if (this.state ~= E_B_State.GO) or (not this.isJugdeCmr) or this.isBattleEnd then
+		this.ReInit_Cmr()
 		return
 	end
 	

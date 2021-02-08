@@ -80,9 +80,6 @@ LES_Battle_State = {
 	Ready                    = _add(),
 	Ready_Ing                = _add(),
 	GO                       = _add(),
-	Battle_End               = _add(),
-	Battle_Error             = _add(),
-	End                      = _add(),
 }
 
 -- 人性角色 - 动作枚举
