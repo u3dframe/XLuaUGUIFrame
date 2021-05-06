@@ -10,9 +10,7 @@ local M = class( "ugui_inputfield", super )
 
 function M:ctor( obj,val,callFunc )
 	assert(obj,"inpfield's obj is null")
-	local gobj = obj.gameObject
-	assert(gobj,"inpfield's gobj is null")
-	super.ctor( self,gobj,"InputField" )
+	super.ctor( self,obj,"InputField" )
 	self.lf_ChgEnd = self.lf_ChgEnd or function()
 		self:ExcuteCallFunc()
 	end

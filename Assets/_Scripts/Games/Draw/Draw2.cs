@@ -6,7 +6,6 @@ public class Draw2Item
 {
     public bool isUpTime;
     public float vUpTime;
-    public Shader shader;
     public GameObject go;
     public MeshFilter mf;
     public MeshRenderer mr;
@@ -16,6 +15,8 @@ public class Draw2 : MonoBehaviour
 {
     Vector3 BasePosition = Vector3.zero;
     List<Draw2Item> lst = new List<Draw2Item>();
+    Color _c = new Color(1, 0, 0, 0.25F);
+
     public void SetBasePos(Vector3  pos)
     {
         var s = Mathf.Pow(1, 3);
@@ -38,10 +39,17 @@ public class Draw2 : MonoBehaviour
         nItem.mr = nItem.go.AddComponent<MeshRenderer>();
         nItem.go.layer = LayerMask.NameToLayer("SceneObj");
         nItem.go.transform.position = new Vector3(0, 0.15F, 0);
-        nItem.shader = Shader.Find("S_E/EffectCombine(Blend)");
+        Shader shader = Shader.Find("S_E/Dissolve");
+        if(shader == null)
+            shader = Shader.Find("Mobile/Diffuse");
+        Material mat = new Material(shader);
+        mat.renderQueue = 3000;
+        mat.color = _c;
+        nItem.mr.material = mat;
         lst.Add(nItem);
         return nItem;
     }
+    
     private void CreateMesh(List<Vector3> vertices, float sTime)
     {
         int[] triangles;
@@ -56,13 +64,11 @@ public class Draw2 : MonoBehaviour
             triangles[3 * i + 2] = i + 2;
         }
         Mesh mesh = new Mesh(); 
-        Draw2Item item = GetNewItem();
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles;
+
+        Draw2Item item = GetNewItem();
         item.mf.mesh = mesh;
-        item.mr.material.shader = item.shader;
-        item.mr.material.renderQueue = 3000;
-        item.mr.material.color = new Color(1, 0, 0, 0.25F);
         item.vUpTime = sTime;
         item.isUpTime = sTime > 0;
         item.go.SetActive(true);
@@ -91,6 +97,7 @@ public class Draw2 : MonoBehaviour
         }
         CreateMesh(vertices, dTime);
     }
+    
     //多边形
     public void DrawQuadrilateralSolid(float dTime, List<Vector3> vertices)
     {

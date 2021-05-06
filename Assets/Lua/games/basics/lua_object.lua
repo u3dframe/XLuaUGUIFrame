@@ -27,7 +27,7 @@ end
 
 function M:pre_clean()
 	super.pre_clean( self )
-	self.callFunc = nil
+	self.callFunc,self._cc_func = nil
 end
 
 function M:SetCallFunc(func)

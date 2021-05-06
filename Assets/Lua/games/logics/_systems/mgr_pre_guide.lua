@@ -14,8 +14,6 @@ local super,_evt = MgrBase,Event
 local M = class( "mgr_pre_guide", super)
 local this = M
 
-local _k_m = "pg_sid_%s_uid_%s"
-
 function M.InitCfg()
 	if not this.cfg then
 		local _cfg =  MgrData:GetConfig("guide@@before")
@@ -33,11 +31,7 @@ function M.InitCfg()
 end
 
 function M.GetSid()
-	local _sData = MgrLogin.svCurrData
-	if _sData then
-		return _sData[1]
-	end
-	return MgrLogin:GetCacheSid()
+	return MgrLogin:GetCurrSidSname()
 end
 
 function M.DriveCreateRole(callEnd)
@@ -80,6 +74,12 @@ function M.DriveEnterGame(uid,callEnd)
 	local _sid = this.GetSid()
 	local _k = str_format( "pg_sid_%s_uid_%s",_sid,uid )
 	local _isDo = LGCache.GetCacheBool( _k )
+	if not _isDo then
+		_isDo = (MgrGuide ~= nil) and MgrGuide:ByteGuideType( 99 )
+		if _isDo then
+			LGCache.SetCacheBool( _k,true )
+		end
+	end
 	if _isDo then
 		this.DoCallFunc( callEnd )
 		return
@@ -140,6 +140,7 @@ function M._DriveEnd()
 	this.DoCallFunc( _cf )
 
 	if this._bigKey and str_contains( this._bigKey,"_uid_" ) then
+		this:SendRequest("guide_set", {id = 99});
 		this._CacheEnd()
 		_evt.Brocast( Evt_View_Vdo,2 )
 	end

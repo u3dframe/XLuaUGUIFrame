@@ -30,14 +30,20 @@ public class ED_UIImg : ED_Animator
     public Image m_img { get; private set; }
     public AssetInfo m_asset { get; private set; }
     public bool m_isNativeSize { get; private set; }
+    public bool m_isCheckSame = true;
 
     public ED_UIImg() : base()
     {
     }
-
-    override public void InitComp(string strComp, Action cfDestroy, Action cfShow, Action cfHide)
+    
+    override public void InitComp(string strComp,Core.DF_OnInt cfLife)
     {
-        base.InitComp(strComp, cfDestroy, cfShow, cfHide);
+        base.InitComp(strComp,cfLife);
+    }
+
+    override public void InitComp(Component comp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(comp,cfLife);
     }
     
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
@@ -50,8 +56,6 @@ public class ED_UIImg : ED_Animator
     {
         this.m_img = null;
         this.OnUnLoadAsset();
-        this.m_sAtals = null;
-        this.m_sImg = null;
         this.m_isNativeSize = false;
         base.On_Destroy(obj);
     }
@@ -61,7 +65,10 @@ public class ED_UIImg : ED_Animator
         AssetInfo _asset = this.m_asset;
         this.m_asset = null;
         if(_asset != null)
-            _asset.UnLoadAsset();
+            _asset.UnloadAsset();
+        
+        this.m_sAtals = null;
+        this.m_sImg = null;
     }
 
     public string ReAtals(int nType,string sAtals)
@@ -103,41 +110,56 @@ public class ED_UIImg : ED_Animator
     public void SetImage(int nType,string sAtals,string sImg,bool isNativeSize,bool isNdReRes = true)
     {
         if(!this.m_img)
+        {
+            this.SLog("ED_UIImg SetImage","m_img is null",sAtals,sImg);
             return;
+        }
             
+        this.m_isNativeSize = isNativeSize;
         if(isNdReRes == true)
         {
             sAtals = this.ReAtals(nType,sAtals);
             sImg =  this.RePng(sImg);
         }
-        this.m_isNativeSize = isNativeSize;
 
-        if(!string.IsNullOrEmpty(this.m_sAtals) && !string.IsNullOrEmpty(this.m_sImg))
+        if(m_isCheckSame)
         {
-            bool isSameAB = this.m_sAtals.Equals(sAtals);
-            bool isSameAsset = this.m_sImg.Equals(sImg);
+            bool isSameAB = string.Equals(this.m_sAtals,sAtals);
+            bool isSameAsset = string.Equals(this.m_sImg,sImg);
             if(isSameAB && isSameAsset)
+            {
+                this.SLog("ED_UIImg SetImage","Is Same",sAtals,sImg);
                 return;
+            }
         }
+        
         this.OnUnLoadAsset();
         this.m_sAtals = sAtals;
         this.m_sImg = sImg;
+        this.SLog("ED_UIImg SetImage","Loading",this.m_sAtals,this.m_sImg);
         this.m_asset = ResourceManager.LoadSprite(sAtals,sImg,_OnLoadSprite);
     }
 
     void _OnLoadSprite(Sprite sprite)
     {
         if(!this.m_img)
+        {
+            this.SLog("ED_UIImg _OnLoadSprite","m_img is null",this.m_sAtals,this.m_sImg);
+            this.OnUnLoadAsset();
             return;
+        }
+
         if(!sprite)
         {
             if(this.m_asset != null)
-                Debug.LogErrorFormat( "=== ED_UIImg Load Err , {0} \n{1}",this.m_asset,this.m_asset.GetAssetBundleInfo() );
+                this.SLogError("ED_UIImg _OnLoadSprite","Load Err",this.m_asset.GetAssetBundleInfo(),this.m_asset);
             else
-                Debug.LogErrorFormat( "=== ED_UIImg Load Err ,sAtals = [{0}] , sImg = [{1}]" , this.m_sAtals,this.m_sImg );
+                this.SLogError("ED_UIImg _OnLoadSprite","Load Err",this.m_sAtals,this.m_sImg);
             return;
         }
         
+        this.SLog("ED_UIImg _OnLoadSprite",this.m_sAtals,this.m_sImg,sprite);
+
         this.m_img.sprite = sprite;
         if(this.m_isNativeSize)
             this.SetNativeSize();
@@ -185,8 +207,40 @@ public class ED_UIImg : ED_Animator
     {
         if(!this.m_img)
             return;
-        this.m_img.color = UtilityHelper.ToColor(r, g, b, a);
+        this.m_img.color = LuaHelper.ToColor(r, g, b, a);
     }
+
+    public void SetImgType(int type)
+    {
+        if(!this.m_img)
+            return;
+        Image.Type itp = (Image.Type) type;
+        this.SetImgType(itp);
+    }
+
+    public void SetImgType(Image.Type type)
+    {
+        if(!this.m_img)
+            return;
+        this.m_img.type = type;
+    }
+
+    public void SetImgFillMethod(int fillMethod,int fillOrigin = 0)
+    {
+        if(!this.m_img)
+            return;
+        Image.FillMethod ifm = (Image.FillMethod) fillMethod;
+        this.SetImgFillMethod(ifm,fillOrigin);
+    }
+
+    public void SetImgFillMethod(Image.FillMethod fillMethod,int fillOrigin = 0)
+    {
+        if(!this.m_img)
+            return;
+        this.m_img.fillMethod = fillMethod;
+        this.m_img.fillOrigin = 0;
+    }
+
     public void SetNativeSize()
     {
         if(!this.m_img)

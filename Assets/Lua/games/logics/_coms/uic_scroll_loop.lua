@@ -73,6 +73,11 @@ function M:ctor(lbCfg)
 	self.lbScl:ExcCustomChange(isCustomChange);--部分界面在拖拽时表现存在特殊需求的使用此进行自定义
 end
 
+function M:IsCanScroll(isBl)
+	isBl = isBl == true
+	self.lbScl:SetEnabled( isBl )
+end
+
 -- 此函数在OnShow里面调用
 function M:ShowScroll(listData)
 	self.listData = listData

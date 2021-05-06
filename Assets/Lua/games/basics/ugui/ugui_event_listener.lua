@@ -12,12 +12,10 @@ local this = M
 
 function M:ctor( obj,comp )
 	assert(obj,"listener's obj is null")
-	local gobj = obj.gameObject
-	assert(gobj,"listener's gobj is null")
 	if true == comp then
-		comp = CEvtListener.Get(gobj)
+		comp = CEvtListener.Get(obj)
 	end
-	super.ctor( self,gobj,comp or "UGUIEventListener" )
+	super.ctor( self,obj,comp or "UGUIEventListener" )
 	self._hds = {}
 end
 

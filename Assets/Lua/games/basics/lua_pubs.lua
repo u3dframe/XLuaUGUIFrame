@@ -53,8 +53,9 @@ function M:_ClsEle()
     return _c_ele
 end
 
-function M:NewEleBy(gobj)
-    return self:_ClsEle().New( gobj ):AddSupUIPubs()
+function M:NewEleBy(gobj,isCanSetCSCall)
+    isCanSetCSCall = not (isCanSetCSCall == true)
+    return self:_ClsEle().New( gobj,"PrefabElement",isCanSetCSCall ):AddSupUIPubs()
 end
 
 function M:_ClsFollower()
@@ -120,6 +121,20 @@ function M:_ClsUBtn()
         _ubtn = LuBtn
     end
     return _ubtn
+end
+
+function M:FreezedBtn(isFrozen)
+    isFrozen = isFrozen  == true
+    self:_ClsUBtn().CsIsFreezeAll( isFrozen )
+end
+
+function M:FreezedExcept(isRm,...)
+    isRm = isRm  == true
+    if isRm then
+        self:_ClsUBtn().CsRmExcept( ... )
+    else
+        self:_ClsUBtn().CsAddExcept( ... )
+    end
 end
 
 function M:NewBtnBy(gobj, callFunc, val, isNoScale)
@@ -221,14 +236,6 @@ function M:_ClsUILst()
         _cl_lst = UILst
     end
     return _cl_lst
-end
-
-
-function M:_ClsUISScl()
-    if not _cl_sscl then
-        _cl_sscl = UIScl2
-    end
-    return _cl_sscl
 end
 
 function M:_ClsUIScloop()

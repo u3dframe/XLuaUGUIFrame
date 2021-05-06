@@ -7,11 +7,11 @@ using UnityEngine;
 /// 功能 : 缓存需要操作的对象
 /// </summary>
 public class PrefabElement : PrefabBasic {
-	static public new PrefabElement Get(GameObject gobj,bool isAdd){
-		return UtilityHelper.Get<PrefabElement>(gobj,true);
+	static public new PrefabElement Get(Object uobj,bool isAdd){
+		return UtilityHelper.Get<PrefabElement>(uobj,true);
 	}
 
-	static public new PrefabElement Get(GameObject gobj){
-		return Get(gobj,true);
+	static public new PrefabElement Get(Object uobj){
+		return Get(uobj,true);
 	}
 }

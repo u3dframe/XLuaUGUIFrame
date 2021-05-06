@@ -3,10 +3,14 @@
 -- Date : 2016-05-25 09:25
 -- Desc : 重新整理一遍
 
+local tonumber,tostring,type = tonumber,tostring,type
+local error = error
+
 local tb_insert = table.insert
 local tb_remove = table.remove
 local tb_join = table.concat
 
+local string = string
 local str_format = string.format
 local str_upper = string.upper
 local str_len = string.len
@@ -18,6 +22,8 @@ local str_byte = string.byte
 local str_char = string.char
 local str_gmatch = string.gmatch
 
+local math = math
+
 local _htmlSpecialChars = {
     {"&","&amp;"},
     {" ","&nbsp;"},
@@ -28,6 +34,13 @@ local _htmlSpecialChars = {
     {">","&gt;"},
     {"\n","<br />"},
 }
+
+local function checkstring(str)
+    if type(str) ~= "string" then
+        str = tostring(str)
+    end
+    return str
+end
 
 function string.toHtml(str,isRestroe)
     for _, v in ipairs(_htmlSpecialChars) do
@@ -106,8 +119,12 @@ function string.rtrim(inStr)
 end
 
 function string.trim(inStr)
-    inStr = string.ltrim(inStr)
-    return string.rtrim(inStr)
+    if not inStr then
+        return ""
+    end
+    inStr = tostring(inStr)
+    inStr = str_gsub(inStr,"^%s*(.-)%s*$","%1")
+    return inStr
 end
 
 function string.upfirst(inStr)
@@ -199,4 +216,107 @@ function string.csFmt2Luafmt(inStr)
         _ss = _ss .. "%s"
     end
 	return _ss;
+end
+
+function string.insert(s1, pos, s2)
+    s1 = checkstring(s1)
+    if not s2 then
+        return s1
+    end
+    s2 = checkstring(s2)
+    pos = pos or 1
+    local len = str_len(s1)
+    if pos <= 1 then
+        return s2 .. s1
+    elseif pos >= len + 1 then
+        return s1 .. s2
+    end
+    local pre, suf = str_sub(s1, 1, pos - 1), str_sub(s1, pos, len)
+    return pre .. s2 .. suf
+end
+
+function string.utf8insert(s1, pos, s2)
+    s1 = checkstring(s1)
+    if not s2 then
+        return s1
+    end
+    s2 = checkstring(s2)
+    pos = pos or 1
+    local utf8 = utf8
+    local utf8len = utf8.len(s1)
+    local len = str_len(s1)
+    if pos <= 1 then
+        return s2 .. s1
+    elseif pos >= utf8len + 1 then
+        return s1 .. s2
+    end
+    local m = utf8.offset(s1, pos)
+    local pre, suf = str_sub(s1, 1, m - 1), str_sub(s1, m, len)
+    return pre .. s2 .. suf
+end
+
+function string.remove(s1, pos, num)
+    if not s1 then
+        error("the argument#1 is nil!")
+    end
+    local len = str_len(s1)
+    pos = pos or 1
+    num = num or len
+    if pos <= 1 then
+        pos = 1
+    elseif pos >= len + 1 then
+        return s1
+    end
+    if num <= 0 then
+        return s1
+    end
+    if pos == 1 and num >= len then
+        return ""
+    end
+    local m = math.min(pos + num, len)
+    local pre, suf = str_sub(s1, 1, pos - 1), str_sub(s1, m, len)
+    return pre .. suf
+end
+
+function string.utf8remove(s1, pos, num)
+    if not s1 then
+        error("the argument#1 is nil!")
+    end
+    local utf8 = utf8
+    local utf8len = utf8.len(s1)
+    local len = str_len(s1)
+    pos = pos or 1
+    num = num or utf8len
+    if pos <= 1 then
+        pos = 1
+    elseif pos >= utf8len + 1 then
+        return s1
+    end
+    if num <= 0 then
+        return s1
+    end
+    if pos == 1 and num >= utf8len then
+        return ""
+    end
+    local m1 = utf8.offset(s1, pos)
+    local m2 = utf8.offset(s1, math.min(pos + num, utf8len + 1))
+    local pre, suf = str_sub(s1, 1, m1 - 1), str_sub(s1, m2, len)
+    return pre .. suf
+end
+
+function string.utf8reverse(str)
+    if not str then
+        error("the argument#1 is nil!")
+    end
+    if str == "" then
+        return str
+    end
+    local utf8 = utf8
+    local array = { utf8.codepoint(str, utf8.offset(str, 1), utf8.offset(str, -1)) }
+    local rArray = {}
+    local len = #array
+    for i = len, 1, -1 do
+        rArray[len - i + 1] = array[i]
+    end
+    return utf8.char(unpack(rArray))
 end

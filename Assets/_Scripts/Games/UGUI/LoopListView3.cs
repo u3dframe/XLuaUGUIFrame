@@ -33,6 +33,8 @@ public class LoopListView3 : EventTrigger
         private readonly List<float> worldPos = new List<float>() { 0 };
         private float pivot = 0;
         private float lossyScale = 1;
+        public bool AutoCleanLoop { get; set; } = true;
+        public int AutoMovingDir { get; set; } = 0;
 
         public VirtualContent(LoopListView3 view)
         {
@@ -191,8 +193,57 @@ public class LoopListView3 : EventTrigger
                 }
             }
             //移除完全在视口之外的content，但至少保留一个离中心最近的content
+            if (!AutoCleanLoop) return;
             var nearestPos = worldPos[GetNearestContentIndexToCenter()];
             worldPos.RemoveAll(pos => pos != nearestPos && (pos > viewWorldHigh || (pos + lenWithoutPadding) < viewWorldLow));
+        }
+
+        public void AddContentAtHigh()
+        {
+            var lenWithoutPadding = LengthWithoutPadding;
+            var viewWorldHigh = view.viewWorldHigh;
+            var viewWorldLow = view.viewWorldLow;
+            var nearestContIndex = GetNearestContentIndexToCenter();
+            var contentLow = worldPos[nearestContIndex];
+            var contentHigh = contentLow + lenWithoutPadding;
+            var interval = view.LoopInterval * lossyScale;
+            var n = Mathf.FloorToInt((viewWorldLow - contentHigh) / (lenWithoutPadding + interval));
+            var pos = contentHigh + interval;
+            if (n > 0)  //离中心最近的content已完全离开视口超过一个content长度
+                pos += n * (lenWithoutPadding + interval);
+            if (CheckNewContent(pos))
+            {
+                int index = nearestContIndex;
+                do
+                {
+                    worldPos.Insert(++index, pos);
+                    pos += lenWithoutPadding + interval;
+                }
+                while (pos < viewWorldHigh && CheckNewContent(pos));
+            }
+        }
+
+        public void AddContentAtLow()
+        {
+            var lenWithoutPadding = LengthWithoutPadding;
+            var viewWorldHigh = view.viewWorldHigh;
+            var viewWorldLow = view.viewWorldLow;
+            var nearestContIndex = GetNearestContentIndexToCenter();
+            var contentLow = worldPos[nearestContIndex];
+            var interval = view.LoopInterval * lossyScale;
+            var n = Mathf.FloorToInt((contentLow - viewWorldHigh) / (lenWithoutPadding + interval));
+            var pos = contentLow - interval - lenWithoutPadding;
+            if (n > 0)
+                pos -= n * (lenWithoutPadding + interval);
+            if (CheckNewContent(pos))
+            {
+                do
+                {
+                    worldPos.Insert(nearestContIndex, pos);
+                    pos -= interval + lenWithoutPadding;
+                }
+                while (pos + lenWithoutPadding > viewWorldLow && CheckNewContent(pos));
+            }
         }
 
         private int GetNearestContentIndexToCenter()
@@ -232,8 +283,6 @@ public class LoopListView3 : EventTrigger
                         return false;
                 }
             }
-            else
-                return false;
             return true;
         }
 
@@ -268,13 +317,28 @@ public class LoopListView3 : EventTrigger
             if (view.vertical)
                 index = view.itemCount - index - 1;
             var minDistance = float.MaxValue;
-            for (int i = 0; i < worldPos.Count; i++)
+            if (AutoMovingDir >= 0)
             {
-                GetIntervalByInternalIndex(worldPos[i], index, out var low, out var high);
-                var dis = (low + high) / 2 - view.worldCenter;
-                if (Mathf.Abs(dis) < Mathf.Abs(minDistance))
+                for (int i = 0; i < worldPos.Count; i++)
                 {
-                    minDistance = dis;
+                    GetIntervalByInternalIndex(worldPos[i], index, out var low, out var high);
+                    var dis = (low + high) / 2 - view.worldCenter;
+                    if (Mathf.Abs(dis) < Mathf.Abs(minDistance))
+                    {
+                        minDistance = dis;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = worldPos.Count - 1; i >= 0; i--)
+                {
+                    GetIntervalByInternalIndex(worldPos[i], index, out var low, out var high);
+                    var dis = (low + high) / 2 - view.worldCenter;
+                    if (Mathf.Abs(dis) < Mathf.Abs(minDistance))
+                    {
+                        minDistance = dis;
+                    }
                 }
             }
             return minDistance;
@@ -553,6 +617,10 @@ public class LoopListView3 : EventTrigger
         }
     }
 
+    //触发自动翻页的最小拖拽距离百分比，以视口宽度为基准
+    [SerializeField]
+    protected float distanceToTurnPage = 0f;
+
     [Range(0.01f, 1f)]
     [SerializeField]
     protected float distanceMinDelta = 0.01f;
@@ -704,36 +772,45 @@ public class LoopListView3 : EventTrigger
         }
     }
 
+    private System.Action resetFunc = null;
+
     public void SetItemCount(int count, bool resetPos = true)
     {
         if (!isInitted || itemCount <= 0) resetPos = true;
-        isInitted = true;
-        itemCount = count;
-        if (count <= 0)
+
+        resetFunc = () =>
         {
-            for (int i = 0; i < content.childCount; i++)
+            isInitted = true;
+            itemCount = count;
+            if (count <= 0)
             {
-                var obj = content.GetChild(i).gameObject;
-                if (obj.activeSelf)
-                    obj.SetActive(false);
+                for (int i = 0; i < content.childCount; i++)
+                {
+                    var obj = content.GetChild(i).gameObject;
+                    if (obj.activeSelf)
+                        obj.SetActive(false);
+                }
+                return;
             }
-            return;
-        }
-        prevChangedIndex = -1;
-        prevMovingCompletedIndex = -1;
-        currMovingCompletedIndex = -1;
-        ClearItemList();
-        float np = 0;
-        if (!resetPos)
-            np = normalizedPosition;
-        virtualContent.Reset();
-        if (movementType == MovementType.AutoAlignment)
-            MoveToImmediately(resetPos ? 0 : currentIndex);
-        else
-        {
-            normalizedPosition = resetPos ? (vertical ? content.pivot.y : content.pivot.x) : np;
-            currentIndex = currentIndex;
-        }
+            prevChangedIndex = -1;
+            prevMovingCompletedIndex = -1;
+            currMovingCompletedIndex = -1;
+            ClearItemList();
+            float np = 0;
+            if (!resetPos)
+                np = normalizedPosition;
+            virtualContent.Reset();
+            if (movementType == MovementType.AutoAlignment && delayMoveFunc == null)
+                MoveToImmediately(resetPos ? 0 : currentIndex);
+            else
+            {
+                normalizedPosition = resetPos ? (vertical ? content.pivot.y : content.pivot.x) : np;
+                currentIndex = currentIndex;
+            }
+        };
+        if (isFirstFrame) return;
+        resetFunc();
+        resetFunc = null;
     }
 
     public int GetItemIndex(GameObject obj)
@@ -759,13 +836,21 @@ public class LoopListView3 : EventTrigger
         return dis / (worldCenter - viewWorldLow);
     }
 
+    private System.Action delayMoveFunc = null;
+
     //立即移动到目标索引，没有动画
     public void MoveToImmediately(int index)
     {
-        StopMovement();
-        currentIndex = index;
-        MoveVirtualContent(-GetDistanceToCenterFrom(currentIndex));
-        currMovingCompletedIndex = currentIndex;
+        delayMoveFunc = () =>
+        {
+            StopMovement();
+            currentIndex = index;
+            MoveVirtualContent(-GetDistanceToCenterFrom(currentIndex));
+            currMovingCompletedIndex = currentIndex;
+        };
+        if (!isInitted) return;
+        delayMoveFunc();
+        delayMoveFunc = null;
     }
 
     //强制滑动到目标索引，期间不能控制滑块
@@ -796,6 +881,8 @@ public class LoopListView3 : EventTrigger
             isForceMoving = false;
             currentIndex = virtualContent.CalcLocationIndex();
         }
+        if (isAutoTurningPage)
+            OnPageTurnCompleted();
         autoSpeed = 0;
         worldDragSpeed = 0;
     }
@@ -832,43 +919,99 @@ public class LoopListView3 : EventTrigger
 
     public override void OnPointerDown(PointerEventData eventData)
     {
-        if (isPointerDown || !interactable) return;
+        if (!isInitted || isPointerDown || !interactable) return;
         isPointerDown = true;
         worldDragSpeed = 0;
         currentPointerId = eventData.pointerId; //只处理第一个触屏的指针/手指
+        if (isAutoTurningPage)
+            StopMovement();
     }
 
     public override void OnPointerUp(PointerEventData eventData)
     {
-        if (eventData.pointerId != currentPointerId || !interactable) return;
+        if (!isInitted || eventData.pointerId != currentPointerId || !interactable) return;
         isPointerDown = false;
     }
 
     protected float worldDragSpeed = 0;
     protected Vector3 prevPointerPosition;
     protected Vector3 currPointerPosition;
+    protected Vector3 beginDragPosition;
+    protected Vector3 endDragPosition;
     protected float inertiaLerp = 1;
+    protected bool isAutoTurningPage = false;
 
     public override void OnBeginDrag(PointerEventData eventData)
     {
-        if (eventData.pointerId != currentPointerId || !interactable || isForceMoving) return;
+        if (!isInitted || eventData.pointerId != currentPointerId || !interactable || isForceMoving) return;
         isDragging = true;
         RectTransformUtility.ScreenPointToWorldPointInRectangle(viewRect, eventData.position, eventData.pressEventCamera, out prevPointerPosition);
+        beginDragPosition = prevPointerPosition;
     }
 
     public override void OnDrag(PointerEventData eventData)
     {
-        if (eventData.pointerId != currentPointerId || !interactable || isForceMoving) return;
+        if (!isInitted || eventData.pointerId != currentPointerId || !interactable || isForceMoving) return;
         RectTransformUtility.ScreenPointToWorldPointInRectangle(viewRect, eventData.position, eventData.pressEventCamera, out currPointerPosition);
     }
 
     public override void OnEndDrag(PointerEventData eventData)
     {
-        if (eventData.pointerId != currentPointerId || !interactable) return;
+        if (!isInitted || eventData.pointerId != currentPointerId || !interactable) return;
         currIsMoving = false;   //应对一个极端情况
         isDragging = false;
         inertiaLerp = 0;
+        RectTransformUtility.ScreenPointToWorldPointInRectangle(viewRect, eventData.position, eventData.pressEventCamera, out currPointerPosition);
+        endDragPosition = currPointerPosition;
+        CheckAutoTurnPage();
     }
+
+    protected void CheckAutoTurnPage()
+    {
+        if (distanceToTurnPage <= 0) return;
+        if (itemCount <= 1) return;
+        var deltaVec = endDragPosition - beginDragPosition;
+        var delta = vertical ? deltaVec.y : deltaVec.x;
+        var dis = viewWorldHigh - viewWorldLow;
+        if (Mathf.Abs(delta) < distanceToTurnPage * dis) return;
+        int diff = delta > 0 ? -1 : 1;
+        if (vertical) diff *= -1;
+        int targetIndex = currentIndex + diff;
+        if (!loop && (targetIndex < 0 || targetIndex >= itemCount)) return;
+        if (loop)
+            virtualContent.AutoMovingDir = (int)Mathf.Sign(delta);
+        if (targetIndex < 0)
+        {
+            targetIndex += itemCount;
+            if (vertical)
+                virtualContent.AddContentAtHigh();
+            else
+                virtualContent.AddContentAtLow();
+            if (loop)
+                virtualContent.AutoCleanLoop = false;
+        }
+        else if (targetIndex >= itemCount)
+        {
+            targetIndex -= itemCount;
+            if (vertical)
+                virtualContent.AddContentAtLow();
+            else
+                virtualContent.AddContentAtHigh();
+            if (loop)
+                virtualContent.AutoCleanLoop = false;
+        }
+        worldDragSpeed = 0;
+        currentIndex = targetIndex;
+        isAutoTurningPage = true;
+    }
+
+    protected void OnPageTurnCompleted()
+    {
+        isAutoTurningPage = false;
+        virtualContent.AutoCleanLoop = true;
+        if (loop)
+            virtualContent.AutoMovingDir = 0;
+    }    
 
     protected GameObject GetPrefabByName(string name)
     {
@@ -1090,7 +1233,7 @@ public class LoopListView3 : EventTrigger
         //virtual content运动
         var deltaTime = Time.deltaTime; //暂时不用Time.unscaledDeltaTime
         var prevDis = GetDistanceToCenterFrom(currentIndex);
-        if (isForceMoving)
+        if (isForceMoving || isAutoTurningPage)
         {
             currIsMoving = true;
             var speed = CalcAutoMovingSpeed(currentIndex);
@@ -1100,6 +1243,8 @@ public class LoopListView3 : EventTrigger
             {
                 MoveVirtualContent(-dis);
                 isForceMoving = false;
+                if (isAutoTurningPage)
+                    OnPageTurnCompleted();
                 currMovingCompletedIndex = currentIndex;
             }
         }
@@ -1267,11 +1412,27 @@ public class LoopListView3 : EventTrigger
 
     private readonly Dictionary<int, ListItem> itemCache = new Dictionary<int, ListItem>();
 
+    private bool isFirstFrame = true;
+
     protected void LateUpdate()
     {
         if (!Application.IsPlaying(gameObject)) return;
+        if (isFirstFrame)
+        {
+            isFirstFrame = false;
+            return;
+        }
+        if (resetFunc != null)
+        {
+            resetFunc();
+            resetFunc = null;
+        }
         if (!isInitted) return;
-
+        if (delayMoveFunc != null)
+        {
+            delayMoveFunc();
+            delayMoveFunc = null;
+        }
         if (itemCount <= 0) return;
 
         UpdateVirtualContent();

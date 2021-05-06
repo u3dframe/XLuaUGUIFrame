@@ -27,6 +27,16 @@ end
 local m_round = math.round
 local m_modf = math.modf
 
+function math.clamp(v, minValue, maxValue)  
+    if v < minValue then
+        return minValue
+    end
+    if( v > maxValue) then
+        return maxValue
+    end
+    return v 
+end
+
 if bit then
 	bit_band = bit.band; -- 一个或多个无符号整数 '与 &' 运算 得到值
 	bit_bor = bit.bor; -- 一个或多个无符号整数 '或 |' 运算 得到值

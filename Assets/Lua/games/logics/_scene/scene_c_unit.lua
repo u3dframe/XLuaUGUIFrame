@@ -8,6 +8,7 @@
 local ActionFactory = require ("games/logics/_scene/actions/action_factory")
 local type,tostring,tonumber = type,tostring,tonumber
 local _vec3,NumEx = Vector3,NumEx
+local str_contains = string.contains
 local tb_insert = table.insert
 local E_State,E_Flag,E_State2Action = LES_C_State,LES_C_Flag,LES_C_State_2_Action_State
 local ET_SE,E_AiState = LET_Shader_Effect,LES_C_Action_State
@@ -45,8 +46,25 @@ function M:OnInit()
 		self:SetIsUsePhysics( self._async_isUsePhysics )
 	end
 
+	self:OnInit_HookPoint()
 	self:_InitVecs()
 	self:OnInit_Child()
+end
+
+function M:OnInit_HookPoint()
+	local _vs = LES_Ani_Eft_Point
+	for _, vv in ipairs(_vs) do
+		if not str_contains( vv,";" ) then
+			self["lb".. vv] = self:NewTrsf( vv,true,true )
+		end
+	end
+end
+
+function M:GetHookPoint(kHook)
+	if not kHook then
+		return
+	end
+	return self["lb".. tostring(kHook)]
 end
 
 function M:OnInit_Child()
@@ -88,12 +106,56 @@ function M:PlayAction(n_action)
 	end
 	self._async_n_action = nil
 	if self.comp then
-		-- printInfo("======= [%s] PlayAction = pre = [%s] , cur = [%s]",self:GetCursor(),self.n_action,n_action)
+		local _pre = self.n_action
 		self.n_action = n_action
+		self:OnChgActionBeg( _pre,n_action )
+		self:PlaySubAction( 0 )
 		self.comp:SetActionAndASpeed(self.n_action,self:GetCurrAniSpeed())
+		self:OnChgActionEnd( _pre,n_action )
 	else
 		self._async_n_action = n_action
 	end
+end
+
+function M:OnChgActionBeg(pre,curr)
+end
+
+function M:OnChgActionEnd(pre,curr)
+end
+
+function M:SetP4Int(pkey,pval)
+	if not pkey then
+		return
+	end
+	pkey = tostring(pkey)
+	pval = tonumber( pval ) or 0
+	local _t = self.tSubAction or {}
+	self.tSubAction = _t
+	if _t[pkey] == pval then
+		return
+	end
+
+	self._async_pkey,self._async_pval = nil
+	if self.comp then
+		local _pre = _t[pkey]
+		_t[pkey] = pval
+		self:OnChgSubActionBeg( pkey,_pre,pval )
+		self.comp:SetParameter4Int( pkey,pval )
+		self:OnChgSubActionEnd( pkey,_pre,pval )
+	else
+		self._async_pkey,self._async_pval = pkey,pval
+	end
+end
+
+function M:OnChgSubActionBeg(pkey,pre,curr)
+end
+
+function M:OnChgSubActionEnd(pkey,pre,curr)
+end
+
+function M:PlaySubAction(nval)
+	self.sub_action = self.sub_action or "ation_sub_state"
+	self:SetP4Int( self.sub_action,nval )
 end
 
 function M:OnUpdate_A_Enter(_,_,_,a_state)
@@ -145,7 +207,6 @@ function M:SetState(state,force,...)
 		return
 	end
 	self:SetStateAndPre( state,self.state )
-	-- printInfo("======= [%s] SetState = pre =  [%s] = cur =  [%s]",self:GetCursor(),self.preState,self.state)
 	self:SetMachine( ... )
 end
 
@@ -251,12 +312,12 @@ end
 
 function M:MoveEnd(x,y,isSmooth)
 	self:Move_Over()
-	self:SmoothPos( x,y,false,isSmooth )
+	self:SmoothPos( x,y,nil,isSmooth )
 end
 
-function M:SmoothPos( x,y,isLocal,isSmooth )
+function M:SmoothPos( x,y,ntype,isSmooth )
 	if (isSmooth == true) and self:IsInitGobj() then
-		super.SmoothPos( self,x,self.worldY,y,0.03,isLocal )
+		super.SmoothPos( self,x,self.worldY,y,0.03,ntype )
 	else
 		self:SetPos( x,y )
 	end

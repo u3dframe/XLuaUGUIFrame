@@ -13,12 +13,12 @@ using UnityEngine.UI;
 [AddComponentMenu("UI/UGUILocalize")]
 public class UGUILocalize : GobjLifeListener {
 	// 取得对象
-	static public new UGUILocalize Get(GameObject gobj,bool isAdd){
-		return UtilityHelper.Get<UGUILocalize>(gobj,isAdd);
+	static public new UGUILocalize Get(Object uobj,bool isAdd){
+		return UtilityHelper.Get<UGUILocalize>(uobj,isAdd);
 	}
 
-	static public new UGUILocalize Get(GameObject gobj){
-		return Get(gobj,true);
+	static public new UGUILocalize Get(Object uobj){
+		return Get(uobj,true);
 	}
 
 	public string m_tagName{ get; private set; }
@@ -98,7 +98,7 @@ public class UGUILocalize : GobjLifeListener {
 	}
 
 	public void SetText(object key){
-		string _key_ = key.ToString();
+		string _key_ = key != null ? key.ToString() : null;
 		if(string.IsNullOrEmpty(_key_))
 			_key_ = "1";
 		this.m_isChg = this.m_isChg || !string.Equals(_key_,this.m_key);

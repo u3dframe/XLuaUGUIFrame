@@ -40,8 +40,7 @@ end
 -- 添加常用配置
 function M:_LoadCfgs()
 	local _isOneXlsMoreSheet = true -- 一个系统Excel,有多工作表Sheet
-	local _lbCfgs = {
-	}
+	local _lbCfgs = { "weight" }
 	local _fp,_data,_itm,_nk
 	self._cfgDic = {}
 	for _, v in ipairs(_lbCfgs) do
@@ -64,13 +63,14 @@ function M:_LoadCfgs()
 			
 			clearLoadLua(_fp)
 		else
-			printError( "未查找到配置表[%s]，請检查是否添加", strRoot )
+			printError( "未查找到配置表[%s]，請检查是否添加", _fp )
 		end
 	end
 end
 
 function M:_InitCfgs()
 	self:_InitUnlock()
+	self:_InitWeight()
 end
 
 function M:GetConfig(cfgKey)
@@ -94,7 +94,7 @@ function M:GetOneData(cfgKey, idKey)
 		if (_lb) then
 			return readonly(_lb)
 		end
-		if "effect" ~= cfgKey and "buff" ~= cfgKey then
+		if "effect" ~= cfgKey and "buff" ~= cfgKey and "stimeline" ~= cfgKey then
 			printError("未查找到[%s]的配置表 ID = [%s] 的数据，請检查", cfgKey, idKey)
 		end
 	end
@@ -109,15 +109,34 @@ function M:_InitUnlock()
 	end
 end
 
+function M:_InitWeight()
+	local _cfg = self:GetConfig("weight")
+	if _cfg then
+		local _gt,_ut = {},{}
+		for k, v in pairs(_cfg) do
+			if (v.guidetype) then
+				_gt[v.guidetype] = v
+			elseif (v.resname) then
+				_ut[v.resname] = v
+			end
+		end
+		_cfg.gt = _gt
+		_cfg.ut = _ut
+	end
+end
+
 function M:CfgBasic()
 	return self:GetConfig("basic")
 end
+
 function M:GetCfgBasic( key )
 	return self:GetOneData( "basic",key )
 end
+
 function M:GetCfgAttribute(key)
 	return self:GetOneData( "attribute",key )
 end
+
 function M:GetCfgRes(idKey)
 	return self:GetOneData( "resource",idKey )
 end
@@ -140,6 +159,26 @@ end
 
 function M:GetCfgBuff(idKey)
 	return self:GetOneData( "buff",idKey )
+end
+
+function M:GetWeight4UI(resname)
+	if nil ~= resname and "" ~= resname then
+		local _cfg = self:GetConfig("weight")
+		for k,v in pairs(_cfg.ut) do
+			if str_contains(resname,k) then
+				return v.weight or 0
+			end
+		end
+	end
+	return 0
+end
+
+function M:GetCfgs4GWeight()
+	local _cfg = self:GetConfig("weight")
+	if _cfg then
+		return _cfg.gt or TB_EMPTY
+	end
+	return TB_EMPTY
 end
 
 -- Check Validity

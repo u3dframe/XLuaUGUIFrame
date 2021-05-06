@@ -37,7 +37,7 @@ function M.OnConnectSuccess()
 end
 
 function M.OnConnectFail(btBuffer)
-    local _err = btBuffer:ReadString()
+    local _err = (btBuffer == nil) and "" or btBuffer:ReadString()
     this.OnConnect( false,_err )
 end
 
@@ -61,7 +61,16 @@ function M.OnMessage(btBuffer)
     if this._lfMsg then this._lfMsg(btBuffer) end
 end
 
-function M.OnWrite()
+function M.OnWrite(btBuffer)
+    if btBuffer then
+        local _err = btBuffer:ReadString()
+        if _err then
+            printError(_err)
+        end
+        this.OnException()
+        return
+    end
+
     if this._lfWriteFinish then this._lfWriteFinish() end
 end
 

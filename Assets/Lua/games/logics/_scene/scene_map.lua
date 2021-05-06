@@ -44,6 +44,18 @@ function M:OnInit()
 	end
 end
 
+function M:ReSInfo()
+	local _cfgMap = MgrScene.GetCurrMapCfg()
+	super.ReSInfo( self,_cfgMap )
+end
+
+function M:ReEvent4Self(isBind)
+	_evt.RemoveListener(Evt_Map_ReSInfo, self.ReSInfo, self)
+	if isBind == true then
+		_evt.AddListener(Evt_Map_ReSInfo, self.ReSInfo, self)
+	end
+end
+
 function M:OnDestroy()
 	if self.isHasCamera then
 		_evt.Brocast(Evt_Vw_Def3DCamera,true)
@@ -58,6 +70,16 @@ end
 function M:GetWorldY()
 	if (not self.lbGBox) then return 0 end
 	return self.lbGBox.posY or 0
+end
+
+function M:CmrLocalPosY(nY)
+	if not self.lbCamera or not nY then
+		return
+	end
+	nY = tonumber(nY) or 0
+	local _v3 = self.lbCamera:GetLocalPosition()
+	_v3.y = nY
+	self.lbCamera:SetLocalPosition( _v3.x,_v3.y,_v3.z )
 end
 
 function M:CmrLookAt(tx,ty,tz,isNoSmooth,upLate)

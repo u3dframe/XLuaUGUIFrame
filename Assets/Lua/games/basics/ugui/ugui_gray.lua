@@ -9,11 +9,10 @@ local super = LuBase
 local M = class( "ugui_gray", super )
 
 function M:ctor( obj )
-	assert(obj,"gray's obj is null")
-	local gobj = obj.gameObject
-	assert(gobj,"gray's gobj is null")
-	local _tmp = CGray.Get(gobj)
-	super.ctor( self,gobj,_tmp )
+	assert(obj,"gray's obj is null")	
+	local _tmp = CGray.Get(obj)
+	assert(_tmp,"gray's gobj is null")
+	super.ctor( self,obj,_tmp )
 end
 
 function M:IsGrayTxt(isBl)

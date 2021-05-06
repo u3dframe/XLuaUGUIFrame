@@ -13,9 +13,7 @@ local M = class( "ugui_image",super )
 
 function M:ctor( obj,com )
 	assert(obj,"text's obj is null")
-	local gobj = obj.gameObject
-	assert(gobj,"text's gobj is null")
-	super.ctor( self,gobj,com or "Image" )
+	super.ctor( self,obj,com or "Image" )
 end
 
 function M:BuilderUObj( uobj )

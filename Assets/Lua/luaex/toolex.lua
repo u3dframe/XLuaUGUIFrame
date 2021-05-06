@@ -29,7 +29,7 @@ local _print,_printError = print
 
 local _unpack = unpack or table.unpack
 function unpack( arg )
-	if _unpack then
+	if _unpack and type(arg) == "table" then
 		return _unpack(arg)
 	end
 end

@@ -103,6 +103,9 @@ public class BuildTools : BuildPatcher
                 args.Add(vals[0].Trim(), vals[1].Trim());
             }
         }
+        string choiceSvlist = getOption(args, "choiceSvlist","");
+        CopySVList(choiceSvlist);
+        
         AssetDatabase.Refresh();
         string directory = getOption(args, "targetDir", Path.Combine(Application.dataPath.Replace("/Assets", ""),"../build/"));
         directory = Path.Combine(directory, "android/");
@@ -123,7 +126,7 @@ public class BuildTools : BuildPatcher
         FileUtil.DeleteFileOrDirectory(targetDir);
 
         BuildOptions option = BuildOptions.None;
-        bool development = getOption(args, "development", "true") == "true";
+        bool development = getOption(args, "development", "false") == "true";
         EditorUserBuildSettings.development = development;
         if(development) {
             option |= BuildOptions.Development;
@@ -166,27 +169,25 @@ public class BuildTools : BuildPatcher
         ZipMain();
     }
 
-    static void _CopySVList(int type = 0){
-        string _fname = "severlist_ed";
-        switch (type)
-        {
-            case 1:
-                _fname = "severlist";
-                break;
-        }
+    static public void CopySVList(string suff = ""){
+        string _fname = "severlist";
+        if((!string.IsNullOrEmpty(suff)) && (!"default".Equals(suff) && !"def".Equals(suff)))
+            _fname = string.Concat(_fname,suff);
         string _fp = string.Format("{0}/../_svlists/{1}.lua", Application.dataPath,_fname);
         string _fpDest = string.Format("{0}/Lua/games/net/severlist.lua", Application.dataPath);
         FileInfo fInfo = new FileInfo(_fp);
         fInfo.CopyTo(_fpDest, true);
     }
 
-    [MenuItem("Tools/change net 2 out(切为外网)",false,50)]
-    static public void Net_2_Out(){
-        _CopySVList(1);
+    // change net 2 out(切为外网)
+    // change net 2 in(切为内网)
+    [MenuItem("Tools/切为内网",false,50)]
+    static void Net2In(){
+        CopySVList("");
     }
 
-    [MenuItem("Tools/change net 2 in(切为内网)",false,50)]
-    static void Net_2_In(){
-        _CopySVList();
+    [MenuItem("Tools/切为外网(152.136.147.141)",false,50)]
+    static void Net2Out152_141(){
+        CopySVList("_sdk173");
     }
 }

@@ -34,10 +34,20 @@ public class TimelineUtil : ED_Animator
         return Builder<TimelineUtil>(uobj);
     }
 
+    override public void InitComp(string strComp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(strComp,cfLife);
+    }
+
+    override public void InitComp(string strComp, Action cfDestroy, Action cfShow, Action cfHide)
+    {
+        base.InitComp(strComp, cfDestroy, cfShow, cfHide);
+    }
+
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
     {
         base.InitComp(comp, cfDestroy, cfShow, cfHide);
-        m_director = UtilityHelper.GetOrAddPlayableDirector(this.m_gobj);
+        m_director = LuaHelper.GetOrAddPlayableDirector(this.m_gobj);
         if(m_director != null)
             m_defAsset = this.m_director.playableAsset;
         m_csEle = this.m_comp as PrefabElement;
@@ -48,6 +58,9 @@ public class TimelineUtil : ED_Animator
         
         this.InitTagets(10);
         this.InitPAsset(m_defAsset);
+
+        if(this.m_curSInfo != null)
+            SceneMapEx.LoadMapData(this.m_curSInfo.m_infoName);
     }
 
     public void Init(Action callback,float allTime = 0,PlayableAsset curAsset = null)
@@ -56,7 +69,7 @@ public class TimelineUtil : ED_Animator
         m_curTime = 0;
         if(!this.m_gobj)
         {
-            Debug.LogError("=== TLU Err,gobj is Null");
+            this.SLogError("TimelineUtil Init Err","gobj is Null");
             return;
         }
         this.SetPosition(0,10000,0);
@@ -71,11 +84,17 @@ public class TimelineUtil : ED_Animator
     override protected void On_Destroy(GobjLifeListener obj)
     {
         Dispose();
-        m_newGos.Clear();
+        this.On_DestroyNewGos();
         base.On_Destroy(obj);
     }
 
     override protected void On_Hide()
+    {
+        this.On_DestroyNewGos();
+        base.On_Hide();
+    }
+
+    void On_DestroyNewGos()
     {
         List<GameObject> _list = new List<GameObject>(m_newGos);
         m_newGos.Clear();
@@ -87,7 +106,6 @@ public class TimelineUtil : ED_Animator
                 continue;
             GameObject.DestroyImmediate(_gobj);
         }
-        base.On_Hide();
     }
 
     void InitPAsset(PlayableAsset curAsset)
@@ -149,7 +167,7 @@ public class TimelineUtil : ED_Animator
     {
         if (o != null && IsHasTrack(trackName))
         {
-            UtilityHelper.Get<Animator>(o,true);
+            LuaHelper.Get<Animator>(o,true);
             m_director.SetGenericBinding(bindings[trackName].sourceObject, o);
         }
     }
@@ -174,7 +192,7 @@ public class TimelineUtil : ED_Animator
             if (track.ContainsKey(clipName))
                 return track[clipName] as T;
         }
-        Debug.LogError("GetClip Error, Track does not contain clip, trackName: " + trackName + ", clipName: " + clipName);
+        this.SLogError("TimelineUtil GetClip Error","Track does not contain clip",trackName,clipName);
         return null;
     }
 

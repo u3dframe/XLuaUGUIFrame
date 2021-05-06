@@ -27,16 +27,15 @@ function M:ReEvent4OnUpdate(isBind)
 	super.ReEvent4OnUpdate(self,isBind)
 end
 
-function M:IsVwCircle4Load()
+function M:IsCanCircle()
 	return not (self.cfgAsset.isNoCircle == true)
 end
 
 function M:VwCircle(isShow)
-	if isShow then
-		M._fevt().Brocast(Evt_Circle_Show)
-	else
-		M._fevt().Brocast(Evt_Circle_Hide)
+	if not self:IsCanCircle() then
+		return
 	end
+	super.VwCircle( self,isShow )
 end
 
 function M:_SetVisible(state)
@@ -79,6 +78,8 @@ function M:View(isShow,data,...)
 		self.os_start_time = _func_time()
 		self:SetData( data,... )
 	end
+	-- 显示转圈
+	self:VwCircle( isShow )
 	self:ShowView( isShow )
 end
 
@@ -98,12 +99,6 @@ end
 
 function M:Showing()	
 	self:OnPreShow()
-
-	if self:IsVwCircle4Load() then
-		-- 显示转圈
-		self:VwCircle(true)
-	end
-
 	self.enabled = true
 	if self._isPreLoad then
 		self:_JudgeLoad()
@@ -129,10 +124,6 @@ end
 function M:_JudgeLoad()
 	if self:IsNoLoaded() or not self:IsInitGobj() then
 		return
-	end
-	if self:IsVwCircle4Load() then
-		-- 隐藏转圈
-		self:VwCircle(false)
 	end
 
 	if not self.isVisible then return end
@@ -182,6 +173,7 @@ function M:OnInit()
 end
 
 function M:_OnShow()
+	self:VwCircle(false)
 	self:OnShowBeg()
 	self:OnShow()
 	self:OnShowEnd()
@@ -205,9 +197,24 @@ end
 function M:Hiding(isMus)
 	local _isBl = (isMus == true) or (self.enabled == true)
 	if not _isBl then return end
-	self:_PreOnEnd(false)
-	self:_OnHide()
-	self:_OnEnd(false)
+	self:_OnHideOrDestroy(false)
+end
+
+function M:Destroying(isMus)
+	local _isBl = (isMus == true) or (self._isPreLoad == true)
+	if not _isBl then return end
+	self:_OnHideOrDestroy(true)
+end
+
+function M:_OnHideOrDestroy(isDestroy)
+	isDestroy = isDestroy == true
+	self:_PreOnEnd(isDestroy)
+	if isDestroy then
+		self:_OnDestroy()
+	else
+		self:_OnHide()
+	end
+	self:_OnEnd(isDestroy)
 end
 
 function M:_OnHide()
@@ -215,14 +222,6 @@ function M:_OnHide()
 end
 
 function M:OnHide()
-end
-
-function M:Destroying(isMus)
-	local _isBl = (isMus == true) or (self._isPreLoad == true)
-	if not _isBl then return end
-	self:_PreOnEnd(true)
-	self:_OnDestroy()
-	self:_OnEnd(true)
 end
 
 function M:_OnDestroy()
@@ -256,6 +255,8 @@ function M:PreOnEnd(isDestroy)
 end
 
 function M:_OnEnd(isDestroy)
+	-- 隐藏转圈
+	self:VwCircle(false)
 	self:OnEnd(isDestroy)
 	self:_OnExit(isDestroy)
 end
@@ -282,18 +283,12 @@ end
 function M:OnActive(isActive)
 	super.OnActive( self,isActive )
 	if not isActive then
-		self:OnEnd()
+		self:OnEnd(false)
 	end
 end
 
-function M:OnCF_BegOnDestroy()
-	self:PreOnEnd(true)
-	self:OnDestroy()
-	self:OnEnd(true)
-end
-
-function M:OnCF_EndOnDestroy()
-	self:OnExit(true)
+function M:OnCF_OnDestroy()
+	self:_OnHideOrDestroy(true)
 end
 
 function M:pre_clean()

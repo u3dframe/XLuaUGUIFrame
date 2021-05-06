@@ -22,6 +22,9 @@ function M:BuilderUObj( uobj )
 	return CEDCamera.Builder( uobj )
 end
 
+function M:_GetCFComp()
+end
+
 function M:_Init_Cmr()
 	local _c = self.comp
 	self.depth = _c.depth

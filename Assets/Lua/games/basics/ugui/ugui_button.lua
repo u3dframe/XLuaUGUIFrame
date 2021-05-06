@@ -18,7 +18,8 @@ function M.CsAddExcept( ... )
 	local _ids,_id = {...}
 	for _, v in ipairs(_ids) do
 		_id = _tn(v) or v:GetInstanceID()
-		CBtn.AddExcept(v)
+		_id = this:MFloor( _id )
+		CBtn.AddExcept( _id )
 	end
 end
 
@@ -26,30 +27,45 @@ function M.CsRmExcept( ... )
 	local _ids,_id = {...}
 	for _, v in ipairs(_ids) do
 		_id = _tn(v) or v:GetInstanceID()
-		CBtn.RemoveExcept(v)
+		_id = this:MFloor( _id )
+		CBtn.RemoveExcept( _id )
 	end
 end
 
 function M:ctor( obj,callFunc,val,isNoScale )
 	assert(obj,"btn's obj is null")
-	local gobj = obj.gameObject
-	assert(gobj,"btn's gobj is null")
-	local _tmp = CBtn.Get(gobj)
-	super.ctor( self,gobj,_tmp )
-	_tmp.m_onClick = handler(self,self.OnClickSelf)
+	local _tmp = CBtn.Get(obj)
+	assert(_tmp,"btn's gobj is null")
+	super.ctor( self,obj,_tmp )
+	local function _funcClick(_gobj,pos)
+		self:OnClickSelf(_gobj,pos)
+	end
+	_tmp.m_onClick = _funcClick
 
 	self:_Init(callFunc,val)
 
 	_tmp = (not isNoScale)
 	self:SetRaycastTarget(true,_tmp)
 	self:SetIsPressScale(_tmp)
+	self:ReLmtClick( self.secLmt )
+end
+
+-- 限定下单击间隔时间
+function M:ReLmtClick( sec )
+	if (not self.secLmt) or (self.secLmt ~= sec) then
+		sec = self:TNum( sec,0.1 )
+		self.secLmt = sec
+	end
+	self.lmtSecClick = Time.time + sec;
 end
 
 -- 单击自身
 function M:OnClickSelf(gobj,pos)
-	if not self.isRaycastTarget then
+	if (not self.isRaycastTarget) or (self.lmtSecClick and self.lmtSecClick > Time.time) then
 		return
 	end
+	self:VwCircle( true )
+	self:ReLmtClick( self.secLmt )
 
 	self.respName = ""
 	if gobj then
@@ -57,6 +73,7 @@ function M:OnClickSelf(gobj,pos)
 	end
 
 	self:ExcuteCallFunc()
+	self:VwCircle( false )
 end
 
 function M:SetRaycastTarget( isBl,isNoSync )

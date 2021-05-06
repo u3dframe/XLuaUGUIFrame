@@ -33,7 +33,7 @@ function M.OnClearSome()
 	this.state = LES_State.None
 	this.progress = 0
 	this:ReEvent4Self(false)
-	this.mapid,this.m_instruct = nil
+	this.mapid,this.m_instruct,this.m_params = nil
 end
 
 function M.OnClear()
@@ -83,12 +83,41 @@ function M.GetCurrMapCfg()
 	end
 end
 
+function M.IsMainHome()
+	if this.mapid then
+		return false
+	end
+	return true
+end
+
+function M.GetCurrMapType()
+	local _cfgMap = this.GetCurrMapCfg()
+	if _cfgMap then
+		return _cfgMap.type or 0
+	end
+	return 0
+end
+
+function M.IsJugdeType4CurrMap( nType )
+	local _g = this.GetCurrMapType()
+	return _g == nType
+end
+
+function M.ViewMainHome()
+	MgrUI.HideAll()
+	if this.IsMainHome() then
+		_evt.Brocast( Evt_ToView_Main )
+	else
+		_evt.Brocast( Evt_Map_Load )
+	end
+end
+
 function M.OnLoadMap(pars1, pars2)
 	this.isSameMap = (pars1 == this.mapid)
 	this.isUping = false
 	this.isUpingLoadMap = false
 	this:ReEvent4Self(false)
-	this.mapid,this.m_instruct = nil
+	this.mapid,this.m_instruct,this.m_params = nil
 	if pars1 then
 		if type(pars1) == "number" then
 			this.mapid = pars1
@@ -235,22 +264,6 @@ function M._ST_CurObjs()
 	this._Up_Progress()
 	if not this.ndCount  then
 		this.ndCount = 5
-		
-		local _cfgMap = this.GetCurrMapCfg()
-		if _cfgMap then 
-			if _cfgMap.lightSource and _cfgMap.lightColors then
-				local _val = tonumber( _cfgMap.lightIntensity ) or 0
-				LUtils.ReEnvironment( _cfgMap.lightSource,_val * 0.01,unpack(_cfgMap.lightColors) )
-			end
-
-			if _cfgMap.residSkybox then
-				MgrCamera:ReSkybox( _cfgMap.residSkybox )
-			end
-
-			if _cfgMap.residPPFile then
-				MgrCamera:RePPFile( _cfgMap.residPPFile )
-			end
-		end
 	elseif this.ndCount <= 0 then
 		this.state = LES_State.Complete
 		this.ndCount = nil
@@ -265,6 +278,7 @@ function M._ST_Complete()
 	this._Up_Progress()
 	this.state = LES_State.FinshedEnd
 	if this.mapid then
+		_evt.Brocast( Evt_Map_ReSInfo )
 		_evt.Brocast(Evt_Map_Loaded, this.mapid,this.param)
 	else
 		local _isToMain = (not this.m_instruct)
@@ -288,6 +302,7 @@ end
 
 function M.AddCurrMapObj(lbSObj)
 	local _cursor = lbSObj:GetCursor()
+	this.mapid = this.mapid or 0
 	local _lb = this[this.mapid] or {}
 	this[this.mapid] = _lb
 	

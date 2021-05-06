@@ -11,11 +11,11 @@ using Core;
 [AddComponentMenu("Scene/SceneInfoEx")]
 public class SceneInfoEx : SceneBasicEx
 {
-	static public new SceneInfoEx Get(GameObject gobj,bool isAdd){
-		return UtilityHelper.Get<SceneInfoEx>(gobj,isAdd);
+	static public new SceneInfoEx Get(Object uobj,bool isAdd){
+		return UtilityHelper.Get<SceneInfoEx>(uobj,isAdd);
 	}
 
-	static public new SceneInfoEx Get(GameObject gobj){
-		return Get(gobj,true);
+	static public new SceneInfoEx Get(Object uobj){
+		return Get(uobj,true);
 	}
 }

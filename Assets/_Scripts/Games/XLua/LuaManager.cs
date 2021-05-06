@@ -146,7 +146,8 @@ public class LuaManager : GobjLifeListener
 	}
 
 	void _Init_Global(LuaTable _G){
-		_Init_G_Layer(_G);
+		this._Init_G_Layer(_G);
+		this._Init_G_Event(_G);
 	}
 
 	void _Init_G_Layer(LuaTable _G){
@@ -163,6 +164,9 @@ public class LuaManager : GobjLifeListener
 		_G.Set("Layer",_nt);
 	}
 
+	void _Init_G_Event(LuaTable _G)
+	{
+	}
 	
 
 	[DllImport("xlua", CallingConvention = CallingConvention.Cdecl)]
@@ -234,6 +238,17 @@ public class LuaManager : GobjLifeListener
 		luaEnv.GC();
 	}
 
+	public bool SetCFuncLua(string funcName) 
+	{
+		LuaFunction func = luaEnv.Global.GetInPath<LuaFunction>(funcName);
+		if (func != null)
+		{
+			luaEnv.Global.SetInPath(funcName,func);
+			return true;
+		}
+		return false;
+	}
+
 	public bool CFuncLua(string funcName, params object[] args) {
 		LuaFunction func = luaEnv.Global.GetInPath<LuaFunction>(funcName);
 		if (func != null) {
@@ -255,6 +270,7 @@ public class LuaManager : GobjLifeListener
 					func.Call(args);
 					break;
 			}
+			func.Dispose();
 			return true;
 		}
 		return false;

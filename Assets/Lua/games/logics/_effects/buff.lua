@@ -11,21 +11,17 @@ local E_CEType = LES_Ani_Eft_Type
 local MgrData = MgrData
 local tb_append = table.append
 
-local super,super2,_evt = LuaObject,ClsObjBasic,Event
+local super,super2 = ClsEftBase,ClsObjBasic
 local M = class( "buff",super,super2 )
 local this = M
 this.nm_pool_cls = "p_buff"
-
-function M.GetSObj4Battle(id)
-	return MgrScene.OnGet_Map_Obj( id )
-end
 
 function M.Builder(idMarker,idTarget,b_id,duration,speed)
 	local _isOkey,_cfg_buff = MgrData:CheckCfg4Buff( b_id )
 	if not _isOkey then return end
 	local _p_name,_ret = this.nm_pool_cls .. "@@" .. b_id
 	duration = duration or ((_cfg_buff.duration or 0) / 1000)
-	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,b_id,duration,_cfg_buff.cast_effect,speed,_cfg_buff.cast_effects )
+	_ret = this.BorrowSelf( _p_name,idMarker,idTarget,b_id,duration,speed,_cfg_buff )
 	return _ret
 end
 
@@ -35,57 +31,55 @@ function M:ctor()
 	self.isDelayTime = true
 end
 
-function M:Reset(idMarker,idTarget,b_id,duration,e_id,speed,e_ids)
+function M:Reset(idMarker,idTarget,b_id,duration,speed,cfgBuff)
 	self.isUping = false
-	self:SetData( b_id,idMarker,idTarget,duration,e_id,speed,e_ids )
+	self:SetData( b_id,idMarker,idTarget,duration,speed,cfgBuff )
 end
 
-function M:OnSetData(idMarker,idTarget,duration,e_id,speed,e_ids)
+function M:OnSetData(idMarker,idTarget,duration,speed,cfgBuff)
 	self:_DisappearTarget()
 	self:_DisappearEffect()
 	
 	self.idCaster = idMarker
 	self.idTarget = idTarget or idMarker
 	self.timeOut = duration
-	self.e_id = e_id
-	self.e_ids = e_ids
-	self.speed = speed or 1
-end
+	self:SetSpeed( speed )
+	self.cfgBuff = cfgBuff
 
-function M:ReEvent4Self(isbind)
-	_evt.RemoveListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
-	_evt.RemoveListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
-	if (isbind)then
-		_evt.AddListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
-		_evt.AddListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
-	end
+	self.e_id = cfgBuff.cast_effect
+	self.e_ids = cfgBuff.cast_effects
 end
 
 function M:OnUpdate(dt)
-	if self.isPause then
-		return
-	end
+	super.OnCurrUpdate( self,dt )
+end
 
-	if (self.isDisappear == true) then
-		self:Disappear()
+function M:Jugde4Disappear()
+	self.isNotUpPos = true
+	local _curr = self.currEft
+	if _curr then
+		local cfgEft = _curr:GetCurrCfgEft()
+		self:_DisappearEffect()
+		if cfgEft and cfgEft.nextid then
+			self:_DoEffect( cfgEft.nextid )
+			if self.isUping then
+				return
+			end
+		end
 	end
-
-	self.curr_time = self.curr_time + dt * self.speed
-	if self.timeOut and self.timeOut > 0  then
-		self.isDisappear = (self.timeOut <= self.curr_time)
-	end
+	super.Jugde4Disappear( self )
 end
 
 function M:OnPreDisappear()
-	self.isUping,self.isDisappear,self.timeOut = nil
-	self:RemoveEvents()
+	super.OnPreDisappear( self )
+	self.cfgBuff = nil
 	self:_DisappearEffect()
 	self:_DisappearTarget()
 end
 
 function M:_DisappearEffect()
 	local _lbs = self.lbEfcts
-	self.lbEfcts = nil
+	self.lbEfcts,self.currEft,self.flytime = nil
 
 	if _lbs then
 		for _, v in ipairs(_lbs) do
@@ -128,13 +122,11 @@ function M:GetCasterID()
 end
 
 function M:Start( speed )
-	speed = speed or self.speed
-	self.speed = speed
+	self.curr_time = 0
+	self.mileAge = 0
+	self:SetSpeed( speed or self.speed )
 	self:_StartEffect()
 	self:_StartShaderEffect()
-	if self.isUping then
-		self.curr_time = 0
-	end
 	self:ReEvent4OnUpdate(self.isUping)
 	self:ReEvent4Self(self.isUping)
 end
@@ -174,24 +166,42 @@ function M:_DoEffect( e_id )
 		_e_id = e_id
 	end
 
-	local _lbs = EffectFactory.CreateEffect( self.idCaster,self.idTarget,_e_id )
+	local _idCaster,_idTarget = self.idCaster,self.idTarget
+	local _isFly = (_cfg.chg_time and _cfg.chg_time > 0) and (_idCaster ~= _idTarget)
+	if _isFly then
+		_idTarget = _idCaster
+	end
+	local _lbs = EffectFactory.CreateEffect( _idCaster,_idTarget,_e_id )
 	local _lens = tb_lens( _lbs )
-	self.isUping = (_lens > 0) or (_cfg.action_state)
+	local _isUping = (_lens > 0) or (_cfg.action_state)
 	
 	self.isPlayAction = (_cfg.action_state ~= nil)
 	if self.isPlayAction then
 		_lbTarget:PlayAction( _cfg.action_state )
 	end
-	if _lens > 0 and self.isUping then
+	if _lens > 0 and _isUping then
 		self.lbEfcts = self.lbEfcts or {}
 		tb_append(self.lbEfcts, _lbs)
+
+		-- 设置buff的飞行
+		if _isFly then
+			local _flytime,_sobj = _cfg.chg_time
+			self.currEft = self.lbEfcts[1]
+			self.currEft.maxtime = _flytime * 0.001
+			self.currEft:SetIsNoCurve( true )
+			local _,_mvSpeed,_diff = this.CalcSpeedAndDis( self.idCaster,self.idTarget,_flytime,_cfg.min_mv_speed )
+			self:SetMoveDir( _diff )
+			self:SetMvSpeed( _mvSpeed )
+			self.isNotUpPos = nil
+		end
 	end
 	self.isChgBody = _lbTarget:ChangeBody( _e_id )
 	self.matResId  = _lbTarget:ChgMat( _cfg )
 	EffectFactory.ShowEffects( _lbs )
-	if not self.isUping then
-		self.isUping = self.isChgBody or self.matResId ~= nil
+	if not _isUping then
+		_isUping = self.isChgBody or self.matResId ~= nil
 	end
+	self.isUping = _isUping
 end
 
 function M:_StartShaderEffect()

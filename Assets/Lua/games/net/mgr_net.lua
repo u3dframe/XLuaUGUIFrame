@@ -8,7 +8,7 @@
 local tb_insert = table.insert
 local tb_rmvals = table.removeValues
 local tb_contains = table.contains
-local _not_circle_cmd = { "ping" }
+local _not_circle_cmd = { "ping","debug_longstring","debug_longstring_over","map_move" }
 
 _G.Network = require("games/net/network")
 _G.CfgSvList = require("games/net/severlist")
@@ -30,8 +30,10 @@ function M.Init()
 	this._Init_Sproto()
 	Network.Init(this.OnDispatch_Msg,this.OnConnection, this.OnWriteFinish,this.OnDisConnection)
 
-	this.heartInterval = 10
+	this.heartInterval = 60 * 2
+	this.lmtReConnet = { 0.05 , 0.8 , 1.5 }
 	_evt.AddListener(Evt_UpEverySecond,this.DoHeart)
+	_evt.AddListener(Evt_Net_ShutDown,this.ShutDown)
 end
 
 function M._Init_Sproto()
@@ -80,7 +82,7 @@ local function create_read_stream(ctx, crypt_call, handler, disconnect, data)
 				if not msg then return end
 				local ok,err = xpcall(handler,debug.traceback,msg)
 				if not ok then
-					printError("=== err = [\n%s\n]",err)
+					printError("=== mgrnet create_read_stream err = [\n%s\n]",err)
 				end
 			end
 		end
@@ -124,6 +126,11 @@ local function handle_sproto(msg)
 
 		if not tb_contains( _not_circle_cmd,_lbRequs.cmd ) then
 			HideCircle()
+		end
+
+		if "game_auth" == _lbRequs.cmd then
+			LTimer.RemoveDelayFunc( "net_re_connect" )
+			this.nReConnet = nil
 		end
 
 		if _lbRequs.callback then
@@ -258,7 +265,25 @@ local function handshake_new(callback, target)
 		local rc4read, rc4write = newcipher(secret),newcipher(secret)
 		local function crypt_read(a) return rc4.crypt(rc4read, a) end
 		local function crypt_write(a) return rc4.crypt(rc4write, a) end
-		local function on_disconnect() this._ReConnect() end
+		local function on_disconnect(isError)
+			this.nReConnet = (this.nReConnet or 0) + 1
+			local _v = this.lmtReConnet[this.nReConnet]
+			LTimer.RemoveDelayFunc( "net_re_connect" )
+			if not  _v then
+				this._ExitLogin()
+				return
+			end
+
+			if _v <= 0 then
+				this._ReConnect()
+			else
+				ShowCircle()
+				LTimer.AddDelayFunc1( "net_re_connect",_v,function()
+					HideCircle()
+					this._ReConnect()
+				end)
+			end
+		end
 		stream_read = create_read_stream(
 			{id = id,secret = secret,},
 			crypt_read,
@@ -341,12 +366,13 @@ local function handshake_reuse()
 end
 
 function M.OnConnection(isSucess,errStr)
-	-- printInfo("=== [%s] = [%s] = [%s] = [%s]",_lf_,this.isShutDown,isSucess,errStr)
 	local _lf_ = this._lfConnected
 	this._lfConnected = nil
 
 	if _lf_ and (not this.isShutDown) then
 		_lf_( isSucess,errStr )
+	else
+		printError("=== mgrnet OnConnection = [%s] , [%s] , [%s] , [%s]",(_lf_ == nil),isSucess,this.isShutDown,errStr)
 	end
 
 	-- if isSucess then
@@ -356,7 +382,7 @@ function M.OnConnection(isSucess,errStr)
 end
 
 function M.OnDisConnection(isError)
-	-- printInfo("=== OnDisConnection = [%s]",isError)
+	-- printInfo("=== mgrnet OnDisConnection = [%s] = [%s]",isError,this.isShutDown)
 	if this.isShutDown then
 		this._ExitLogin()
 		return
@@ -396,6 +422,8 @@ function M.OnHeart(svMsg)
 end
 
 function M.Clean()
+	LTimer.RemoveDelayFunc( "net_re_connect" )
+	this.nReConnet = nil
 	stream_read, stream_write = nil, nil
 	host, sender = nil, nil
 	_cursor,_cb_requs = 0,{}
@@ -404,12 +432,16 @@ end
 function M.ShutDown(isExit)
 	-- printInfo("=== ShutDown = [%s]",isExit)
 	this.isShutDown = (isExit == true)
-    _csMgr:ShutDown()
+    local _isOkey = _csMgr:ShutDown()
+	if not _isOkey then
+		this._ExitLogin()
+	end
 end
 
 function M._ExitLogin()
 	-- printInfo("=== _ExitLogin = ")
 	HideCircle( true )
+	LuBtn.CsIsFreezeAll( false )
 	this.Clean()
 	this.isShutDown = nil
 	_evt.Brocast( Evt_Re_Login )
@@ -466,6 +498,12 @@ function M.SendRequest( cmd,data,callback )
 		return
 	end
 
+	local _lfSender = sender
+	if not _lfSender then
+		this.ShutDown( true )
+		return
+	end
+
 	if not tb_contains( _not_circle_cmd,cmd ) then
 		ShowCircle()
 	end
@@ -473,8 +511,10 @@ function M.SendRequest( cmd,data,callback )
 	local _cur = _cursor + 1
 	_cursor = _cur
 	_cb_requs[_cur] = { cmd = cmd, callback = callback }
-	local msg = string.pack(">s2", sender(cmd, data, _cur))
+	local _strs = _lfSender(cmd, data, _cur)
+	local msg = string.pack(">s2", _strs)
 	stream_write.append(msg)
+
 	if this._isHook then
 		ON_HOOK_OCCUR {
 			name = cmd,

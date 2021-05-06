@@ -5,9 +5,9 @@
 	-- Desc : 
 ]]
 
-local super,_evt = FabBase,Event
+local super,super2 = FabBase,ClsEftBase
 local _cLayer = L_SObj
-local M = class( "effect_object",super )
+local M = class( "effect_object",super,super2 )
 local this = M
 this.nm_pool_cls = "p_efct"
 
@@ -37,6 +37,7 @@ end
 
 function M:ctor()
 	super.ctor( self )
+	super2.ctor( self )
 	self.isUping = false
 end
 
@@ -65,29 +66,23 @@ function M:OnSetData(idTarget,mount_point,isfollow,timeout,v3Offset,v3Angle)
 	self.mount_point = mount_point
 	self.isFollow = isfollow == true
 	timeout = (timeout or 1000)
-	self.timeOut = timeout
-	if timeout > 0 then
-		self.timeOut = self.timeOut  * 0.001
-	end
+	self.timeOut = (timeout > 0) and (timeout  * 0.001) or timeout
 	self.v3Offset = v3Offset
 	self.v3Angle = v3Angle
 	self.curex_time = 0
-end
-
-function M:ReEvent4Self(isbind)
-	_evt.RemoveListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
-	_evt.RemoveListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
-	if (isbind)then
-		_evt.AddListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
-		_evt.AddListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
-	end
 end
 
 function M:OnViewBeforeOnInit()
 	self.start_time = Time.time
 	self.curr_time = 0
 	self.isDelayTime = true
-	local _lbTarget = self:GetSObjBy( self.idTarget )
+	local _sid,_tid = self.idTarget
+	local cfgEft = self:GetCurrCfgEft()
+	if cfgEft and cfgEft.is_link == 1 then
+		_sid = self.idCaster or self.data
+		_tid = self.idTarget
+	end
+	local _lbTarget = self:GetSObjBy( _sid )
 	if not _lbTarget then
 		-- 立即销毁 ???
 		return
@@ -95,11 +90,9 @@ function M:OnViewBeforeOnInit()
 
 	local _lbT_Point
 	if self.mount_point then
-		_lbT_Point = _lbTarget:NewTrsf(self.mount_point,true,true)
+		_lbT_Point = _lbTarget:GetHookPoint( self.mount_point )
 	end
-	if not _lbT_Point then
-		_lbT_Point = _lbTarget
-	end
+	_lbT_Point = _lbT_Point or _lbTarget
 
 	-- 跟随
 	self:SetParent(_lbT_Point.trsf,true)
@@ -124,7 +117,14 @@ function M:OnViewBeforeOnInit()
 		end
 	end
 	-- self:SetLayer( _cLayer,true )
-	
+
+	self._link2id = nil
+	if _tid then
+		local _sobjLine = self:GetSObjBy( _tid )
+		if _sobjLine then
+			self._link2id = _tid
+		end
+	end
 	self.isUping = true
 end
 
@@ -133,14 +133,27 @@ function M:OnInit()
 end
 
 function M:OnShow()
-	self.comp.speedRate = self.speed or 1
+	self.comp.speedRate = self:GetSpeed()
 	self.comp.isPause = (self.isPause == true)
 	if self.csCurve then
 		self.csCurve.m_indexCurve = -1
 	end
+
+	if self._link2id and not self.lbTrsfOffset then
+		local _obj = self:FindGobj("offset")
+		if _obj then
+			self.lbTrsfOffset = self:NewTrsfBy( _obj,true )
+		end
+	end
 end
 
-function M:GetSpeed()
+function M:GetCurrCfgEft()
+	if self.cfg_e_id then
+		return MgrData:GetCfgSkillEffect( self.cfg_e_id )
+	end
+end
+
+function M:GetSpeed2()
 	if self.data then
 		local _maker = self:GetSObjBy( self.data )
 		if _maker and _maker:GetCursor() and _maker.GetCurrAniSpeed then
@@ -150,29 +163,13 @@ function M:GetSpeed()
 	return 1
 end
 
-function M:OnUpdateLoaded(dt)
-	if self.isPause then
-		return
-	end
-	
-	if (self.isDisappear == true) then
-		self:Disappear()
-	end
-
-	self.curr_time = self.curr_time + dt * self.speed
-	if self.timeOut and self.timeOut > 0  then
-		self.isDisappear = (self.timeOut <= self.curr_time)
-		self:SetCurve( dt,self.timeOut )
-	end
+function M:ReEvent4Self(isbind)
+	super2.ReEvent4Self( self,isbind )
 end
 
--- 消失
-function M:OnPreDisappear()
-	self.isUping,self.isDisappear,self.timeOut = nil
-	local _lfunc = self.lfDisappear
-	self.lfDisappear = nil
-	if _lfunc then
-		_lfunc()
+function M:OnUpdateLoaded(dt)
+	if super2.OnCurrUpdate( self,dt ) then
+		self:OnUp_Link( dt )
 	end
 end
 
@@ -195,29 +192,8 @@ function M:Regain()
 	end
 end
 
-function M:SetIsNoCurve( isBl )
-	self.isNoCurve = (isBl == true)
-end
-
-function M:SetCurve( dt,maxtime,force )
-	force = (force == true) or (not self.isNoCurve)
-	if (not force) or (not self.csCurve) or (not maxtime) or (maxtime <= 0) then
-		return
-	end
-	self.curex_time = self.curex_time or 0
-	self.curex_time = self.curex_time  + (dt * self.speed)	
-	self.csCurve:ReVal(self.curex_time,maxtime)
-end
-
-function M:ResetTimeOut( time_out_sec )
-	self.timeOut = time_out_sec
-	if self.timeOut and self.timeOut > 0 then
-		self.curr_time = 0
-	end
-end
-
 function M:SetSpeed( speed )
-	self.speed = speed or 1
+	super2.SetSpeed( self,speed )
 	if self.comp then
 		self.comp.speedRate = self.speed
 	end

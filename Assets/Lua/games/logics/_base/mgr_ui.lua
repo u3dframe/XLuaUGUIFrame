@@ -6,6 +6,7 @@
 ]]
 
 local tb_insert,tb_con,tb_conf,tb_rmf = table.insert,table.contains,table.contains_func,table.removeValuesFunc
+local str_contains = string.contains
 local _E_Layer,_E_Hide = LE_UILayer,LE_UI_Mutex
 local _layVw,_lay_1 = {},{_E_Layer.Default,_E_Layer.Main,_E_Layer.Background,_E_Layer.Normal,_E_Layer.Pop,_E_Layer.Message,_E_Layer.Top}
 local _clsUI,_clsUrt = UIBase,UIRoot
@@ -55,9 +56,18 @@ function M.AddViewUI(ui)
 	end
 	this.uiViews[_layer] = _lb
 	this.last_vw_ui = ui
+	if _layer == _E_Layer.Normal then
+		this.last_ui_nor = ui
+	end
 end
 
 function M.RmViewUI(ui)
+	if this.last_ui_nor == ui then
+		this.last_ui_nor = nil
+	end
+	if this.last_vw_ui == ui then
+		this.last_vw_ui = nil
+	end
 	local _layer = ui:GetLayer()
 	if not _layer then return end
 	local _lb = this.uiViews[_layer]
@@ -65,6 +75,15 @@ function M.RmViewUI(ui)
 	tb_rmf(_lb,_lf_equipLUI,ui)
 end
 
+function M.LastUIWeight()
+	local _abName = nil
+	if this.last_ui_nor then
+		_abName = this.last_ui_nor:GetAbName()
+	elseif this.last_vw_ui then
+		_abName = this.last_vw_ui:GetAbName()
+	end
+	return MgrData:GetWeight4UI( _abName )
+end
 
 function M.HideAll(layer,...)
 	layer = layer or _layVw
@@ -85,13 +104,12 @@ function M.HideOneLayer(layer,...)
 	if _lens_ <= 0 then return end
 	local _isBl = false
 	local _lens,_exceptUIs = this:Lens4Pars( ... )
-	local _lfContains = table.contains_func
 	if _lens > 0 then
 		_exceptUIs = { ... }
 	end
 	for i = _lens_,1,-1 do
 		_ui_ = _lb_[i]
-		_isBl = (_ui_ ~= nil) and ((not _exceptUIs) or (not _lfContains(_exceptUIs,_lf_equipLUI,_ui_)))
+		_isBl = (_ui_ ~= nil) and ((not _exceptUIs) or (not tb_conf(_exceptUIs,_lf_equipLUI,_ui_)))
 		if _isBl then
 			this.HideUI(_ui_)
 		end
@@ -159,6 +177,28 @@ function M.OpenUI2(id,lfPreOpen,lfOnShowOnce,...)
 		end
 		_evt.Brocast( id,id,lfOnShowOnce,... )
 	end
+end
+
+function M.GetUI(uiname)
+	local _ui = nil
+	local function _func_0(item,p1)
+		if (not item) or (not p1) then
+			return true
+		end
+		local _abName = item:GetAbName()
+		if (_abName == p1) or str_contains(_abName,p1) or (item:getCName() == p1) then
+			_ui = item
+			return true
+		end
+		return false
+	end
+
+	for _,_lb in pairs(this.uiViews) do
+		if tb_conf(_lb,_func_0,uiname) then
+			break
+		end
+	end
+	return _ui
 end
 
 function M.IsUnlock(id,isTips)

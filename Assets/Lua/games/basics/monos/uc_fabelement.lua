@@ -8,13 +8,19 @@
 local super = LCFabBasic
 local M = class( "lua_PrefabElement",super )
 
-function M:ctor( obj,component )
+function M:ctor( obj,component,isNotSetCSCall )
 	assert(obj,"element is null")
 	if true == component then
 		component = CPElement.Get(obj)
 	end
-	super.ctor(self,obj,component or "PrefabElement")
+	super.ctor(self,obj,component or "PrefabElement",isNotSetCSCall)
 	self.isEleComp = CHelper.IsElement(self.comp)
+end
+
+function M:_GetCFComp()
+	if self.isCanSetCSCall then
+		return super._GetCFComp( self )
+	end
 end
 
 function M:IsHasChild( elName )
@@ -28,11 +34,36 @@ end
 
 function M:GetElement( elName )
 	if not self.isEleComp then return end
-	local _k = self:SFmt("__gobj_%s",elName)
-	if not self[_k] then 
-		self[_k] = self.comp:GetGobjElement(elName) 
+	local _k,_v = self:SFmt("__gobj_%s",elName)
+	_v = self[_k]
+	if not _v then
+		local _k1 = self:SFmt("__trsf_%s",elName)
+		_v = self[_k1]
+		if _v then
+			_v = _v.gameObject
+		else
+			_v = self.comp:GetGobjElement(elName) 
+		end
+		self[_k] = _v
 	end
-	return self[_k]
+	return _v
+end
+
+function M:GetElementTrsf( elName )
+	if not self.isEleComp then return end
+	local _k,_v = self:SFmt("__trsf_%s",elName)
+	_v = self[_k]
+	if not _v then
+		local _k1 = self:SFmt("__gobj_%s",elName)
+		_v = self[_k1]
+		if _v then
+			_v = _v.transform
+		else
+			_v = self.comp:GetTrsfElement(elName) 
+		end
+		self[_k] = _v
+	end
+	return _v
 end
 
 function M:GetElementComponent( elName,strComp )

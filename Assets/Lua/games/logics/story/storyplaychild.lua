@@ -57,7 +57,16 @@ function M:OnInit()
 end
 
 function M:OnShow()
-    self.csEDComp:Init(self.playOverCallBack,self.time)
+    self._lfCFOver = self._lfCFOver or function ()
+        self._fevt().Brocast( Evt_Map_ReSInfo )
+        local _lf = self.playOverCallBack
+        self.playOverCallBack = nil
+        if _lf then
+            _lf()
+        end
+    end
+    self:ReSInfo()
+    self.csEDComp:Init(self._lfCFOver,self.time)
     -- super.SetPosition( self,0,10000,0 )
     if self.PreloadCompleteCallBack then self.PreloadCompleteCallBack() end
 end
@@ -71,6 +80,14 @@ end
 function M:OnCF_Hide()
     super.OnCF_Hide( self )
     self:Disappear()
+end
+
+function M:ReSInfo()
+	local _cfg = MgrData:GetOneData( "stimeline",self.resid )
+    if not _cfg then
+        _cfg = MgrData:GetOneData( "stimeline",0 )
+    end
+	super.ReSInfo( self,_cfg )
 end
 
 ---预加载剧情信息

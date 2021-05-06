@@ -35,10 +35,10 @@ function M:NewCmr(elName,isNoPrint)
     printError("=== NewCmr is Null, name = [%s]", elName)
 end
 
-function M:NewEle(elName,isNoPrint)
+function M:NewEle(elName,isCanSetCSCall,isNoPrint)
     local _gobj = self:GetElement(elName)
     if _gobj then
-        return self:NewEleBy(_gobj)
+        return self:NewEleBy(_gobj,isCanSetCSCall)
     end
     if isNoPrint == true then return end
     printError("=== NewEle is Null, name = [%s]", elName)

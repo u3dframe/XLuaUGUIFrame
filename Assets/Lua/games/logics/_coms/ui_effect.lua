@@ -7,8 +7,8 @@
 
 local _vec3,type = Vector3,type
 local _v3_0,_v3_1 = _vec3.zero,_vec3.one
-local super = FabBase
-local M = class( "ui_effect",super )
+local super,super2 = FabBase,ClsEftBase
+local M = class( "ui_effect",super,super2 )
 local this = M
 this.nm_pool_cls = "p_uieft"
 
@@ -23,6 +23,7 @@ end
 
 function M:ctor()
 	super.ctor( self )
+	super2.ctor( self )
 	self.isUping = false
 end
 
@@ -73,29 +74,11 @@ function M:OnShow()
 	self.isUping = true
 end
 
-function M:OnUpdateLoaded(dt)
-	if self.isPause then
-		return
-	end
-	
-	if (self.isDisappear == true) then
-		self:Disappear()
-	end
-
-	self.curr_time = self.curr_time + dt
-	if self.timeOut and self.timeOut > 0  then
-		self.isDisappear = (self.timeOut <= self.curr_time)
-	end
+function M:ReEvent4Self(isbind)
 end
 
--- 消失
-function M:OnPreDisappear()
-	self.isUping,self.isDisappear,self.timeOut = nil
-	local _lfunc = self.lfDisappear
-	self.lfDisappear = nil
-	if _lfunc then
-		_lfunc()
-	end
+function M:OnUpdateLoaded(dt)
+	super2.OnCurrUpdate( self,dt )
 end
 
 function M:ResetTimeOut( time_out_sec )

@@ -104,7 +104,7 @@ function M:PreloadingUI()
 	-- -- 加载 Loading界面
 	-- _evt.Brocast(Evt_Loading_Show,0,function()
 	-- 	-- 加载 请求遮挡 界面
-	-- 	ShowCircle( HideCircle,true )
+	-- 	ShowCircle( HideCircle )
 	-- 	_evt.Brocast(Evt_ToView_Login)
 	-- end)
 	

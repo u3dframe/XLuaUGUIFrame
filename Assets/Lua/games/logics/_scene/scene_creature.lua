@@ -7,8 +7,9 @@
 
 local SceneCUnit = require ("games/logics/_scene/scene_c_unit") -- 生物 - 单元
 
+local tonumber,type,tostring = tonumber,type,tostring
 local tb_insert,tb_sort,tb_lens = table.insert,table.sort,table.lens
-local tostring,NumEx = tostring,NumEx
+local NumEx = NumEx
 local str_split = string.split
 
 local E_Object,E_State = LES_Object,LES_C_State
@@ -52,6 +53,11 @@ function M:onAssetConfig( _cfg )
 	_cfg.isUpdate = true
 	_cfg.isStay = true
 	return _cfg
+end
+
+function M:on_clean()
+	super.on_clean( self )
+	self._t_nddis = nil
 end
 
 function M:GetComponent()
@@ -240,6 +246,10 @@ function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 	if (not isNotAct) and cfgEft.action_state then
 		self:PlayAction( cfgEft.action_state )
 	end
+
+	if (not isNotAct) and cfgEft.action_sub_state then
+		self:PlaySubAction( cfgEft.action_sub_state )
+	end
 	
 	local _e_data,_idCaster,_idTarget = self:_GetECastData( e_id ),self:GetCursor()
 	_idTarget = _idCaster
@@ -247,9 +257,20 @@ function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 	if _e_data then
 		_idCaster = (isHurt) and _e_data.caster or _idCaster
 		_idTarget = self:IsSelf4TargetBy( _e_tp ) and _idCaster or _e_data.target
+		if cfgEft.is_link == 1 then
+			if (_idCaster == _idTarget) then
+				_idTarget = (_idTarget == _e_data.caster) and _e_data.target or _idTarget
+			end
+		end
 	end
 
-	self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
+	local _vt = self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
+	if cfgEft.is_interrupt == 1 and _vt then
+		local _obj = self:GetSObjBy ( _idCaster )
+		if _obj then
+			_obj:_InsertNDispByChgAction( _vt )
+		end
+	end
 
 	self:_ExcuteSpecialEffect(e_id,cfgEft,_idCaster,_idTarget,_e_data)
 
@@ -276,6 +297,26 @@ function M:_ExcuteEffect( e_id,cfgEft,idCaster,idTarget )
 end
 
 function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget,svData )
+end
+
+function M:_InsertNDispByChgAction(vt)
+	if type(vt) == "table" and #vt > 0 then
+		local _t = self._t_nddis or {}
+		self._t_nddis = _t
+		for _,vobj in ipairs(vt) do
+			_t[#_t + 1] = vobj
+		end
+	end
+end
+
+function M:OnChgActionBeg(pre,curr)
+	local _t = self._t_nddis
+	self._t_nddis = nil
+	if _t then
+		for _,eobj in ipairs(_t) do
+			eobj:Disappear()
+		end
+	end
 end
 
 -- 处理效果
@@ -313,8 +354,7 @@ end
 
 -- 主动 效果
 function M:DoInjured(svMsg)
-	self.nOrder = self.nOrder or 0
-	self.nOrder = self.nOrder + 1
+	self.nOrder = (self.nOrder or 0) + 1
 	local _cfgSkill = MgrData:GetCfgSkill( svMsg.skillid ) or self.cfgSkill
 	if (not _cfgSkill) or (not _cfgSkill.cast_order) then return end
 	local _data = _cfgSkill.cast_order[self.nOrder]
@@ -353,22 +393,23 @@ end
 
 -- 受伤 效果
 function M:DoHurtEffect(svOne)
+	local _temp = nil
 	if self:_IsHurtEffect(svOne) then
-		local _temp = MgrData:GetCfgHurtEffect( svOne.effectid )
+		_temp = MgrData:GetCfgHurtEffect( svOne.effectid )
 		if _temp and _temp.hit_effect then
 			self:_AddECastData( _temp.hit_effect,svOne )
 			self:ExcuteEffectByEid( _temp.hit_effect,true )
 		end
-
-		if svOne.dead == true then
-			_temp = (self.data ~= nil) and (self.data.die ~= nil)
-			if _temp then
-				self:_AddECastData( self.data.die,svOne )
-				self:SetState( E_State.Die,true )
-			else
-				self:Reback()
-				printError("======= no die effect,hero id = [%s]",self.svData.cfgid)
-			end
+	end
+	
+	if svOne and svOne.dead == true then
+		_temp = (self.data ~= nil) and (self.data.die ~= nil)
+		if _temp then
+			self:_AddECastData( self.data.die,svOne )
+			self:SetState( E_State.Die,true )
+		else
+			self:Reback()
+			printError("======= no die effect,hero id = [%s]",self.svData.cfgid)
 		end
 	end
 	self:DoHurtNumData( svOne )
@@ -383,9 +424,9 @@ function M:IsDeath()
 	return self.isDied == true or self.state == E_State.Die
 end
 
-function M:AddBuff( b_id,duration )
+function M:AddBuff( b_id,duration,fmid )
 	local _idCaster = self:GetCursor()
-	local _buff = EffectFactory.Make( E_EType.Buff,_idCaster,_idCaster,b_id,duration )
+	local _buff = EffectFactory.Make( E_EType.Buff,fmid or _idCaster,_idCaster,b_id,duration )
 	if not _buff then return end
 	local _pool = self.buffs or {}
 	self.buffs = _pool

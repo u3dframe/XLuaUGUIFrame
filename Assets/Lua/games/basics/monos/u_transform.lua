@@ -4,8 +4,8 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-
-local _vec3,_vec2,type = Vector3,Vector2,type
+local tonumber,type,tostring = tonumber,type,tostring
+local _vec3,_vec2 = Vector3,Vector2
 
 local super = LUGobj
 local M = class( "lua_transform",super )
@@ -47,6 +47,7 @@ function M:GetChild( nIndex )
 end
 
 function M:GetPosition()
+	self:_CreateVecs()
 	if self:IsInitTrsf() then
 		local _tmp = self.csEDComp:GetPosition()
 		self.v3Pos:Set(_tmp.x,_tmp.y,_tmp.z)
@@ -63,6 +64,15 @@ function M:SetPosition( x,y,z )
 	else
 		self._async_px,self._async_py,self._async_pz = x,y,z
 	end
+end
+
+function M:GetLocalPosition()
+	self.v3PosLoc = self.v3PosLoc or _vec3.zero
+	if self:IsInitTrsf() then
+		local _tmp = self.csEDComp:GetLocalPosition()
+		self.v3PosLoc:Set(_tmp.x,_tmp.y,_tmp.z)
+	end
+	return self.v3PosLoc
 end
 
 function M:SetLocalPosition( x,y,z )
@@ -272,15 +282,16 @@ function M:SetAsLastSibling()
 	self.csEDComp:SetAsLastSibling()
 end
 
-function M:SmoothPos( x,y,z,stime,isLocal )
+-- ntype = LE_Trsf_Smooth
+function M:SmoothPos( x,y,z,stime,ntype )
 	if not (x and y and z) then
 		return
 	end
 
 	if self:IsInitGobj() then
-		isLocal = isLocal == true
+		ntype = tonumber(ntype) or LE_Trsf_Smooth.Pos
 		stime = tonumber(stime) or 0.1
-		self.csEDComp:ToSmoothPos( x,y,z,isLocal,stime )
+		self.csEDComp:ToSmoothPos( x,y,z,ntype,stime )
 	end
 end
 

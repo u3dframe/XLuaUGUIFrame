@@ -84,6 +84,7 @@ local _L_Midle = {
 -- lua 组件
 local _L_Midle_1 = {
 	{"LTimer","lua_timer",8}, -- sv时间(延迟，定点)
+	{"LFTask","lua_frame_task",8}, -- 分帧任务
 	{"UIRow","uicell_row",8}, -- 行单元（多行多列使用）
 	{"UIScl","uic_scroll",8}, -- 固定循环
 	{"UIScloop","uic_scroll_loop",8}, -- 固定循环
@@ -104,6 +105,7 @@ local _L_End = {
 	{"MgrPopTip", "mgr_popuptip", 9}, -- 文本弹出框
 	{"MgrLoading","mgr_loading",9}, -- 加载界面
 	{"MgrVdo","mgr_vdo",9}, -- Vdo
+	{"MgrSDK","mgr_sdk",9}, -- SDK
 	
 	{"MgrLoadScene","mgr_loadscene",10}, -- 加载场景管理
 	{"SceneFactory","scene_factory",10}, -- 场景工厂
@@ -113,6 +115,9 @@ local _L_End = {
 
 local _L_End_Mgr = {
 	{"MgrLogin","login/mgr_login",6}, 	-- 登录管理
+
+	{"", "vminfo", 5},
+
 }
 
 function GetLuaFp4Globals()

@@ -16,6 +16,8 @@ Evt_SendRay4ScreenPoint = "Evt_SendRay4ScreenPoint"; -- 发射线 (v2,lfCall[ray
 Evt_UserLog2Net = "Evt_UserLog2Net"; -- 用户日志记录
 Evt_UserProcessLog2Net = "Evt_UserProcessLog2Net"; -- 用户流程日志记录
 
+Evt_Net_ShutDown = "Evt_Net_ShutDown"; -- 断开链接(true = 断开)
+
 -------- 摄像机 - 所用事件
 Evt_Vw_Def3DCamera = "Evt_Vw_Def3DCamera"; -- 显/隐 默认的3D 摄像机 (true/false,otherCamera)
 Evt_Get_UICamera = "Evt_Get_UICamera"; -- 取得UI摄像机 ( self.lfunc(lbUICamera),self )
@@ -43,6 +45,7 @@ Evt_Map_Load = "Evt_Map_Load"; -- 执行加载地图 (mapid)
 Evt_Map_Loaded = "Evt_Map_Loaded"; -- 地图加载完成
 Evt_Map_AddObj = "Evt_Map_AddObj"; -- 添加 map 场景里面的 对象 (objType,resid,lfunc,lbObject)
 Evt_Map_GetObj = "Evt_Map_GetObj"; -- 取 map 场景里面的 对象 (uniqueID,lfunc,lbObject)
+Evt_Map_ReSInfo = "Evt_Map_ReSInfo"; -- 重写设置下当前场景的场景数据
 
 Evt_State_Battle_Start = "Evt_State_Battle_Start"; -- 战斗状态开始
 Evt_Map_SV_AddObj = "Evt_Map_SV_AddObj"; -- 服务器消息 - 添加对象 (objType,svData)
@@ -64,6 +67,7 @@ Evt_Battle_End = "Evt_Battle_End"; -- 战斗 - 结束
 
 -------- 界面所用事件
 Evt_UI_Showing = "Evt_UI_Showing"; -- UI显示中ing事件
+Evt_UI_Closed = "Evt_UI_Closed"; -- UI关闭ed事件
 Evt_Popup_Tips = "Evt_Popup_Tips"; -- 弹出提示
 Evt_Desc_Tip = "Evt_Desc_Tip"; -- 弹出描述tip
 Evt_Error_Tips = "Evt_Error_Tips"; -- 错误提示
@@ -74,3 +78,5 @@ Evt_Re_Login = "Evt_Re_Login"; -- 返回登陆
 
 Evt_View_FightUI = "Evt_View_FightUI"; -- 显隐 - 战斗UI  ( isHide )
 Evt_FightUI_Showing = "Evt_FightUI_Showing"; -- 战斗UI 显示中ing
+
+Evt_LoginSDK = "Evt_LoginSDK"; -- SDK登录成功返回

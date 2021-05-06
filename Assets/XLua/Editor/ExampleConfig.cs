@@ -89,6 +89,8 @@ public static class ExampleConfig
                 typeof(MaskableGraphic),
                 typeof(Text),
                 typeof(Image),
+                typeof(Scrollbar),
+                typeof(ScrollRect),
                 // typeof(Image.Type), // 枚举不用到wrap文件
                 typeof(Toggle),
                 typeof(Slider),
@@ -100,6 +102,9 @@ public static class ExampleConfig
                 typeof(EventTrigger), // UGUIEventListener 的 父类
                 //------------------------ 类1 ---------------------
                 typeof(LoopListView3),
+                typeof(GuideController),
+                typeof(Conversation),
+                typeof(TMPro.TMP_InputField),
                 //------------------------ 类2 ---------------------
 #if USE_DOTWEEN
                 typeof(DG.Tweening.AutoPlay),
@@ -148,7 +153,7 @@ public static class ExampleConfig
                 typeof(MemDisplay),
                 typeof(TimelineUtil),
                 typeof(CardUtil),
-                // typeof(StaticEx),
+                typeof(EU_Bridge),
                 typeof(ObjEx),
                 typeof(StrEx),
                 typeof(PathEx),

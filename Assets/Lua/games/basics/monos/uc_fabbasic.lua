@@ -7,10 +7,11 @@
 local super = LUComonet
 local M = class( "lua_GobjLifeListener",super )
 
-function M:ctor( obj,component )
+function M:ctor( obj,component,isNotSetCSCall )
 	if true == component then
 		component = CGobjLife.Get(obj)
 	end
+	self.isCanSetCSCall = not (isNotSetCSCall == true)
 	super.ctor(self,obj,component or "GobjLifeListener")
 end
 

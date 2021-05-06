@@ -78,6 +78,7 @@ function M:OnViewBeforeOnInit()
 	self:HideOtherExcludeSelf()
 end
 
+
 function M:_SetSelfLayer()
 	local _lay = self:GetLayer()
 	if _E_Layer.URoot == _lay then
@@ -104,6 +105,21 @@ end
 
 function M:OnInitEnd()
 	self._objTopBanner = self:GetElement("ui_topbanner")
+	local _lbBtns = self:GetLbBtns()
+	if _lbBtns then		
+		local _btnName,_btn = nil
+		for _,vv in ipairs(_lbBtns) do
+			_btnName = self:ReSEnd( "lbBtn",vv.name )
+			if vv.ntype == 1 then
+				_btn = self:NewBtnBy( vv.gobj,vv.func,vv.val,vv.isNoScale )
+			elseif vv.ntype == 2 then
+				_btn = self:NewBtn4UEvt( vv.name,vv.func,vv.val,vv.isNoScale,vv.isNoPrint )
+			else
+				_btn = self:NewBtn( vv.name,vv.func,vv.val,vv.isNoScale,vv.isNoPrint )
+			end
+			self[_btnName] = _btn
+		end
+	end
 end
 
 function M:OnShowEnd()
@@ -128,7 +144,11 @@ function M:OnShowEnd()
 end
 
 function M:View(isShow,data,...)
+	self:_ReMgrView( isShow )
 	super.View( self,isShow,data,... )
+end
+
+function M:_ReMgrView(isShow)
 	if self:SelfIsRoot() then
 		return
 	end
@@ -169,6 +189,8 @@ function M:OnExit(isInited)
 	local _isPre = self:Get4NotClear("isPreNormalUI")
 	local _isBack = self:Get4NotClear("isBackSelf")
 	self:Clear4NotClear("isCloseSelf","isShowMain","isPreNormalUI","isBackSelf")
+
+	_evt.Brocast( Evt_UI_Closed,self:GetAbName(),self );
 
 	if (not isInited) then return end
 

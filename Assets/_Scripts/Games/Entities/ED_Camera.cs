@@ -21,15 +21,15 @@ public class ED_Camera : ED_Animator
         posY = 0;
         if (null == cmr || null == uiCmr || uiCmr == cmr)
             return;
-        Transform _trsf = UtilityHelper.ToTransform( src );
+        Transform _trsf = LuaHelper.ToTransform( src );
          if (null == _trsf)
             return;
-        GameObject _uiDest = UtilityHelper.ToGObj( uiParent );
+        GameObject _uiDest = LuaHelper.ToGObj( uiParent );
         Vector3 _p3 = _trsf.position;
         if(_x != 0 || _y != 0)
             _p3 += new Vector3(_x,_y,0);
         Vector3 _pos = cmr.WorldToScreenPoint(_p3);
-        Vector2 _ret = UtilityHelper.ScreenPointToLocalPointInRectangleBy( _uiDest,uiCmr,_pos );
+        Vector2 _ret = LuaHelper.ScreenPointToLocalPointInRectangleBy( _uiDest,uiCmr,_pos );
         posX = _ret.x;
         posY = _ret.y;
     }
@@ -47,10 +47,15 @@ public class ED_Camera : ED_Animator
     public ED_Camera() : base()
     {
     }
-
-    override public void InitComp(string strComp, Action cfDestroy, Action cfShow, Action cfHide)
+    
+    override public void InitComp(string strComp,Core.DF_OnInt cfLife)
     {
-        base.InitComp(strComp, cfDestroy, cfShow, cfHide);
+        base.InitComp(strComp,cfLife);
+    }
+
+    override public void InitComp(Component comp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(comp,cfLife);
     }
 
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
@@ -87,7 +92,7 @@ public class ED_Camera : ED_Animator
     {
         if (null == this.m_cmr)
         {
-            this.ToSmoothPos(toX,toY,toZ,true,smoothPos,callFinish);
+            this.ToSmoothPos(toX,toY,toZ,1,smoothPos,callFinish);
             return;
         }
         bool isChgPos = this.IsChgSmoothPos( toX,toY,toZ );
@@ -102,7 +107,7 @@ public class ED_Camera : ED_Animator
         float _difFOV = this.m_toFOV - this.m_curFOV;
 
         bool _isSmoonthFOV  = isChgFOV && (smoothFov > 0) && (_difFOV < m_lmtFOV * -1 || _difFOV > m_lmtFOV);
-        bool _isSmoonth = this.IsSmoothPos(toX,toY,toZ,true,smoothPos,callFinish);
+        bool _isSmoonth = this.IsSmoothPos(toX,toY,toZ,1,smoothPos,callFinish);
         if (_isSmoonth || _isSmoonthFOV)
         {
             if (this.m_curFOV != this.m_toFOV)
@@ -124,14 +129,14 @@ public class ED_Camera : ED_Animator
 
     public void SetFieldOfView(float val)
     {
-        if(UtilityHelper.IsNull(this.m_cmr))
+        if(LuaHelper.IsNull(this.m_cmr))
             return;
         this.m_cmr.fieldOfView = val;
     }
 
     public void ToSmooth4LocXYZ(float val, float toFieldOfView, float smoothFov = 0f,float smoothPos = 0f, int xyz = 0, Action callFinish = null)
     {
-        if(UtilityHelper.IsNull(this.m_gobj))
+        if(LuaHelper.IsNull(this.m_gobj))
             return;
         Vector3 _to = this.GetCurrPos();
         float _x = _to.x;
@@ -154,7 +159,7 @@ public class ED_Camera : ED_Animator
 
     public void ToSmooth4LocXYZStartAdd(float val, float toFieldOfView, float smoothFov = 0f,float smoothPos = 0f, int xyz = 0, Action callFinish = null)
     {
-        if(UtilityHelper.IsNull(this.m_gobj))
+        if(LuaHelper.IsNull(this.m_gobj))
             return;
         Vector3 _to = this.m_startLocPos;
         float _x = _to.x;
@@ -177,7 +182,7 @@ public class ED_Camera : ED_Animator
 
     public void RebackStart(float smoothFov = 0f,float smoothPos = 0f, Action callFinish = null)
     {
-        if(UtilityHelper.IsNull(this.m_gobj))
+        if(LuaHelper.IsNull(this.m_gobj))
             return;
         Vector3 _to = this.m_startLocPos;
         this.ToSmooth4Local(_to.x, _to.y, _to.z, this.m_startFOV, smoothFov,smoothPos, callFinish);
@@ -185,7 +190,7 @@ public class ED_Camera : ED_Animator
 
     public void GetUILocPos(UnityEngine.Object src,Camera uiCmr,UnityEngine.Object uiParent,ref float posX,ref float posY)
     {
-        if(UtilityHelper.IsNull(this.m_gobj))
+        if(LuaHelper.IsNull(this.m_gobj))
             return;
         GetUILocPos(this.m_cmr,src,uiCmr,uiParent,ref posX,ref posY);
     }

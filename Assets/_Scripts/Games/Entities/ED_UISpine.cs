@@ -21,6 +21,16 @@ public class ED_UISpine : ED_Animator
     {
     }
 
+    override public void InitComp(string strComp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(strComp,cfLife);
+    }
+
+    override public void InitComp(Component comp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(comp,cfLife);
+    }
+
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
     {
         base.InitComp(comp, cfDestroy, cfShow, cfHide);
@@ -40,10 +50,10 @@ public class ED_UISpine : ED_Animator
 
     public void SetPars(UnityEngine.Object uobjParent,Vector3 locScale,Vector3 locPos)
     {
-        if(UtilityHelper.IsNull(this.m_gobj))
+        if(LuaHelper.IsNull(this.m_gobj))
             return;
         
-        UtilityHelper.SetParent(this.m_trsf,uobjParent,true);
+        LuaHelper.SetParent(this.m_trsf,uobjParent,true);
         RectTransform s = uobjParent as RectTransform;
         s.localScale = locScale;
         s.localPosition = locPos;

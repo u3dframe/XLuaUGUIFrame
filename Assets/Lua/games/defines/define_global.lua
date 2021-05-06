@@ -71,6 +71,15 @@ LE_UI_Mutex = {
 	MainAndSelf    = 6, -- 互斥: 主界面 和 自身层级界面
 }
 
+-- 组件 Transform 平滑常量
+LE_Trsf_Smooth = {
+    None     = 0,
+    PosLocal = 1, -- local position
+    Pos      = 2, -- position
+    AnPos    = 3, -- anchored position
+    AnPos3D  = 4  -- anchored position 3D
+}
+
 -- 游戏 虚拟资源
 LE_VCoin = {
     Item = 5,
@@ -79,8 +88,17 @@ LE_VCoin = {
     Skill = 999
 }
 
-
--- 游戏回调函数
+-- UI动作
 LE_Anim_Unique = {
     anc_pos_up2down = 1001,
+}
+
+-- 场景类型
+LE_SceneType = {
+    MainHome = 0, -- home主场景
+    Fight = 1, -- 战斗地图
+    Explore = 2, -- 探索地图
+    CityState = 3, -- 城邦
+    OutSide = 4, -- 野外
+    Card = 5, -- 抽卡
 }

@@ -77,4 +77,11 @@ function M:SetActiveSelect( isBl )
 	return self
 end
 
+function M:_GetCFComp()
+end
+
+function M:_GetCFComp4Base()
+	return super._GetCFComp( self )
+end
+
 return M

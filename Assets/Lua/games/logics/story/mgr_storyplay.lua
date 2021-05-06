@@ -185,11 +185,15 @@ function M:StoryPlayOver()
         --清除当前播放数据
         self.IsOfficiaPlaying = false;
         self.IsStoryPlaying = false;
-        local lastId = self.CurrPlayStory.id;
-        if (self.CurrPlayStory.onOverCallBack)then
-            self.CurrPlayStory.onOverCallBack()
+        local lastId = nil
+        if (self.CurrPlayStory)then
+            local _dd = self.CurrPlayStory
+            self.CurrPlayStory = nil;
+            lastId = _dd.id;
+            if (_dd.onOverCallBack)then
+                _dd.onOverCallBack()
+            end
         end
-        self.CurrPlayStory = nil;
         if #self.PlayStoryCacheQueue <= 0 then
             --通知其他系统播放剧情完成 大家爱咋咋滴
             evt.Brocast(Evt_StopPlayStory, lastId);

@@ -75,6 +75,16 @@ public class ED_UIItem : ED_Animator
     {
     }
 
+    override public void InitComp(string strComp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(strComp,cfLife);
+    }
+
+    override public void InitComp(Component comp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(comp,cfLife);
+    }
+
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
     {
         base.InitComp(comp, cfDestroy, cfShow, cfHide);
@@ -206,7 +216,7 @@ public class ED_UIItem : ED_Animator
             return null;
 
         ED_UIItem.ItemStar _it = this.m_listStars[0];
-        GameObject gobj = UtilityHelper.Clone(_it.m_gobj);
+        GameObject gobj = LuaHelper.Clone(_it.m_gobj);
         PrefabElement _csEleTemp = gobj.GetComponent<PrefabElement>();
         if(_csEleTemp == null)
             return null;
@@ -248,31 +258,40 @@ public class ED_UIItem : ED_Animator
         return this.NewStar();
     }
 
-    public void VwStars(int star,string sbg,string sicon)
+    public void VwStars(int star,string sicon,string sbg,int defStar)
     {
         int _cout = this.m_listStars.Count;
         if(_cout <= 0)
             return;
         ED_UIItem.ItemStar _cs = null;
-        int _max = UtilityHelper.NMaxMore(star,_cout);
+        int _max = LuaHelper.NMaxMore(defStar,_cout);
 
         bool _isBlBg = !string.IsNullOrEmpty(sbg);
-        bool _isBl = !string.IsNullOrEmpty(sicon);
-        bool _isBlIcon = false;
+        bool _isBlIcon = !string.IsNullOrEmpty(sicon);
+        bool _isCanIcon = false,_isCanBg = false;
+        bool _isActiveIcon = false;
         for (int i = 0; i < _max; i++)
         {
             if( i >= _cout )
                 _cs = this.NewStar();
             else
                 _cs = this.m_listStars[i];
-                
-            if(_isBlBg)
+            
+            _isCanBg = (_isBlBg && _cs.m_imgBg != null);
+            if(_isCanBg)
                 _cs.m_imgBg.SetIcon(sbg,false);
             
-            _isBlIcon = _isBl && (i < star);
-            _cs.m_imgIcon.SetActive(_isBlIcon);
-            if(_isBlIcon)
-                _cs.m_imgIcon.SetIcon(sicon,false);
+            _isCanIcon = _isBlIcon && (i < star);
+            _isActiveIcon = _isCanIcon || (_isBlBg && !_isCanBg);
+            _cs.m_imgIcon.SetActive(_isActiveIcon);
+            if(_isActiveIcon)
+            {
+                if(_isCanIcon)
+                    _cs.m_imgIcon.SetIcon(sicon,false);
+                else
+                    _cs.m_imgIcon.SetIcon(sbg,false);
+            }
+            
         }
     }
 
@@ -296,7 +315,7 @@ public class ED_UIItem : ED_Animator
         if(this.m_txtName == null)
             return;
         
-        Color _c = UtilityHelper.ToColor(r,g,b,a);
+        Color _c = LuaHelper.ToColor(r,g,b,a);
         this.VwNameColor(_c);
     }
 
@@ -345,7 +364,7 @@ public class ED_UIItem : ED_Animator
         if(this.m_txtValue == null)
             return;
         
-        Color _c = UtilityHelper.ToColor(r,g,b,a);
+        Color _c = LuaHelper.ToColor(r,g,b,a);
         this.VwValueColor(_c);
     }
 
@@ -418,8 +437,12 @@ public class ED_UIItem : ED_Animator
     public void VwIcon(string icon,int type)
     {
         if(this.m_imgIcon == null)
+        {
+            this.SLogError("ED_UIItem VwIcon","m_imgIcon is null",icon,type);
             return;
+        }
         bool _isBl = !string.IsNullOrEmpty(icon);
+        this.SLog("ED_UIItem VwIcon",_isBl,icon,type);
         if(_isBl)
         {
             if(type == 6)
@@ -431,8 +454,21 @@ public class ED_UIItem : ED_Animator
             else
                 this.m_imgIcon.SetIcon(icon,false);
         }
-
         this.m_imgIcon.SetActive(_isBl);
+    }
+
+    public void CheckSame4Icon(bool isBl)
+    {
+        if(this.m_imgIcon == null)
+            return;
+        this.m_imgIcon.m_isCheckSame = isBl;
+    }
+
+    public void SetSLog4Icon(bool isBl)
+    {
+        if(this.m_imgIcon == null)
+            return;
+        this.m_imgIcon.m_isSLog = isBl;
     }
 
     public void VwQuality(string icon)

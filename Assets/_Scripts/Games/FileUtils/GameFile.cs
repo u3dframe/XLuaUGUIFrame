@@ -84,19 +84,25 @@ namespace Core
 			InitFdRoot(m_resFdRoot);
 			if(Application.isPlaying){
 				GameEntranceEx.Entrance(_OnCFError);
-				string _url_push_log;
-				_url_push_log =  "http://push.dianyue.com/";
-				// _url_push_log =  "http://140.143.15.163:8085/";
-				LogToNetHelper.shareInstance.Init(_url_push_log,"client_log");
 			}
 
 			CfgPackage.InitPackage(()=>{
 				m_bk_url = CfgPackage.instance.m_urlVersion;
+				_InitPush();
 				if(callFunc != null)
 					callFunc();
-				EU_Bridge.SendAndCall("{\"cmd\":\"logLev\",\"logLev\":10}",null);
 			});
         }
+
+		static void _InitPush()
+		{
+			if(Application.isPlaying){
+				string _url_push_log = CfgPackage.instance.GetStr("push_url");
+				if(string.IsNullOrEmpty(_url_push_log))
+					_url_push_log =  "http://push.dianyue.com/";
+				LogToNetHelper.shareInstance.Init(_url_push_log,"client_log");
+			}
+		}
 
 		static void InitFdRoot(string fdRoot){
 			m_resFdRoot = fdRoot;
@@ -131,7 +137,11 @@ namespace Core
         }
 
         static public bool IsTextInCT(string fn){
-			return fn.EndsWith(".csv") || fn.EndsWith(".minfo") || fn.IndexOf("protos/") != -1 || fn.IndexOf("movies/") != -1;
+			return fn.EndsWith(".csv") || fn.EndsWith(".minfo") || fn.IndexOf("protos/") != -1 || fn.EndsWith(".txt");
+		}
+
+		static public bool IsFileInCT(string fn){
+			return fn.IndexOf("movies/") != -1;
 		}
 
 		static public bool IsUpdateUIRes (string resName)
@@ -142,7 +152,7 @@ namespace Core
 		// 取得路径
 		override public string GetFilePath(string fn){
 #if UNITY_EDITOR
-			if(IsTextInCT(fn)){
+			if(IsTextInCT(fn) || IsFileInCT(fn)){
 				return string.Format("{0}CsvTxts/{1}",m_appAssetPath,fn);
 			}
 #else
@@ -174,12 +184,22 @@ namespace Core
 			if(m_en != null)
 				m_en.Init(0.08f,_CallDEx);
 			m_en.Start();
-
+#if UNITY_EDITOR
+			_CallPhone(null);
+#else
 			EU_Bridge.SendAndCall("{\"cmd\":\"phone_mem_cpu\"}",_CallPhone);
+#endif
 		}
 
 		static void _CallPhone(string strData)
 		{
+			MemDisplay _dis = GameMgr.GetMem(false);
+			if(UtilityHelper.IsNull(_dis))
+				return;
+
+			if(IsInitLuaMgr)
+				_dis.m_luaUseMem = LuaHelper.LuaMemroy() * 1024;
+
 			JsonData _json = LJsonHelper.ToJData(strData);
 			if (_json == null)
 				return;
@@ -187,12 +207,6 @@ namespace Core
 			JsonData _jd = LJsonHelper.ToJDataByStrVal(_json,"data");
 			if (_jd == null)
 				return;
-			MemDisplay _dis = GameMgr.GetMem(false);
-			if(UtilityHelper.IsNull(_dis))
-				return;
-			
-			if(IsInitLuaMgr)
-				_dis.m_luaUseMem = LuaHelper.LuaMemroy() * 1024;
 			
 			_dis.m_outMemAll = LJsonHelper.ToLong( _jd,"am_total" );
 			_dis.m_outMemFree = LJsonHelper.ToLong( _jd,"am_free" );

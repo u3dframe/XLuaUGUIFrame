@@ -8,16 +8,16 @@ public class Launcher : MonoBehaviour
     void Start()
     {
         GameFile.IsInitLuaMgr = false;
-        GameFile.VwMems(true);
         GameFile.InitFirst(_StartUpdateProcess);
     }
 
     void _StartUpdateProcess()
     {
         bool isUnZip = !GameFile.isEditor;
-        bool isValidVer = !GameFile.isEditor;
-        isValidVer = false;
-        string obbPath = null;
+        bool _isVer = CfgPackage.instance.GetBool("isValidVer");
+        bool isValidVer = !GameFile.isEditor && _isVer;
+        string obbPath = CfgPackage.instance.GetObbPath("obbPath");
+        // Debug.LogFormat("=== obbPath = [{0}] , isVer = [{1}]",obbPath,_isVer);
         UpdateProcess updateProcess = new UpdateProcess().Init(Entry, _OnCallState,obbPath,isUnZip, isValidVer);
         updateProcess.Start();
     }
@@ -28,6 +28,7 @@ public class Launcher : MonoBehaviour
         InputMgr.instance.Init();
         UGUIEventSystem.instance.Init(false);
         AssetBundleManager.instance.isDebug = true;
+        // AssetBundleManager.instance.m_abOutSec = 0;
         SceneMapEx.m_cfLoad = ResourceManager.LoadTexture;
         LuaManager.instance.Init();
     }

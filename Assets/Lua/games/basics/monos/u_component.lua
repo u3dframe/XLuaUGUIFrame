@@ -4,21 +4,30 @@
 	-- Date : 2020-06-27 13:25
 	-- Desc : 
 ]]
-local type,tostring = type,tostring
+local tonumber,type,tostring = tonumber,type,tostring
+local tb_contains = table.contains
+
+local _not_cf_comp = { "UGUICanvasAdaptive","MainCameraManager","RectTransform" }
+
 local super = LUTrsf
 local M = class( "lua_component",super )
 local this = M
 
 function M:ctor( obj,component )
 	super.ctor(self,obj)
-	self._cf_ondestroy = self._cf_ondestroy or handler(self,self.OnCF_Destroy)
-	self._cf_onshow = self._cf_onshow or handler(self,self.OnCF_Show)
-	self._cf_onhide = self._cf_onhide or handler(self,self.OnCF_Hide)
 	self:InitComp(component)
 end
 
 function M:IsInitComp()
 	return self.comp ~= nil;
+end
+
+function M:_GetCFComp()
+	if tb_contains( _not_cf_comp,self.compStr ) then
+		return
+	end
+	self._cf_onlife = self._cf_onlife or handler(self,self.OnCF_Life)
+	return self._cf_onlife
 end
 
 function M:InitComp( component )
@@ -30,8 +39,23 @@ function M:InitComp( component )
 		if self:IsNeedGetComp() then
 			component = self:GetComponent( component )
 		end
-		self.csEDComp:InitComp( component,self._cf_ondestroy,self._cf_onshow,self._cf_onhide )
+		self.compStr = tostring( component )
+
+		local _flife = self:_GetCFComp()
+		self.csEDComp:InitComp( component,_flife )
 		self.comp = self.csEDComp.m_comp
+	end
+end
+
+function M:OnCF_Life(valInt)
+	valInt = tonumber(valInt) or 0
+	self.nLife = valInt
+	if self.nLife == 1 then
+		self:OnCF_Show()
+	elseif self.nLife == 2 then
+		self:OnCF_Destroy()
+	else
+		self:OnCF_Hide()
 	end
 end
 

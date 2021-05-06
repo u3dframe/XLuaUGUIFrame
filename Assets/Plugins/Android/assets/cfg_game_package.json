@@ -3,6 +3,9 @@
   "platformID":"平台标识ID",
   "language":"Chinese",
   "url_ver":"http://setting.dianyue.com/static/frontend/dykj",
+  "push_url":"http://dianyue.f3322.net:8085/",
   "uproj_ver":"kp_and",
+  "isValidVer":false,
+  "obbPath":"com.dygame.sdk173.SPlgGL173;obbPath",
   "isSync2CfgVer":true
 }

@@ -29,6 +29,10 @@ local MgrStore
 local super,_evt = UICell,Event
 local M = class( "ui_item",super )
 
+function M:ctor(gobj,cfClick)
+	super.ctor( self,gobj,cfClick )
+end
+
 function M:BuilderUObj( uobj )
 	return CEDUIItem.Builder( uobj )
 end
@@ -69,12 +73,15 @@ function M:OnView()
 		return
 	end
 	
-	if _type == 1 or _type == 2 or _type == 3 or _type == 4 or _type == 5 or _type == 8 then 
+	if _type == 1 or _type == 2 or _type == 3 or _type == 4 or _type == 5 or _type == 8 or _type == 12 then 
 		_showNum = MgrStore:GetItemNumStr(_type,_cfgid)
 	elseif _type == 6 then 
 		_rare = _cfg.rare
 		_feature = _cfg.feature
 		_level = _nNum
+	end
+	if MgrStore:IsEquipType(_type) then
+		_feature = _data[4]
 	end
 	_qua = _cfg.quality
 	_name = _cfg.name 
@@ -86,8 +93,9 @@ function M:OnView()
 	self:VwName(_name)
 	self:VwDesc(_desc)
 	self:VwOrder(_ord)
-	local _de = (_type == 6) and "Lv." or "x"
+	local _de = (_type == 6) and "Lv." or nil
 	self:VwValueDesc(_de)
+	self:VwTag(_cfg.tag)
 	self:VwStars(_star, _qua)
 	self:VwIcon(_icon,_type)
 	self:VwRare(_rare, _qua)
@@ -95,6 +103,8 @@ function M:OnView()
 	self:VwBgImg(_qua)
 	self:VwEmptyObj(false)
 	self:VwDQuality(_type, _level or _val, _qua,_feature)
+	local isFrag = MgrStore:IsItemType(_type) and MgrStore:IsItemFragment(_cfgid)
+	self:ShowFrag(isFrag)
 end
 
 function M:OnVwEmpty()
@@ -104,6 +114,7 @@ function M:OnVwEmpty()
 	self:VwValueDesc()
 	self:VwDesc("")
 	self:VwOrder()
+	self:VwTag()
 	self:VwStars(0)
 	self:VwIcon()
 	self:VwRare()
@@ -112,6 +123,7 @@ function M:OnVwEmpty()
 	self:VwEmptyObj(true)
 	self:VwDQuality()
 	self:SetFeature( )
+	self:ShowFrag(false)
 end
 
 function M:VwName(v)
@@ -125,25 +137,23 @@ end
 
 function M:_ReVal( nNum ,curNum,showNum )
 	local _v = nil
+	local _v1 = MgrStore:GetFmtNumStr(nNum)
+	local _v2 = MgrStore:GetFmtNumStr(showNum)
 	if LE_ItVShowType.Need == self.valType then
-		_v = nNum
+		_v = _v1
 	elseif LE_ItVShowType.Have == self.valType then
-		--_v = curNum
-		_v = showNum
+		_v = _v2
 	elseif LE_ItVShowType.XNeed == self.valType then
-		_v = "x" .. nNum
+		_v = "x" .. _v1
 	elseif LE_ItVShowType.XHave == self.valType then
-		--_v = "x" .. curNum
-		_v = "x" .. showNum
+		_v = "x" .. _v2
 	elseif LE_ItVShowType.Have_Need == self.valType then
-		-- _v = curNum .. "/" .. nNum
-		_v = showNum .. "/" .. nNum
+		_v = _v2 .. "/" .. _v1
 	elseif LE_ItVShowType.Need_Have == self.valType then
-		--_v = nNum .. "/" .. curNum
-		_v = nNum .. "/" .. showNum
+		_v = _v1 .. "/" .. _v2
 	elseif (LE_ItVShowType.NeedMoreThan1 == self.valType) then
 		if nNum > 1 then
-			_v = nNum
+			_v = _v1
 		end
 	end
 	self.isEnough = curNum >= nNum
@@ -260,14 +270,16 @@ function M:VwRare(rare, quality)
 end
 
 --显示星星
-function M:VwStars(nStars, quality)
+function M:VwStars(nStars, quality,ndStars)
 	nStars = tonumber(nStars) or 0
-	local _iconbg,_icon = nil
-	if quality then
-		_iconbg = "star_b_" .. quality
+	ndStars = tonumber(ndStars) or 5
+	local _iconbg = "star_w"
+	local _icon = nil
+	if quality and quality > 0 then
+		-- _iconbg = "star_b_" .. quality
 		_icon = "star_q_" .. quality
 	end
-	self.csEDComp:VwStars( nStars,_iconbg,_icon )
+	self.csEDComp:VwStars( nStars,_icon,_iconbg,ndStars )
 end
 
 function M:VwEmptyObj(isActive)
@@ -392,8 +404,8 @@ function M:ShowByArgs(ty, id, cnt, feature, level)
 	cnt = cnt or 0
 	self:VwValueBg()
 	if feature > 0 and cnt > 1 then
-		self:VwValueDesc("x")
-		self:VwValue(cnt)
+		--self:VwValueDesc("x")
+		self:VwValue(MgrStore:GetFmtNumStr(cnt))
 		self:VwValueBg(cfg.quality)
 		self:SetFeature(cfg.quality, feature)
 	elseif feature > 0 then
@@ -406,8 +418,8 @@ function M:ShowByArgs(ty, id, cnt, feature, level)
 		end
 	elseif cnt > 1 then
 		self:VwValueBg(cfg.quality)
-		self:VwValueDesc("x")
-		self:VwValue(cnt)
+		--self:VwValueDesc("x")
+		self:VwValue(MgrStore:GetFmtNumStr(cnt))
 	end
 	self:ShowFrag(isFrag)
 end

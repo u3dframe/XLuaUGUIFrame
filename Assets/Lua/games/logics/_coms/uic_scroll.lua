@@ -56,6 +56,14 @@ function M:ctor(lbCfg)
 	self.lbScl:ShowScroll(0,isVertical,isCallNoData,isAlpha)
 end
 
+function M:IsCanScroll(isBl)
+	isBl = isBl == true
+	local _sr = self.lbScl.comp
+	self.csMvType = self.csMvType or _sr.movementType
+	_sr.movementType = isBl and self.csMvType or URSMT_Clamped
+	-- self.lbScl:SetEnabled( isBl )
+end
+
 -- 此函数在OnShow里面调用
 function M:ShowScroll(listData)
 	self.listData = listData

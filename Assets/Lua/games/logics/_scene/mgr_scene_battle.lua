@@ -479,16 +479,25 @@ function M._OnMsgEndBattle( msg )
 				_sobj:SetLocalEulerAngles( 0,0,0 )
 				this.RemoveAll( _uuid )
 				local _t,_ox,_oy,_oz,_fov = MgrData:GetCfgBasic("battle_end_offset"),-3,0.5,0
+				local _cy = nil
 				if _t then
 					_ox,_oy,_oz = (tonumber(_t[1]) or -300) * 0.01,(tonumber(_t[2]) or 50) * 0.01,(tonumber(_t[3]) or 0) * 0.01
 					
 					if _t[4] then
 						_fov = (tonumber(_t[4]) or 0) * 0.01
 					end
+					if _t[5] then
+						_cy = tonumber(_t[5])
+						if _cy then
+							_cy = _cy * 0.01
+						end
+					end
 				end
 				MgrCamera:GetMainCamera():StopSmooth()
 				_tMap:CmrFov( _fov )
-				_tMap:CmrLookAtTarget( _sobj.trsf,_ox,_oy,_oz )
+				local _fmid = _sobj:GetElementTrsf("f_mid")
+				_tMap:CmrLookAtTarget( _fmid or _sobj.trsf,_ox,_oy,_oz,true )
+				_tMap:CmrLocalPosY( _cy )
 			end
 		end
 		LTimer.AddDelayFunc1( "battle_end",((_max_ms + 100) / 1000),this.EndBattle4Scene,false,true )
@@ -500,7 +509,7 @@ end
 function M.OnMsg_Buff_Add(svMsg)
 	local _obj = this.GetSObj( svMsg.id )
 	if not _obj then return end
-	_obj:AddBuff( svMsg.buffid,(svMsg.duration or 0) * 0.01 )
+	_obj:AddBuff( svMsg.buffid,(svMsg.duration or 0) * 0.01,svMsg.fromid )
 end
 
 function M.OnMsg_Buff_Rmv(svMsg)

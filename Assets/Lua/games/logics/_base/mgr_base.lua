@@ -32,4 +32,18 @@ function M:GetCfgData(cfgKey,idKey)
 	return MgrData:GetConfig( cfgKey )
 end
 
+function M:FreezedBtn(isFrozen)
+    isFrozen = isFrozen  == true
+    LuBtn.CsIsFreezeAll( isFrozen )
+end
+
+function M:FreezedExcept(isRm,...)
+    isRm = isRm  == true
+    if isRm then
+        LuBtn.CsRmExcept( ... )
+    else
+        LuBtn.CsAddExcept( ... )
+    end
+end
+
 return M

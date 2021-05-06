@@ -14,6 +14,11 @@ public class CardUtil : ED_Animator
         return Builder<CardUtil>(uobj);
     }
 
+    override public void InitComp(string strComp)
+    {
+        base.InitComp(strComp);
+    }
+
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
     {
         base.InitComp(comp, cfDestroy, cfShow, cfHide);

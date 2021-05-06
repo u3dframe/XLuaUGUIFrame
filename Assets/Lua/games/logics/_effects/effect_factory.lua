@@ -13,6 +13,7 @@ local _vec3 = Vector3
 local fdir = "games/logics/_effects/"
 local _req = reimport or require
 
+ClsEftBase                    = _req (fdir .. "effect_base")    -- 效果de父类
 local ClsEffect               = _req (fdir .. "effect_object")  -- 特效
 local ClsBuff                 = _req (fdir .. "buff")           -- buff
 local ClsBullet               = _req (fdir .. "bullet")         -- buff
@@ -69,6 +70,7 @@ function M.CreateEffect( idMarker,idTarget,e_id )
 			_v3Ang = _vec3.New( (cfgEft.angle_x or 0) * 0.01,(cfgEft.angle_y or 0) * 0.01,(cfgEft.angle_z or 0) * 0.01 )
 		end
 		_it = ClsEffect.Builder( idMarker,idTarget,cfgEft.resid,v,_isFollow,cfgEft.effecttime,_v3Of,_v3Ang )
+		_it.cfg_e_id = e_id
 		if _it then
 			tb_insert( _lb,_it )
 		end

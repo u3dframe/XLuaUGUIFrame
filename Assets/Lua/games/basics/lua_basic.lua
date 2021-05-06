@@ -45,10 +45,10 @@ end
 
 function M:_OnInit()
 	if self.isInited then return end
-	self.isInited = true
 	self:OnInitBeg()
 	self:OnInit()
 	self:OnInitEnd()
+	self.isInited = true
 end
 
 function M:OnInitBeg()
@@ -60,17 +60,38 @@ end
 function M:OnInitEnd()
 end
 
+function M:IsCanCircle()
+	return true
+end
+
+function M:VwCircle(isShow)
+	if not self:IsCanCircle() then
+		return
+	end
+	if isShow then
+		if not self.isCircle then
+			self.isCircle = true
+			self._fevt().Brocast(Evt_Circle_Show)
+		end
+	else
+		if self.isCircle then
+			self.isCircle = nil
+			self._fevt().Brocast(Evt_Circle_Hide)
+		end
+	end
+end
+
 function M:ReEvent4OnUpdate(isBind)
-	if not M._fevt() then
+	if not self._fevt() then
 		return
 	end
 	if self._lfUp then
-		M._fevt().RemoveListener(Evt_Update,self._lfUp)
+		self._fevt().RemoveListener(Evt_Update,self._lfUp)
 	end
 
 	if isBind == true then
 		self._lfUp = self._lfUp or handler_xpcall(self,self.__OnUpdate)
-		M._fevt().AddListener(Evt_Update,self._lfUp);
+		self._fevt().AddListener(Evt_Update,self._lfUp);
 	end
 end
 

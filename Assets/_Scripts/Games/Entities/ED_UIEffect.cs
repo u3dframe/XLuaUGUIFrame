@@ -22,6 +22,16 @@ public class ED_UIEffect : ED_Animator
     {
     }
 
+    override public void InitComp(string strComp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(strComp,cfLife);
+    }
+
+    override public void InitComp(Component comp,Core.DF_OnInt cfLife)
+    {
+        base.InitComp(comp,cfLife);
+    }
+
     override public void InitComp(Component comp, Action cfDestroy, Action cfShow, Action cfHide)
     {
         base.InitComp(comp, cfDestroy, cfShow, cfHide);
@@ -41,10 +51,10 @@ public class ED_UIEffect : ED_Animator
 
     public void SetPars(UnityEngine.Object uobjParent,Vector3 locPos,Vector3 locAngle,Vector3 locScale)
     {
-        if(UtilityHelper.IsNull(this.m_gobj))
+        if(LuaHelper.IsNull(this.m_gobj))
             return;
         
-        UtilityHelper.SetParent(this.m_trsf,uobjParent,true);
+        LuaHelper.SetParent(this.m_trsf,uobjParent,true);
         this.m_trsf.localPosition = locPos;
         this.m_trsf.localEulerAngles = locAngle;
         this.m_trsf.localScale = locScale;

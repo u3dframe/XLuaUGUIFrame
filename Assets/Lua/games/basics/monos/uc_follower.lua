@@ -18,6 +18,9 @@ function M:ctor( obj,component )
 	super.ctor(self,obj,component or "SmoothFollower")
 end
 
+function M:_GetCFComp()
+end
+
 function M:_RePars( distance,height,offsetH,isLerpDistance,isLerpHeight,isLerpRotate )
 	return (distance or 8),(height or 5),(offsetH or 0),(isLerpDistance == true),(isLerpHeight == true),(isLerpRotate == true)
 end

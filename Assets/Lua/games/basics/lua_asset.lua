@@ -32,6 +32,7 @@ function M:InitBase(assetCfg)
 		isNoCircle = nil,
 		isStay = nil,
 		isLogVTime = nil,
+		lbBtns = nil, -- {{}}
 
 		layer = nil,
 		hideType = nil,
@@ -94,6 +95,10 @@ end
 
 function M:GetAssetName()
 	return self.cfgAsset.assetName
+end
+
+function M:GetLbBtns()
+	return self.cfgAsset.lbBtns
 end
 
 function M:IsNoStateLoad(state)

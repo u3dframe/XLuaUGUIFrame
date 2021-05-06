@@ -40,7 +40,7 @@ function M._InitUI()
 
 	ui.OnShow = function(_s)
 		local _msg = this.GetPopopMsg()
-		_s.lbTxt:SetText(_msg)
+		_s.lbTxt:SetOrFmt2( "_error",_msg )
 		
 		_s.speed = _ySpeed
 		_s.toY = _yStart

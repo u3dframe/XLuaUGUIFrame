@@ -69,6 +69,9 @@ function M:ctor( obj )
 	self.csEDComp = _csEDComp
 	self.gobj = _isTab and _gobj or _csEDComp.m_gobj
 	self.trsf = _trsf or _csEDComp.m_trsf
+	if Is_GNMRelative then
+		self.g_name = CHelper.RelativeName( self.gobj )
+	end
 	self:_ExecuteAsync_Gobj()
 end
 
@@ -103,8 +106,8 @@ function M:SetActive( isActive )
 		if self.isActive == nil or isActive ~= self.isActive then
 			self.isActive = isActive
 			self.csEDComp:SetActive( self.isActive )
+			self:OnActive(self.isActive)
 		end
-		self:OnActive(self.isActive)
 	else
 		self._async_active = isActive
 	end

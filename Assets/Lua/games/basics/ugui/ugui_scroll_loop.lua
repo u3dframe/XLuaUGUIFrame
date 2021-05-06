@@ -84,10 +84,14 @@ end
 function M:OnUpItemData(gobj,index,n01)
     index = index + 1
     local _lb = self.objlist[gobj]
-    _lb.cur_index = index
-    if self.funcSetData then
-        self.funcSetData(_lb,index)
+    local _v  = _lb.cur_index
+    if _v ~= index then
+        _lb.cur_index = index
+        if self.funcSetData then
+            self.funcSetData(_lb,index)
+        end
     end
+    
     self:ExcScale( _lb,n01 )
     self:ExcAlpha( _lb,n01 )
     self:ExcCustom(_lb,n01 )

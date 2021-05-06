@@ -77,8 +77,7 @@ function M:OnUpdate4Moving(dt)
         _owner:SetUpMovement( 0 )
     else
         if _pos.y > self.groundPosY then
-            self.gravity = self.gravity or 1
-            self.gravityPosY = self.gravity * dt
+            self.gravityPosY = (self.gravity or 1) * dt
             movement.y = movement.y - self.gravityPosY
         end
     end

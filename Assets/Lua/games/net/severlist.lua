@@ -5,38 +5,64 @@
 	-- Desc : 
 ]]
 
+local _fmt = string.format
 local _mgrWWW = MgrWww
 
-local _fmt = string.format
-local fdir = "all1"
-
 local M = {
-    defEditorUrl = "https://setting.dianyue.com/static/frontend/" .. fdir .."/serverlist.json",
-    defUrl = "https://setting.dianyue.com/static/frontend/" .. fdir .."/serverlist.json",
+    _isUseSDK = true,
+    defUrl = "http://setting.dianyue.com/static/frontend/all1/serverlist.json",
     listUrl = {
     },
 
     isVPassed = false,
     isPassed = {
-    }
+    },
+
+    defUrlCreateEdt = "http://gamecenter.dianyue.com/user/create/1",
+    defUrlCreate = "http://gamecenter.dianyue.com/user/create/2",
+    listUrlCreate = {
+    },
 }
 
 local this = M
 
+function M.IsUseSDK(cur)
+    local _isVal = this._isUseSDK
+    return _isVal == true
+end
+
 -- 取得服务器列表 
 function M.GetSvUrl(cur)
-	local _strUrl,_strKey
-    _strKey = GM_IsEditor and _fmt("e_%s",cur) or _fmt("s_%s",cur)    
+    local _strUrl,_strKey
+    _strKey = GM_IsEditor and _fmt("e_%s",cur) or _fmt("s_%s",cur)
     _strUrl = this.listUrl[_strKey]
     if  not _strUrl then
-        _strUrl = GM_IsEditor and this.defEditorUrl or this.defUrl
+        if GM_IsEditor then
+            _strUrl = (this.defUrlEdt or this.defUrl)
+        else
+            _strUrl = this.defUrl
+        end
     end
-	return _strUrl
+    return _strUrl
+end
+
+function M.GetCreateUrl(cur)
+    local _strUrl,_strKey
+    _strKey = GM_IsEditor and _fmt("e_%s",cur) or _fmt("s_%s",cur)
+    _strUrl = this.listUrlCreate[_strKey]
+    if  not _strUrl then
+        if GM_IsEditor then
+            _strUrl = (this.defUrlCreateEdt or this.defUrlCreate)
+        else
+            _strUrl = this.defUrlCreate
+        end
+    end
+    return _strUrl
 end
 
 -- 是否过审核
 function M.IsPassedTrial(cur)
-	if this.isVPassed == true then
+    if this.isVPassed == true then
 		local _rval,_strKey = GM_IsEditor
 		if not _rval then
 			_strKey = _fmt("s_%s",cur)

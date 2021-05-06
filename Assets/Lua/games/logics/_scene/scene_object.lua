@@ -110,6 +110,27 @@ function M:SetSize( size )
 	end
 end
 
+function M:ReSInfo( cfg )
+	if self.csEDComp then
+		self.csEDComp:ReSInfo()
+	end
+	if cfg then 
+		local LUtils,MgrCamera = LUtils,MgrCamera
+		if cfg.lightSource and cfg.lightColors then
+			local _val = tonumber( cfg.lightIntensity ) or 0
+			LUtils.ReEnvironment( cfg.lightSource,_val * 0.01,unpack(cfg.lightColors) )
+		end
+
+		if cfg.residSkybox then
+			MgrCamera:ReSkybox( cfg.residSkybox )
+		end
+
+		if cfg.residPPFile then
+			MgrCamera:RePPFile( cfg.residPPFile )
+		end
+	end
+end
+
 function M:ReEvent4Self(isbind)
 	_evt.RemoveListener(Evt_Map_SV_Skill_Pause, self.Pause, self)
 	_evt.RemoveListener(Evt_Map_SV_Skill_GoOn, self.Regain, self)
@@ -128,6 +149,7 @@ end
 
 function M:OnCF_OnDestroy()
 	self:Reback()
+	super.OnCF_OnDestroy( self )
 end
 
 function M:DestroyObj(isNotImmediate)

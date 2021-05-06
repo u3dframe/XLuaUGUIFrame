@@ -9,12 +9,10 @@ local M = class( "ugui_text", super )
 
 function M:ctor( obj,com )
 	assert(obj,"text's obj is null")
-	local gobj = obj.gameObject
-	assert(gobj,"text's gobj is null")
 	if true == com then
-		com = CTxt.Get(gobj)
+		com = CTxt.Get(obj)
 	end
-	super.ctor( self,gobj,com or "UGUILocalize" )
+	super.ctor( self,obj,com or "UGUILocalize" )
 	local _c = self.comp:GetColor()
 	self.defColor = _c
 	self.curColor = LUtils.RColor( nil,_c.r,_c.g,_c.b,_c.a )
@@ -27,7 +25,8 @@ end
 -- 本地化内容处理完毕
 function M:SetText( val )
 	if val == nil or val == "" then
-		val = 1
+		self:SetUText( val )
+		return
 	end
 	self.comp:SetText(val);
 end
@@ -46,9 +45,8 @@ function M:SetOrFmt( val, ... )
 end
 
 function M:SetUText( val )
-	if val == nil or val == "" then
-		self:SetText( val )
-		return
+	if val == nil then
+		val = ""
 	end
 	self.comp:SetUText(val)
 end
