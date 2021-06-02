@@ -6,7 +6,7 @@
 	-- 界面需要绑定脚本 PrefabeElement.cs
 ]]
 
-local super,_evt = UICell,Event
+local super = UICell
 local M = class( "uicell_xxx",super ) -- uipart_xxx
 
 -- 初始化对象只调用一次(必要)
@@ -37,6 +37,7 @@ end
 
 -- 自定义的刷新事件绑定函数(非必要,处理事件刷新)
 function M:ReEvent4Self(isBind)
+	local _evt = self._fevt()
 	-- _evt.RemoveListener(Evt_ToChangeScene,self._lfXxx); -- 移除事件
 	if isBind == true then
 		-- _evt.AddListener(Evt_ToChangeScene,self._lfXxx); -- 添加事件
