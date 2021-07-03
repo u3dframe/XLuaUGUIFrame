@@ -10,22 +10,28 @@ local tb_insert = table.insert
 local super = LUTrsf
 local M = class( "uicell_row",super )
 
-function M:ctor(gobj,clsLua,nColumn,cfClick,isAllActive)
+function M:ctor(gobj,clsLua,nColumn,cfClick,isAllActive,syncUObj,nColumnData)
 	super.ctor( self,gobj )
 	
 	self.nColumn = nColumn
+	self.nColumnData = nColumnData or self.nColumn
 	self.isAllActive = (isAllActive == true)
-	
+
 	local _trsf = self.trsf
 	
 	-- 行单元中的列元素
 	local columns = {}
 	local _func = handler(self,self.ExcuteCallFunc)
 	local _gobjCell,_lb = nil
+	local _tObj = LuEvtListener
 	for i = 1,self.nColumn do
 		_gobjCell = _trsf:GetChild(i-1).gameObject
 		_lb = clsLua.New(_gobjCell,_func)
 		tb_insert(columns,_lb)
+
+		if _tObj and syncUObj then
+			_tObj.AddSyncDrag(_gobjCell,syncUObj)
+		end
 	end
 
 	self.columns = columns
@@ -39,8 +45,8 @@ function M:ShowViewByList(listOrg,nRow,...)
 	local _isActive,_tmp,_nIndex
 	for i = 1,self.nColumn do
 		_tmp = self.columns[i]
-		_nIndex = (nRow - 1) * self.nColumn + i;
-		_isActive = (_nIndex <= count) or self.isAllActive
+		_nIndex = (nRow - 1) * self.nColumnData + i;
+		_isActive = ((_nIndex <= count or self.isAllActive) and i <= self.nColumnData)
 		if _isActive then
 			_tmp:ShowViewByData(listOrg[_nIndex],_nIndex,...)
 		end

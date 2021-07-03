@@ -7,7 +7,7 @@
 local tonumber,type,tostring = tonumber,type,tostring
 local tb_contains = table.contains
 
-local _not_cf_comp = { "UGUICanvasAdaptive","MainCameraManager","RectTransform" }
+local _not_cf_comp = { "UGUICanvasAdaptive","MainCameraManager","RectTransform","CtrlCamera" }
 
 local super = LUTrsf
 local M = class( "lua_component",super )

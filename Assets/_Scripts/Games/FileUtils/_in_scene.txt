@@ -1,0 +1,12 @@
+/maps/
+post_process/
+skyboxs/
+maincity/
+outside/
+card/
+/explore/comom/
+/explore/grass/
+/explore/snow/
+/explore/eb_
+/explore/explore_
+lightmaps/

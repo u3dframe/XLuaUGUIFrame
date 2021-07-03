@@ -17,12 +17,12 @@ function M:onAssetConfig( _cfg )
 	-- _mgr = Mgrxxxx -- 配置在 define_luafp 里面的管理脚本
 	_cfg = super.onAssetConfig( self,_cfg )
 	_cfg.abName = "login/uilogin" -- ui 资源 ab 名，在prefab/ui/文件夹下
-	_cfg.isLogVTime = true
 	-- _cfg.assetName = "uiroot.prefab" -- ab里面的资源Asset名
 	-- _cfg.assetLType = LE_AsType.UI 资源类型
 	-- _cfg.layer = LE_UILayer.Normal -- 所在层级 默认是 Normal 层
 	-- _cfg.isStay = true -- 常驻界面不销毁
 	-- _cfg.isUpdate = true -- 是否调用update 对应函数 function M:OnUpdateLoaded(dt)
+	-- _cfg.isLogVTime = true -- 打印 _OnView 执行时间
 	
 	-- 界面通用按钮(界面独立按钮)，取得按钮的方式：self.lbBtnXxx
 	--_cfg.lbBtns = {
@@ -43,13 +43,13 @@ function M:OnInit()
 	-- self.lbTrsfXxx = self:NewTrsf(elName);
 	-- self.lbCompXXX = self:NewComp(elName,compName);
 	
-	_tmp = self:GetElement("elName")
+	_tmp = self:GetElement("elName") -- GetElementTrsf , GetElementComponent
 	self.lbPartXxx = _clsPart.New(_tmp,self)
 	
 	_tmp = self:GetElement("elName")
 	self.lbCellXxx = _clsCell.New(_tmp)
 
-	-- 循环滚动： 多行多列的/单行单列（无外部脚本的） -- 不支持非固定大小，和多个固定大小子元素的混合
+	-- 循环滚动： 多行多列/单行单列（无外部脚本的） -- 不支持非固定大小，和多个固定大小子元素的混合
 	self.lbUSclXxx = self:NewUScl(elName,{
 		clsLua = _clsCell, -- 可以为 require 后对象，也可以为字符串(需要被 require 的脚本路径):"xxx/xx/cellXxx"，还有为 Create 函数
 		-- clsLua = "xxx/xx/cellXxx",
@@ -66,7 +66,7 @@ function M:OnInit()
 		-- gobjCell = 指定列表子元素对象（可选）,
 	})
 	
-	-- 循环滚动： 多行多列的/单行单列（自定义外部脚本的 LoopListView3 ） -- 支持多个固定大小子元素的混合 ; 不支持非固定大小
+	-- 循环滚动： 多行多列/单行单列（自定义外部脚本的 LoopListView3 ） -- 支持多个固定大小子元素的混合 ; 不支持非固定大小
 	self.lbCSclXxx = self:NewUSclLoop(elName,{
 		clsLua = _clsCell, -- 可以为 require 后对象，也可以为字符串(需要被 require 的脚本路径):"xxx/xx/cellXxx"，还有为 Create 函数
 		-- clsLua = "xxx/xx/cellXxx",
@@ -120,7 +120,7 @@ end
 -- 接受参数，当界面调用 View(true,data,p1,p2,...) (非必要)
 function M:OnSetData(p1,p2,...)
 	-- 取第一个data参数时 self.data
-	-- 后面参数在此函数里面接收
+	-- data后面参数在此函数里面接收
 end
 
 -- 当isUpdate = true,资源加载完毕后，每帧才会回调(非必要)

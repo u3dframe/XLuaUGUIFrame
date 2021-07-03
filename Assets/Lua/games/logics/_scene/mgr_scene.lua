@@ -39,7 +39,6 @@ end
 function M.OnClear()
 	this.OnClearSome()
 	this.lbMap = nil
-	_evt.Brocast(Evt_ToChangeScene)
 end
 
 function M:ReEvent4Self(isBind)
@@ -113,6 +112,7 @@ function M.ViewMainHome()
 end
 
 function M.OnLoadMap(pars1, pars2)
+	_evt.Brocast( Evt_Map_PreLoading )
 	this.isSameMap = (pars1 == this.mapid)
 	this.isUping = false
 	this.isUpingLoadMap = false
@@ -280,6 +280,12 @@ function M._ST_Complete()
 	if this.mapid then
 		_evt.Brocast( Evt_Map_ReSInfo )
 		_evt.Brocast(Evt_Map_Loaded, this.mapid,this.param)
+
+		-- 设置下主摄像机
+		local _cfgMap = this.GetCurrMapCfg()
+		if _cfgMap and _cfgMap.backdistance then
+			MgrCamera:SetFBDistance( _cfgMap.backdistance,_cfgMap.type == 2 )
+		end
 	else
 		local _isToMain = (not this.m_instruct)
 		if this.m_instruct == "ToUI" then
@@ -328,6 +334,7 @@ function M.RemoveCurrMapObj(cursor)
 	local _v = this.GetCurrMapObj(cursor)
 	if not _v then return end
 	this[this.mapid][cursor] = nil
+	return _v
 end
 
 function M.GetOrNew_SObj(objType,resid,uuid)

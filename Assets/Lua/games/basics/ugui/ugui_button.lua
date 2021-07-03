@@ -47,7 +47,6 @@ function M:ctor( obj,callFunc,val,isNoScale )
 	_tmp = (not isNoScale)
 	self:SetRaycastTarget(true,_tmp)
 	self:SetIsPressScale(_tmp)
-	self:ReLmtClick( self.secLmt )
 end
 
 -- 限定下单击间隔时间
@@ -61,11 +60,19 @@ end
 
 -- 单击自身
 function M:OnClickSelf(gobj,pos)
-	if (not self.isRaycastTarget) or (self.lmtSecClick and self.lmtSecClick > Time.time) then
+	if (not self.isRaycastTarget) then
 		return
 	end
+
+	if (self.lmtSecClick and self.lmtSecClick > Time.time) then
+		local _evt = self._fevt()
+		_evt.Brocast( Evt_Popup_Tips,"Click Too fast,Please Slowly" )
+		return
+	end
+	if self.lmtSecClick then
+		self:ReLmtClick( self.secLmt )
+	end
 	self:VwCircle( true )
-	self:ReLmtClick( self.secLmt )
 
 	self.respName = ""
 	if gobj then

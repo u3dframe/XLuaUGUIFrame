@@ -87,13 +87,22 @@ function M:ShowScroll(listData)
 end
 
 function M:_CreateCell(newGo)
+	local _tObj,_ret_ = LuEvtListener
 	if self.tpClsLua == "function" then
-		return self.clsLua(newGo,self._lfCkCell)
+		_ret_ = self.clsLua(newGo,self._lfCkCell)
+		-- if _tObj then
+		-- 	_tObj.AddSyncDrag(newGo,self.gobj)
+		-- end
+		return _ret_
 	end
 	if self.isUseRow then
-		return _row.New(newGo,self.clsLua,self.nColumn,self._lfCkCell,self.isAllActive)
+		return _row.New(newGo,self.clsLua,self.nColumn,self._lfCkCell,self.isAllActive,self.gobj)
 	end
-	return self.clsLua.New(newGo,self._lfCkCell)
+	_ret_ = self.clsLua.New(newGo,self._lfCkCell)
+    -- if _tObj then
+    --     _tObj.AddSyncDrag(newGo,self.gobj)
+    -- end
+	return _ret_
 end
 
 function M:_ShowCell(lbCell,nRow)

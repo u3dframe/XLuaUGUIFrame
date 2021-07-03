@@ -75,17 +75,13 @@ function M:OnCreatItem(newGO)
     _lb = _lb or {}
     _lb.gobj = _lb.gobj or newGO
     self.objlist[_lb.gobj] = _lb
-    local _csEvt = CEvtListener.Get(newGO,false)
-    if _csEvt then
-        _csEvt:AddSyncDrag4EventTrigger( self.gobj )
-    end
 end
 
-function M:OnUpItemData(gobj,index,n01)
+function M:OnUpItemData(gobj,index,n01,isDistanceChange)
     index = index + 1
     local _lb = self.objlist[gobj]
     local _v  = _lb.cur_index
-    if _v ~= index then
+    if _v ~= index or not isDistanceChange then
         _lb.cur_index = index
         if self.funcSetData then
             self.funcSetData(_lb,index)

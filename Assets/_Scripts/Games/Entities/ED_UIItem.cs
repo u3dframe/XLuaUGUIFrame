@@ -69,6 +69,7 @@ public class ED_UIItem : ED_Animator
     public UGUILocalize m_txtMinHero { get; private set; } // 英雄小头像
 
     public GameObject m_gobjFragment { get; private set; } // 
+    public GameObject name_obj { get; private set; } // 名字地图  nameobj
 
     List<ED_UIItem.ItemStar> m_listStars = new List<ED_UIItem.ItemStar>();
     public ED_UIItem() : base()
@@ -102,6 +103,7 @@ public class ED_UIItem : ED_Animator
         this.m_gobjOrder = csEle.GetGobjElement("orderimg");
         this.m_gobjTag = csEle.GetGobjElement("bg_tag");
         this.m_txtTag = csEle.GetComponent4Element<UGUILocalize>("tag");
+        this.name_obj = csEle.GetGobjElement("nameobj");
 
         Image _img = csEle.GetComponent4Element<Image>("bg");
         this.m_imgBg = ED_UIImg.Builder(_img);
@@ -194,7 +196,7 @@ public class ED_UIItem : ED_Animator
         this.m_imgMinHeroIcon = null;
         this.m_txtMinHero = null;
         this.m_gobjFragment = null;
-        
+        this.name_obj = null;
         base.On_Destroy(obj);
     }
 
@@ -308,6 +310,8 @@ public class ED_UIItem : ED_Animator
             else
                 this.m_txtName.SetText(obj.ToString());
         }
+        if (this.name_obj)
+         this.name_obj.SetActive(_isBl);
     }
 
     public void VwNameColor(float r,float g,float b,float a = 1)

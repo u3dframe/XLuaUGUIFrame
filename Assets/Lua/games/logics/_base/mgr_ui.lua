@@ -75,12 +75,14 @@ function M.RmViewUI(ui)
 	tb_rmf(_lb,_lf_equipLUI,ui)
 end
 
-function M.LastUIWeight()
+function M.LastUIWeight(isLastNor)
 	local _abName = nil
-	if this.last_ui_nor then
-		_abName = this.last_ui_nor:GetAbName()
-	elseif this.last_vw_ui then
-		_abName = this.last_vw_ui:GetAbName()
+	local _ui = this.last_vw_ui
+	if (isLastNor == true) and this.last_ui_nor then
+		_ui = this.last_ui_nor
+	end
+	if _ui then
+		_abName = _ui:GetAbName()
 	end
 	return MgrData:GetWeight4UI( _abName )
 end

@@ -22,7 +22,7 @@ function M.Builder(nCursor,resid)
 end
 
 function M:IsEnemy()
-	if self.n_camp then return (self.n_camp == 1) end
+	return (self.n_camp) and (self.n_camp == 1)
 end
 
 return M

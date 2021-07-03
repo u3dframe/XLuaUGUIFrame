@@ -10,6 +10,14 @@ local super = LuBase
 local M = class( "ugui_event_listener", super )
 local this = M
 
+function M.AddSyncDrag( uobj,destUObj )
+	assert(uobj or destUObj,"listener's uobj is null")
+	local _csEvt = CEvtListener.Get( uobj,false )
+    if _csEvt then
+        _csEvt:AddSyncDrag4EventTrigger( destUObj )
+    end
+end
+
 function M:ctor( obj,comp )
 	assert(obj,"listener's obj is null")
 	if true == comp then

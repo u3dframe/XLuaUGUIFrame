@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class PrefabElement : PrefabBasic {
 	static public new PrefabElement Get(Object uobj,bool isAdd){
-		return UtilityHelper.Get<PrefabElement>(uobj,true);
+		return UtilityHelper.Get<PrefabElement>(uobj,isAdd);
 	}
 
 	static public new PrefabElement Get(Object uobj){

@@ -58,4 +58,9 @@ public sealed class LuaHelper : UtilityHelper {
 	static public bool CFuncLua(string funcName,object obj1,object obj2,object obj3,object obj4,object obj5,object obj6) {
 		return CFuncLuaMore(funcName,obj1,obj2,obj3,obj4,obj5,obj6);
 	}
+
+	static public UnityStandardAssets.ImageEffects.GlobalFog GetOrAddPostGFog(UnityEngine.Object uobj)
+    {
+        return Get<UnityStandardAssets.ImageEffects.GlobalFog>(uobj, true);
+    }
 }

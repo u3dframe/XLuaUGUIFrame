@@ -5,6 +5,7 @@
 	-- Desc : 
 ]]
 
+local m_min,m_max = math.min,math.max
 local E_Object,ET_SE = LES_Object,LET_Shader_Effect
 local E_State,E_CEType = LES_C_State,LES_Ani_Eft_Type
 local MgrData,LTimer = MgrData,LTimer
@@ -36,6 +37,7 @@ function M:OnEnd(isDestroy)
 	self:EndChgBody()
 	self:EndStopSAction()
 	self:EndChgMat()
+	self:EndPosChg()
 end
 
 function M:EndAction()
@@ -58,6 +60,13 @@ function M:OnUpdate_Child(dt,undt)
 			self:EndStopSAction()
 		end
 	end
+
+	if self.fps_loop_chgpos then
+		self:PosChging()
+		if self.fps_loop_chgpos <= 0 then
+			self:EndPosChg()
+		end
+	end
 end
 
 function M:On_SEByCCType(preType)
@@ -72,6 +81,19 @@ function M:On_SEByCCType(preType)
 		self:SetPause( true )
 		self:CsAniSpeed(0)
 	end
+end
+
+function M:ReEvent4Self(isBind)
+	super.ReEvent4Self( self,isBind )
+	local _evt = self._fevt()
+	_evt.RemoveListener(Evt_StopPlayStory, self.EndBigSkill, self)
+	if isBind == true then
+		_evt.AddListener(Evt_StopPlayStory, self.EndBigSkill, self)
+	end
+end
+
+function M:EndBigSkill()
+	self:ReCLight()
 end
 
 function M:GetActionState()
@@ -212,11 +234,49 @@ function M:ShiftTeleporting( cfgEft,svData )
 		return
 	end
 	local _x,_y = svData.args2 * 0.01,svData.args3 * 0.01
-	self:SetPos_SvPos( _x,_y )
+	self:PosChg( _x,_y,cfgEft.chg_time )
 	local _sd = self.svDataCast
 	if _sd then
 		self:LookTarget( _sd.target,_sd.targetx,_sd.targety )
 	end
+end
+
+function M:PosChg(sx,sy,chg_time_ms)
+	if (not sx) or (not sx) then
+		return
+	end
+	if not chg_time_ms or chg_time_ms <= 10 then
+		self:SetPos_SvPos( sx,sx )
+		return
+	end
+
+	local to_x,to_y = self:SvPos2MapPos( sx,sy )
+	self.to_x,self.to_y = to_x,to_y
+	local chg_time = chg_time_ms * 0.001
+	local _fps = self:MCeil( chg_time / 0.02 )
+	local _cpos = self:GetPosition()
+	self.c_x,self.c_y = _cpos.x,_cpos.z
+	self.s_x,self.s_y = (self.to_x - self.c_x) / _fps , (self.to_y - self.c_y) / _fps
+	self.isAddX,self.isAddY = (self.s_x > 0),(self.s_y > 0)
+	self.fps_loop_chgpos = _fps
+end
+
+function M:PosChging()
+	if not self.fps_loop_chgpos then
+		return
+	end
+	if self.fps_loop_chgpos > 0 then
+		self.c_x,self.c_y = self.c_x + self.s_x,self.c_y + self.s_y
+		self.c_x = self.isAddX and m_min(self.c_x,self.to_x) or m_max(self.c_x,self.to_x)
+		self.c_y = self.isAddY and m_min(self.c_y,self.to_y) or m_max(self.c_y,self.to_y)
+		self:SetPos( self.c_x,self.c_y )
+	end
+	self.fps_loop_chgpos = self.fps_loop_chgpos - 1
+end
+
+function M:EndPosChg()
+	self.to_x,self.to_y,self.fps_loop_chgpos = nil
+	self.c_x,self.c_y,self.s_x,self.s_y,self.isAddX,self.isAddY = nil
 end
 
 function M:ChgMat( cfgEft )
@@ -224,7 +284,7 @@ function M:ChgMat( cfgEft )
 		return
 	end
 	local _ntype = (cfgEft.type == E_CEType.MatReplace) and 1 or 2
-	local _resid = cfgEft.resid
+	local _resid,_rernames = cfgEft.resid,cfgEft.rernames
 	local _cfgRes = self:GetResCfg( _resid )
 	local _abname = self:ReSBegEnd( _cfgRes.rsaddress,"materials/special_effects/",Mat_End )
 	local _lb = self.lbNewMat or {}
@@ -235,7 +295,7 @@ function M:ChgMat( cfgEft )
 			self.unMat = _lb2
 			local _unMat = CHelper.NewMat(obj)
 			_lb2[_resid] = _unMat
-			self.comp:ChgSkinMat(_unMat,_ntype)
+			self.comp:ChgSkinMat(_unMat,_ntype,_rernames)
 		end
 	end)
 	return _resid

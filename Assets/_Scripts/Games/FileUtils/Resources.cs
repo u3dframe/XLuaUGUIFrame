@@ -49,22 +49,24 @@ namespace Core.Kernel
 			return GetObject<UObject>(assetPath,suffix);
         }
 
+        static private CfgMustFiles _cfgInScene = null;
         static public T LoadInEditor<T>(string abName,string assetName) where T : UObject{
             if (string.IsNullOrEmpty (abName))
                 return null;
+            if(_cfgInScene == null)
+            {
+                string _fp_ = string.Format("{0}_Scripts/Games/FileUtils/_in_scene.txt",m_dirData);
+                _cfgInScene = CfgMustFiles.BuilderFp(_fp_);
+            }
             string _fp = m_appAssetPath;
             bool _isFab = false , _isLmap =  false;
             if(abName.Contains("/effects/")  || abName.Contains("/uis/")  || abName.Contains("/ef_") || abName.Contains("/special_effects/")){
                 _fp  += "Effects/Builds/";
             }else if(abName.Contains("/c_") || abName.Contains("timeline/")){
                 _fp  += "Characters/Builds/";
-            }else if(abName.Contains("/maps/") || abName.Contains("post_process/") || abName.Contains("skyboxs/") || abName.Contains("card/")){
+            }else if(_cfgInScene.IsHas(abName)){
                 _fp  += "Scene/Builds/";
-            }else if(abName.Contains("/explore/comom/") || abName.Contains("/explore/grass/") || abName.Contains("/explore/snow/") || abName.Contains("/explore/eb_") || abName.Contains("/explore/explore_" )){
-                _fp  += "Scene/Builds/";
-            }else if(abName.Contains("lightmaps/")){
-                _fp  += "Scene/Builds/";
-                _isLmap = true;
+                _isLmap = abName.Contains("lightmaps/");
             }else{
                 _fp += "Builds/";
             }

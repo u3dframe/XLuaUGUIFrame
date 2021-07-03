@@ -24,7 +24,7 @@ public class LuaFileLoader {
         return GameFile.GetFileBytes(fileName);
 #else
         fileName = GameFile.curInstance.GetPath(fn);
-        return GameFile.curInstance.GetDecryptTextBytes(fn);
+        return GameFile.curInstance.GetDecryptLuaBytes(fn);
 #endif
     }
 

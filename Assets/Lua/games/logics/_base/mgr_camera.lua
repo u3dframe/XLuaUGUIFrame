@@ -69,17 +69,44 @@ function M:_InitFab()
 			end
 		end)
 	end
+
+	_lb_.RePGFog = function(_s,ntype,height,heightDensity)
+		if ntype == 1 then
+			local _cs = _s.csPGFog or CHelper.GetOrAddPostGFog( _s.mainCamera.comp )
+			if not _s.csPGFog then
+				local _sd = CGameFile.SFindShader("Hidden/GlobalFog")
+				if _sd then
+					_cs:Init( _sd )
+				end
+			end
+			height = _s:TNum( height,100 ) * 0.01
+			heightDensity = _s:TNum( heightDensity,100 ) * 0.01
+			_cs.height = height
+			_cs.heightDensity = heightDensity
+			_s.csPGFog = _cs
+		elseif _s.csPGFog then
+			local _cs = _s.csPGFog
+			_s.csPGFog = nil
+			CGameFile.UnLoadOne( _cs,true )
+		end
+	end
 end
 
 function M:GetCsObj()
 	return self.lbCamera.comp
 end
 
-function M:GetFollower()
+function M:GetFollower(isOther)
+	if isOther == true and self.otherCamera then
+		return self.otherCamera:GetFollower()
+	end
 	return self.lbCamera.lbFlower
 end
 
-function M:GetDTarget()
+function M:GetDTarget(isOther)
+	if isOther == true and self.otherCamera then
+		return self.otherCamera:GetFTarget()
+	end
 	return self.lbCamera.lbTarget
 end
 
@@ -107,17 +134,30 @@ function M:RePPFile( resid )
 	self.lbCamera:RePPFile( resid )
 end
 
-function M:SetTargetPos(x,y,z)
-	return self:GetDTarget():SetPosition( x,y,z )
+function M:RePGFog( ntype,height,heightDensity )
+	self.lbCamera:RePGFog( ntype,height,heightDensity )
 end
 
-function M:SetFTarget(target)
-	return self:GetFollower():SetTarget( target )
+function M:SetTargetPos(x,y,z,isOther)
+	return self:GetDTarget(isOther):SetPosition( x,y,z )
 end
 
-function M:SetDefTarget(x,y,z)
-	self:SetTargetPos(x,y,z)
-	return self:SetFTarget( self:GetDTarget().trsf )
+function M:SetFTarget(target,isOther)
+	return self:GetFollower(isOther):SetTarget( target )
+end
+
+function M:SetFBDistance(back,isOther)
+	return self:GetFollower(isOther):IsBackDistance( back )
+end
+
+function M:SetFSyncRotate(rotate,isOther)
+	return self:GetFollower(isOther):IsSyncRotate( rotate )
+end
+
+function M:SetDefTarget(x,y,z,isOther)
+	self:SetTargetPos(x,y,z,isOther)
+	local _tger = self:GetDTarget(isOther)
+	return self:SetFTarget( _tger.trsf,isOther )
 end
 
 function M:SetLBUICamera(lbUICamera)
@@ -157,14 +197,17 @@ function M:UIEvtPos2UILocalPos(gobjParent,evt_x,evt_y)
 	return self.lbUICamera:ToUILocalPointByEventPos( gobjParent,evt_x,evt_y );
 end
 
-function M:ReSRectWH(ofW,ofH)
+function M:ReSRectWH(ofW,ofH,isOther)
+	if isOther == true and self.otherCamera then
+		return self.otherCamera:ReScreenRect( ofW,ofH )
+	end
 	ofW,ofH = self:TNum( ofW ),self:TNum( ofH )
 	self:GetCsObj():ReScreenRect( ofW,ofH )
 end
 
 function M:IsInCamera(gobj)
 	local _csCmr = self:GetMainCamera().comp
-	return self:GetCsObj():IsInCamera( _csCmr,gobj );
+	return self:GetCsObj():IsInCamera( gobj,_csCmr );
 end
 
 return M

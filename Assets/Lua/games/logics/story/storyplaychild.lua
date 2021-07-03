@@ -23,9 +23,13 @@ function M.PreLoad(resid,lfOnceShow)
 	local _ret_ = this.Builder( resid )
 	_ret_:SetCallFunc( lfOnceShow )
 	_ret_.lfOnShowOnce = function()
+        local _isHas = (_ret_.csEDComp:HasSInfo())
 		local _lf = _ret_.callFunc
 		_ret_.callFunc = nil
 		_ret_:Disappear()
+        if _isHas then
+            _ret_._fevt().Brocast( Evt_Map_ReSInfo )
+        end
 
 		if _lf then
 			_lf()

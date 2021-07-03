@@ -18,8 +18,9 @@ local M = {
     isPassed = {
     },
 
-    defUrlCreateEdt = "http://gamecenter.dianyue.com/user/create/1",
-    defUrlCreate = "http://gamecenter.dianyue.com/user/create/2",
+    defUrlCreateEdt = "http://gamecenter.dianyue.com/user/create/1/all/all1",
+    defUrlCreate = "http://gamecenter.dianyue.com/user/create/2/all/all1",
+    defUrlOrder = "http://gamecenter.dianyue.com/user1/recharge",
     listUrlCreate = {
     },
 }
@@ -55,6 +56,20 @@ function M.GetCreateUrl(cur)
             _strUrl = (this.defUrlCreateEdt or this.defUrlCreate)
         else
             _strUrl = this.defUrlCreate
+        end
+    end
+    return _strUrl
+end
+
+function M.GetOrderUrl(cur)
+    local _strUrl,_strKey
+    _strKey = GM_IsEditor and _fmt("e_%s",cur) or _fmt("s_%s",cur)
+    _strUrl = this.listUrlCreate[_strKey]
+    if  not _strUrl then
+        if GM_IsEditor then
+            _strUrl = this.defUrlOrder
+        else
+            _strUrl = this.defUrlOrder
         end
     end
     return _strUrl

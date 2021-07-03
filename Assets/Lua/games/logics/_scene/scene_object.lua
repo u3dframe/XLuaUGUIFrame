@@ -7,6 +7,7 @@
 
 local E_Object,E_Layer = LES_Object,LES_Layer
 local tostring,tonumber = tostring,tonumber
+local unpack = unpack
 
 local super,_evt = FabBase,Event
 local M = class( "scene_object",super )
@@ -56,8 +57,7 @@ function M:SetCamp( nCamp )
 end
 
 function M:IsEnemy()
-	if self.n_camp then return (self.n_camp == 1) end
-	return true
+	return (not self.n_camp) or (self.n_camp ~= 1)
 end
 
 function M:SetWorldY(w_y)
@@ -121,6 +121,10 @@ function M:ReSInfo( cfg )
 			LUtils.ReEnvironment( cfg.lightSource,_val * 0.01,unpack(cfg.lightColors) )
 		end
 
+		if cfg.lightFog then
+			LUtils.LFog( unpack(cfg.lightFog) )
+		end
+
 		if cfg.residSkybox then
 			MgrCamera:ReSkybox( cfg.residSkybox )
 		end
@@ -128,6 +132,9 @@ function M:ReSInfo( cfg )
 		if cfg.residPPFile then
 			MgrCamera:RePPFile( cfg.residPPFile )
 		end
+		local _t,_type = cfg.postGFog
+		_type = _t ~= nil and 1 or nil
+		MgrCamera:RePGFog( _type,unpack(_t) )
 	end
 end
 

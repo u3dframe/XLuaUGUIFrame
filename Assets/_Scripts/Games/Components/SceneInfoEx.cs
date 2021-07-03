@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Core;
 
 /// <summary>
 /// 类名 : 场景参数

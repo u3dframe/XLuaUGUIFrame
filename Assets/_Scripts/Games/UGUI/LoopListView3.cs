@@ -12,7 +12,7 @@ public class LoopListView3 : EventTrigger
 
     public delegate void DF_OnItemCreated(GameObject obj);
 
-    public delegate void DF_SetItemData(GameObject obj, int index, float normalizedDistance);
+    public delegate void DF_SetItemData(GameObject obj, int index, float normalizedDistance, bool isDistanceChange);
 
     public delegate void DF_OnValueChanged(float value);
 
@@ -531,7 +531,7 @@ public class LoopListView3 : EventTrigger
 
     [SerializeField]
     [Range(0.01f, 10f)]
-    protected float elasticity = 1.5f;
+    protected float elasticity = 5f;
 
     public enum LayoutType
     {
@@ -628,7 +628,7 @@ public class LoopListView3 : EventTrigger
     //拖动后惯性速度的衰减率
     [Range(0.01f, 0.9f)]
     [SerializeField]
-    protected float inertiaDecelerationRate = 0.3f;
+    protected float inertiaDecelerationRate = 0.1f;
 
     //自动定位速度随定位距离的正比系数
     [Range(0.1f, 20f)]
@@ -903,15 +903,6 @@ public class LoopListView3 : EventTrigger
         this.Sync();
     }
 
-    public void IterateItemList(DF_SetItemData callback)
-    {
-        for (int i = 0; i < itemList.Count; i++)
-        {
-            var item = itemList[i];
-            callback(item.gameObject, item.index, item.normalizedDistance);
-        }
-    }
-
     protected void MoveVirtualContent(float delta)
     {
         virtualContent.WorldMove(delta);
@@ -1104,12 +1095,12 @@ public class LoopListView3 : EventTrigger
         itemList.Clear();
         if (visibleItemIndexList.Count == 0) return;
         ListItem it;
-        bool isChanged;
+        bool isDataChanged, isDistanceChanged;
         float maxSizeNotOnLayoutAxis = float.MinValue;
         for (int x = 0; x < visibleItemIndexList.Count; x++)
         {
             var i = visibleItemIndexList[x];
-            isChanged = false;
+            isDataChanged = isDistanceChanged = false;
             if (itemCache.ContainsKey(i))
             {
                 it = itemCache[i];
@@ -1119,16 +1110,16 @@ public class LoopListView3 : EventTrigger
             {
                 it = GetItemFromPool(GetItemName(i));
                 it.index = i;
-                isChanged = true;
+                isDataChanged = true;
             }
             var dis = GetNormalizedDistanceToCenterFrom(i);
             if (Mathf.Abs(it.normalizedDistance - dis) >= distanceMinDelta)
             {
-                isChanged = true;
+                isDistanceChanged = true;
                 it.normalizedDistance = dis;
             }
-            if (isChanged)
-                _ExcSetDate(it.gameObject, it.index, it.normalizedDistance);
+            if (isDataChanged || isDistanceChanged)
+                _ExcSetDate(it.gameObject, it.index, it.normalizedDistance, isDistanceChanged);
             itemList.Add(it);
             if (!it.gameObject.activeSelf)
                 it.gameObject.SetActive(true);
@@ -1156,6 +1147,8 @@ public class LoopListView3 : EventTrigger
             for (int i = 0; i < itemList.Count; i++)
             {
                 var rt = itemList[i].gameObject.GetComponent<RectTransform>();
+                if (rt.GetComponent<ContentSizeFitter>() != null)
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
                 var rtWidth = rt.rect.width * rt.localScale.x;
                 var rtHeight = rt.rect.height * rt.localScale.y;
                 float x;
@@ -1185,6 +1178,8 @@ public class LoopListView3 : EventTrigger
             for (int i = 0; i < itemList.Count; i++)
             {
                 var rt = itemList[i].gameObject.GetComponent<RectTransform>();
+                if (rt.GetComponent<ContentSizeFitter>() != null)
+                    LayoutRebuilder.ForceRebuildLayoutImmediate(rt);
                 var rtWidth = rt.rect.width * rt.localScale.x;
                 var rtHeight = rt.rect.height * rt.localScale.y;
                 float y;
@@ -1206,10 +1201,29 @@ public class LoopListView3 : EventTrigger
         }
     }
 
+    private void SetEventMask()
+    {
+        var obj = new GameObject("EventMask");
+        var img = obj.AddComponent<Image>();
+        img.color = new Color(1, 1, 1, 0);
+        img.raycastTarget = true;
+        var view = viewRect;
+        obj.transform.SetParent(view, false);
+        var rt = obj.GetComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.anchoredPosition3D = Vector3.zero;
+        rt.sizeDelta = view.sizeDelta;
+
+        UGUIEventListener btn = UGUIEventListener.Get(gameObject);
+        btn.m_isPropagation = true;
+    }
+
     protected void Awake()
     {
         if (!Application.IsPlaying(gameObject)) return;
         virtualContent = new VirtualContent(this);
+        SetEventMask();
     }
 
     protected void Start()
@@ -1290,10 +1304,15 @@ public class LoopListView3 : EventTrigger
                 //惯性速度与自动定位/弹性速度插值
                 var autoSpeed = speed;
                 if (movementType == MovementType.AutoAlignment)
+                {
                     autoSpeed = CalcAutoMovingSpeed(currentIndex);
-                else if (movementType == MovementType.Elastic)
+                    inertiaLerp += deltaTime;
+                }
+                else if (movementType == MovementType.Elastic && elasticSpeed != 0)
+                {
                     autoSpeed = elasticSpeed;
-                inertiaLerp += deltaTime * elasticity;
+                    inertiaLerp += deltaTime * elasticity;
+                }
                 speed = Mathf.Lerp(speed, autoSpeed, Mathf.Clamp01(inertiaLerp));
             }
             if (speed != 0)
@@ -1412,6 +1431,8 @@ public class LoopListView3 : EventTrigger
 
     private readonly Dictionary<int, ListItem> itemCache = new Dictionary<int, ListItem>();
 
+    public bool SkipFirstFrame { get; set; } = true;
+
     private bool isFirstFrame = true;
 
     protected void LateUpdate()
@@ -1420,7 +1441,7 @@ public class LoopListView3 : EventTrigger
         if (isFirstFrame)
         {
             isFirstFrame = false;
-            return;
+            if (SkipFirstFrame) return;
         }
         if (resetFunc != null)
         {
@@ -1492,8 +1513,8 @@ public class LoopListView3 : EventTrigger
         }
     }
 
-    void _ExcSetDate(GameObject gobj,int index,float normalizedDistance){
-        SetItemData?.Invoke(gobj,index,normalizedDistance);
+    void _ExcSetDate(GameObject gobj,int index,float normalizedDistance, bool isDistanceChange){
+        SetItemData?.Invoke(gobj,index,normalizedDistance, isDistanceChange);
     }
 
     protected void OnDestroy()

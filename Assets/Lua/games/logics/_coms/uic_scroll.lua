@@ -43,6 +43,7 @@ function M:ctor(lbCfg)
 	self.clsLua = _tmp
 	self.tpClsLua = type(_tmp)
 	self.nColumn = self:TInt( nColumn,0 )
+	self.nColumnData = lbCfg.nColumnData or self.nColumn
 	self.isUseRow = self.nColumn > 1
 	self.isAllActive = (isAllActive == true)
 	self.lfClick = cfClick
@@ -64,11 +65,17 @@ function M:IsCanScroll(isBl)
 	-- self.lbScl:SetEnabled( isBl )
 end
 
+function M:SyncSizeByConentSize()
+	self.lbScl:SyncSizeByConentSize()
+end
+
 -- 此函数在OnShow里面调用
-function M:ShowScroll(listData)
+function M:ShowScroll(listData,nColumnData)
 	self.listData = listData
 	local nLen = #self.listData
-	if self.isUseRow then nLen = self:NPage(nLen,self.nColumn) end
+	nColumnData = nColumnData or self.nColumn
+	self.nColumnData = nColumnData
+	if self.isUseRow then nLen = self:NPage(nLen,nColumnData) end
 	self.lbScl:ChangeListCount(nLen)
 end
 
@@ -88,6 +95,7 @@ function M:_ShowCell(lbCell,nRow)
 		return
 	end
 	if self.isUseRow then
+		lbCell.nColumnData = self.nColumnData
 		lbCell:ShowViewByList(self.listData,nRow,_upk(self.exts))
 	else
 		lbCell:ShowViewByData(self.listData[nRow],nRow,_upk(self.exts))

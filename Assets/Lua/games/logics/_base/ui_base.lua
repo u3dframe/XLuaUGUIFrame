@@ -122,17 +122,24 @@ function M:OnInitEnd()
 	end
 end
 
+function M:GetTopResourcesBy(uiType)
+	if not uiType then return end
+	local cfg = MgrData:GetOneData("fnopen", uiType)
+	if cfg then return cfg.show_money end
+end
+
+function M:__TopResources__()
+
+end
+
+function M:GetUIType()
+	return self.uiType
+end
+
 function M:OnShowEnd()
 	self.lastShowTime = Time.time
 	if self._objTopBanner then
-		local resources
-		if type(self.__TopResources__) == "table" then
-			resources = self.__TopResources__
-		elseif type(self.__TopResources__) == "function" then
-			resources = self:__TopResources__()
-		else
-			--todo:从配置文件读取
-		end
+		local resources = self:__TopResources__() or self:GetTopResourcesBy(self:GetUIType())
 		MgrTopBanner:ShowResources(self._objTopBanner, resources)
 	end
 

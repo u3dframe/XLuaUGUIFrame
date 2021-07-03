@@ -85,6 +85,16 @@ function M:GetMvSpeed()
 	return self.mvSpeed or 1
 end
 
+function M:SetMoveDir( dir )
+	super.SetMoveDir( self,dir )
+	if dir then
+		local _obj = self.currEft or self
+		if type(_obj.SetForward) == "function" then
+			_obj:SetForward( dir.x,0,dir.z )
+		end
+	end
+end
+
 function M:_IsNotCanUpPos()
 	if (self.isDisappear == true) or (not self.movement) or (not self.currEft) or (not self.currEft:IsInitTrsf()) then
 		return true
@@ -135,7 +145,6 @@ function M:_OnPos(dt)
 		local _pos = _curr:GetPosition()
 		_v3Mov = self.v3Target - _pos
 	end
-
 	if _v3_zero:Equals(_v3Mov) then
         return
     end

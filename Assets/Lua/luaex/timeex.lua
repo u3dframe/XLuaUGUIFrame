@@ -82,7 +82,7 @@ function M.getHMS( ms )
   mm = math_floor( ms / this.MINUTE );
 
   ms = ms % this.MINUTE;
-  ss = ms / this.SECOND;
+  ss = math_floor(ms / this.SECOND);
   return hh,mm,ss;
 end
 

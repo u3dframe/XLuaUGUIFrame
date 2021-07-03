@@ -68,6 +68,9 @@ function M:OnInit_Child()
 	super.OnInit_Child( self )
 	self.csRMatProp = CRMatProp.Get( self.gobj )
 	self.ccType = 0
+
+	self.csCLight = CCLight.Get( self.gobj,true )
+	self:ReCLight()
 end
 
 function M:OnActive(isActive)
@@ -93,10 +96,29 @@ function M:OnSetData(svData)
 end
 
 function M:OnEnd(isDestroy)
-	if self._cmds_d_hurt then
+	if (self._cmds_d_hurt) then
 		for _cmd,_ in pairs(self._cmds_d_hurt) do
 			LTimer.RemoveDelayFunc( _cmd )
 		end
+	end
+
+	if (not isDestroy) then
+		self.isPause,self.isDied = nil
+		self:SetIsUsePhysics( true )
+		self:RmvAllBuff()
+		self:_RmvEObj( "_t_nddis" )
+		self:_RmvEObj( "_t_eobj" )
+		self:ClearState()
+	end
+end
+
+function M:ReCLight()
+	if not self.csCLight then
+		return
+	end
+	local _sobj = self:GetSObjMap()
+	if _sobj and _sobj.uObjLShadow then
+		self.csCLight:SetLight( _sobj.uObjLShadow )
 	end
 end
 
@@ -164,7 +186,8 @@ function M:_DoAttack(svMsg,cfgSkill,cfgAction,e_id)
 	self.cfgSkill_Action = cfgAction
 	self.tmEfts = {}
 	local _temp,_temp0,_timeout,_tval = {},{},(cfgAction.effecttime or 0),0
-	self:_InitAttackEffets( _temp,e_id,_temp0 )
+	local _lbCheck = {}
+	self:_InitAttackEffets( _temp,e_id,_temp0,_lbCheck )
 	-- this.InsertTimeLineIds( _temp,_ef.nexttime,_ef_next )
 	for _,v in pairs(_temp) do
 		tb_insert(self.tmEfts,v)
@@ -187,8 +210,15 @@ function M:_DoComboAttack(svMsg, cfgSkill, cfgAction)
 	MgrCombo:PlayComboSkill(svMsg, cfgSkill, cfgAction);
 end
 
-function M:_InitAttackEffets(lb,e_id,lb0)
-	if not e_id then return end
+function M:_InitAttackEffets(lb,e_id,lb0,lbCheck)
+	if (not e_id) then return end
+	if lbCheck then
+		if lbCheck[e_id] then
+			printError("====== [%s] is loop die",e_id)
+			return
+		end
+		lbCheck[e_id] = true
+	end
 	local _ef = MgrData:GetCfgSkillEffect( e_id )
 	if (not _ef) or (not _ef.nextid) then return end
 
@@ -201,7 +231,7 @@ function M:_InitAttackEffets(lb,e_id,lb0)
 		this.InsertTimeLineIds( lb,_ef.nexttime,_ef.nextid,(_ef_time or 0) )
 	end
 	if _ef_next.nextid then
-		self:_InitAttackEffets( lb,_ef.nextid,lb0 )
+		self:_InitAttackEffets( lb,_ef.nextid,lb0,lbCheck )
 	end
 end
 
@@ -265,10 +295,12 @@ function M:ExcuteEffectByEid( e_id,isHurt,isNotAct )
 	end
 
 	local _vt = self:_ExcuteEffect(e_id,cfgEft,_idCaster,_idTarget)
-	if cfgEft.is_interrupt == 1 and _vt then
-		local _obj = self:GetSObjBy ( _idCaster )
-		if _obj then
-			_obj:_InsertNDispByChgAction( _vt )
+	local _obj = self:GetSObjBy ( _idCaster )
+	if _obj then
+		if cfgEft.is_interrupt == 1 and _vt then
+			_obj:_RecordEObj( _vt,"_t_nddis" )
+		else
+			_obj:_RecordEObj( _vt,"_t_eobj" )
 		end
 	end
 
@@ -299,24 +331,32 @@ end
 function M:_ExcuteSpecialEffect( e_id,cfgEft,idCaster,idTarget,svData )
 end
 
-function M:_InsertNDispByChgAction(vt)
+function M:_RecordEObj(vt,skey)
 	if type(vt) == "table" and #vt > 0 then
-		local _t = self._t_nddis or {}
-		self._t_nddis = _t
+		skey = tostring(skey)
+		local _t = self[skey] or {}
+		self[skey] = _t
 		for _,vobj in ipairs(vt) do
 			_t[#_t + 1] = vobj
 		end
 	end
 end
 
-function M:OnChgActionBeg(pre,curr)
-	local _t = self._t_nddis
-	self._t_nddis = nil
-	if _t then
-		for _,eobj in ipairs(_t) do
-			eobj:Disappear()
+function M:_RmvEObj(skey)
+	if skey then
+		skey = tostring(skey)
+		local _t = self[skey]
+		if type(_t) == "table" and #_t > 0 then
+			self[skey] = nil
+			for _,eobj in ipairs(_t) do
+				eobj:Disappear()
+			end
 		end
 	end
+end
+
+function M:OnChgActionBeg(pre,curr)
+	self:_RmvEObj( "_t_nddis" )
 end
 
 -- 处理效果
@@ -359,7 +399,7 @@ function M:DoInjured(svMsg)
 	if (not _cfgSkill) or (not _cfgSkill.cast_order) then return end
 	local _data = _cfgSkill.cast_order[self.nOrder]
 	if not _data or _data <= 0 then return end
-	local _isOkey,cfgEft = MgrData:CheckCfg4Effect( _data )
+	local _isOkey = MgrData:CheckCfg4Effect( _data )
 	if not _isOkey then return end
 	self:_AddECastData( _data,svMsg )
 	self:LookTarget( svMsg.target,svMsg.targetx,svMsg.targety )
@@ -424,9 +464,9 @@ function M:IsDeath()
 	return self.isDied == true or self.state == E_State.Die
 end
 
-function M:AddBuff( b_id,duration,fmid )
+function M:AddBuff( b_id,cfgid,duration,fmid )
 	local _idCaster = self:GetCursor()
-	local _buff = EffectFactory.Make( E_EType.Buff,fmid or _idCaster,_idCaster,b_id,duration )
+	local _buff = EffectFactory.Make( E_EType.Buff,fmid or _idCaster,_idCaster,cfgid,duration )
 	if not _buff then return end
 	local _pool = self.buffs or {}
 	self.buffs = _pool

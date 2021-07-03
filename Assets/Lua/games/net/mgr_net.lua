@@ -9,6 +9,7 @@ local tb_insert = table.insert
 local tb_rmvals = table.removeValues
 local tb_contains = table.contains
 local _not_circle_cmd = { "ping","debug_longstring","debug_longstring_over","map_move" }
+local ClsConnet = nil 
 
 _G.Network = require("games/net/network")
 _G.CfgSvList = require("games/net/severlist")
@@ -31,9 +32,13 @@ function M.Init()
 	Network.Init(this.OnDispatch_Msg,this.OnConnection, this.OnWriteFinish,this.OnDisConnection)
 
 	this.heartInterval = 60 * 2
-	this.lmtReConnet = { 0.05 , 0.8 , 1.5 }
+	this.lmtReConnet = { 4 }
 	_evt.AddListener(Evt_UpEverySecond,this.DoHeart)
 	_evt.AddListener(Evt_Net_ShutDown,this.ShutDown)
+	this.AddPushCall( "game_over",function ()
+		this.game_over = true 
+	end )
+
 end
 
 function M._Init_Sproto()
@@ -131,6 +136,8 @@ local function handle_sproto(msg)
 		if "game_auth" == _lbRequs.cmd then
 			LTimer.RemoveDelayFunc( "net_re_connect" )
 			this.nReConnet = nil
+			this.istips = nil 
+			this.game_over = nil 
 		end
 
 		if _lbRequs.callback then
@@ -266,11 +273,31 @@ local function handshake_new(callback, target)
 		local function crypt_read(a) return rc4.crypt(rc4read, a) end
 		local function crypt_write(a) return rc4.crypt(rc4write, a) end
 		local function on_disconnect(isError)
+			if this.game_over then 
+				_evt.Brocast( Evt_Net_ShutDown,true )
+				return 
+			end
 			this.nReConnet = (this.nReConnet or 0) + 1
 			local _v = this.lmtReConnet[this.nReConnet]
 			LTimer.RemoveDelayFunc( "net_re_connect" )
+			if this.nReConnet and this.nReConnet == 5 then 
+				this.nReConnet = nil
+				this.istips = nil 
+				_evt.Brocast( Evt_Net_ShutDown,true )
+				return 
+			end 
 			if not  _v then
-				this._ExitLogin()
+				--this._ExitLogin()
+				ShowCircle()
+				LTimer.AddDelayFunc1( "net_re_connect",1,function()
+					HideCircle(true)
+					if not ClsConnet  then 
+						ClsConnet = require("games/net/connet_ui").New()
+					end
+					local _ui = ClsConnet
+					_ui:View(true)
+					this.istips = true 
+				end)
 				return
 			end
 
@@ -377,7 +404,7 @@ function M.OnConnection(isSucess,errStr)
 
 	-- if isSucess then
 	-- 	local _rnd = math.random(1,10)
-	-- 	LUtils.Wait(_rnd,this.ShutDown,_rnd > 8 ) -- TODO 随机断开连接 用于重连测试 --测试完毕记得后删除
+	-- 	LUtils.Wait(_rnd,this.ShutDown,false ) -- TODO 随机断开连接 用于重连测试 --测试完毕记得后删除
 	-- end
 end
 
@@ -424,8 +451,9 @@ end
 function M.Clean()
 	LTimer.RemoveDelayFunc( "net_re_connect" )
 	this.nReConnet = nil
+	this.istips = nil 
+	this.game_over = nil 
 	stream_read, stream_write = nil, nil
-	host, sender = nil, nil
 	_cursor,_cb_requs = 0,{}
 end
 
@@ -439,7 +467,6 @@ function M.ShutDown(isExit)
 end
 
 function M._ExitLogin()
-	-- printInfo("=== _ExitLogin = ")
 	HideCircle( true )
 	LuBtn.CsIsFreezeAll( false )
 	this.Clean()
@@ -458,9 +485,11 @@ local function _Connect(addr,port,callback)
 end
 
 function M._ReConnect()
+	ShowCircle()
 	local info = assert(this._ConnectInfo)
 	local addr, port = info.addr, info.port
 	_Connect(addr,port, function(ok, err)
+		HideCircle()
 		if not ok then
 			if stream_read then
 				stream_read.on_disconnect("Reconnect failure ".. tostring(err))
@@ -468,6 +497,10 @@ function M._ReConnect()
 				this._ExitLogin()
 			end
 		else
+			if this.istips then 
+				this.istips = nil 
+				this.nReConnet = nil
+			end
 			handshake_reuse()
 		end
 	end)
@@ -505,7 +538,7 @@ function M.SendRequest( cmd,data,callback )
 	end
 
 	if not tb_contains( _not_circle_cmd,cmd ) then
-		ShowCircle()
+		ShowCircle(nil,true)
 	end
 
 	local _cur = _cursor + 1

@@ -110,6 +110,7 @@ public class UGUILocalize : GobjLifeListener {
 	public void SetUText(string val){
 		if(!m_text)
 			return;
+		this.m_key = null;
 		this.m_isUseLocalize = false;
 		val =  (val == null) ? "" : val;
 		_SetTextVal(val);

@@ -38,7 +38,6 @@ function M._InitUI()
 
 	ui.OnShow = function(_s)
 		_evt.Brocast( Evt_Circle_Showing )
-		_s.delay_vw_hd = 2
 		local _lf = _s.lfCallShow
 		_s.lfCallShow = nil
 		if _lf then
@@ -47,10 +46,10 @@ function M._InitUI()
 	end
 
 	ui.OnUpdateLoaded = function(_s,_dt)
-		if _s.delay_vw_hd then
-			_s.delay_vw_hd = _s.delay_vw_hd - _dt
-			if _s.delay_vw_hd <= 0 then
-				_s.delay_vw_hd = nil
+		if this.delay_vw_hd then
+			this.delay_vw_hd = this.delay_vw_hd - _dt
+			if this.delay_vw_hd <= 0 then
+				this.delay_vw_hd = nil
 				if _s.lbTrsf0 then
 					_s.lbTrsf0:SetActive( true )
 				end
@@ -75,13 +74,9 @@ function M._InitUI()
 		if (not isDestroy) and _s.lbTrsf0 then
 			_s.lbTrsf0:SetActive( false )
 		end
-		LTimer.RemoveDelayFunc( "DELAY_SHOW_CIRCLE" )
+		this.delay_vw_hd = nil
 		_evt.Brocast( Evt_Circle_Hided )
 	end
-end
-
-function _ShowCircle(lfCallShow)
-	this.ui:View( true,_def_duration,lfCallShow )
 end
 
 function ShowCircle(lfCallShow,isNotImm)
@@ -89,14 +84,8 @@ function ShowCircle(lfCallShow,isNotImm)
 		this._nShowCount = 0
 	end
 	this._nShowCount = this._nShowCount + 1
-
-	LTimer.RemoveDelayFunc( "DELAY_SHOW_CIRCLE" )
-	local isImmediate = not (isNotImm == true)
-	if isImmediate then
-		_ShowCircle( lfCallShow )
-	else
-		LTimer.AddDelayFunc1( "DELAY_SHOW_CIRCLE",1.2,_ShowCircle,lfCallShow )
-	end
+	this.delay_vw_hd = (isNotImm == true) and 0.36 or 0
+	this.ui:View( true,_def_duration,lfCallShow )
 end
 
 function HideCircle(isImmediate)
@@ -107,7 +96,6 @@ function HideCircle(isImmediate)
 	if (this._nShowCount > 0) then
 		return
 	end
-	LTimer.RemoveDelayFunc( "DELAY_SHOW_CIRCLE" )
 	this.ui:View(false)
 end
 

@@ -19,6 +19,7 @@ function M.Init()
 	_lb[2] = this.CheckLevel
 	_lb[3] = this.CheckMaxHeroLevel
 	_lb[4] = this.CheckHeroStageNum
+	_lb[5] = this.CheckVipLevel
 	this:AddPCall( "fnopen_list",this.On_SvOpenIds )
 	this:AddPCall( "fnopen_new",this.On_SvOpenNew )
 end
@@ -147,4 +148,11 @@ function M.CheckHeroStageNum(dt)
 	end
 	return false
 end
+
+--5:VIP等级
+function M.CheckVipLevel(dt)
+	local currLv, _ = MgrVip:GetVipLvAndExp()
+	return currLv >= dt[2]
+end
+
 return M

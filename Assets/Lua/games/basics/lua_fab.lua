@@ -174,6 +174,11 @@ end
 
 function M:_OnShow()
 	self:VwCircle(false)
+	local _lf = self.lfBegOnShowOnce
+	self.lfBegOnShowOnce = nil
+	if _lf then
+		_lf(self)
+	end
 	self:OnShowBeg()
 	self:OnShow()
 	self:OnShowEnd()
@@ -181,7 +186,7 @@ function M:_OnShow()
 	local _lf = self.lfOnShowOnce
 	self.lfOnShowOnce = nil
 	if _lf then
-		_lf()
+		_lf(self)
 	end
 end
 
@@ -239,13 +244,13 @@ function M:_PreOnEnd(isDestroy)
 	local _tmp = self.lfPrefEnd1
 	self.lfPrefEnd1 = nil
 	if _tmp then
-		_tmp(self.isInited)
+		_tmp(self.isInited,self)
 	end
 
 	local _tmp = self.lfPrefEnd2
 	self.lfPrefEnd2 = nil
 	if _tmp then
-		_tmp(self.isInited)
+		_tmp(self.isInited,self)
 	end
 
 	self:PreOnEnd(isDestroy)

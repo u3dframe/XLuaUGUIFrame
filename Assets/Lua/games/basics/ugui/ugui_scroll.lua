@@ -4,6 +4,7 @@
 	-- Date : 2020-07-11 12:25
 	-- Desc : 参照
 ]]
+local m_min,m_max = math.min,math.max
 local _tinsert = table.insert
 local _titKVArr = table.getVK4Arr
 local _tsort = table.sort
@@ -393,6 +394,18 @@ function M:SetNormalizedPosition(norVal)
 	else
 		self.comp.horizontalNormalizedPosition = norVal
 	end
+end
+
+function M:SyncSizeByConentSize()
+	if not self.comp then
+		return
+	end
+	local _curr = self.isVertical and self.hSelf or self.wSelf
+	local _vCont = self.isVertical and self.hContent or self.wContent
+	local _min = m_min( _curr,_vCont )
+	local _x = self.isVertical and self.wSelf or _min
+	local _y = self.isVertical and _min or self.hSelf
+	self:SetSizeDelta( _x,_y )
 end
 
 return M

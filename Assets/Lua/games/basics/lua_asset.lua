@@ -16,7 +16,7 @@ end
 local super = LCFabElement
 local M = class( "lua_asset",super )
 
-M.AddNoClearKeys( "cfgAsset","strABAsset" )
+M.AddNoClearKeys( "cfgAsset","strABAsset","stateLoad" )
 
 function M:ctor(assetCfg)
 	self:InitBase( assetCfg )
@@ -118,6 +118,7 @@ function M:IsLoaded()
 end
 
 function M:LoadAsset()
+	if self:IsStateLoad(_E_SLoad.Loading) then return self end
 	local _isBl,_abName,_assetName,_ltp = self:_CfgAssetInfo();
 	if _isBl then
 		self.stateLoad = _E_SLoad.Loading;
@@ -184,6 +185,7 @@ function M:_OnUnLoad()
 end
 
 function M:OnUnLoad()
+	if self:IsStateLoad(_E_SLoad.UnLoad) then return end
 	local _isBl,_abName,_assetName,_ltp = self:_CfgAssetInfo();
 	if _isBl then
 		self.stateLoad = _E_SLoad.UnLoad;

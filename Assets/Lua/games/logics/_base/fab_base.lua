@@ -93,6 +93,10 @@ function M:GetSObjMapBox()
 	return self:GetSObjBy( "map.gbox" )
 end
 
+function M:GetSObjMap()
+	return self:GetSObjBy( "mapobj" )
+end
+
 function M:SetCursor(nCursor)
 	self.nCursor = nCursor
 	return self

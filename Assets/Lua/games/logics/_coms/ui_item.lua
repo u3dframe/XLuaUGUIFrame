@@ -38,12 +38,13 @@ function M:BuilderUObj( uobj )
 end
 
 -- 用[_]占位，兼容row传递参数
-function M:OnSetData(nRowOrColumn,valType,isVwEmpty,isNoChgColor,Synlv)
+function M:OnSetData(nRowOrColumn,valType,isVwEmpty,isNoChgColor,Synlv,IsVwName)
 	self.cur_index = nRowOrColumn
 	self.valType = valType or LE_ItVShowType.Have
 	self.isVwEmpty = isVwEmpty == true
 	self.isNoChgColor = isNoChgColor == true
 	self.Synlv = Synlv
+	self.isVwName = IsVwName == true
 end
 
 function M:OnInit()
@@ -90,7 +91,8 @@ function M:OnView()
 	_cNum = MgrStore:GetItemNum(_type,_cfgid) or 1
 
 	local _val = self:_ReVal(_nNum,_cNum,_showNum)
-	self:VwName(_name)
+	
+	-- self:VwName(_name)
 	self:VwDesc(_desc)
 	self:VwOrder(_ord)
 	local _de = (_type == 6) and "Lv." or nil
@@ -127,6 +129,9 @@ function M:OnVwEmpty()
 end
 
 function M:VwName(v)
+	if not self.isVwName and v then 
+		return 
+	end 
 	self.csEDComp:VwName( v )
 end
 
@@ -348,6 +353,7 @@ end
 
 function M:SetMinHero(uuid)
 	if not uuid then
+		self.csEDComp:VwMinHero( )
 		return
 	end
 	local hero,_cfg_ = MgrStore:GetStoryData(MgrStore.HeroType, uuid)
@@ -371,7 +377,8 @@ function M:ShowFrag(b)
 	self.csEDComp:VwFragment(b == true)
 end
 
-function M:ShowByArgs(ty, id, cnt, feature, level)
+function M:ShowByArgs(ty, id, cnt, feature, level,isname)
+	self.isVwName = isname == true
 	level = level or 0
 	if MgrStore:IsEquipType(ty) and level > 0 then
 		level = "+"..level
@@ -420,6 +427,10 @@ function M:ShowByArgs(ty, id, cnt, feature, level)
 		self:VwValueBg(cfg.quality)
 		--self:VwValueDesc("x")
 		self:VwValue(MgrStore:GetFmtNumStr(cnt))
+	end	
+
+	if self.isVwName then 
+		self:VwName(cfg.name )
 	end
 	self:ShowFrag(isFrag)
 end

@@ -14,15 +14,14 @@ local E_B_State,E_Object = LES_Battle_State,LES_Object
 local E_Type = LE_Effect_Type
 local _is_debug = false
 
-MgrScene = require( "games/logics/_scene/mgr_scene" )
-local ClsCG = require( "games/logics/story/storyplaychild" )
+MgrMPreLoad = require( "games/logics/_scene/mgr_scene_preload" )
 
 local super,_evt = MgrBase,Event
 local M = class( "mgr_scene_battle",super )
 local this = M
 
 function M.Init()
-	MgrScene:Init()
+	MgrMPreLoad:Init()
 
 	this.ReInitPars()
 	this.eveRegion = this:TF((1 / (E_B_State.Entry_CG - E_B_State.Start)),4)
@@ -43,10 +42,10 @@ function M.Init()
 	_evt.AddListener( Evt_Msg_B_Buff_Add,this.OnMsg_Buff_Add )
 	_evt.AddListener( Evt_Msg_B_Buff_Rmv,this.OnMsg_Buff_Rmv )
 	_evt.AddListener( Evt_Bat_OneAttrChg,this.OnMsg_OneAttrChg )
-	_evt.AddListener(Evt_Re_Login,this.OnClear)
 	_evt.AddListener( Evt_Msg_B_Trigger_Add,this.OnMsg_Trigger_Add )
 	_evt.AddListener( Evt_Msg_B_Trigger_Rmv,this.OnMsg_Trigger_Rmv )
-	_evt.AddListener(Evt_Map_Load,this.EndBattle4Scene)
+	_evt.AddListener( Evt_Map_PreLoading,this.MapPreLoading )
+	_evt.AddListener( Evt_Re_Login,this.OnClear )
 end
 
 function M.ReInitPars()
@@ -54,17 +53,14 @@ function M.ReInitPars()
 	this.state = E_B_State.None
 
 	this.progress = 0
-	this._ms_delay_end = 0
-	this._ndelay_fps = 0
-	this._need_load,this._loaded = 0,0
-	this._need_load_obj,this._loaded_obj = 0,0
 	-- this._deLObjSec = 0.03
+	this._ms_delay_end = 0
+	this._need_load,this._loaded = 0,0
 
 	this.ReInit_Cmr()
 
 	this.isJugdeCmr = nil
 	this.isBattleEnd = nil
-	this.res_ids,this._need_funcs = nil
 end
 
 function M.ReInit_Cmr()
@@ -76,9 +72,9 @@ end
 
 function M.OnClear()
 	Time:SetTimeScale(1)
-	this.ReInitPars()
 	this.RemoveAll()
-	MgrScene.OnClear()
+	MgrMPreLoad.OnClear()
+	this.ReInitPars()
 end
 
 function M:OnUpdate(dt)
@@ -87,7 +83,13 @@ function M:OnUpdate(dt)
 	this._ST_JugdeCamera()
 
 	if this.state == E_B_State.Start then
-		this._SetUpState( E_B_State.Create_Objs )
+		this._SetUpState( E_B_State.Wait_SvObjs )
+	elseif this.state == E_B_State.Wait_SvObjs then
+		this._nwait = (this._nwait or 0) + 1
+		if this._nwait >= 2 then
+			this._SetUpState( E_B_State.Create_Objs )
+			this._nwait = nil
+		end
 	elseif this.state == E_B_State.Create_Objs then
 		this._ST_OnUp_LoadObj( dt )
 	elseif this.state == E_B_State.LoadOtherObjs then
@@ -130,7 +132,8 @@ function M._IsCanStart()
 end
 
 function M.Start()
-	_evt.Brocast(Evt_Loading_Show,this.progress,this._ST_Begin)
+	-- _evt.Brocast(Evt_Loading_Show,this.progress,this._ST_Begin)
+	this._ST_Begin()
 end
 
 function M._ST_Begin()
@@ -170,7 +173,7 @@ function M._ST_OnUp_LoadObj(dt)
 	end
 	local _cur,_need = this._loaded,this._need_load
 	if this.state == E_B_State.LoadOtherObjs then
-		_cur,_need = this._loaded_obj,this._need_load_obj
+		_cur,_need = MgrMPreLoad.GetCurrNeed()
 		if _need <= 0 then
 			this._SetUpState( E_B_State.WaitOpenFightUI )
 			_evt.Brocast( Evt_View_FightUI )
@@ -182,58 +185,17 @@ function M._ST_OnUp_LoadObj(dt)
 	_evt.Brocast(Evt_Loading_UpPlg,_v)
 end
 
-local function _pre_load_obj()
-	this._loaded_obj = this._loaded_obj + 1
-end
-
-function M._AddNeedLoadResid( resid,isCG )
-	if not resid then
-		return
-	end
-
-	local _lb = this.res_ids or {}
-	this.res_ids = _lb
-
-	if _lb[resid] ~= nil then
-		return
-	end
-	_lb[resid] = true
-	local _func_ = nil
-	if isCG == true then
-		_func_ = function()
-			ClsCG.PreLoad( resid,_pre_load_obj )
-		end
-	else
-		_func_ = function()
-			EffectFactory.Make( E_Type.Pre_Effect,nil,nil,resid,_pre_load_obj )
-		end
-	end
-	
-
-	_lb = this._need_funcs or {}
-	this._need_funcs = _lb
-	tb_insert(_lb,_func_)
-	this._need_load_obj = this._need_load_obj + 1
-end
-
 function M._ST_LoadObjs()
-	if not this._need_funcs then return end
-	if #this._need_funcs <= 0 then
-		if this.state == E_B_State.LoadOtherObjs then
-			if (this._loaded_obj > this._need_load_obj) then
-				if this._ndelay_fps >= 3 then
-					this._SetUpState( E_B_State.WaitOpenFightUI )
-					_evt.Brocast( Evt_View_FightUI )
-				end
-				this._ndelay_fps = this._ndelay_fps + 1
-			elseif (this._loaded_obj == this._need_load_obj) then
-				this._loaded_obj = this._loaded_obj + 1
+	if this.state == E_B_State.LoadOtherObjs then
+		if MgrMPreLoad.IsPreLoaded() then
+			this._ndelay_fps = (this._ndelay_fps or 0) + 1
+			if this._ndelay_fps >= 3 then
+				this._SetUpState( E_B_State.WaitOpenFightUI )
+				_evt.Brocast( Evt_View_FightUI )
+				this._ndelay_fps = nil
 			end
 		end
-		return
 	end
-	local _lf = tb_remove( this._need_funcs,1 )
-	_lf()
 end
 
 function M._ST_UIOpenFinished()
@@ -274,7 +236,7 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 	end
 
 	_func = function()
-		local _cfg_,_resid
+		local _cfg_,_resid,_isRole = nil
 		if objType ==  E_Object.Trigger then
 			_cfg_ = this:GetCfgData("skill_trigger",svMsg.cfgid)
 			if _cfg_ then
@@ -284,6 +246,7 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 				end
 			end
 		elseif objType ==  E_Object.Hero or objType ==  E_Object.Monster then
+			_isRole = true
 			_cfg_ = this:GetCfgData("hero",svMsg.cfgid)
 			if _cfg_ then
 				_resid = _cfg_.resource
@@ -301,19 +264,9 @@ function M.OnSv_Add_Map_Obj(objType,svMsg)
 				end
 				_obj:View(true,_cfg_,svMsg)
 			end
-			
-			if _cfg_.resid_fs then
-				this._AddNeedLoadResid( _cfg_.resid_fs )
-			end
 
-			if _cfg_.resids then
-				for _, resid in ipairs(_cfg_.resids) do
-					this._AddNeedLoadResid( resid )
-				end
-			end
-
-			if _cfg_.resid_cg then
-				this._AddNeedLoadResid( _cfg_.resid_cg,true )
+			if _isRole then
+				_evt.Brocast( Evt_PreLoad_FightObj,svMsg.cfgid )
 			end
 		end
 	end
@@ -376,17 +329,16 @@ function M.RemoveCurr( id )
 	if (not id) or (not this.sv_dic_add) then return end
 
 	local _func = this.sv_dic_add[id]
+	this.sv_dic_add[id] = nil
 	if _func then
 		tb_rm_val( this.sv_queue_add,_func )
 	end
-	this.sv_dic_add[id] = nil
 end
 
 function M.RemoveById(id,isNotDis)
 	this.RemoveCurr( id )
 
-	local _obj = this.GetSObj( id )
-	MgrScene.RemoveCurrMapObj( id )
+	local _obj = MgrScene.RemoveCurrMapObj( id )
 	if _obj then
 		if not (isNotDis == true) then
 			_obj:Disappear()
@@ -407,12 +359,17 @@ function M.RemoveAll(isNotDis)
 	end
 end
 
-function M.EndBattle4Scene(isInterrupt,isNotRmv)
-	-- printTable("=========EndBattle4Scene")
+function M.MapPreLoading()
 	LTimer.RemoveDelayFunc( "battle_end" )
-	this.ReInitPars()
+	this.OnClear()
+end
+
+function M.EndBattle4Scene(isInterrupt,isNotRmv)
+	-- printInfo("=========EndBattle4Scene = [%s] = [%s]",isInterrupt,isNotRmv)
+	LTimer.RemoveDelayFunc( "battle_end" )
 	if not isNotRmv then
 		this.RemoveAll()
+		this.ReInitPars()
 	end
 	_evt.Brocast(Evt_Battle_End)
 	-- MgrBattle:OpenBattleSettlement(isInterrupt)
@@ -496,8 +453,7 @@ function M._OnMsgEndBattle( msg )
 				MgrCamera:GetMainCamera():StopSmooth()
 				_tMap:CmrFov( _fov )
 				local _fmid = _sobj:GetElementTrsf("f_mid")
-				_tMap:CmrLookAtTarget( _fmid or _sobj.trsf,_ox,_oy,_oz,true )
-				_tMap:CmrLocalPosY( _cy )
+				_tMap:CmrLookAtTarget( _fmid or _sobj.trsf,_ox,_oy,_oz,true ):CmrLocalPosY( _cy ):Light2Winner()
 			end
 		end
 		LTimer.AddDelayFunc1( "battle_end",((_max_ms + 100) / 1000),this.EndBattle4Scene,false,true )
@@ -507,15 +463,15 @@ function M._OnMsgEndBattle( msg )
 end
 
 function M.OnMsg_Buff_Add(svMsg)
-	local _obj = this.GetSObj( svMsg.id )
+	local _obj = this.GetSObj( svMsg.tid )
 	if not _obj then return end
-	_obj:AddBuff( svMsg.buffid,(svMsg.duration or 0) * 0.01,svMsg.fromid )
+	_obj:AddBuff( svMsg.uuid,svMsg.cfgid,(svMsg.duration or 0) * 0.01,svMsg.fromid )
 end
 
 function M.OnMsg_Buff_Rmv(svMsg)
-	local _obj = this.GetSObj( svMsg.id )
+	local _obj = this.GetSObj( svMsg.tid )
 	if not _obj then return end
-	_obj:RmvBuff( svMsg.buffid )
+	_obj:RmvBuff( svMsg.uuid )
 end
 
 function M.OnMsg_OneAttrChg(svMsg)

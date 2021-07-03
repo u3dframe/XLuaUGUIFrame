@@ -164,8 +164,8 @@ public class BuildTools : BuildPatcher
     }
 
     static public void Zip_Main(){
+        m_luacExe = "D:/lua-5.3.5_w64/luac.exe";
         SaveDefaultCfgVersion();
-        // Net_2_Out();
         ZipMain();
     }
 
@@ -186,8 +186,18 @@ public class BuildTools : BuildPatcher
         CopySVList("");
     }
 
-    [MenuItem("Tools/切为外网(152.136.147.141)",false,50)]
-    static void Net2Out152_141(){
+    [MenuItem("Tools/切为外网(测试服)",false,50)]
+    static void Net2Out(){
         CopySVList("_sdk173");
+    }
+
+    [MenuItem("Tools/切为内网QA",false,50)]
+    static void Net2InQA(){
+        CopySVList("_qa");
+    }
+
+    [MenuItem("Tools/切为外网(送审)",false,50)]
+    static void Net2Out_SS(){
+        CopySVList("_sdk173_ss");
     }
 }

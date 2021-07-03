@@ -41,6 +41,7 @@ function M:OnInit()
 
 	if self.isHasCamera then
 		_evt.Brocast(Evt_Vw_Def3DCamera,false,self.lbCamera)
+		self.uObjLShadow = self.lbCamera:Find("light_monster")
 	end
 end
 
@@ -73,45 +74,59 @@ function M:GetWorldY()
 end
 
 function M:CmrLocalPosY(nY)
-	if not self.lbCamera or not nY then
-		return
+	if self.lbCamera and nY then
+		nY = tonumber(nY) or 0
+		local _v3 = self.lbCamera:GetLocalPosition()
+		_v3.y = nY
+		self.lbCamera:SetLocalPosition( _v3.x,_v3.y,_v3.z )
 	end
-	nY = tonumber(nY) or 0
-	local _v3 = self.lbCamera:GetLocalPosition()
-	_v3.y = nY
-	self.lbCamera:SetLocalPosition( _v3.x,_v3.y,_v3.z )
+	return self
 end
 
 function M:CmrLookAt(tx,ty,tz,isNoSmooth,upLate)
-	if not self.lbCamera then
-		return
+	if self.lbCamera then
+		self.csAt = self.csAt or CLookAt.Get( self.lbCamera.gobj )
+		tx = tonumber(tx) or 0
+		ty = tonumber(ty) or 0
+		tz = tonumber(tz) or 0
+		isNoSmooth = not (isNoSmooth == true)
+		self.csAt:LookAt( tx,ty,tz,isNoSmooth,upLate == true )
 	end
-	self.csAt = self.csAt or CLookAt.Get( self.lbCamera.gobj )
-	tx = tonumber(tx) or 0
-	ty = tonumber(ty) or 0
-	tz = tonumber(tz) or 0
-	isNoSmooth = not (isNoSmooth == true)
-	self.csAt:LookAt( tx,ty,tz,isNoSmooth,upLate == true )
+	return self
 end
 
 function M:CmrLookAtTarget(trsfTaget,ox,oy,oz,isNoSmooth,upLate)
-	if not self.lbCamera or not trsfTaget then
-		return
+	if self.lbCamera and trsfTaget then
+		self.csAt = self.csAt or CLookAt.Get( self.lbCamera.gobj )
+		ox = tonumber(ox) or 0
+		oy = tonumber(oy) or 0
+		oz = tonumber(oz) or 0
+		isNoSmooth = not (isNoSmooth == true)
+		self.csAt:LookAt( trsfTaget,ox,oy,oz,isNoSmooth,upLate == true )
 	end
-	self.csAt = self.csAt or CLookAt.Get( self.lbCamera.gobj )
-	ox = tonumber(ox) or 0
-	oy = tonumber(oy) or 0
-	oz = tonumber(oz) or 0
-	isNoSmooth = not (isNoSmooth == true)
-	self.csAt:LookAt( trsfTaget,ox,oy,oz,isNoSmooth,upLate == true )
+	return self
 end
 
 function M:CmrFov(fov)
 	fov = tonumber(fov)
-	if not self.lbCamera or not fov then
-		return
+	if self.lbCamera and fov then
+		self.lbCamera:SetFieldOfView(fov)
 	end
-	self.lbCamera:SetFieldOfView(fov)
+	return self
+end
+
+function M:Light2Winner()
+	local _obj = self.lbCamera
+	if _obj then
+		local _l_main = self.uObjLShadow
+		if _l_main then
+			local _l_victory = _obj:Find("lights_victory")
+			if _l_victory then
+				CHelper.SetParent( _l_main,_l_victory )
+			end
+		end		
+	end
+	return self
 end
 
 return M

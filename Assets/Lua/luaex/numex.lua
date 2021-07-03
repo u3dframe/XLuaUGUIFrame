@@ -19,7 +19,7 @@ math.round = math.round or function(val)
 	if nVal ~= 0 then
 		fVal = val - nVal;
 	end
-	if fVal > 0.5 then
+	if fVal >= 0.5 then
 		nVal = nVal + 1;
 	end
 	return nVal;

@@ -85,6 +85,7 @@ LE_VCoin = {
     Item = 5,
     Hero = 6,
     Equip = 7,
+    Chip = 15,
     Skill = 999
 }
 

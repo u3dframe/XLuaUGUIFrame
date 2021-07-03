@@ -29,7 +29,7 @@ public class Launcher : MonoBehaviour
         UGUIEventSystem.instance.Init(false);
         AssetBundleManager.instance.isDebug = true;
         // AssetBundleManager.instance.m_abOutSec = 0;
-        SceneMapEx.m_cfLoad = ResourceManager.LoadTexture;
+        SceneMapEx.ReStatic(ResourceManager.LoadTexture,ResourceManager.LoadCube,ResourceManager.LoadProbes);
         LuaManager.instance.Init();
     }
 

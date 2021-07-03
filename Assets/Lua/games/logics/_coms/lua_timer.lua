@@ -20,6 +20,9 @@ local this = M
 
 function M.Init()
 	this:clean_end()
+	_evt.AddListener(Evt_Re_Login,function()
+		this._lbFuncDelays = nil
+	end)
 end
 
 function M:clean_end()

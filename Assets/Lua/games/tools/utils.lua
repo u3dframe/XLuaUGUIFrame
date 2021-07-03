@@ -105,4 +105,21 @@ function M.ReEnvironment(tp,intensity,...)
 	end
 end
 
+function M.LFog(tp,cr,cg,cb,v1,v2)
+	tp = tonumber( tp ) or 0
+	cr = tonumber( cr ) or 0
+	cg = tonumber( cg ) or 0
+	cb = tonumber( cb ) or 0
+	v1 = tonumber( v1 ) or 0
+	v2 = tonumber( v2 ) or 0
+	if tp >= 100 then
+		tp,cr,cg,cb,v1,v2 = tp * 0.01,cr * 0.01,cg * 0.01,cb * 0.01,v1 * 0.01,v2 * 0.01
+	end
+	
+	if tp == 1 or tp == 2 or tp == 3 then
+		local _c = this.ReColor( cr,cg,cb )
+		CRSettingEx.SetFog( true,tp,_c,v1,v1,v2 )
+	end
+end
+
 return M

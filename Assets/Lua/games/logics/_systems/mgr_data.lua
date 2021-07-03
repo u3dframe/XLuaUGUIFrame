@@ -8,11 +8,13 @@
 local strRoot = "games/config/" --配置表根路径
 local str_split = string.split
 local str_contains = string.contains
+local tb_concat = table.concat
 local _req,pcall = require,pcall
 local clearLoadLua,weakTB,readonly = clearLoadLua,weakTB,readonly
 local _sp_symbols = "@@" -- "_"
 
 UIType = {}
+AttrsType = {}
 
 local M = class( "mgr_data")
 
@@ -71,6 +73,7 @@ end
 function M:_InitCfgs()
 	self:_InitUnlock()
 	self:_InitWeight()
+	self:_InitAtrrs()
 end
 
 function M:GetConfig(cfgKey)
@@ -87,12 +90,12 @@ function M:GetConfig(cfgKey)
 	printError("未查找到[%s]的配置表，請查找是否添加", cfgKey)
 end
 
-function M:GetOneData(cfgKey, idKey)
+function M:GetOneData(cfgKey, idKey,isNoRL)
 	local _cfg,_lb = self:GetConfig(cfgKey)
 	if _cfg then
 		_lb = _cfg[idKey] 
 		if (_lb) then
-			return readonly(_lb)
+			return (isNoRL == true) and _lb or readonly(_lb)
 		end
 		if "effect" ~= cfgKey and "buff" ~= cfgKey and "stimeline" ~= cfgKey then
 			printError("未查找到[%s]的配置表 ID = [%s] 的数据，請检查", cfgKey, idKey)
@@ -104,11 +107,23 @@ function M:_InitUnlock()
 	local _cfg = self:GetConfig("fnopen")
 	if _cfg then
 		for k, v in pairs(_cfg) do
+			if v.uitype then
 			UIType[v.uitype] = k
+			end
 		end
 	end
 end
 
+function M:_InitAtrrs()
+	local _cfg = self:GetConfig("attribute")
+	if _cfg then
+		for k, v in pairs(_cfg) do
+			if v.name then
+				AttrsType[v.name] = k
+			end
+		end
+	end
+end
 function M:_InitWeight()
 	local _cfg = self:GetConfig("weight")
 	if _cfg then
@@ -149,8 +164,8 @@ function M:GetCfgSkill(idKey)
 	return self:GetOneData( "skill",idKey )
 end
 
-function M:GetCfgSkillEffect(idKey)
-	return self:GetOneData( "skill@@skilleffect",idKey )
+function M:GetCfgSkillEffect(idKey,isNoRL)
+	return self:GetOneData( "skill@@skilleffect",idKey,isNoRL )
 end
 
 function M:GetCfgHurtEffect(idKey)
@@ -182,9 +197,9 @@ function M:GetCfgs4GWeight()
 end
 
 -- Check Validity
-function M:CheckCfg4Action( e_id )
+function M:CheckCfg4Action(e_id,isNoRL)
 	if not e_id then return end
-	local cfgEft = self:GetCfgSkillEffect( e_id )
+	local cfgEft = self:GetCfgSkillEffect( e_id,isNoRL )
 	if not cfgEft then return end
 	if cfgEft.type == 1 then
 		return false,cfgEft
@@ -193,13 +208,25 @@ function M:CheckCfg4Action( e_id )
 end
 
 function M:CheckCfg4Effect( e_id )
-	local _isOk,cfgEft = self:CheckCfg4Action( e_id )
+	local _isOk,cfgEft = self:CheckCfg4Action( e_id,true )
 	if not _isOk then return end
 	if cfgEft.type == 8 then return true,cfgEft end
-	
-	if not cfgEft.point then return end
+	if (not cfgEft.point) and (not cfgEft.points) then return end
 	if not cfgEft.resid then return end
-	local _points = LES_Ani_Eft_Point[cfgEft.point]
+	local _EPoint = LES_Ani_Eft_Point
+	local _points = nil
+	if cfgEft.points then
+		local _lbs,_vpt = {}
+		for _,_v in ipairs(cfgEft.points) do
+			_vpt = _EPoint[_v]
+			if _vpt then
+				_lbs[#_lbs + 1] = _vpt
+			end
+		end
+		_points = tb_concat( _lbs,";" )
+	else
+		_points = _EPoint[cfgEft.point]
+	end
 	if not _points then return end
 	local _cfgRes = self:GetCfgRes(cfgEft.resid)
 	if not _cfgRes then return end

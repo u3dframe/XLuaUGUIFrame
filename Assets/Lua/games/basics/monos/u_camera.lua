@@ -28,13 +28,13 @@ end
 function M:_Init_Cmr()
 	local _c = self.comp
 	self.depth = _c.depth
-	self.clearFlags = _c.clearFlags
+	-- self.clearFlags = _c.clearFlags
 	self.fieldOfView = _c.fieldOfView
-	self.farClipPlane = _c.farClipPlane
-	self.backgroundColor = _c.backgroundColor
+	-- self.nearClipPlane = _c.nearClipPlane
+	-- self.farClipPlane = _c.farClipPlane
+	-- self.backgroundColor = _c.backgroundColor
 	self.orthographic = _c.orthographic
-	self.nearClipPlane = _c.nearClipPlane
-	self.pixelHeight = _c.pixelHeight
+	-- self.pixelHeight = _c.pixelHeight
 end
 
 function M:_Init_Cmr_Vecs()
@@ -156,6 +156,34 @@ function M:StopSmooth()
 	if self.csEDComp then
 		self.csEDComp:StopAllUpdate()
 	end
+end
+
+function M:_InitFollower()
+	if not self.lbFlower then
+		local _cctrl = CCtrlCamera.Get(self.gobj)
+		local _c = _cctrl.m_follower
+		self.csCCtrl = _cctrl
+		self.lbFlower = LCFollower.New( _c,_c )
+		self.lbTarget = LUTrsf.New( _cctrl.m_target )
+	end
+end
+
+function M:GetFollower()
+	self:_InitFollower()
+	return self.lbFlower
+end
+
+function M:GetFTarget()
+	self:_InitFollower()
+	return self.lbTarget
+end
+
+function M:ReScreenRect(ofW,ofH)
+	if not self.csCCtrl then
+		return
+	end
+	ofW,ofH = self:TNum( ofW ),self:TNum( ofH )
+	self.csCCtrl:ReScreenRect( ofW,ofH )
 end
 
 return M

@@ -34,6 +34,10 @@ function M:IsNeedGetComp()
 	return true
 end
 
+function M:IsCheckComp()
+	return true
+end
+
 function M:OnInit()
 	self:_Init_CU_Vecs()
 	self._lf_On_Up = handler_pcall(self,self.OnUpdate_CUnit)
@@ -41,7 +45,9 @@ function M:OnInit()
 	self._lf_On_A_Up = handler_pcall(self,self.OnUpdate_A_Up)
 	self._lf_On_A_Exit = handler_pcall(self,self.OnUpdate_A_Exit)
 	
-	self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit)
+	if self.comp then
+		self.comp:InitCCEx(self._lf_On_Up,self._lf_On_A_Enter,self._lf_On_A_Up,self._lf_On_A_Exit)
+	end
 	if self._async_isUsePhysics ~= nil then
 		self:SetIsUsePhysics( self._async_isUsePhysics )
 	end
@@ -427,6 +433,15 @@ function M:EndAction()
 			self:State2Idle()
 		end
 	end
+end
+
+function M:ClearState(isNotExit)
+	local _machine = self.machine
+	self.machine = nil
+	if _machine and (not (isNotExit == true)) then
+		_machine:Exit()
+	end
+	self:SetStateAndPre( E_State.None,E_State.None )
 end
 
 return M

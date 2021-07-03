@@ -133,6 +133,12 @@ public class TimelineUtil : ED_Animator
         {
             _name = o.streamName;
             // 每一个binding的名字和binding绑定
+            if(bindings.ContainsKey(_name))
+            {
+                var _vv = bindings[_name];
+                string _err = string.Format("=== has same bind = [{0}] , [{1}] = [{2}]",_name,o,_vv);
+                throw new Exception(_err);
+            }
             bindings.Add(_name, o);
             // 每个binding下的对象都是TrackAsset类型
             _srcObj = o.sourceObject as TrackAsset;

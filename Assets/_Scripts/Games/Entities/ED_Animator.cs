@@ -63,13 +63,13 @@ public class ED_Animator : Core.Kernel.Beans.ED_Comp
     virtual public void InitComp(string strComp,Core.DF_OnInt cfLife)
     {
         this._m_cfOnLife = cfLife;
-        base.InitComp(strComp);
+        this.InitComp(strComp);
     }
 
     virtual public void InitComp(Component comp,Core.DF_OnInt cfLife)
     {
         this._m_cfOnLife = cfLife;
-        base.InitComp(comp);
+        this.InitComp(comp);
     }
 
     override protected void On_Destroy(GobjLifeListener obj)
@@ -288,9 +288,14 @@ public class ED_Animator : Core.Kernel.Beans.ED_Comp
             _m_cfAnimEvent(val);
     }
 
+    public bool HasSInfo()
+    {
+        return this.m_curSInfo != null;
+    }
+
     public void ReSInfo()
     {
-        if(this.m_curSInfo != null)
+        if(this.HasSInfo())
             this.m_curSInfo.LoadInfos();
     }
 }

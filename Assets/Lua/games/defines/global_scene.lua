@@ -16,6 +16,7 @@ L_SPartner = LayerMask.NameToLayer("Partner")
 L_SMPartner = LayerMask.NameToLayer("M_Partner")
 L_UI = LayerMask.NameToLayer("UI")
 L_CG = LayerMask.NameToLayer("CG")
+L_Dynamic = LayerMask.NameToLayer("Dynamic")
 
 -- 场景 - 对象类型
 LES_Object = {
@@ -30,6 +31,7 @@ LES_Object = {
 	UIModel        = _add(), -- UI模型
 	UIRawModel     = _add(), -- UI-RawImage 模型
 	CG             = _add(), -- CG
+	Dynamic        = _add(), -- 物件动态层
 }
 
 LES_Layer = {
@@ -44,6 +46,7 @@ LES_Layer = {
 	[LES_Object.UIModel]        =    L_UI,
 	[LES_Object.UIRawModel]     =    L_UI,
 	[LES_Object.CG]             =    L_CG,
+	[LES_Object.Dynamic]        =    L_Dynamic,
 }
 
 -- 场景 - 状态
@@ -67,6 +70,7 @@ LES_Battle_State = {
 	None                     = _add(100),
 	Start                    = _add(),
 
+	Wait_SvObjs              = _add(),
 	Create_Objs              = _add(),
 	LoadOtherObjs            = _add(),
 
@@ -238,6 +242,16 @@ LES_Ani_Eft_Point = {
 	[12]                 = "f_l_weapon",
 	[13]                 = "f_r_weapon",
 	[14]                 = "f_l_weapon;f_r_weapon",
+	[15]                 = "f_node_00",
+	[16]                 = "f_node_01",
+	[17]                 = "f_node_02",
+	[18]                 = "f_node_03",
+	[19]                 = "f_node_04",
+	[20]                 = "f_node_05",
+	[21]                 = "f_node_06",
+	[22]                 = "f_node_07",
+	[23]                 = "f_node_08",
+	[24]                 = "f_node_09",
 }
 
 -- shader特效 - 类型

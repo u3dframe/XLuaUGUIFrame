@@ -16,6 +16,7 @@ function M:ctor( obj,component )
 		component = CFollower.Get(obj)
 	end
 	super.ctor(self,obj,component or "SmoothFollower")
+	self.isRunning = self.comp.isRunning
 end
 
 function M:_GetCFComp()
@@ -38,14 +39,33 @@ end
 function M:Start( target,distance,height,offsetH,isLerpDistance,isLerpHeight,isLerpRotate )
 	local _p1,_p2,_p3,_p4,_p5,_p6 = self:_RePars( distance,height,offsetH,isLerpDistance,isLerpHeight,isLerpRotate )
 	self.comp:DoStart( target,_p1,_p2,_p3,_p4,_p5,_p6 )
+	self.isRunning = true
+end
+
+function M:Start()
+	if not self.isRunning then
+		self.isRunning = true
+		self.comp.isRunning = true
+	end
 end
 
 function M:Stop()
-	self.comp.isRunning = false
+	if self.isRunning then
+		self.isRunning = false
+		self.comp.isRunning = false
+	end
 end
 
 function M:SetTarget( target )
 	self.comp:SetTarget( target )
+end
+
+function M:IsBackDistance( back )
+	self.comp.isBackDistance = (1 == back) or (back == true)
+end
+
+function M:IsSyncRotate( rotate )
+	self.comp.isSyncRotate = (1 == rotate) or (rotate == true)
 end
 
 return M

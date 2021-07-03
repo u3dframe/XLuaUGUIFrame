@@ -42,10 +42,12 @@ Evt_GameEntryAfterUpRes = "Evt_GameEntryAfterUpRes"; -- 处理更新完毕后的
 
 -------- 地图场景 - 所用事件
 Evt_Map_Load = "Evt_Map_Load"; -- 执行加载地图 (mapid)
+Evt_Map_PreLoading = "Evt_Map_PreLoading"; -- 加载地图之前
 Evt_Map_Loaded = "Evt_Map_Loaded"; -- 地图加载完成
 Evt_Map_AddObj = "Evt_Map_AddObj"; -- 添加 map 场景里面的 对象 (objType,resid,lfunc,lbObject)
 Evt_Map_GetObj = "Evt_Map_GetObj"; -- 取 map 场景里面的 对象 (uniqueID,lfunc,lbObject)
 Evt_Map_ReSInfo = "Evt_Map_ReSInfo"; -- 重写设置下当前场景的场景数据
+Evt_PreLoad_FightObj = "Evt_PreLoad_FightObj"; -- 预加载处理 - 战斗特效资源
 
 Evt_State_Battle_Start = "Evt_State_Battle_Start"; -- 战斗状态开始
 Evt_Map_SV_AddObj = "Evt_Map_SV_AddObj"; -- 服务器消息 - 添加对象 (objType,svData)

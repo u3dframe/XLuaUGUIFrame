@@ -72,6 +72,7 @@ public static class ExampleConfig
                 typeof(WaitForSeconds),
                 typeof(UnityWebRequest),
                 typeof(DownloadHandler),
+                typeof(DownloadHandlerBuffer),
                 typeof(CertificateHandler),
                 typeof(AudioClip),
                 typeof(AudioSource),
@@ -82,6 +83,8 @@ public static class ExampleConfig
                 typeof(Screen),
                 typeof(CharacterController),
                 typeof(Skybox),
+                typeof(Shader),
+                typeof(Material),
                 //------------------------ ugui --------------------------------
                 typeof(RectTransform),
                 typeof(UIBehaviour),
@@ -141,6 +144,9 @@ public static class ExampleConfig
                 // typeof(DG.Tweening.DOTweenVisualManager),
 #endif
                 //------------------------ 类3 ---------------------
+                typeof(UnityStandardAssets.ImageEffects.PostEffectsBase),
+                typeof(UnityStandardAssets.ImageEffects.GlobalFog),
+                //------------------------ 类4 ---------------------
                 typeof(ED_Basic),
                 typeof(EU_Basic),
                 typeof(ED_Comp),
@@ -176,8 +182,8 @@ public static class ExampleConfig
                 typeof(UGUIEventListener),
                 typeof(UGUIEventSystem),
                 typeof(PrefabBasic),
-                typeof(VideoEx),
                 typeof(PrefabElement),
+                typeof(VideoEx),
                 typeof(Localization),
                 typeof(UGUILocalize),
                 typeof(UGUIGray),
@@ -193,7 +199,7 @@ public static class ExampleConfig
                 typeof(LuaManager),
                 typeof(SmoothLookAt),
                 typeof(SmoothFollower),
-                typeof(MgrMainCamera),
+                typeof(CtrlCamera),
                 typeof(MainCameraManager),
                 typeof(RayScreenPointInfo),
                 typeof(InputBaseMgr),
@@ -213,6 +219,10 @@ public static class ExampleConfig
                 typeof(WebVerifyCert),
                 typeof(SceneMapEx),
                 typeof(CRCClass),
+                typeof(CoatingLight),
+                //------------------------ ljson ---------------------
+                typeof(LitJson.JsonData),
+                typeof(LJsonHelper),
                 //---------------------------------------------------------------  
             };
 
@@ -239,11 +249,14 @@ public static class ExampleConfig
                 typeof(DF_LoadedAsset),
                 typeof(DF_LoadedFab),
                 typeof(DF_LoadedTex2D),
-                typeof(DF_LoadedTex2DExt),
+                typeof(DF_ToLoadTex2D),
+                typeof(DF_LoadedCube),
+                typeof(DF_ToLoadCube),
                 typeof(DF_LoadedSprite),
                 typeof(DF_LoadedAnimator),
                 typeof(DF_LoadedAnimationClip),
                 typeof(DF_LoadedAdoClip),
+                typeof(DF_ToLoadAdoClip),
                 typeof(DF_LoadedTimelineAsset),
                 typeof(DF_LoadedMaterial),
                 typeof(DF_LoadedPPFile),

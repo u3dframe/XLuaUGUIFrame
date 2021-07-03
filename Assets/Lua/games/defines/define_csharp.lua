@@ -48,6 +48,7 @@ CGFile = CGameFile.curInstance
 CHelper = CS.LuaHelper
 CLocliz = CS.Localization
 CLoadSceneMgr = CS.MgrLoadScene
+CCtrlCamera = CS.CtrlCamera
 -- CMCaneraMgr = CS.MainCameraManager
 CInpMgr = CS.InputMgr
 CELog2Net =  CELog2Net or CS.LogToNetHelper.shareInstance
@@ -62,6 +63,7 @@ CEDCamera = CS.ED_Camera
 CEDUIEffect = CS.ED_UIEffect
 CEDUISpine = CS.ED_UISpine
 CBridge = CS.EU_Bridge
+CCLight = CS.CoatingLight
 
 CCardUtil = CS.CardUtil
 CTimelineUtil = CS.TimelineUtil
@@ -86,6 +88,7 @@ FrameRate = UApplication.targetFrameRate
 OneFrameSec = todecimal( 1 / FrameRate,4,0.016,true)
 
 Is_PPLayer_Enabled = (Is_LoadOrg4Editor) or (not GM_IsEditor) -- 设置 PostProcessLayer 的 enabled
+-- Is_PPLayer_Enabled = false
 Is_GNMRelative = GM_IsEditor
 Is_CanDraw = GM_IsEditor
 

@@ -108,6 +108,17 @@ public class Draw2 : MonoBehaviour
         CreateMesh(vertices, dTime);
     }
 
+    public void DestoryAll()
+    {
+        if (lst != null)
+        {
+            foreach (var item in lst)
+            {
+                DestroyImmediate(item.go);
+            } lst.Clear();
+        }
+    }
+
     void Update()
     {
         for (int i = 0; i < lst.Count; i++)

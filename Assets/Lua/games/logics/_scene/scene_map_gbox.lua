@@ -12,9 +12,10 @@ local super,_evt = UICell,Event
 local M = class( "scene_map_gbox",super )
 
 function M:OnInit()
-	self.comp:ForeachElement(function(_,gobj)
+	self.comp:ForeachElement(function(nIndex,gobj)
 		local _nm = "n_" .. (gobj.name)
 		self[_nm] = self:NewTrsfBy(gobj,true)
+		self.nMaxIndex = nIndex + 1
 	end)
 
 	-- 目前没考虑旋转，缩放的情况下
@@ -75,6 +76,17 @@ function M:GetUnitPos(nIndex)
 	if (util)then
 		local _pos = util.v3Pos;
 		return _pos.x,_pos.y,_pos.z
+	end
+end
+
+function M:GetUnitMinMaxPosXZ(min, max)
+	local _p1x,_,_p1z  = self:GetUnitPos(min or 1)
+	local _p2x,_,_p2z  = self:GetUnitPos(max or self.nMaxIndex)
+	if _p1x and _p2x then
+		local _mmin = Mathf.Min
+		local _minx = _mmin( _p1x,_p2x )
+		local _minz = _mmin( _p1z,_p2z )
+		return _minx,_minz,(_minx == _p1x and _p2x or _p1x),(_minz == _p1z and _p2z or _p1z)
 	end
 end
 return M

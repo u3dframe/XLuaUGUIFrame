@@ -21,4 +21,8 @@ function M.Builder(nCursor,resid)
 	return _ret
 end
 
+function M:OnDisappear()
+	self:DestroyObj()
+end
+
 return M
