@@ -25,11 +25,22 @@ function M:onAssetConfig( _cfg )
 	-- _cfg.isLogVTime = true -- 打印 _OnView 执行时间
 	
 	-- 界面通用按钮(界面独立按钮)，取得按钮的方式：self.lbBtnXxx
-	--_cfg.lbBtns = {
-		--{name = "elName"(绑定在PrefabeElement里面的对象), func = 单击执行函数, val = 按钮文字(可), isNoScale = 单击时是否-不缩放(可), isNoPrint = 没有时是否-不告知(可)},
-		--{name = "Close",func = handler(self, self.OnClickCloseSelf),val = 201}, -- 取得按钮的方式：self.lbBtnClose
-		--{name = "GoFight",func = function() self:OnClick2Fight(); end,val = "开始战斗"}, -- 取得按钮的方式：self.lbGoFight
-	--}
+	--[[
+	_cfg.lbBtns = {
+		{name = "elName"(绑定在PrefabeElement里面的对象), func = 单击执行函数, val = 按钮文字(可), isNoScale = 单击时是否-不缩放(可), isNoPrint = 没有时是否-不告知(可)},
+		{name = "Close",func = handler(self, self.OnClickCloseSelf),val = 201}, -- 取得按钮的方式：self.lbBtnClose
+		{name = "GoFight",func = function() self:OnClick2Fight(); end,val = "开始战斗"}, -- 取得按钮的方式：self.lbGoFight
+	}
+	--]]
+	
+	-- 事件列表 = 等价于 重构 M:ReEvent4Self(isBind)
+	--[[
+	_cfg.lbEvts = {
+		{key = 自定义的刷新事件公共名,func = 单击执行函数,obj = 函数的第一个参数},
+		{key = Evt_RefreshXxx,func = handler(self, self.OnClickCloseSelf)}, -- 等价于 {key = Evt_RefreshXxx,func = self.OnClickCloseSelf,obj = self},
+		{key = Evt_XXXX,func = function() self:OnClick2Fight(); end},
+	}
+	--]]
 	return _cfg;
 end
 
